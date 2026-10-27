@@ -1,0 +1,10 @@
+.env
+data/
+cache/
+runs/
+*.mp4
+*.mov
+*.webm
+__pycache__/
+.venv/
+*.pyc
