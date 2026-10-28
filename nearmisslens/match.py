@@ -90,3 +90,29 @@ def event_metrics(pred_ev: pd.DataFrame, ref_ev: pd.DataFrame, pmap: dict, tol_f
     rec = tp / len(ref_ev) if len(ref_ev) else float("nan")
     f1 = 2 * prec * rec / (prec + rec) if prec and rec and prec + rec > 0 else 0.0
     return {"ref_events": int(len(ref_ev)), "pred_events": int(len(pred_ev)), "tp": tp, "precision": prec, "recall": rec, "f1": f1}
+
+
+def pet_metrics(pred: pd.DataFrame, ref: pd.DataFrame, pmap: dict, max_pet: float, tol_s: float = 1.0) -> dict:
+    """PET encounters at or below max_pet match when the mapped pair is the same and times agree within tol_s."""
+    P = pred[pred["pet"] <= max_pet]
+    R = ref[ref["pet"] <= max_pet]
+    ref_by_pair = defaultdict(list)
+    for k, r in R.iterrows():
+        ref_by_pair[frozenset((r["id_1"], r["id_2"]))].append((k, r))
+    used, tp, errors = set(), 0, []
+    for _, p in P.iterrows():
+        pair = frozenset((pmap.get(p["id_1"]), pmap.get(p["id_2"])))
+        for k, r in ref_by_pair.get(pair, []):
+            if k not in used and abs(p["t_first_exit"] - r["t_first_exit"]) <= tol_s:
+                used.add(k)
+                tp += 1
+                errors.append(p["pet"] - r["pet"])
+                break
+    prec = tp / len(P) if len(P) else float("nan")
+    rec = tp / len(R) if len(R) else float("nan")
+    f1 = 2 * prec * rec / (prec + rec) if prec and rec and prec + rec > 0 else 0.0
+    out = {"ref_events": int(len(R)), "pred_events": int(len(P)), "tp": tp, "precision": prec, "recall": rec, "f1": f1}
+    if errors:
+        out["pet_bias_s"] = float(np.mean(errors))
+        out["pet_mae_s"] = float(np.mean(np.abs(errors)))
+    return out

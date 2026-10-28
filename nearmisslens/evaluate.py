@@ -40,11 +40,18 @@ def evaluate_conflicts(ours: pd.DataFrame, ref: pd.DataFrame, label: str) -> dic
     for kind in ("rear_end", "crossing", "lane_change"):
         out[kind] = match.event_metrics(ev_ours[ev_ours["type"] == kind], ev_ref[ev_ref["type"] == kind], pmap)
         log_metrics("conflicts_ttc", label, {"class": kind, **out[kind]})
-    return {"summary": out, "ours": ev_ours, "ref": ev_ref, "map": pmap}
+    pet_ours = conflicts.pet_events(ours)
+    pet_ref = conflicts.pet_events(ref[conflicts.STATE_COLUMNS])
+    for band in (1.5, 3.0):
+        out[f"pet<={band}"] = match.pet_metrics(pet_ours, pet_ref, pmap, band)
+        log_metrics("conflicts_pet", label, {"class": f"pet<={band}", **out[f"pet<={band}"]})
+    return {"summary": out, "ours": ev_ours, "ref": ev_ref, "pet_ours": pet_ours, "pet_ref": pet_ref, "map": pmap}
 
 
 def write_events(result: dict, out: Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
     result["ours"].to_csv(out / "events_ours.csv", index=False)
     result["ref"].to_csv(out / "events_reference.csv", index=False)
+    result["pet_ours"].to_csv(out / "pet_ours.csv", index=False)
+    result["pet_ref"].to_csv(out / "pet_reference.csv", index=False)
     (out / "conflict_summary.json").write_text(json.dumps(result["summary"], indent=1, default=float))

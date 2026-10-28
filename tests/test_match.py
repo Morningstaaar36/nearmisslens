@@ -31,3 +31,12 @@ def test_event_metrics():
                         {"id_1": "p0", "id_2": "p1", "frame_start": 60, "frame_end": 62}])
     e = match.event_metrics(pev, rev, pmap)
     assert e["tp"] == 1 and e["recall"] == 1.0 and e["precision"] == 0.5
+
+
+def test_pet_metrics():
+    pmap = {"p1": "r1", "p2": "r2"}
+    ref = pd.DataFrame([{"id_1": "r1", "id_2": "r2", "pet": 1.0, "t_first_exit": 5.0}])
+    pred = pd.DataFrame([{"id_1": "p1", "id_2": "p2", "pet": 1.2, "t_first_exit": 5.3},
+                         {"id_1": "p1", "id_2": "p2", "pet": 0.8, "t_first_exit": 30.0}])
+    m = match.pet_metrics(pred, ref, pmap, 1.5)
+    assert m["tp"] == 1 and m["recall"] == 1.0 and m["precision"] == 0.5 and abs(m["pet_bias_s"] - 0.2) < 1e-9
