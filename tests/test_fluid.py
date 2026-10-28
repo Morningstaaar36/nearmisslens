@@ -26,3 +26,11 @@ def test_dev_clip_loads():
     df = fluid.load_trajectories(c, real_only=True)
     assert {"vehicle", "two_wheeler", "pedestrian"} <= set(df["cls"])
     assert df["frame"].min() == 1
+
+
+@pytest.mark.skipif(not fluid.clip(*fluid.DEV).base_map.exists(), reason="FLUID data not downloaded")
+def test_geotiff_transform_reads_both_tag_styles():
+    from nearmisslens.calibrate import geotiff_transform
+    for site in (fluid.DEV, fluid.HELDOUT):
+        x0, y0, sx, sy = geotiff_transform(fluid.clip(*site).base_map)
+        assert 0.03 < sx < 0.06 and sx == pytest.approx(sy)
