@@ -12,7 +12,7 @@ CLASSES = ("vehicle", "two_wheeler", "pedestrian")
 
 
 def evaluate_tracks(points: pd.DataFrame, c: fluid.Clip, frames: tuple[int, int], label: str) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
-    ours = tracks.smooth_states(points, pipeline.FPS)
+    ours = tracks.smooth_states(points, pipeline.clip_fps(c))
     ours = ours[ours["frame"].between(*frames)]
     ref = pipeline.reference_states(c, frames)
     ref_real = ref[ref["isReal"] == 1]

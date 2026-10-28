@@ -16,7 +16,7 @@ def ttc_probability(states: pd.DataFrame, events: pd.DataFrame, sigma_pos: float
     idx = states.set_index(["id", "frame"])
     probs = []
     for e in events.itertuples():
-        f = int(round(e.t_min_ttc * 10))
+        f = int(e.frame_min_ttc)
         try:
             a = idx.loc[(e.id_1, f), STATE_COLS].to_numpy(float)
             b = idx.loc[(e.id_2, f), STATE_COLS].to_numpy(float)
@@ -71,7 +71,7 @@ def event_locations(events: pd.DataFrame, states: pd.DataFrame) -> pd.DataFrame:
     idx = states.set_index(["id", "frame"])[["x", "y"]]
     xs, ys = [], []
     for e in events.itertuples():
-        f = int(round(e.t_min_ttc * 10))
+        f = int(e.frame_min_ttc)
         try:
             p = (idx.loc[(e.id_1, f)].to_numpy() + idx.loc[(e.id_2, f)].to_numpy()) / 2
         except KeyError:

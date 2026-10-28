@@ -10,7 +10,6 @@ from scipy.optimize import linear_sum_assignment
 from . import calibrate, conflicts, fluid, tiling, tracks, video
 from .meta_client import MetaClient
 
-FPS = 10.0
 SEGMENT_S = 60.0
 OVERLAP_S = 1.0
 
@@ -57,6 +56,7 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
     if out.exists():
         return pd.read_csv(out)
     info = video.probe(c.video)
+    fps = info["fps"]
     tiles = tiling.grid(info["width"], info["height"])
     starts = list(np.arange(start_s, start_s + duration_s - 1e-6, SEGMENT_S))
 
@@ -65,22 +65,26 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
         seg_len = min(SEGMENT_S + OVERLAP_S, start_s + duration_s - t)
         raw = tiling.track_tiles(client, c.video, float(t), seg_len, concepts, work, tiles, f"{c.stem}@{t:.0f}")
         dets = tiling.merge_tiles(raw, tiles)
-        pts = tracks.detections_to_points(dets, cal, FPS, frame_offset=int(round(t * FPS)) + 1, prefix=f"s{k}:")
+        pts = tracks.detections_to_points(dets, cal, fps, frame_offset=int(round(t * fps)) + 1, prefix=f"s{k}:")
         if not pts.empty:
             pts["segment"] = k
         return pts
 
     with ThreadPoolExecutor(3) as ex:
         parts = [p for p in ex.map(segment, enumerate(starts)) if not p.empty]
-    points = link_segments(pd.concat(parts, ignore_index=True), int(OVERLAP_S * FPS)) if parts else pd.DataFrame()
+    points = link_segments(pd.concat(parts, ignore_index=True), int(OVERLAP_S * fps)) if parts else pd.DataFrame()
     points.to_csv(out, index=False)
     return points
+
+
+def clip_fps(c: fluid.Clip) -> float:
+    return video.probe(c.video)["fps"]
 
 
 def reference_states(c: fluid.Clip, frames: tuple[int, int]) -> pd.DataFrame:
     raw = fluid.load_trajectories(c)
     raw = raw[raw["frame"].between(*frames)]
-    st = conflicts.from_fluid(raw)
+    st = conflicts.from_fluid(raw, clip_fps(c))
     return st.merge(raw[["id", "frame", "speed", "isReal", "cx", "cy", "w", "h", "r", "overall_direction"]],
                     on=["id", "frame"])
 

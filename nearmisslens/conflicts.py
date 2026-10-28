@@ -128,7 +128,7 @@ def ttc_events(states: pd.DataFrame, th: Thresholds = Thresholds(), gap_frames: 
     """Maximal intervals per pair with TTC at or below the threshold."""
     f = ttc_frames(states)
     if f.empty:
-        return pd.DataFrame(columns=["id_1", "id_2", "cls_1", "cls_2", "frame_start", "frame_end", "t_min_ttc",
+        return pd.DataFrame(columns=["id_1", "id_2", "cls_1", "cls_2", "frame_start", "frame_end", "frame_min_ttc", "t_min_ttc",
                                      "min_ttc", "angle", "type", "severity"])
     f = f[f["ttc"] <= th.ttc_s].sort_values(["id_1", "id_2", "frame"])
     events = []
@@ -140,7 +140,7 @@ def ttc_events(states: pd.DataFrame, th: Thresholds = Thresholds(), gap_frames: 
             k = e["ttc"].to_numpy().argmin()
             events.append({"id_1": i1, "id_2": i2, "cls_1": e["cls_1"].iloc[0], "cls_2": e["cls_2"].iloc[0],
                            "frame_start": int(e["frame"].min()), "frame_end": int(e["frame"].max()),
-                           "t_min_ttc": float(e["t_1"].iloc[k]), "min_ttc": float(e["ttc"].iloc[k]),
+                           "frame_min_ttc": int(e["frame"].iloc[k]), "t_min_ttc": float(e["t_1"].iloc[k]), "min_ttc": float(e["ttc"].iloc[k]),
                            "angle": float(e["angle"].iloc[k])})
     ev = pd.DataFrame(events)
     ev["type"] = conflict_type(ev["angle"].to_numpy())
@@ -205,7 +205,7 @@ def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = G
     return pd.DataFrame(rows, columns=["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"])
 
 
-def from_fluid(df: pd.DataFrame, fps: float = 10.0) -> pd.DataFrame:
+def from_fluid(df: pd.DataFrame, fps: float) -> pd.DataFrame:
     """Reference trajectories (FLUID columns) to engine states."""
     out = pd.DataFrame({"id": df["id"], "frame": df["frame"], "t": df["frame"] / fps, "x": df["cx_m"],
                         "y": df["cy_m"], "vx": df["vx"], "vy": df["vy"], "yaw": df["yaw"],
