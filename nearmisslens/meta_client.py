@@ -14,6 +14,10 @@ from .cost import CostMeter
 RETRY_STATUS = {408, 409, 429, 500, 502, 503, 504}
 
 
+class IncompleteResponse(RuntimeError):
+    pass
+
+
 class ApiError(RuntimeError):
     def __init__(self, status: int, body: str):
         super().__init__(f"HTTP {status}: {body[:500]}")
@@ -105,15 +109,23 @@ class MetaClient:
             return r.json()
         return self._retrying(call)
 
-    def cached(self, namespace: str, request: dict, run, cost_fn, estimate_usd: float, what: str) -> dict:
+    def cached(self, namespace: str, request: dict, run, cost_fn, estimate_usd: float, what: str,
+               require_text: bool = False) -> dict:
+        """Serve from cache, or reserve budget, call, record the real cost and cache only complete results."""
         key = request_key(namespace, request)
         hit = self.cache.get(namespace, key)
         if hit is not None:
             return hit
-        self.meter.check(estimate_usd, what)
-        result = run()
-        usd, model, usage = cost_fn(result)
-        self.meter.record(model, usd, what, **usage)
+        self.meter.reserve(estimate_usd, what)
+        try:
+            result = run()
+            usd, model, usage = cost_fn(result)
+            self.meter.record(model, usd, what, **usage)
+        finally:
+            self.meter.release(estimate_usd)
+        status = result.get("status")
+        if status not in (None, "completed") or (require_text and not output_text(result).strip()):
+            raise IncompleteResponse(f"{what}: status={status!r}, details={result.get('incomplete_details')}")
         self.cache.put(namespace, key, result)
         return result
 
@@ -122,7 +134,8 @@ class MetaClient:
         req = {"sha256": file_sha256(path), "name": path.name}
         key = request_key("files", req)
         hit = self.cache.get("files", key)
-        if hit is not None:
+        margin = 3600
+        if hit is not None and (hit.get("expires_at") or 0) > time.time() + margin:
             return hit["id"]
 
         def call():

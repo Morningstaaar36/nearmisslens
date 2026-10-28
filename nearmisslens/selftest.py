@@ -104,13 +104,13 @@ def check_tracking(client: MetaClient, min_recall: float = 0.6, min_precision: f
     ref = ref[ref["isReal"] == 1]
     res = {}
     for cls in ("vehicle", "two_wheeler"):
-        m = match.tracking_metrics(ours, ref, cls)
+        m = match.tracking_metrics(ours, ref, cls, fps=fps)
         log_metrics("tracking_smoke", "dev_smoke", m)
         res[cls] = {k: round(float(v), 3) if isinstance(v, (float, np.floating)) else v for k, v in m.items()}
     ch.detail = res
     v = res["vehicle"]
-    ch.status = "PASS" if (v["recall"] >= min_recall and v["precision"] >= min_precision and
-                           v["position_rmse_m"] <= max_rmse_m) else "FAIL"
+    rmse = v.get("position_rmse_m", float("inf"))
+    ch.status = "PASS" if (v["recall"] >= min_recall and v["precision"] >= min_precision and rmse <= max_rmse_m) else "FAIL"
     return ch
 
 
@@ -131,7 +131,8 @@ def check_verifier(client: MetaClient) -> Check:
             clip = verifier.render_event_clip(c.video, _work() / f"event_{e.id_1}_{e.id_2}_{mid}.mp4", pix,
                                               e["id_1"], e["id_2"], mid, fps, info["width"], info["height"])
             trace = verifier.speed_trace_png(st, e["id_1"], e["id_2"], mid, fps)
-            v = verifier.verify(client, clip, trace, f"min TTC {e['min_ttc']:.1f} s, {e['type']}, A={e['cls_1']}, B={e['cls_2']}", f"selftest-{k}")
+            v = verifier.verify(client, clip, trace, f"min TTC {e['min_ttc']:.1f} s, {e['type']}, A={e['cls_1']}, B={e['cls_2']}",
+                                f"selftest-{k}", clip_key=verifier.event_key(c.video, e["id_1"], e["id_2"], mid, fps))
             verdicts.append(v)
     except ReplayMiss as err:
         ch.detail = {"reason": f"no cached response ({err}); run without NML_REPLAY to fetch (about $0.002)"}

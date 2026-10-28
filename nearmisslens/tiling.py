@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 from . import sam_api, video
+from .cache import source_sha
 from .cost import sam_video_usd
 from .meta_client import MetaClient
 from .segments import Detection
@@ -45,10 +46,13 @@ def track_tiles(client: MetaClient, src: Path, start_s: float, duration_s: float
     with ThreadPoolExecutor(min(4, len(tiles))) as ex:
         clips = list(ex.map(cut, range(len(tiles))))
 
+    src_sha = source_sha(src)
+
     def run(job):
         k, concept = job
-        x, y, _, _ = tiles[k]
-        dets = sam_api.track_video(client, clips[k], concept, frames, f"{tag}t{k}", dx=x, dy=y)
+        x, y, w, h = tiles[k]
+        key = f"{src_sha}|start={start_s:.3f}|dur={duration_s:.3f}|crop={x},{y},{w},{h}"
+        dets = sam_api.track_video(client, clips[k], concept, frames, f"{tag}t{k}", dx=x, dy=y, source_key=key)
         for d in dets:
             d.obj = f"t{k}:{d.obj}"
         return dets

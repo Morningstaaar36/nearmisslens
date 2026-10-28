@@ -58,7 +58,16 @@ def test_ttc_ignores_initial_overlap():
 
 
 def test_footprint_cells_follow_orientation():
-    straight = cf._footprint_cells(0.0, 0.0, 0.0, 4.0, 1.0, 0.5)
-    diagonal = cf._footprint_cells(0.0, 0.0, np.pi / 4, 4.0, 1.0, 0.5)
-    assert len(straight) == 16
-    assert len(diagonal) < 30
+    f = lambda yaw: cf.footprint_cells(np.array([0.0]), np.array([0.0]), np.array([yaw]), np.array([4.0]),
+                                       np.array([1.0]), 0.5)
+    assert len(f(0.0)[0]) == 16
+    assert 10 < len(f(np.pi / 4)[0]) < 30
+    small = cf.footprint_cells(np.array([0.1]), np.array([0.1]), np.array([0.0]), np.array([0.2]),
+                               np.array([0.2]), 0.5)
+    assert len(small[0]) == 1
+
+
+def test_ttc_events_empty_when_no_event_below_threshold():
+    st = pd.concat([track(1, 0, 0, 11, 0, n=3), track(2, 28, 0, 0.6, 0, n=3)])
+    ev = cf.ttc_events(st)
+    assert ev.empty and list(ev.columns) == cf.EVENT_COLUMNS

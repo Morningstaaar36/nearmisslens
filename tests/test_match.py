@@ -15,11 +15,11 @@ def states(prefix, n=20, dx=0.0):
 
 def test_tracking_metrics_perfect_and_offset():
     ref, pred = states("r"), states("p", dx=0.3)
-    m = match.tracking_metrics(pred, ref, "vehicle")
+    m = match.tracking_metrics(pred, ref, "vehicle", fps=10.0)
     assert m["recall"] == 1.0 and m["precision"] == 1.0
     assert abs(m["position_rmse_m"] - 0.3) < 1e-9 and m["id_switches_per_min"] == 0
     far = states("p", dx=5.0)
-    assert match.tracking_metrics(far, ref, "vehicle")["recall"] == 0.0
+    assert match.tracking_metrics(far, ref, "vehicle", fps=10.0)["recall"] == 0.0
 
 
 def test_event_metrics():

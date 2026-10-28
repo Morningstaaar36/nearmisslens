@@ -3,6 +3,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+from functools import lru_cache
 from pathlib import Path
 
 
@@ -21,6 +22,17 @@ def file_sha256(path: Path, block: int = 1 << 22) -> str:
         for chunk in iter(lambda: f.read(block), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+@lru_cache(maxsize=64)
+def _sha_cached(path: str, size: int, mtime_ns: int) -> str:
+    return file_sha256(Path(path))
+
+
+def source_sha(path: Path) -> str:
+    """SHA-256 of a source file, memoised on path, size and modification time."""
+    st = Path(path).stat()
+    return _sha_cached(str(path), st.st_size, st.st_mtime_ns)
 
 
 class Cache:

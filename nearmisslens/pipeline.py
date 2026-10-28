@@ -42,9 +42,17 @@ def link_segments(points: pd.DataFrame, overlap_frames: int, radius_m: float = 1
                 for p, q in zip(i[D[i, j] < radius_m], j[D[i, j] < radius_m]):
                     k = (xa["id"].iloc[p], xb["id"].iloc[q])
                     votes[k] = votes.get(k, 0) + 1
-        for (ida, idb), n in votes.items():
-            if n >= max(2, len(shared) // 3):
-                parent[find(idb)] = find(ida)
+        if votes:
+            left = sorted({a for a, _ in votes})
+            right = sorted({b for _, b in votes})
+            V = np.zeros((len(left), len(right)))
+            for (ida, idb), n in votes.items():
+                V[left.index(ida), right.index(idb)] = n
+            rows, cols = linear_sum_assignment(-V)
+            need = max(2, len(shared) // 3)
+            for r, q in zip(rows, cols):
+                if V[r, q] >= need:
+                    parent[find(right[q])] = find(left[r])
     points["id"] = points["id"].map(find)
     later = points.duplicated(["id", "frame"], keep="first")
     return points[~later].reset_index(drop=True)

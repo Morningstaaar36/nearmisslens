@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -9,7 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-from .cache import file_sha256
+from .cache import file_sha256, source_sha
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
 
@@ -107,12 +108,17 @@ def speed_trace_png(states: pd.DataFrame, id_a, id_b, frame_mid: int, fps: float
 ARMS = ("full", "no_video", "no_metric")
 
 
+def event_key(src: Path, id_a, id_b, frame_mid: int, fps: float) -> str:
+    """Identity of a rendered event clip that does not depend on encoder output bytes."""
+    return f"{source_sha(src)}|{id_a}|{id_b}|{frame_mid}|{fps}|{CROP_W}x{CROP_H}|pad={PAD_S}"
+
+
 def verify(client: MetaClient, clip: Path, trace_png: str, metric_text: str, tag: str,
-           model: str = MODEL, effort: str = "low", arm: str = "full") -> dict:
+           model: str = MODEL, effort: str = "low", arm: str = "full", clip_key: str | None = None) -> dict:
     """arm: full (video + trace + metric), no_video (trace + metric), no_metric (video + trace)."""
     if arm not in ARMS:
         raise ValueError(arm)
-    request = {"model": model, "clip": file_sha256(clip), "trace": trace_png[-64:], "metric": metric_text,
+    request = {"model": model, "clip": clip_key or file_sha256(clip), "trace": hashlib.sha256(trace_png.encode()).hexdigest(), "metric": metric_text,
                "schema": VERDICT_SCHEMA, "effort": effort, "instructions": INSTRUCTIONS, "arm": arm}
     if arm == "full":
         request.pop("arm")
@@ -139,5 +145,5 @@ def verify(client: MetaClient, clip: Path, trace_png: str, metric_text: str, tag
         return token_usd(model, u.get("input_tokens", 0), u.get("output_tokens", 0), cached), model, {
             "input_tokens": u.get("input_tokens", 0), "output_tokens": u.get("output_tokens", 0)}
 
-    resp = client.cached("spark_verify", request, run, cost, 0.01, f"verify {tag}")
+    resp = client.cached("spark_verify", request, run, cost, 0.01, f"verify {tag}", require_text=True)
     return json.loads(output_text(resp))

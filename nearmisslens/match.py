@@ -27,7 +27,8 @@ def frame_matches(pred: pd.DataFrame, ref: pd.DataFrame, cls: str) -> pd.DataFra
     return pd.DataFrame(out, columns=["frame", "pred_id", "ref_id", "dist", "pi", "ri"])
 
 
-def tracking_metrics(pred: pd.DataFrame, ref: pd.DataFrame, cls: str, frames: set[int] | None = None) -> dict:
+def tracking_metrics(pred: pd.DataFrame, ref: pd.DataFrame, cls: str, *, fps: float,
+                     frames: set[int] | None = None) -> dict:
     if frames is not None:
         pred = pred[pred["frame"].isin(frames)]
         ref = ref[ref["frame"].isin(frames)]
@@ -48,7 +49,7 @@ def tracking_metrics(pred: pd.DataFrame, ref: pd.DataFrame, cls: str, frames: se
         for rid, g in m.sort_values("frame").groupby("ref_id"):
             ids = g["pred_id"].to_numpy()
             switches += int((ids[1:] != ids[:-1]).sum())
-        minutes = (ref["frame"].max() - ref["frame"].min() + 1) / 600.0 if len(ref) else 1.0
+        minutes = (ref["frame"].max() - ref["frame"].min() + 1) / (60.0 * fps) if len(ref) else 1.0
         res["id_switches_per_min"] = switches / max(minutes, 1e-9)
         if "speed" in ref.columns and {"vx", "vy"} <= set(pred.columns):
             ps = np.hypot(pred.loc[m["pi"], "vx"].to_numpy(), pred.loc[m["pi"], "vy"].to_numpy())

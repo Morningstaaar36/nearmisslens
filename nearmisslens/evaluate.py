@@ -20,7 +20,7 @@ def evaluate_tracks(points: pd.DataFrame, c: fluid.Clip, frames: tuple[int, int]
     for cls in CLASSES:
         if (ref_real["cls"] == cls).sum() == 0:
             continue
-        m = match.tracking_metrics(ours, ref_real, cls)
+        m = match.tracking_metrics(ours, ref_real, cls, fps=pipeline.clip_fps(c))
         rows.append(log_metrics("tracking", label, m))
     return ours, ref, rows
 
@@ -32,9 +32,10 @@ def evaluate_conflicts(ours: pd.DataFrame, ref: pd.DataFrame, label: str) -> dic
     overall = match.event_metrics(ev_ours, ev_ref, pmap)
     log_metrics("conflicts_ttc", label, {"class": "all", **overall})
     out = {"all": overall}
-    for sev in ("ttc<=0.5", "ttc<=1.0"):
-        o = ev_ours[ev_ours["min_ttc"] <= float(sev[4:])]
-        r = ev_ref[ev_ref["min_ttc"] <= float(sev[4:])]
+    for limit in conflicts.SEVERITY_TTC_S[:-1]:
+        sev = f"ttc<={limit}"
+        o = ev_ours[ev_ours["min_ttc"] <= limit]
+        r = ev_ref[ev_ref["min_ttc"] <= limit]
         out[sev] = match.event_metrics(o, r, pmap)
         log_metrics("conflicts_ttc", label, {"class": sev, **out[sev]})
     for kind in ("rear_end", "crossing", "lane_change"):

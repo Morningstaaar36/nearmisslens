@@ -17,6 +17,8 @@ MIN_CLOSING_MPS = 1.0
 MIN_MOVING_MPS = 0.5
 
 STATE_COLUMNS = ["id", "frame", "t", "x", "y", "vx", "vy", "yaw", "length", "width", "cls"]
+EVENT_COLUMNS = ["id_1", "id_2", "cls_1", "cls_2", "frame_start", "frame_end", "frame_min_ttc", "t_min_ttc",
+                 "min_ttc", "angle", "type", "severity"]
 
 
 @dataclass(frozen=True)
@@ -127,10 +129,10 @@ def ttc_frames(states: pd.DataFrame) -> pd.DataFrame:
 def ttc_events(states: pd.DataFrame, th: Thresholds = Thresholds(), gap_frames: int = 5) -> pd.DataFrame:
     """Maximal intervals per pair with TTC at or below the threshold."""
     f = ttc_frames(states)
+    if not f.empty:
+        f = f[f["ttc"] <= th.ttc_s].sort_values(["id_1", "id_2", "frame"])
     if f.empty:
-        return pd.DataFrame(columns=["id_1", "id_2", "cls_1", "cls_2", "frame_start", "frame_end", "frame_min_ttc", "t_min_ttc",
-                                     "min_ttc", "angle", "type", "severity"])
-    f = f[f["ttc"] <= th.ttc_s].sort_values(["id_1", "id_2", "frame"])
+        return pd.DataFrame(columns=EVENT_COLUMNS)
     events = []
     for (i1, i2), g in f.groupby(["id_1", "id_2"]):
         frames = g["frame"].to_numpy()
@@ -152,57 +154,69 @@ def ttc_events(states: pd.DataFrame, th: Thresholds = Thresholds(), gap_frames: 
 MIN_CROSSING_DEG = 30.0
 
 
-def _footprint_cells(x: float, y: float, yaw: float, length: float, width: float, cell: float) -> list[tuple[int, int]]:
-    """Grid cells whose centres lie inside the oriented rectangle (at least the centre cell)."""
-    c = _corners(np.array(x), np.array(y), np.array(yaw), np.array(length), np.array(width))
-    gx = np.arange(np.floor(c[:, 0].min() / cell), np.floor(c[:, 0].max() / cell) + 1)
-    gy = np.arange(np.floor(c[:, 1].min() / cell), np.floor(c[:, 1].max() / cell) + 1)
-    if len(gx) == 0 or len(gy) == 0:
-        return [(int(np.floor(x / cell)), int(np.floor(y / cell)))]
-    X, Y = np.meshgrid((gx + 0.5) * cell, (gy + 0.5) * cell)
-    dx, dy = X - x, Y - y
-    u = dx * np.cos(yaw) + dy * np.sin(yaw)
-    v = -dx * np.sin(yaw) + dy * np.cos(yaw)
-    inside = (np.abs(u) <= length / 2) & (np.abs(v) <= width / 2)
-    cells = [(int(np.floor(a / cell)), int(np.floor(b / cell))) for a, b in zip(X[inside], Y[inside])]
-    return cells or [(int(np.floor(x / cell)), int(np.floor(y / cell)))]
+def footprint_cells(x: np.ndarray, y: np.ndarray, yaw: np.ndarray, length: np.ndarray, width: np.ndarray,
+                    cell: float, chunk: int = 20000) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Grid cells whose centres lie inside each oriented rectangle; returns (row, i, j). Every row gets at least its centre cell."""
+    half = np.sqrt((length / 2) ** 2 + (width / 2) ** 2)
+    k = int(np.ceil(np.nanmax(half) / cell)) + 1 if len(x) else 0
+    off = np.arange(-k, k + 1)
+    di, dj = np.meshgrid(off, off, indexing="ij")
+    di, dj = di.ravel(), dj.ravel()
+    rows_out, i_out, j_out = [], [], []
+    for a in range(0, len(x), chunk):
+        sl = slice(a, a + chunk)
+        ci = np.floor(x[sl] / cell).astype(np.int64)
+        cj = np.floor(y[sl] / cell).astype(np.int64)
+        gi = ci[:, None] + di[None]
+        gj = cj[:, None] + dj[None]
+        dx = (gi + 0.5) * cell - x[sl, None]
+        dy = (gj + 0.5) * cell - y[sl, None]
+        c, s_ = np.cos(yaw[sl])[:, None], np.sin(yaw[sl])[:, None]
+        u = dx * c + dy * s_
+        v = -dx * s_ + dy * c
+        inside = (np.abs(u) <= length[sl, None] / 2) & (np.abs(v) <= width[sl, None] / 2)
+        inside[~inside.any(axis=1), len(di) // 2] = True
+        r, q = np.nonzero(inside)
+        rows_out.append(r + a)
+        i_out.append(gi[r, q])
+        j_out.append(gj[r, q])
+    if not rows_out:
+        return np.zeros(0, int), np.zeros(0, int), np.zeros(0, int)
+    return np.concatenate(rows_out), np.concatenate(i_out), np.concatenate(j_out)
+
+
+PET_COLUMNS = ["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"]
 
 
 def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = GRID_M,
                min_angle: float = MIN_CROSSING_DEG) -> pd.DataFrame:
     """Grid-based post-encroachment time between users whose paths cross a shared cell at an angle."""
-    occ = []
-    moving = np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS
-    for r in states[moving].itertuples(index=False):
-        course = float(np.arctan2(r.vy, r.vx))
-        for i, j in _footprint_cells(r.x, r.y, r.yaw, r.length, r.width, cell):
-            occ.append((i, j, r.id, r.t, r.cls, course))
-    if not occ:
-        return pd.DataFrame(columns=["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"])
-    o = pd.DataFrame(occ, columns=["i", "j", "id", "t", "cls", "course"])
-    span = o.groupby(["i", "j", "id", "cls"]).agg(t_in=("t", "min"), t_out=("t", "max"),
-                                                  course=("course", "median")).reset_index()
-    span = span.sort_values(["i", "j", "t_in"])
-    best: dict[tuple, tuple] = {}
-    for (_, _), g in span.groupby(["i", "j"], sort=False):
-        if len(g) < 2:
-            continue
-        ids, cls = g["id"].to_numpy(), g["cls"].to_numpy()
-        tin, tout, crs = g["t_in"].to_numpy(), g["t_out"].to_numpy(), g["course"].to_numpy()
-        for k in range(len(g) - 1):
-            pet = tin[k + 1] - tout[k]
-            if ids[k] == ids[k + 1] or pet < 0 or pet > max_pet:
-                continue
-            d = np.degrees(abs((crs[k + 1] - crs[k] + np.pi) % (2 * np.pi) - np.pi))
-            if d < min_angle:
-                continue
-            key = (ids[k], ids[k + 1]) if ids[k] < ids[k + 1] else (ids[k + 1], ids[k])
-            if key not in best or pet < best[key][0]:
-                first_cls, second_cls = (cls[k], cls[k + 1]) if ids[k] < ids[k + 1] else (cls[k + 1], cls[k])
-                best[key] = (pet, tout[k], tin[k + 1], first_cls, second_cls)
-    rows = [{"id_1": a, "id_2": b, "cls_1": v[3], "cls_2": v[4], "pet": v[0], "t_first_exit": v[1],
-             "t_second_entry": v[2]} for (a, b), v in best.items()]
-    return pd.DataFrame(rows, columns=["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"])
+    st = states[np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS].reset_index(drop=True)
+    if st.empty:
+        return pd.DataFrame(columns=PET_COLUMNS)
+    rows, ii, jj = footprint_cells(st["x"].to_numpy(float), st["y"].to_numpy(float), st["yaw"].to_numpy(float),
+                                   st["length"].to_numpy(float), st["width"].to_numpy(float), cell)
+    occ = pd.DataFrame({"i": ii, "j": jj, "id": st["id"].to_numpy()[rows], "cls": st["cls"].to_numpy()[rows],
+                        "t": st["t"].to_numpy()[rows],
+                        "course": np.arctan2(st["vy"].to_numpy(), st["vx"].to_numpy())[rows]})
+    span = occ.groupby(["i", "j", "id", "cls"], sort=False).agg(
+        t_in=("t", "min"), t_out=("t", "max"), course=("course", "median")).reset_index()
+    span = span.sort_values(["i", "j", "t_in"]).reset_index(drop=True)
+    nxt = span.shift(-1)
+    same_cell = (nxt["i"] == span["i"]) & (nxt["j"] == span["j"])
+    pet = nxt["t_in"] - span["t_out"]
+    turn = np.degrees(np.abs((nxt["course"] - span["course"] + np.pi) % (2 * np.pi) - np.pi))
+    ok = same_cell & (nxt["id"] != span["id"]) & (pet >= 0) & (pet <= max_pet) & (turn >= min_angle)
+    a, b = span[ok], nxt[ok]
+    if a.empty:
+        return pd.DataFrame(columns=PET_COLUMNS)
+    first_smaller = (a["id"].to_numpy() < b["id"].to_numpy())
+    pairs = pd.DataFrame({
+        "id_1": np.where(first_smaller, a["id"], b["id"]), "id_2": np.where(first_smaller, b["id"], a["id"]),
+        "cls_1": np.where(first_smaller, a["cls"], b["cls"]), "cls_2": np.where(first_smaller, b["cls"], a["cls"]),
+        "pet": pet[ok].to_numpy(), "t_first_exit": a["t_out"].to_numpy(), "t_second_entry": b["t_in"].to_numpy()})
+    best = pairs.loc[pairs.groupby(["id_1", "id_2"])["pet"].idxmin()]
+    return best[PET_COLUMNS].reset_index(drop=True)
 
 
 def from_fluid(df: pd.DataFrame, fps: float) -> pd.DataFrame:

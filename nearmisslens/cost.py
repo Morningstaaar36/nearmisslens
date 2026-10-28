@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import threading
 import time
 from pathlib import Path
 
@@ -37,6 +38,8 @@ class CostMeter:
     def __init__(self, ledger: Path, cap_usd: float):
         self.ledger = Path(ledger)
         self.cap = cap_usd
+        self._lock = threading.Lock()
+        self._reserved = 0.0
 
     def spent(self) -> float:
         if not self.ledger.exists():
@@ -44,13 +47,30 @@ class CostMeter:
         return sum(json.loads(line)["usd"] for line in self.ledger.read_text().splitlines() if line.strip())
 
     def check(self, estimate_usd: float, what: str) -> None:
-        if self.spent() + estimate_usd > self.cap:
-            raise BudgetExceeded(f"{what}: ${estimate_usd:.4f} would exceed the ${self.cap:.2f} cap (spent ${self.spent():.4f})")
+        """Raise if the estimate does not fit under the cap, counting spend and in-flight reservations."""
+        with self._lock:
+            committed = self.spent() + self._reserved
+            if committed + estimate_usd > self.cap:
+                raise BudgetExceeded(f"{what}: ${estimate_usd:.4f} would exceed the ${self.cap:.2f} cap "
+                                     f"(spent and reserved ${committed:.4f})")
+
+    def reserve(self, estimate_usd: float, what: str) -> None:
+        """Atomically check the cap and hold the estimate until release() or record()."""
+        with self._lock:
+            committed = self.spent() + self._reserved
+            if committed + estimate_usd > self.cap:
+                raise BudgetExceeded(f"{what}: ${estimate_usd:.4f} would exceed the ${self.cap:.2f} cap "
+                                     f"(spent and reserved ${committed:.4f})")
+            self._reserved += estimate_usd
+
+    def release(self, estimate_usd: float) -> None:
+        with self._lock:
+            self._reserved = max(0.0, self._reserved - estimate_usd)
 
     def record(self, model: str, usd: float, what: str, **usage) -> None:
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
         row = {"t": time.time(), "model": model, "usd": round(usd, 6), "what": what, **usage}
-        with self.ledger.open("a") as f:
+        with self._lock, self.ledger.open("a") as f:
             f.write(json.dumps(row) + "\n")
 
     def summary(self) -> dict:

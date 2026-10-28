@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 from pathlib import Path
 
 import cv2
@@ -26,7 +27,7 @@ def segment_image(client: MetaClient, image: np.ndarray, concept: str, tag: str,
                   dx: float = 0.0, dy: float = 0.0) -> list[Detection]:
     url = _png_data_url(image)
     request = {"model": MODEL, "metadata": METADATA, "concept": concept,
-               "image_sha": __import__("hashlib").sha256(url.encode()).hexdigest()}
+               "image_sha": hashlib.sha256(url.encode()).hexdigest()}
     payload = {"model": MODEL, "metadata": METADATA, "input": [{"type": "message", "role": "user", "content": [
         {"type": "input_text", "text": concept}, {"type": "input_image", "image_url": url}]}]}
 
@@ -40,8 +41,10 @@ def segment_image(client: MetaClient, image: np.ndarray, concept: str, tag: str,
 
 
 def track_video(client: MetaClient, mp4: Path, concept: str, frames: int, tag: str,
-                dx: float = 0.0, dy: float = 0.0) -> list[Detection]:
-    request = {"model": MODEL, "metadata": METADATA, "concept": concept, "video_sha": file_sha256(mp4)}
+                dx: float = 0.0, dy: float = 0.0, source_key: str | None = None) -> list[Detection]:
+    """source_key identifies the clip independently of encoder bytes (source sha, window, crop)."""
+    request = {"model": MODEL, "metadata": METADATA, "concept": concept,
+               "source": source_key or file_sha256(mp4)}
     estimate = sam_video_usd(frames)
 
     def run():
