@@ -8,11 +8,33 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "httpx>=0.28",
     "meta-sam-parser>=0.1.0",
-    "numpy>=2.1",
+    "numpy>=1.26,<2",
     "opencv-python-headless>=4.10",
     "pandas>=2.2",
     "scipy>=1.14",
 ]
+
+[project.optional-dependencies]
+local = [
+    "torch==2.11.0",
+    "torchvision==0.26.0",
+    "setuptools<81",
+    "einops",
+    "pycocotools",
+    "decord; platform_machine == 'x86_64'",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [project.scripts]
 nml = "nearmisslens.cli:main"
