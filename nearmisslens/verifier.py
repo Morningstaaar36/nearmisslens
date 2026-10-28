@@ -104,21 +104,33 @@ def speed_trace_png(states: pd.DataFrame, id_a, id_b, frame_mid: int, fps: float
     return "data:image/png;base64," + base64.b64encode(buf.tobytes()).decode()
 
 
+ARMS = ("full", "no_video", "no_metric")
+
+
 def verify(client: MetaClient, clip: Path, trace_png: str, metric_text: str, tag: str,
-           model: str = MODEL, effort: str = "low") -> dict:
+           model: str = MODEL, effort: str = "low", arm: str = "full") -> dict:
+    """arm: full (video + trace + metric), no_video (trace + metric), no_metric (video + trace)."""
+    if arm not in ARMS:
+        raise ValueError(arm)
     request = {"model": model, "clip": file_sha256(clip), "trace": trace_png[-64:], "metric": metric_text,
-               "schema": VERDICT_SCHEMA, "effort": effort, "instructions": INSTRUCTIONS}
+               "schema": VERDICT_SCHEMA, "effort": effort, "instructions": INSTRUCTIONS, "arm": arm}
+    if arm == "full":
+        request.pop("arm")
 
     def run():
-        file_id = client.upload_file(clip, expire_seconds=24 * 3600)
+        content = []
+        if arm != "no_metric":
+            content.append({"type": "input_text", "text": f"Flagged metric: {metric_text}"})
+        else:
+            content.append({"type": "input_text", "text": "A pair of road users was flagged by an automatic screen."})
+        if arm != "no_video":
+            content.append({"type": "input_video", "file_id": client.upload_file(clip, expire_seconds=24 * 3600)})
+        content.append({"type": "input_image", "image_url": trace_png})
         payload = {"model": model, "instructions": INSTRUCTIONS, "reasoning": {"effort": effort},
                    "max_output_tokens": 4000,
                    "text": {"format": {"type": "json_schema", "name": "near_miss_verdict", "schema": VERDICT_SCHEMA,
                                        "strict": True}},
-                   "input": [{"type": "message", "role": "user", "content": [
-                       {"type": "input_text", "text": f"Flagged metric: {metric_text}"},
-                       {"type": "input_video", "file_id": file_id},
-                       {"type": "input_image", "image_url": trace_png}]}]}
+                   "input": [{"type": "message", "role": "user", "content": content}]}
         return client.create_response(payload)
 
     def cost(resp):
