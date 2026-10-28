@@ -54,7 +54,12 @@ def detections_to_points(dets: list[Detection], cal: Calibration, fps: float, fr
             box_w = float(np.median([s[5] for s in shapes]))
         else:
             sf = np.array([], dtype=float)
-            length = width = box_l = box_w = float("nan")
+            bw = float(np.median([d.x2 - d.x1 for d in ds]))
+            bh = float(np.median([d.y2 - d.y1 for d in ds]))
+            c0 = np.array([[(ds[0].x1 + ds[0].x2) / 2, (ds[0].y1 + ds[0].y2) / 2]])
+            m = cal.to_metres(np.vstack([c0, c0 + [bw / 2, 0], c0 + [0, bh / 2]]))
+            dims = sorted([2 * np.linalg.norm(m[1] - m[0]), 2 * np.linalg.norm(m[2] - m[0])], reverse=True)
+            length, width, box_l, box_w = dims[0], dims[1], max(bw, bh), min(bw, bh)
         centres = np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in ds])
         metres = cal.to_metres(centres)
         for d, (px, py), (x, y) in zip(ds, centres, metres):

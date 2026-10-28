@@ -82,6 +82,33 @@ def check_engine() -> Check:
     return ch
 
 
+def check_linking(min_idf1: float = 0.9, noise_m: float = 0.3, seed: int = 0) -> Check:
+    ch = Check("window_linking", criterion=(f"reference tracks cut into {pipeline.SEGMENT_S:.0f} s windows with fresh ids "
+                                            f"and {noise_m} m position noise are re-linked with vehicle IDF1 >= {min_idf1}"))
+    c = fluid.clip(*fluid.DEV)
+    fps = pipeline.clip_fps(c)
+    seg = int(round(pipeline.SEGMENT_S * fps))
+    ov = int(round(pipeline.OVERLAP_S * fps))
+    ref = pipeline.reference_states(c, (1, 1200))
+    ref = ref[ref["isReal"] == 1]
+    rng = np.random.default_rng(seed)
+    parts = []
+    for k, start in enumerate(range(1, int(ref["frame"].max()) + 1, seg)):
+        w = ref[ref["frame"].between(start, start + seg + ov - 1)].copy()
+        w["id"] = [f"s{k}:{i}" for i in w["id"]]
+        w["segment"] = k
+        w[["x", "y"]] += rng.normal(0, noise_m, (len(w), 2))
+        parts.append(w)
+    linked = pipeline.link_segments(pd.concat(parts, ignore_index=True), ov)
+    res = {}
+    for cls in ("vehicle", "two_wheeler"):
+        m = match.tracking_metrics(linked, ref, cls, fps=fps)
+        res[cls] = {k: round(float(m[k]), 3) for k in ("recall", "idf1", "id_switches_per_min")}
+    ch.detail = res
+    ch.status = "PASS" if res["vehicle"]["idf1"] >= min_idf1 else "FAIL"
+    return ch
+
+
 def check_tracking(client: MetaClient, min_recall: float = 0.6, min_precision: float = 0.8,
                    max_rmse_m: float = 1.0) -> Check:
     ch = Check("tracking_smoke", criterion=(f"SAM 3.1 tiled tracking on dev {SMOKE_START_S:.0f}-{SMOKE_START_S + SMOKE_DURATION_S:.0f} s: "
@@ -151,7 +178,7 @@ def run(replay: bool = True) -> list[Check]:
     data = check_data()
     checks = [data]
     if data.status == "PASS":
-        checks += [check_calibration(), check_engine(), check_tracking(client), check_verifier(client)]
+        checks += [check_calibration(), check_engine(), check_linking(), check_tracking(client), check_verifier(client)]
     return checks
 
 

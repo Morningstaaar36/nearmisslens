@@ -8,7 +8,7 @@ import pandas as pd
 
 from . import sam_api, video
 from .cache import source_sha
-from .cost import sam_video_usd
+from .cost import SAM_MIN_FRAMES, sam_video_usd
 from .meta_client import MetaClient
 from .segments import Detection
 
@@ -30,29 +30,93 @@ def estimate_usd(frames: int, n_tiles: int, n_concepts: int) -> float:
     return n_tiles * n_concepts * sam_video_usd(frames)
 
 
+SAM_MAX_OBJECTS = 16
+OVERLAP_FRAMES = 5
+
+
+def link_pieces(first: list[Detection], second: list[Detection], overlap: range, radius_px: float = 30.0) -> list[Detection]:
+    """Relabel `second` with ids from `first` where boxes coincide in the overlapping frames; drop duplicates there."""
+    from scipy.optimize import linear_sum_assignment
+
+    votes: dict[tuple[str, str], int] = {}
+    for f in overlap:
+        a = [d for d in first if d.frame == f]
+        b = [d for d in second if d.frame == f]
+        if not a or not b:
+            continue
+        ca = np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in a])
+        cb = np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in b])
+        D = np.linalg.norm(ca[:, None] - cb[None], axis=2)
+        i, j = linear_sum_assignment(D)
+        for p, q in zip(i[D[i, j] < radius_px], j[D[i, j] < radius_px]):
+            votes[(a[p].obj, b[q].obj)] = votes.get((a[p].obj, b[q].obj), 0) + 1
+    rename: dict[str, str] = {}
+    if votes:
+        left = sorted({x for x, _ in votes})
+        right = sorted({y for _, y in votes})
+        V = np.zeros((len(left), len(right)))
+        for (x, y), n in votes.items():
+            V[left.index(x), right.index(y)] = n
+        rows, cols = linear_sum_assignment(-V)
+        for r, c in zip(rows, cols):
+            if V[r, c] >= max(1, len(overlap) // 2):
+                rename[right[c]] = left[r]
+    in_overlap = set(overlap)
+    out = list(first)
+    for d in second:
+        if d.frame in in_overlap and d.obj in rename:
+            continue
+        d.obj = rename.get(d.obj, d.obj)
+        out.append(d)
+    return out
+
+
+def track_job(client: MetaClient, src: Path, src_sha: str, fps: float, start_s: float, duration_s: float,
+              tile: tuple[int, int, int, int], concept: str, work: Path, tag: str, stats: dict,
+              path: str = "") -> list[Detection]:
+    """One SAM 3.1 video request for a tile and window; if it returns SAM_MAX_OBJECTS distinct objects (the API's
+    per-request cap) it is split in time, down to the 50-frame billing minimum, and the halves are re-linked.
+    Detection frames are relative to start_s."""
+    x, y, w, h = tile
+    frames = int(round(duration_s * fps))
+    clip = video.cut(src, work / f"{src.stem}_{start_s:.2f}_{duration_s:.2f}_{x}-{y}-{w}x{h}.mp4", start_s,
+                     duration_s, crop=(x, y, w, h))
+    key = f"{src_sha}|start={start_s:.3f}|dur={duration_s:.3f}|crop={x},{y},{w},{h}"
+    dets = sam_api.track_video(client, clip, concept, frames, f"{tag}{path}", dx=x, dy=y, source_key=key)
+    stats["requests"] = stats.get("requests", 0) + 1
+    for d in dets:
+        d.obj = f"{path}{d.obj}"
+    saturated = len({d.obj for d in dets}) >= SAM_MAX_OBJECTS
+    half = frames // 2
+    if not saturated:
+        return dets
+    if half < SAM_MIN_FRAMES:
+        stats["saturated_leaves"] = stats.get("saturated_leaves", 0) + 1
+        return dets
+    stats["splits"] = stats.get("splits", 0) + 1
+    first = track_job(client, src, src_sha, fps, start_s, (half + OVERLAP_FRAMES) / fps, tile, concept, work, tag,
+                      stats, path + "a")
+    second = track_job(client, src, src_sha, fps, start_s + half / fps, (frames - half) / fps, tile, concept, work,
+                       tag, stats, path + "b")
+    for d in second:
+        d.frame += half
+    return link_pieces(first, second, range(half, half + OVERLAP_FRAMES))
+
+
 def track_tiles(client: MetaClient, src: Path, start_s: float, duration_s: float, concepts: list[str],
                 work: Path, tiles: list[tuple[int, int, int, int]] | None = None, tag: str = "",
-                workers: int = 8) -> list[Detection]:
+                workers: int = 8, stats: dict | None = None) -> list[Detection]:
     info = video.probe(src)
     tiles = tiles or grid(info["width"], info["height"])
     frames = int(round(duration_s * info["fps"]))
     client.meter.check(estimate_usd(frames, len(tiles), len(concepts)), f"tiles {tag}")
-
-    def cut(k):
-        x, y, w, h = tiles[k]
-        return video.cut(src, work / f"{src.stem}_{start_s:.1f}_{duration_s:.1f}_{x}-{y}-{w}x{h}.mp4", start_s,
-                         duration_s, crop=(x, y, w, h))
-
-    with ThreadPoolExecutor(min(4, len(tiles))) as ex:
-        clips = list(ex.map(cut, range(len(tiles))))
-
     src_sha = source_sha(src)
+    stats = stats if stats is not None else {}
 
     def run(job):
         k, concept = job
-        x, y, w, h = tiles[k]
-        key = f"{src_sha}|start={start_s:.3f}|dur={duration_s:.3f}|crop={x},{y},{w},{h}"
-        dets = sam_api.track_video(client, clips[k], concept, frames, f"{tag}t{k}", dx=x, dy=y, source_key=key)
+        dets = track_job(client, src, src_sha, info["fps"], start_s, duration_s, tiles[k], concept, work,
+                         f"{tag}t{k}", stats)
         for d in dets:
             d.obj = f"t{k}:{d.obj}"
         return dets

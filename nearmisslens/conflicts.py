@@ -102,7 +102,7 @@ def pair_states(states: pd.DataFrame, radius: float = PAIR_RADIUS_M) -> pd.DataF
 
 def ttc_frames(states: pd.DataFrame) -> pd.DataFrame:
     """Per pair and frame: TTC, closing speed and angle, with the artefact filter applied."""
-    p = pair_states(states)
+    p = pair_states(states.dropna(subset=["x", "y", "vx", "vy", "yaw", "length", "width"]))
     if p.empty:
         return p
     p["frame"] = p["frame_1"]
@@ -191,7 +191,8 @@ PET_COLUMNS = ["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_secon
 def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = GRID_M,
                min_angle: float = MIN_CROSSING_DEG) -> pd.DataFrame:
     """Grid-based post-encroachment time between users whose paths cross a shared cell at an angle."""
-    st = states[np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS].reset_index(drop=True)
+    st = states[np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS]
+    st = st.dropna(subset=["x", "y", "yaw", "length", "width"]).reset_index(drop=True)
     if st.empty:
         return pd.DataFrame(columns=PET_COLUMNS)
     rows, ii, jj = footprint_cells(st["x"].to_numpy(float), st["y"].to_numpy(float), st["yaw"].to_numpy(float),

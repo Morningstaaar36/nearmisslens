@@ -10,8 +10,8 @@ from scipy.optimize import linear_sum_assignment
 from . import calibrate, conflicts, fluid, tiling, tracks, video
 from .meta_client import MetaClient
 
-SEGMENT_S = 60.0
-OVERLAP_S = 1.0
+SEGMENT_S = 10.0
+OVERLAP_S = 0.5
 
 
 def link_segments(points: pd.DataFrame, overlap_frames: int, radius_m: float = 1.5) -> pd.DataFrame:
@@ -58,15 +58,24 @@ def link_segments(points: pd.DataFrame, overlap_frames: int, radius_m: float = 1
     return points[~later].reset_index(drop=True)
 
 
+def segment_starts(start_s: float, duration_s: float) -> list[float]:
+    return [float(t) for t in np.arange(start_s, start_s + duration_s - 1e-6, SEGMENT_S)]
+
+
 def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: float, concepts: list[str],
-              work: Path, cal: calibrate.Calibration) -> pd.DataFrame:
-    out = work / f"{c.site}_{c.stem}_{start_s:.0f}_{duration_s:.0f}_points.csv.gz"
+              work: Path, cal: calibrate.Calibration, starts: list[float] | None = None) -> pd.DataFrame:
+    """Track [start_s, start_s + duration_s) in SEGMENT_S segments (plus OVERLAP_S) of tiled SAM 3.1 video requests.
+
+    starts restricts the run to the given segment starts of that grid, for partial runs on cached segments.
+    """
+    starts = starts if starts is not None else segment_starts(start_s, duration_s)
+    tagname = "_".join(f"{t:.0f}" for t in starts)
+    out = work / f"{c.site}_{c.stem}_{start_s:.0f}_{duration_s:.0f}_{tagname}_points.csv.gz"
     if out.exists():
         return pd.read_csv(out)
     info = video.probe(c.video)
     fps = info["fps"]
     tiles = tiling.grid(info["width"], info["height"])
-    starts = list(np.arange(start_s, start_s + duration_s - 1e-6, SEGMENT_S))
 
     def segment(k_t):
         k, t = k_t

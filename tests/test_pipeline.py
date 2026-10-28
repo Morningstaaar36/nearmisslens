@@ -72,3 +72,62 @@ def test_tile_clip_names_are_unique_per_crop(tmp_path, monkeypatch):
     for t in tiles:
         tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [t])
     assert len(set(made)) == len(tiles)
+
+
+def _fake_sam(n_objects_by_start):
+    """SAM stand-in: n objects moving right at 2 px/frame, present in every frame of the requested window."""
+    from nearmisslens.segments import Detection
+
+    def track_video(client, clip, concept, frames, tag, dx=0.0, dy=0.0, source_key=None):
+        start = float(source_key.split("start=")[1].split("|")[0])
+        n = n_objects_by_start(start, frames)
+        out = []
+        for f in range(frames):
+            g = int(round(start * 10)) + f
+            for i in range(min(n, 16)):
+                x = dx + 50 + 60 * i + 2 * g
+                out.append(Detection(f, str(i), concept, x, dy + 100, x + 20, dy + 140, None, 0.9))
+        return out
+    return track_video
+
+
+def test_saturated_requests_split_in_time_and_relink(tmp_path, monkeypatch):
+    from nearmisslens import tiling, video
+
+    monkeypatch.setattr(video, "probe", lambda p: {"width": 3840, "height": 2160, "fps": 10.0, "frames": 1000})
+    monkeypatch.setattr(video, "cut", lambda src, out, *a, **k: out)
+    monkeypatch.setattr(tiling, "source_sha", lambda p: "sha")
+    monkeypatch.setattr(tiling.sam_api, "track_video", _fake_sam(lambda start, frames: 20 if frames > 60 else 10))
+
+    class C:
+        class meter:
+            @staticmethod
+            def check(*a):
+                pass
+
+    stats = {}
+    dets = tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [(0, 0, 1984, 1144)], stats=stats)
+    assert stats["splits"] == 1 and stats["requests"] == 3
+    frames = sorted({d.frame for d in dets})
+    assert frames == list(range(100))
+    assert len({d.obj for d in dets}) == 10
+    assert all(sum(1 for d in dets if d.frame == f) == 10 for f in frames)
+
+
+def test_unsaturated_request_is_not_split(tmp_path, monkeypatch):
+    from nearmisslens import tiling, video
+
+    monkeypatch.setattr(video, "probe", lambda p: {"width": 3840, "height": 2160, "fps": 10.0, "frames": 1000})
+    monkeypatch.setattr(video, "cut", lambda src, out, *a, **k: out)
+    monkeypatch.setattr(tiling, "source_sha", lambda p: "sha")
+    monkeypatch.setattr(tiling.sam_api, "track_video", _fake_sam(lambda start, frames: 8))
+
+    class C:
+        class meter:
+            @staticmethod
+            def check(*a):
+                pass
+
+    stats = {}
+    tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [(0, 0, 1984, 1144)], stats=stats)
+    assert stats == {"requests": 1}
