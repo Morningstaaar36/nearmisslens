@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -29,18 +30,33 @@ def estimate_usd(frames: int, n_tiles: int, n_concepts: int) -> float:
 
 
 def track_tiles(client: MetaClient, src: Path, start_s: float, duration_s: float, concepts: list[str],
-                work: Path, tiles: list[tuple[int, int, int, int]] | None = None, tag: str = "") -> list[Detection]:
+                work: Path, tiles: list[tuple[int, int, int, int]] | None = None, tag: str = "",
+                workers: int = 8) -> list[Detection]:
     info = video.probe(src)
     tiles = tiles or grid(info["width"], info["height"])
     frames = int(round(duration_s * info["fps"]))
     client.meter.check(estimate_usd(frames, len(tiles), len(concepts)), f"tiles {tag}")
+
+    def cut(k):
+        x, y, w, h = tiles[k]
+        return video.cut(src, work / f"{src.stem}_{start_s:.1f}_{duration_s:.1f}_t{k}.mp4", start_s, duration_s,
+                         crop=(x, y, w, h))
+
+    with ThreadPoolExecutor(min(4, len(tiles))) as ex:
+        clips = list(ex.map(cut, range(len(tiles))))
+
+    def run(job):
+        k, concept = job
+        x, y, _, _ = tiles[k]
+        dets = sam_api.track_video(client, clips[k], concept, frames, f"{tag}t{k}", dx=x, dy=y)
+        for d in dets:
+            d.obj = f"t{k}:{d.obj}"
+        return dets
+
+    jobs = [(k, c) for k in range(len(tiles)) for c in concepts]
     out: list[Detection] = []
-    for k, (x, y, w, h) in enumerate(tiles):
-        clip = video.cut(src, work / f"{src.stem}_{start_s:.1f}_{duration_s:.1f}_t{k}.mp4", start_s, duration_s, crop=(x, y, w, h))
-        for concept in concepts:
-            dets = sam_api.track_video(client, clip, concept, frames, f"{tag}t{k}", dx=x, dy=y)
-            for d in dets:
-                d.obj = f"t{k}:{d.obj}"
+    with ThreadPoolExecutor(workers) as ex:
+        for dets in ex.map(run, jobs):
             out.extend(dets)
     return out
 

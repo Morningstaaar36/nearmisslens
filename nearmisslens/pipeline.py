@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -57,19 +58,20 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
         return pd.read_csv(out)
     info = video.probe(c.video)
     tiles = tiling.grid(info["width"], info["height"])
-    parts = []
-    t = start_s
-    k = 0
-    while t < start_s + duration_s - 1e-6:
+    starts = list(np.arange(start_s, start_s + duration_s - 1e-6, SEGMENT_S))
+
+    def segment(k_t):
+        k, t = k_t
         seg_len = min(SEGMENT_S + OVERLAP_S, start_s + duration_s - t)
-        raw = tiling.track_tiles(client, c.video, t, seg_len, concepts, work, tiles, f"{c.stem}@{t:.0f}")
+        raw = tiling.track_tiles(client, c.video, float(t), seg_len, concepts, work, tiles, f"{c.stem}@{t:.0f}")
         dets = tiling.merge_tiles(raw, tiles)
         pts = tracks.detections_to_points(dets, cal, FPS, frame_offset=int(round(t * FPS)) + 1, prefix=f"s{k}:")
         if not pts.empty:
             pts["segment"] = k
-            parts.append(pts)
-        t += SEGMENT_S
-        k += 1
+        return pts
+
+    with ThreadPoolExecutor(3) as ex:
+        parts = [p for p in ex.map(segment, enumerate(starts)) if not p.empty]
     points = link_segments(pd.concat(parts, ignore_index=True), int(OVERLAP_S * FPS)) if parts else pd.DataFrame()
     points.to_csv(out, index=False)
     return points
