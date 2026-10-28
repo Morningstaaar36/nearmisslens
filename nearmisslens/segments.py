@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import multiprocessing as mp
 import os
 import re
 from concurrent.futures import ProcessPoolExecutor
@@ -92,7 +93,7 @@ def decode_masks(dets: list[Detection], workers: int | None = None) -> None:
     if n == 1 or len(todo) < 32:
         masks = [_decode(d.payload) for d in todo]
     else:
-        with ProcessPoolExecutor(n) as ex:
+        with ProcessPoolExecutor(n, mp_context=mp.get_context("forkserver")) as ex:
             masks = list(ex.map(_decode, [d.payload for d in todo], chunksize=16))
     for d, m in zip(todo, masks):
         d.mask = m
