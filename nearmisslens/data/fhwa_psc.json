@@ -20,7 +20,8 @@
     "leading pedestrian interval"
    ],
    "site_control": "Signalized",
-   "requires_user": "pedestrian"
+   "requires_user": "pedestrian",
+   "condition": "a turning movement"
   },
   {
    "name": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
@@ -67,7 +68,8 @@
    "cmf_keywords": [
     "backplate"
    ],
-   "site_control": "Signalized"
+   "site_control": "Signalized",
+   "condition": "an entry on yellow or red"
   },
   {
    "name": "Corridor Access Management",
@@ -76,7 +78,8 @@
     "access management",
     "driveway"
    ],
-   "site_control": "any"
+   "site_control": "any",
+   "condition": "driveway or access-point conflicts"
   },
   {
    "name": "Dedicated Left- and Right-Turn Lanes at Intersections",
@@ -85,7 +88,8 @@
     "left-turn lane",
     "right-turn lane"
    ],
-   "site_control": "any"
+   "site_control": "any",
+   "condition": "a turning movement"
   },
   {
    "name": "Reduced Left-Turn Conflict Intersections",
@@ -96,7 +100,8 @@
     "median u-turn",
     "j-turn"
    ],
-   "site_control": "any"
+   "site_control": "any",
+   "condition": "a left-turn movement"
   },
   {
    "name": "Roundabouts",
@@ -122,7 +127,8 @@
     "yellow change interval",
     "change interval"
    ],
-   "site_control": "Signalized"
+   "site_control": "Signalized",
+   "condition": "an entry on yellow or red"
   },
   {
    "name": "Lighting",
@@ -159,5 +165,5 @@
    "site_control": "any"
   }
  ],
- "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: crash condition the countermeasure targets, which video conflicts alone do not establish"
+ "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: what the observed conflicts must show for the countermeasure to address them (movements and signal entry are derived from the tracks; nighttime, pavement and driveway conditions are not observable from the conflicts alone)"
 }

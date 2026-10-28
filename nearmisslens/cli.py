@@ -44,6 +44,14 @@ def cmd_evaluate(args) -> int:
     return 0
 
 
+def cmd_audit(args) -> int:
+    from .runner import run_audit
+    out = run_audit(args.split, args.source)
+    print((out / "memo.md").read_text())
+    print(f"written to {out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -52,12 +60,16 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("metrics", help="latest logged metrics per stage, clip and class")
     ev = sub.add_parser("evaluate", help="track and score pre-registered splits (dev, test, heldout)")
     ev.add_argument("splits", nargs="+", choices=["dev", "test", "heldout"])
+    au = sub.add_parser("audit", help="site audit memo: conflicts, hotspots, cited countermeasures")
+    au.add_argument("split", choices=["dev", "test", "heldout"])
+    au.add_argument("--source", choices=["reference", "sam"], default="reference",
+                    help="reference: FLUID trajectories (no model calls); sam: SAM 3.1 tracks from nml evaluate")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
-    return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate}[args.cmd](args)
+    return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit}[args.cmd](args)
 
 
 if __name__ == "__main__":

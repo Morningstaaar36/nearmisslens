@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import calibrate, conflicts, fluid, match, pipeline, tiling, tracks, verifier, video
+from . import calibrate, conflicts, fluid, match, movements, pipeline, tiling, tracks, verifier, video
 from .cache import ReplayMiss
 from .config import ROOT, SETTINGS
 from .meta_client import MetaClient
@@ -109,6 +109,29 @@ def check_linking(min_idf1: float = 0.9, noise_m: float = 0.3, seed: int = 0) ->
     return ch
 
 
+def check_routes(min_accuracy: float = 0.9) -> Check:
+    ch = Check("routes", criterion=(f"entry-exit arms derived from reference positions agree with FLUID route labels "
+                                    f">= {min_accuracy} on each clip; signal state on entry reported for through and left-turn users"))
+    res = {}
+    for site in (fluid.DEV, fluid.TEST, fluid.HELDOUT):
+        c = fluid.clip(*site)
+        ref = pipeline.reference_states(c, (1, 10 ** 9))
+        ref = ref[ref["isReal"] == 1]
+        acc = movements.route_accuracy(ref, ref.groupby("id")["overall_direction"].first())
+        r = movements.routes(ref)
+        sig = fluid.load_signals(c)
+        entry = {}
+        for cls in ("vehicle", "two_wheeler"):
+            sub = r[(r["cls"] == cls) & r["movement"].isin(["through", "left"])]
+            states = pd.Series([movements.entry_signal(sig, x) for x in sub.itertuples()]).dropna()
+            entry[cls] = {k: round(float(v), 3) for k, v in states.value_counts(normalize=True).items()}
+        res[f"{c.site}_{c.stem}"] = {"tracks": acc["tracks"], "route_accuracy": round(acc["route_accuracy"], 3),
+                                     "entry_signal_share": entry}
+    ch.detail = res
+    ch.status = "PASS" if all(v["route_accuracy"] >= min_accuracy for v in res.values()) else "FAIL"
+    return ch
+
+
 def check_tracking(client: MetaClient, min_recall: float = 0.6, min_precision: float = 0.8,
                    max_rmse_m: float = 1.0) -> Check:
     ch = Check("tracking_smoke", criterion=(f"SAM 3.1 tiled tracking on dev {SMOKE_START_S:.0f}-{SMOKE_START_S + SMOKE_DURATION_S:.0f} s: "
@@ -178,7 +201,7 @@ def run(replay: bool = True) -> list[Check]:
     data = check_data()
     checks = [data]
     if data.status == "PASS":
-        checks += [check_calibration(), check_engine(), check_linking(), check_tracking(client), check_verifier(client)]
+        checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_tracking(client), check_verifier(client)]
     return checks
 
 

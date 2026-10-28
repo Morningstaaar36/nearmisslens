@@ -17,7 +17,8 @@ PAIR_CRASH_TYPES = {
     frozenset({"vehicle", "pedestrian"}): ["Vehicle/pedestrian"],
     frozenset({"two_wheeler", "pedestrian"}): ["Vehicle/pedestrian"],
 }
-CONFLICT_CRASH_TYPES = {"rear_end": ["Rear end"], "crossing": ["Angle", "Left turn"], "lane_change": ["Sideswipe"]}
+CONFLICT_CRASH_TYPES = {"rear_end": ["Rear end"], "crossing": ["Angle", "Left turn"], "turning": ["Angle", "Left turn", "Right turn"],
+                        "lane_change": ["Sideswipe"]}
 
 
 def load_cmf(path: Path = CMF_PATH) -> pd.DataFrame:
@@ -68,8 +69,8 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
                min_stars: int = 3, conditions: frozenset[str] = frozenset()) -> tuple[list[Candidate], list[dict]]:
     """FHWA PSC-linked CMFs that target the conflict's crash type and reduce crashes; rejections are returned with reasons.
 
-    conditions names crash conditions established for the site (for example "nighttime"); countermeasures that
-    target a condition not in it are rejected."""
+    conditions names what the observed conflicts show (for example "a left-turn movement"); a countermeasure whose
+    condition is not among them is rejected."""
     types, note = crash_types_for(pair, conflict_type)
     out: list[Candidate] = []
     rejected: list[dict] = []
@@ -84,7 +85,7 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
             rejected.append({"psc": item["name"], "reason": f"targets {item['requires_user']} crashes; no {item['requires_user']} in this conflict"})
             continue
         if item.get("condition") and item["condition"] not in conditions:
-            rejected.append({"psc": item["name"], "reason": f"targets {item['condition']} crashes, which the observed conflicts do not establish"})
+            rejected.append({"psc": item["name"], "reason": f"requires {item['condition']}, which the observed conflicts do not show"})
             continue
         hit = np.zeros(len(cmf), dtype=bool)
         for kw in item["cmf_keywords"]:
