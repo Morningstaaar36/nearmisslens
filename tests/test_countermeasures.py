@@ -36,3 +36,16 @@ def test_candidates_from_real_database():
     ids = {c.crfid for c in cands}
     assert cands and all(c.cmf < 1 for c in cands)
     assert any(r.get("crfid") == "9897" for r in rejected) or "9897" not in ids
+
+
+@pytest.mark.skipif(not cm.CMF_PATH.exists(), reason="CMF Clearinghouse CSV not downloaded")
+def test_candidates_respect_user_control_and_condition():
+    db = cm.load_cmf()
+    cands, rejected = cm.candidates(db, ("vehicle", "vehicle"), "crossing")
+    names = {c.psc for c in cands}
+    assert not names & {"Pedestrian Hybrid Beacons", "Leading Pedestrian Interval", "Lighting", "Pavement Friction Management"}
+    assert all(0 < c.cmf < 1 for c in cands)
+    ped, _ = cm.candidates(db, ("vehicle", "pedestrian"), "crossing")
+    assert "Pedestrian Hybrid Beacons" not in {c.psc for c in ped}
+    night, _ = cm.candidates(db, ("vehicle", "pedestrian"), "crossing", conditions=frozenset({"nighttime"}))
+    assert "Lighting" in {c.psc for c in night}

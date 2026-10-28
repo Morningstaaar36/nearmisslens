@@ -65,8 +65,11 @@ class Candidate:
 
 
 def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, control: str | None = "Signalized",
-               min_stars: int = 3) -> tuple[list[Candidate], list[dict]]:
-    """FHWA PSC-linked CMFs that target the conflict's crash type and reduce crashes; rejections are returned with reasons."""
+               min_stars: int = 3, conditions: frozenset[str] = frozenset()) -> tuple[list[Candidate], list[dict]]:
+    """FHWA PSC-linked CMFs that target the conflict's crash type and reduce crashes; rejections are returned with reasons.
+
+    conditions names crash conditions established for the site (for example "nighttime"); countermeasures that
+    target a condition not in it are rejected."""
     types, note = crash_types_for(pair, conflict_type)
     out: list[Candidate] = []
     rejected: list[dict] = []
@@ -76,6 +79,12 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
             continue
         if control and item.get("site_control", "any") not in ("any", control):
             rejected.append({"psc": item["name"], "reason": f"applies to {item['site_control']} sites, not {control}"})
+            continue
+        if item.get("requires_user") and item["requires_user"] not in pair:
+            rejected.append({"psc": item["name"], "reason": f"targets {item['requires_user']} crashes; no {item['requires_user']} in this conflict"})
+            continue
+        if item.get("condition") and item["condition"] not in conditions:
+            rejected.append({"psc": item["name"], "reason": f"targets {item['condition']} crashes, which the observed conflicts do not establish"})
             continue
         hit = np.zeros(len(cmf), dtype=bool)
         for kw in item["cmf_keywords"]:
@@ -93,7 +102,9 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
         worse = typed[typed["cmf"] >= 1]
         for r in worse.itertuples():
             rejected.append({"psc": item["name"], "crfid": r.crfid, "reason": f"CMF {r.cmf:.3f} >= 1 (no reduction) for {r.crash_type}"})
-        reducing = typed[typed["cmf"] < 1]
+        for r in typed[typed["cmf"] <= 0].itertuples():
+            rejected.append({"psc": item["name"], "crfid": r.crfid, "reason": f"CMF {r.cmf:.3f} is not a plausible estimate"})
+        reducing = typed[(typed["cmf"] > 0) & (typed["cmf"] < 1)]
         good = reducing[reducing["stars"] >= min_stars]
         if good.empty:
             good = reducing[reducing["stars"].isna() | (reducing["stars"] < 1)]
