@@ -10,7 +10,7 @@ import numpy as np
 from .cache import file_sha256
 from .cost import SAM_IMAGE_USD, sam_video_usd
 from .meta_client import MetaClient, output_text
-from .segments import Detection, parse_text
+from .segments import Detection, parse_fast, parse_text
 
 MODEL = "sam-3.1"
 METADATA = {"mask_encoding": "one_bit", "include_confidence": "true"}
@@ -58,4 +58,4 @@ def track_video(client: MetaClient, mp4: Path, concept: str, frames: int, tag: s
         return sam_video_usd(int(n)), MODEL, {"frames": int(n)}
 
     resp = client.cached("sam_video", request, run, cost, estimate, f"sam video {tag} '{concept}'")
-    return parse_text(output_text(resp), concept, video=True, dx=dx, dy=dy)
+    return parse_fast(output_text(resp), concept, dx=dx, dy=dy)
