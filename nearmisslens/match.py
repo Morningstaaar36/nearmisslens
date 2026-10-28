@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import linear_sum_assignment
 
+from .assign import one_to_one
+
 MATCH_M = {"vehicle": 2.0, "two_wheeler": 1.5, "pedestrian": 1.0}
 
 
@@ -40,10 +42,8 @@ def tracking_metrics(pred: pd.DataFrame, ref: pd.DataFrame, cls: str, *, fps: fl
            "precision": tp / n_pred if n_pred else float("nan")}
     if tp:
         res["position_rmse_m"] = float(np.sqrt(np.mean(m["dist"] ** 2)))
-        best: dict = {}
-        for rid, g in m.groupby("ref_id"):
-            best[rid] = Counter(g["pred_id"]).most_common(1)[0][0]
-        idtp = int(sum((g["pred_id"] == best[rid]).sum() for rid, g in m.groupby("ref_id")))
+        votes = m.groupby(["ref_id", "pred_id"]).size().to_dict()
+        idtp = int(sum(votes[(rid, pid)] for pid, rid in one_to_one(votes, 1).items()))
         res["idf1"] = 2 * idtp / (n_ref + n_pred) if (n_ref + n_pred) else float("nan")
         switches = 0
         for rid, g in m.sort_values("frame").groupby("ref_id"):

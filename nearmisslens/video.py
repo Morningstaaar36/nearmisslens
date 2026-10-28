@@ -35,7 +35,12 @@ def cut(src: Path, out: Path, start_s: float, duration_s: float, crop: tuple[int
            "-movflags", "+faststart"]
     if vf:
         cmd += ["-vf", ",".join(vf)]
-    subprocess.run(cmd + [str(out)], check=True)
+    tmp = out.with_name(f".{out.stem}.part{out.suffix}")
+    try:
+        subprocess.run(cmd + [str(tmp)], check=True)
+        tmp.replace(out)
+    finally:
+        tmp.unlink(missing_ok=True)
     return out
 
 

@@ -60,13 +60,15 @@ def render_event_clip(src: Path, out: Path, pixel_tracks: pd.DataFrame, id_a, id
     sel = sel.dropna(subset=["px", "py", "box_l", "box_w", "box_angle"])
     x0, y0 = _crop_window(sel["px"].to_numpy(), sel["py"].to_numpy(), width, height)
     out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_name(f".{out.stem}.part{out.suffix}")
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s",
                              f"{CROP_W}x{CROP_H}", "-r", str(fps), "-i", "-", "-c:v", "libx264", "-preset", "veryfast",
-                             "-crf", "20", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out)],
+                             "-crf", "20", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(tmp)],
                             stdin=subprocess.PIPE)
     cap = cv2.VideoCapture(str(src))
     cap.set(cv2.CAP_PROP_POS_FRAMES, f0 - 1)
     by_frame = {f: g for f, g in sel.groupby("frame")}
+    written = 0
     for f in range(f0, f1 + 1):
         ok, img = cap.read()
         if not ok:
@@ -81,9 +83,14 @@ def render_event_clip(src: Path, out: Path, pixel_tracks: pd.DataFrame, id_a, id
             cv2.putText(crop, "A" if r.id == id_a else "B", (int(r.px - x0) + 10, int(r.py - y0) - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.0, colour, 2)
         proc.stdin.write(crop.tobytes())
+        written += 1
     cap.release()
     proc.stdin.close()
-    proc.wait()
+    code = proc.wait()
+    if code != 0 or written == 0:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError(f"event clip {out.name}: ffmpeg exit {code}, {written} frames written")
+    tmp.replace(out)
     return out
 
 

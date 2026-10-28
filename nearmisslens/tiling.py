@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import threading
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from . import sam_api, video
+from .assign import nearest_pairs, one_to_one
 from .cache import source_sha
 from .cost import SAM_MIN_FRAMES, sam_video_usd
 from .meta_client import MetaClient
@@ -34,33 +37,19 @@ SAM_MAX_OBJECTS = 16
 OVERLAP_FRAMES = 5
 
 
+def _box_centres(ds: list[Detection]) -> np.ndarray:
+    return np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in ds])
+
+
 def link_pieces(first: list[Detection], second: list[Detection], overlap: range, radius_px: float = 30.0) -> list[Detection]:
     """Relabel `second` with ids from `first` where boxes coincide in the overlapping frames; drop duplicates there."""
-    from scipy.optimize import linear_sum_assignment
-
     votes: dict[tuple[str, str], int] = {}
     for f in overlap:
         a = [d for d in first if d.frame == f]
         b = [d for d in second if d.frame == f]
-        if not a or not b:
-            continue
-        ca = np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in a])
-        cb = np.array([[(d.x1 + d.x2) / 2, (d.y1 + d.y2) / 2] for d in b])
-        D = np.linalg.norm(ca[:, None] - cb[None], axis=2)
-        i, j = linear_sum_assignment(D)
-        for p, q in zip(i[D[i, j] < radius_px], j[D[i, j] < radius_px]):
+        for p, q in nearest_pairs(_box_centres(a), _box_centres(b), radius_px):
             votes[(a[p].obj, b[q].obj)] = votes.get((a[p].obj, b[q].obj), 0) + 1
-    rename: dict[str, str] = {}
-    if votes:
-        left = sorted({x for x, _ in votes})
-        right = sorted({y for _, y in votes})
-        V = np.zeros((len(left), len(right)))
-        for (x, y), n in votes.items():
-            V[left.index(x), right.index(y)] = n
-        rows, cols = linear_sum_assignment(-V)
-        for r, c in zip(rows, cols):
-            if V[r, c] >= max(1, len(overlap) // 2):
-                rename[right[c]] = left[r]
+    rename = one_to_one(votes, max(1, len(overlap) // 2))
     in_overlap = set(overlap)
     out = list(first)
     for d in second:
@@ -69,6 +58,14 @@ def link_pieces(first: list[Detection], second: list[Detection], overlap: range,
         d.obj = rename.get(d.obj, d.obj)
         out.append(d)
     return out
+
+
+_STATS_LOCK = threading.Lock()
+
+
+def _count(stats: dict, key: str) -> None:
+    with _STATS_LOCK:
+        stats[key] = stats.get(key, 0) + 1
 
 
 def track_job(client: MetaClient, src: Path, src_sha: str, fps: float, start_s: float, duration_s: float,
@@ -83,7 +80,7 @@ def track_job(client: MetaClient, src: Path, src_sha: str, fps: float, start_s: 
                      duration_s, crop=(x, y, w, h))
     key = f"{src_sha}|start={start_s:.3f}|dur={duration_s:.3f}|crop={x},{y},{w},{h}"
     dets = sam_api.track_video(client, clip, concept, frames, f"{tag}{path}", dx=x, dy=y, source_key=key)
-    stats["requests"] = stats.get("requests", 0) + 1
+    _count(stats, "requests")
     for d in dets:
         d.obj = f"{path}{d.obj}"
     saturated = len({d.obj for d in dets}) >= SAM_MAX_OBJECTS
@@ -91,9 +88,9 @@ def track_job(client: MetaClient, src: Path, src_sha: str, fps: float, start_s: 
     if not saturated:
         return dets
     if half < SAM_MIN_FRAMES:
-        stats["saturated_leaves"] = stats.get("saturated_leaves", 0) + 1
+        _count(stats, "saturated_leaves")
         return dets
-    stats["splits"] = stats.get("splits", 0) + 1
+    _count(stats, "splits")
     first = track_job(client, src, src_sha, fps, start_s, (half + OVERLAP_FRAMES) / fps, tile, concept, work, tag,
                       stats, path + "a")
     second = track_job(client, src, src_sha, fps, start_s + half / fps, (frames - half) / fps, tile, concept, work,
@@ -136,11 +133,27 @@ def _edge_distance(d: Detection, tiles, k: int) -> float:
 
 
 def merge_tiles(dets: list[Detection], tiles, radius_px: float = 25.0, min_shared: int = 3) -> list[Detection]:
-    """Union tile-local tracks that are the same object in overlap zones; keep one detection per object per frame."""
+    """Join tile-local tracks that are the same object in overlap zones (one-to-one per tile pair, at most one track
+    per tile in a group); keep the detection farthest from its tile edge per object per frame."""
     by_frame: dict[tuple[int, str], list[Detection]] = {}
     for d in dets:
         by_frame.setdefault((d.frame, d.concept), []).append(d)
+    votes: dict[tuple[str, str, str], dict[tuple[str, str], int]] = {}
+    for (_, concept), ds in by_frame.items():
+        by_tile: dict[str, list[Detection]] = {}
+        for d in ds:
+            by_tile.setdefault(d.obj.split(":")[0], []).append(d)
+        names = sorted(by_tile)
+        for i, ta in enumerate(names):
+            for tb in names[i + 1:]:
+                a, b = by_tile[ta], by_tile[tb]
+                ca = np.array([d.centre()[:2] for d in a])
+                cb = np.array([d.centre()[:2] for d in b])
+                v = votes.setdefault((concept, ta, tb), {})
+                for p, q in nearest_pairs(ca, cb, radius_px):
+                    v[(a[p].obj, b[q].obj)] = v.get((a[p].obj, b[q].obj), 0) + 1
     parent: dict[str, str] = {}
+    members: dict[str, set[str]] = {}
 
     def find(a):
         while parent.setdefault(a, a) != a:
@@ -148,20 +161,17 @@ def merge_tiles(dets: list[Detection], tiles, radius_px: float = 25.0, min_share
             a = parent[a]
         return a
 
-    shared: dict[tuple[str, str], int] = {}
-    for (_, _), ds in by_frame.items():
-        if len(ds) < 2:
-            continue
-        c = np.array([d.centre()[:2] for d in ds])
-        tile_of = [d.obj.split(":")[0] for d in ds]
-        D = np.linalg.norm(c[:, None] - c[None], axis=2)
-        for i, j in zip(*np.nonzero(np.triu(D < radius_px, 1))):
-            if tile_of[i] != tile_of[j]:
-                key = tuple(sorted((f"{ds[i].concept}|{ds[i].obj}", f"{ds[j].concept}|{ds[j].obj}")))
-                shared[key] = shared.get(key, 0) + 1
-    for (a, b), n in shared.items():
-        if n >= min_shared:
-            parent[find(a)] = find(b)
+    for (concept, _, _), v in sorted(votes.items()):
+        for right, left in sorted(one_to_one(v, min_shared).items()):
+            ra, rb = find(f"{concept}|{left}"), find(f"{concept}|{right}")
+            if ra == rb:
+                continue
+            ta = members.get(ra, {left.split(":")[0]})
+            tb = members.get(rb, {right.split(":")[0]})
+            if ta & tb:
+                continue
+            parent[ra] = rb
+            members[rb] = ta | tb
     merged: dict[tuple[int, str], Detection] = {}
     best: dict[tuple[int, str], float] = {}
     for d in dets:
@@ -170,6 +180,6 @@ def merge_tiles(dets: list[Detection], tiles, radius_px: float = 25.0, min_share
         k = int(d.obj.split(":")[0][1:])
         score = _edge_distance(d, tiles, k)
         if key not in merged or score > best[key]:
-            merged[key] = Detection(d.frame, gid.split("|", 1)[1], d.concept, d.x1, d.y1, d.x2, d.y2, d.mask, d.score)
+            merged[key] = replace(d, obj=gid.split("|", 1)[1])
             best[key] = score
     return list(merged.values())

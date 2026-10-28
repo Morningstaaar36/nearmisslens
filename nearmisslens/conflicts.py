@@ -185,12 +185,16 @@ def footprint_cells(x: np.ndarray, y: np.ndarray, yaw: np.ndarray, length: np.nd
     return np.concatenate(rows_out), np.concatenate(i_out), np.concatenate(j_out)
 
 
-PET_COLUMNS = ["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"]
+PET_COLUMNS = ["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry", "simultaneous", "x", "y",
+               "angle"]
 
 
 def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = GRID_M,
                min_angle: float = MIN_CROSSING_DEG) -> pd.DataFrame:
-    """Grid-based post-encroachment time between users whose paths cross a shared cell at an angle."""
+    """Grid-based post-encroachment time between users whose paths cross a shared cell at an angle.
+
+    Each occupant of a cell is compared with every later occupant that enters within max_pet of its exit. Overlapping
+    occupancies give PET 0 with `simultaneous` set. x, y (cell centre) and angle belong to each pair's minimum PET."""
     st = states[np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS]
     st = st.dropna(subset=["x", "y", "yaw", "length", "width"]).reset_index(drop=True)
     if st.empty:
@@ -203,19 +207,28 @@ def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = G
     span = occ.groupby(["i", "j", "id", "cls"], sort=False).agg(
         t_in=("t", "min"), t_out=("t", "max"), course=("course", "median")).reset_index()
     span = span.sort_values(["i", "j", "t_in"]).reset_index(drop=True)
-    nxt = span.shift(-1)
-    same_cell = (nxt["i"] == span["i"]) & (nxt["j"] == span["j"])
-    pet = nxt["t_in"] - span["t_out"]
-    turn = np.degrees(np.abs((nxt["course"] - span["course"] + np.pi) % (2 * np.pi) - np.pi))
-    ok = same_cell & (nxt["id"] != span["id"]) & (pet >= 0) & (pet <= max_pet) & (turn >= min_angle)
-    a, b = span[ok], nxt[ok]
-    if a.empty:
+    parts = []
+    for k in range(1, len(span)):
+        nxt = span.shift(-k)
+        reach = (nxt["i"] == span["i"]) & (nxt["j"] == span["j"]) & (nxt["t_in"] <= span["t_out"] + max_pet)
+        if not reach.any():
+            break
+        turn = np.degrees(np.abs((nxt["course"] - span["course"] + np.pi) % (2 * np.pi) - np.pi))
+        ok = reach & (nxt["id"] != span["id"]) & (turn >= min_angle)
+        a, b = span[ok], nxt[ok]
+        if a.empty:
+            continue
+        gap = (b["t_in"] - a["t_out"]).to_numpy()
+        first_smaller = a["id"].to_numpy() < b["id"].to_numpy()
+        parts.append(pd.DataFrame({
+            "id_1": np.where(first_smaller, a["id"], b["id"]), "id_2": np.where(first_smaller, b["id"], a["id"]),
+            "cls_1": np.where(first_smaller, a["cls"], b["cls"]), "cls_2": np.where(first_smaller, b["cls"], a["cls"]),
+            "pet": np.clip(gap, 0, None), "t_first_exit": a["t_out"].to_numpy(), "t_second_entry": b["t_in"].to_numpy(),
+            "simultaneous": gap < 0, "x": (a["i"].to_numpy() + 0.5) * cell, "y": (a["j"].to_numpy() + 0.5) * cell,
+            "angle": turn[ok].to_numpy()}))
+    if not parts:
         return pd.DataFrame(columns=PET_COLUMNS)
-    first_smaller = (a["id"].to_numpy() < b["id"].to_numpy())
-    pairs = pd.DataFrame({
-        "id_1": np.where(first_smaller, a["id"], b["id"]), "id_2": np.where(first_smaller, b["id"], a["id"]),
-        "cls_1": np.where(first_smaller, a["cls"], b["cls"]), "cls_2": np.where(first_smaller, b["cls"], a["cls"]),
-        "pet": pet[ok].to_numpy(), "t_first_exit": a["t_out"].to_numpy(), "t_second_entry": b["t_in"].to_numpy()})
+    pairs = pd.concat(parts, ignore_index=True)
     best = pairs.loc[pairs.groupby(["id_1", "id_2"])["pet"].idxmin()]
     return best[PET_COLUMNS].reset_index(drop=True)
 

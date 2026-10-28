@@ -5,9 +5,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import linear_sum_assignment
 
 from . import calibrate, conflicts, fluid, tiling, tracks, video
+from .assign import nearest_pairs, one_to_one
+from .cache import request_key
 from .meta_client import MetaClient
 
 SEGMENT_S = 10.0
@@ -37,22 +38,11 @@ def link_segments(points: pd.DataFrame, overlap_frames: int, radius_m: float = 1
             for cls in set(pa["cls"]) & set(pb["cls"]):
                 xa = pa[pa["cls"] == cls]
                 xb = pb[pb["cls"] == cls]
-                D = np.linalg.norm(xa[["x", "y"]].to_numpy()[:, None] - xb[["x", "y"]].to_numpy()[None], axis=2)
-                i, j = linear_sum_assignment(D)
-                for p, q in zip(i[D[i, j] < radius_m], j[D[i, j] < radius_m]):
+                for p, q in nearest_pairs(xa[["x", "y"]].to_numpy(), xb[["x", "y"]].to_numpy(), radius_m):
                     k = (xa["id"].iloc[p], xb["id"].iloc[q])
                     votes[k] = votes.get(k, 0) + 1
-        if votes:
-            left = sorted({a for a, _ in votes})
-            right = sorted({b for _, b in votes})
-            V = np.zeros((len(left), len(right)))
-            for (ida, idb), n in votes.items():
-                V[left.index(ida), right.index(idb)] = n
-            rows, cols = linear_sum_assignment(-V)
-            need = max(2, len(shared) // 3)
-            for r, q in zip(rows, cols):
-                if V[r, q] >= need:
-                    parent[find(right[q])] = find(left[r])
+        for right, left in one_to_one(votes, max(2, len(shared) // 3)).items():
+            parent[find(right)] = find(left)
     points["id"] = points["id"].map(find)
     later = points.duplicated(["id", "frame"], keep="first")
     return points[~later].reset_index(drop=True)
@@ -69,8 +59,9 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
     starts restricts the run to the given segment starts of that grid, for partial runs on cached segments.
     """
     starts = starts if starts is not None else segment_starts(start_s, duration_s)
-    tagname = "_".join(f"{t:.0f}" for t in starts)
-    out = work / f"{c.site}_{c.stem}_{start_s:.0f}_{duration_s:.0f}_{tagname}_points.csv.gz"
+    key = request_key("points", {"starts": starts, "start": start_s, "duration": duration_s, "concepts": sorted(concepts),
+                       "segment": SEGMENT_S, "overlap": OVERLAP_S, "H": np.round(cal.H, 9).tolist(), "transform": list(cal.transform)})[:16]
+    out = work / f"{c.site}_{c.stem}_{start_s:.0f}_{duration_s:.0f}_{key}_points.csv.gz"
     if out.exists():
         return pd.read_csv(out)
     info = video.probe(c.video)
@@ -89,7 +80,9 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
 
     with ThreadPoolExecutor(3) as ex:
         parts = [p for p in ex.map(segment, enumerate(starts)) if not p.empty]
-    points = link_segments(pd.concat(parts, ignore_index=True), int(OVERLAP_S * fps)) if parts else pd.DataFrame()
+    if not parts:
+        return pd.DataFrame()
+    points = link_segments(pd.concat(parts, ignore_index=True), int(OVERLAP_S * fps))
     points.to_csv(out, index=False)
     return points
 

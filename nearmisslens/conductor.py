@@ -68,6 +68,8 @@ def make_site(c: fluid.Clip, cal: Calibration, work: Path, window_s: float = 30.
 
 
 def run_job(client: MetaClient, site: Site, led: Ledger, tile: int, w: int, concept: str) -> dict:
+    if not (0 <= tile < len(site.tiles) and 0 <= w < len(site.windows)):
+        return {"status": "rejected", "reason": f"tile must be in 0..{len(site.tiles) - 1}, window in 0..{len(site.windows) - 1}"}
     if (tile, w, concept) in led.jobs:
         return {"status": "already tracked"}
     cost = site.job_usd(w)
@@ -100,9 +102,10 @@ def motion_energy(site: Site, w: int, samples: int = 6, scale: float = 0.25) -> 
     idx = np.linspace(start, start + n - 2, samples).astype(int)
     energy = np.zeros(len(site.tiles))
     for f in idx:
-        a = cv2.cvtColor(video.frame_at(site.clip.video, f), cv2.COLOR_BGR2GRAY)
-        b = cv2.cvtColor(video.frame_at(site.clip.video, f + 1), cv2.COLOR_BGR2GRAY)
-        d = cv2.resize(cv2.absdiff(a, b), None, fx=scale, fy=scale).astype(float)
+        pair = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for _, img in video.frames(site.clip.video, int(f), 2)]
+        if len(pair) < 2:
+            continue
+        d = cv2.resize(cv2.absdiff(pair[0], pair[1]), None, fx=scale, fy=scale).astype(float)
         for k, (x, y, tw, th) in enumerate(site.tiles):
             energy[k] += d[int(y * scale):int((y + th) * scale), int(x * scale):int((x + tw) * scale)].mean()
     return list(energy / samples)

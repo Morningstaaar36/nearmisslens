@@ -49,6 +49,8 @@ def collect_stream(events: Iterator[dict]) -> dict:
             final = ev.get("response", {})
         elif kind in ("error", "response.failed"):
             raise ApiError(500, json.dumps(ev))
+    if not final:
+        final = {"status": "stream_ended", "incomplete_details": {"reason": "stream closed before response.completed"}}
     final.setdefault("output_text", "".join(text))
     return final
 
@@ -124,7 +126,7 @@ class MetaClient:
         finally:
             self.meter.release(estimate_usd)
         status = result.get("status")
-        if status not in (None, "completed") or (require_text and not output_text(result).strip()):
+        if status != "completed" or (require_text and not output_text(result).strip()):
             raise IncompleteResponse(f"{what}: status={status!r}, details={result.get('incomplete_details')}")
         self.cache.put(namespace, key, result)
         return result
