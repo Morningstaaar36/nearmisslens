@@ -29,3 +29,12 @@ def test_cache_roundtrip_and_replay(tmp_path):
     assert c.get("ns", key) == {"x": [1, 2]}
     with pytest.raises(ReplayMiss):
         Cache(tmp_path, replay=True).get("ns", request_key("ns", {"a": 2}))
+
+
+def test_metrics_log(tmp_path):
+    from nearmisslens.runlog import log_metrics, metrics_markdown, read_metrics
+    p = tmp_path / "m.jsonl"
+    log_metrics("track", "dev", {"class": "vehicle", "recall": 0.5}, p)
+    log_metrics("track", "dev", {"class": "vehicle", "recall": 0.9}, p)
+    rows = read_metrics(p)
+    assert len(rows) == 2 and "0.900" in metrics_markdown(rows)
