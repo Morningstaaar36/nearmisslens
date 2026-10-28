@@ -132,6 +132,25 @@ def check_routes(min_accuracy: float = 0.9) -> Check:
     return ch
 
 
+def check_audit() -> Check:
+    ch = Check("audit", criterion="audit of the dev reference finds hotspots, each with countermeasures that cite CMF Clearinghouse "
+                                  "ids present in the database and pass the site checks")
+    from . import audit, countermeasures
+    c = fluid.clip(*fluid.DEV)
+    ref = pipeline.reference_states(c, (1, 10 ** 9))
+    ref = ref[ref["isReal"] == 1]
+    sig = fluid.load_signals(c)
+    cmf = countermeasures.load_cmf()
+    facts = audit.audit(ref, cmf, signals=sig, control="Signalized", right_turn_signalised=fluid.has_right_turn_control(sig))
+    known = set(cmf["crfid"])
+    cited = [m["crfid"] for f in facts["findings"] for m in f["countermeasures"]]
+    ch.detail = {"conflicts": facts["conflicts"], "hotspots": [
+        {"rate_per_1000": f["rate_per_1000"], "ci95": f["ci95"], "dominant": f"{f['dominant']['type']} {'-'.join(f['dominant']['pair'])}",
+         "countermeasures": [m["psc"] for m in f["countermeasures"]]} for f in facts["findings"]]}
+    ch.status = "PASS" if facts["findings"] and cited and all(i in known for i in cited) else "FAIL"
+    return ch
+
+
 def check_tracking(client: MetaClient, min_recall: float = 0.6, min_precision: float = 0.8,
                    max_rmse_m: float = 1.0) -> Check:
     ch = Check("tracking_smoke", criterion=(f"SAM 3.1 tiled tracking on dev {SMOKE_START_S:.0f}-{SMOKE_START_S + SMOKE_DURATION_S:.0f} s: "
@@ -201,7 +220,7 @@ def run(replay: bool = True) -> list[Check]:
     data = check_data()
     checks = [data]
     if data.status == "PASS":
-        checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_tracking(client), check_verifier(client)]
+        checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_audit(), check_tracking(client), check_verifier(client)]
     return checks
 
 

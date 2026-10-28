@@ -51,6 +51,7 @@ def test_pet_compares_non_adjacent_occupants():
     pairs = {(r.id_1, r.id_2) for r in pet.itertuples()}
     assert (1, 3) in pairs and (2, 3) in pairs and (1, 2) not in pairs
     assert {"x", "y", "angle", "simultaneous"} <= set(pet.columns)
+    assert pet["id_1"].dtype == a["id"].dtype and pet["id_2"].dtype == a["id"].dtype
 
 
 def test_pet_overlapping_occupancy_is_zero():

@@ -11,7 +11,11 @@
     "advance stop"
    ],
    "site_control": "any",
-   "requires_user": "pedestrian"
+   "requires_user": "pedestrian",
+   "render": {
+    "prompt": "Repaint every pedestrian crossing at this junction as a high-visibility continental (ladder) crosswalk in bright white paint, with a solid white advance stop line before each crossing.",
+    "check": "crosswalk"
+   }
   },
   {
    "name": "Leading Pedestrian Interval",
@@ -31,7 +35,11 @@
     "refuge island"
    ],
    "site_control": "any",
-   "requires_user": "pedestrian"
+   "requires_user": "pedestrian",
+   "render": {
+    "prompt": "Add a raised concrete pedestrian refuge island with kerbs and bollards in the middle of the pedestrian crossing nearest the centre of the image, splitting the crossing into two halves.",
+    "check": "traffic island"
+   }
   },
   {
    "name": "Pedestrian Hybrid Beacons",
@@ -60,7 +68,11 @@
    ],
    "site_control": "any",
    "requires_user": "pedestrian",
-   "condition": "pedestrians walking along the roadway"
+   "condition": "pedestrians walking along the roadway",
+   "render": {
+    "prompt": "Add a continuous raised concrete sidewalk with a kerb along the road edge nearest the centre of the image.",
+    "check": "sidewalk"
+   }
   },
   {
    "name": "Backplates with Retroreflective Borders",
@@ -89,7 +101,11 @@
     "right-turn lane"
    ],
    "site_control": "any",
-   "condition": "a turning movement"
+   "condition": "a turning movement",
+   "render": {
+    "prompt": "Mark a dedicated turn lane on the approach nearest the centre of the image: a solid white lane line separating it and white turn-arrow pavement markings inside the lane.",
+    "check": "arrow road marking"
+   }
   },
   {
    "name": "Reduced Left-Turn Conflict Intersections",
@@ -109,7 +125,11 @@
    "cmf_keywords": [
     "roundabout"
    ],
-   "site_control": "any"
+   "site_control": "any",
+   "render": {
+    "prompt": "Convert this junction into a single-lane modern roundabout with a raised circular central island and splitter islands on each approach.",
+    "check": "roundabout"
+   }
   },
   {
    "name": "Systemic Application of Multiple Low-Cost Countermeasures at Stop-Controlled Intersections",

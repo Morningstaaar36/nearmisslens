@@ -215,7 +215,7 @@ def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = G
             break
         turn = np.degrees(np.abs((nxt["course"] - span["course"] + np.pi) % (2 * np.pi) - np.pi))
         ok = reach & (nxt["id"] != span["id"]) & (turn >= min_angle)
-        a, b = span[ok], nxt[ok]
+        a, b = span[ok], nxt[ok].astype({"id": span["id"].dtype})
         if a.empty:
             continue
         gap = (b["t_in"] - a["t_out"]).to_numpy()

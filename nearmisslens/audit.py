@@ -14,6 +14,7 @@ from . import conflicts, countermeasures, movements, risk
 CELL_M = 15.0
 PET_SERIOUS_S = 1.5
 MIN_HOTSPOT_EVENTS = 2
+EXAMPLES = 5
 SIGNAL_NAMES = {"G": "green", "y": "yellow", "r": "red"}
 CONFLICT_COLUMNS = ["measure", "value", "type", "id_1", "id_2", "cls_1", "cls_2", "t", "x", "y"]
 
@@ -104,6 +105,9 @@ def audit(states: pd.DataFrame, cmf: pd.DataFrame, *, signals: pd.DataFrame | No
             "rate_per_1000": round(float(h["rate_per_1000"]), 1),
             "ci95": [round(float(h["ci_low"]), 1), round(float(h["ci_high"]), 1)],
             "by_measure": in_cell["measure"].value_counts().to_dict(),
+            "examples": [{"measure": r.measure, "value": round(float(r.value), 2), "t": round(float(r.t), 1),
+                          "id_1": str(r.id_1), "id_2": str(r.id_2), "cls_1": r.cls_1, "cls_2": r.cls_2, "type": r.type}
+                         for r in dominant.sort_values("value").head(EXAMPLES).itertuples()],
             "dominant": {"pair": list(pair), "type": ctype, "events": int(n),
                          "min_pet_s": _min(dominant, "PET"), "min_ttc_s": _min(dominant, "TTC"), **ev},
             "countermeasures": [c.__dict__ for c in kept],
@@ -150,6 +154,16 @@ def memo(facts: dict, title: str, source: str) -> str:
                   f"{f['events']} conflicts among {f['users']} road users: {f['rate_per_1000']} per 1,000 "
                   f"(95% CI {f['ci95'][0]}–{f['ci95'][1]}). Dominant: {d['events']} {d['type'].replace('_', '-')} "
                   f"{' – '.join(p.replace('_', '-') for p in d['pair'])} conflicts ({sev}{mv}).", ""]
+        if f.get("verification"):
+            v = f["verification"]
+            lines += [f"Muse Spark reviewed the video of the {v['reviewed']} most severe of these: {v['real']} judged real "
+                      f"conflicts, {v['reviewed'] - v['real']} not ({v['evasive']} with visible braking or swerving).", ""]
+        if f.get("illustration"):
+            il = f["illustration"]
+            verdict = "found" if il["check_passed"] else "not found"
+            lines += [f"Illustration: {il['countermeasure']} ({Path(il['image']).name}). SAM 3.1 check for "
+                      f"'{il['check_concept']}' in the hotspot: {verdict} (covered share {il['area_before']:.3f} before, "
+                      f"{il['area_after']:.3f} after). AI-generated; not an engineering design.", ""]
         if f["countermeasures"]:
             lines += ["| FHWA Proven Safety Countermeasure | CMF Clearinghouse ID | CMF | Crash reduction | Rating | Crash type | Note |",
                       "|---|---|---|---|---|---|---|"]

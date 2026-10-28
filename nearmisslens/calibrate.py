@@ -57,6 +57,18 @@ class Calibration:
         x0, y0, sx, sy = self.transform
         return np.stack([x0 + pts[:, 0] * sx, y0 - pts[:, 1] * sy], axis=1)
 
+    def to_pixels(self, xy_m: np.ndarray) -> np.ndarray:
+        x0, y0, sx, sy = self.transform
+        m = np.asarray(xy_m, np.float64).reshape(-1, 2)
+        base = np.stack([(m[:, 0] - x0) / sx, (y0 - m[:, 1]) / sy], axis=1)
+        return cv2.perspectiveTransform(base.reshape(-1, 1, 2), np.linalg.inv(self.H)).reshape(-1, 2)
+
+
+def metres_per_pixel(cal: Calibration, centre_px: np.ndarray, step: float = 50.0) -> float:
+    pts = np.array([centre_px, centre_px + [step, 0.0], centre_px + [0.0, step]], float)
+    m = cal.to_metres(pts)
+    return float((np.linalg.norm(m[1] - m[0]) + np.linalg.norm(m[2] - m[0])) / (2 * step))
+
 
 def calibrate(frame: np.ndarray, base_map: Path, max_features: int = 20000, work_width: int = 1920) -> Calibration:
     base = cv2.imread(str(base_map), cv2.IMREAD_COLOR)

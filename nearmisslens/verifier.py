@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from .cache import file_sha256, source_sha
+from .calibrate import metres_per_pixel
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
 
@@ -110,6 +111,17 @@ def speed_trace_png(states: pd.DataFrame, id_a, id_b, frame_mid: int, fps: float
     cv2.putText(img, "speed 0-15 m/s, red=A cyan=B, line=flagged moment", (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
     ok, buf = cv2.imencode(".png", img)
     return "data:image/png;base64," + base64.b64encode(buf.tobytes()).decode()
+
+
+def pixel_tracks(states: pd.DataFrame, cal) -> pd.DataFrame:
+    """Image positions, footprint size and heading of metric states, through the inverse calibration."""
+    xy = states[["x", "y"]].to_numpy(float)
+    px = cal.to_pixels(xy)
+    ahead = cal.to_pixels(xy + np.stack([np.cos(states["yaw"]), np.sin(states["yaw"])], axis=1))
+    mpp = metres_per_pixel(cal, np.nanmedian(px, axis=0))
+    return pd.DataFrame({"id": states["id"].to_numpy(), "frame": states["frame"].to_numpy(), "px": px[:, 0], "py": px[:, 1],
+                         "box_l": states["length"].to_numpy(float) / mpp, "box_w": states["width"].to_numpy(float) / mpp,
+                         "box_angle": np.arctan2(ahead[:, 1] - px[:, 1], ahead[:, 0] - px[:, 0])})
 
 
 ARMS = ("full", "no_video", "no_metric")

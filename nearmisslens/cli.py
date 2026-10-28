@@ -46,7 +46,7 @@ def cmd_evaluate(args) -> int:
 
 def cmd_audit(args) -> int:
     from .runner import run_audit
-    out = run_audit(args.split, args.source)
+    out = run_audit(args.split, args.source, verify_n=args.verify, illustrate=args.illustrate)
     print((out / "memo.md").read_text())
     print(f"written to {out}")
     return 0
@@ -64,6 +64,10 @@ def main(argv: list[str] | None = None) -> int:
     au.add_argument("split", choices=["dev", "test", "heldout"])
     au.add_argument("--source", choices=["reference", "sam"], default="reference",
                     help="reference: FLUID trajectories (no model calls); sam: SAM 3.1 tracks from nml evaluate")
+    au.add_argument("--verify", type=int, default=0, metavar="N",
+                    help="Muse Spark reviews the video of each hotspot's N most severe conflicts")
+    au.add_argument("--illustrate", action="store_true",
+                    help="Muse Image before/after of the first illustratable countermeasure per hotspot, checked by SAM 3.1")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)

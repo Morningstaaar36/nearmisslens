@@ -112,7 +112,7 @@ class MetaClient:
         return self._retrying(call)
 
     def cached(self, namespace: str, request: dict, run, cost_fn, estimate_usd: float, what: str,
-               require_text: bool = False) -> dict:
+               require_text: bool = False, complete=None) -> dict:
         """Serve from cache, or reserve budget, call, record the real cost and cache only complete results."""
         key = request_key(namespace, request)
         hit = self.cache.get(namespace, key)
@@ -126,10 +126,19 @@ class MetaClient:
         finally:
             self.meter.release(estimate_usd)
         status = result.get("status")
-        if status != "completed" or (require_text and not output_text(result).strip()):
+        done = complete(result) if complete else status == "completed"
+        if not done or (require_text and not output_text(result).strip()):
             raise IncompleteResponse(f"{what}: status={status!r}, details={result.get('incomplete_details')}")
         self.cache.put(namespace, key, result)
         return result
+
+    def post_json(self, path: str, body: dict) -> dict:
+        def call():
+            r = self.http.post(path, json=body)
+            if r.status_code != 200:
+                raise ApiError(r.status_code, r.text)
+            return r.json()
+        return self._retrying(call)
 
     def upload_file(self, path: Path, expire_seconds: int = 7 * 24 * 3600) -> str:
         path = Path(path)
