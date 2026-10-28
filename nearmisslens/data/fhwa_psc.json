@@ -1,0 +1,153 @@
+{
+  "source": "FHWA Proven Safety Countermeasures index, https://highways.dot.gov/safety/proven-safety-countermeasures (read via Wayback snapshot 2026-10-22); list reduced from 28 to 23 items in July 2026",
+  "note": "The six Roadway Departure items are omitted because they do not apply to intersections.",
+  "items": [
+    {
+      "name": "Crosswalk Visibility Enhancements",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "high-visibility crosswalk",
+        "advance yield",
+        "advance stop"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Leading Pedestrian Interval",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "leading pedestrian interval"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "raised median",
+        "refuge island"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Pedestrian Hybrid Beacons",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "pedestrian hybrid beacon"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Rectangular Rapid Flashing Beacons",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "rectangular rapid flashing beacon"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Walkways",
+      "group": "Pedestrian",
+      "cmf_keywords": [
+        "sidewalk",
+        "walkway"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Backplates with Retroreflective Borders",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "backplate"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Corridor Access Management",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "access management",
+        "driveway"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Dedicated Left- and Right-Turn Lanes at Intersections",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "left-turn lane",
+        "right-turn lane"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Reduced Left-Turn Conflict Intersections",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "restricted crossing u-turn",
+        "rcut",
+        "median u-turn",
+        "j-turn"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Roundabouts",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "roundabout"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Systemic Application of Multiple Low-Cost Countermeasures at Stop-Controlled Intersections",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "systemic",
+        "low-cost countermeasures"
+      ],
+      "site_control": "Stop-controlled"
+    },
+    {
+      "name": "Yellow Change Intervals",
+      "group": "Intersections",
+      "cmf_keywords": [
+        "yellow change interval",
+        "change interval"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Lighting",
+      "group": "Crosscutting",
+      "cmf_keywords": [
+        "lighting",
+        "illumination"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Local Road Safety Plans",
+      "group": "Crosscutting",
+      "cmf_keywords": [],
+      "site_control": "any"
+    },
+    {
+      "name": "Pavement Friction Management",
+      "group": "Crosscutting",
+      "cmf_keywords": [
+        "friction",
+        "high friction surface"
+      ],
+      "site_control": "any"
+    },
+    {
+      "name": "Road Safety Audit",
+      "group": "Crosscutting",
+      "cmf_keywords": [
+        "road safety audit"
+      ],
+      "site_control": "any"
+    }
+  ]
+}
