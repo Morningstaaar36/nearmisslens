@@ -66,4 +66,9 @@ The same engine (`nearmisslens/conflicts.py`) runs on our tracks and on the refe
 SAM concepts "car" and "scooter" for API runs; 2×2 tiles with 128 px overlap; Savitzky–Golay window 11, order 2; the thresholds above.
 
 ## Changes after registration
-None yet.
+Made before any test or held-out run, after a literature review (`research/R6_papers.md`):
+
+1. **Smoothing.** Velocities are now Savitzky–Golay derivatives of the raw positions, not of already-smoothed positions. Each track is split at gaps longer than 3 frames, and shorter gaps are filled by linear interpolation. This fixes a double-smoothing and gap defect.
+2. **PET footprint.** Cells are those whose centres lie inside the oriented rectangle, not its axis-aligned bounding box. The old version biased PET for diagonal vehicles.
+3. **Headline measure.** PET (crossing and turning paths) is the headline conflict measure, and TTC is secondary. Tracker-derived TTC is known to be biased towards less safe (Liu, Saunier & Bilodeau, Transportation Research Part C 2026). In a visual review, 47% of TTC-flagged events were data errors, against 3% for PET (Steinmaßl et al., Traffic Safety Research 2025).
+4. **No crash-frequency estimates.** Extreme value theory needs 15 to more than 45 hours per site (Zheng et al., Accident Analysis & Prevention 2025), so we report no crash frequencies.

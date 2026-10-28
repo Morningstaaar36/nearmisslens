@@ -55,3 +55,10 @@ def test_pet_ignores_following():
 def test_ttc_ignores_initial_overlap():
     st = pd.concat([track(1, 0, 0, 5, 0), track(2, 1, 0, 1, 0)])
     assert cf.ttc_events(st).empty
+
+
+def test_footprint_cells_follow_orientation():
+    straight = cf._footprint_cells(0.0, 0.0, 0.0, 4.0, 1.0, 0.5)
+    diagonal = cf._footprint_cells(0.0, 0.0, np.pi / 4, 4.0, 1.0, 0.5)
+    assert len(straight) == 16
+    assert len(diagonal) < 30

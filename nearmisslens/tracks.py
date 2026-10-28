@@ -37,29 +37,43 @@ def detections_to_points(dets: list[Detection], cal: Calibration, fps: float, fr
     return df
 
 
-def smooth_states(points: pd.DataFrame, fps: float, window: int = 11, min_len: int = 5) -> pd.DataFrame:
-    """Per-track Savitzky-Golay smoothing of positions; velocity from its derivative; yaw from motion or body axis."""
+def _segments(frames: np.ndarray, max_gap: int) -> list[np.ndarray]:
+    breaks = np.nonzero(np.diff(frames) > max_gap)[0]
+    return np.split(np.arange(len(frames)), breaks + 1)
+
+
+def smooth_states(points: pd.DataFrame, fps: float, window: int = 11, min_len: int = 5,
+                  max_gap: int = 3) -> pd.DataFrame:
+    """Savitzky-Golay positions and velocities from the raw positions, per gap-free segment of each track.
+
+    Gaps up to max_gap frames are filled by linear interpolation; longer gaps split the track into segments.
+    Yaw follows the motion direction when moving, otherwise the body axis.
+    """
+    cols = ["id", "frame", "t", "x", "y", "vx", "vy", "yaw", "length", "width", "cls"]
     out = []
     for tid, g in points.sort_values("frame").groupby("id"):
-        if len(g) < min_len:
-            continue
-        g = g.drop_duplicates("frame").copy()
-        n = len(g)
-        w = min(window, n if n % 2 else n - 1)
-        order = 2 if w > 3 else 1
-        dt = 1.0 / fps
-        g["x"] = savgol_filter(g["x"], w, order)
-        g["y"] = savgol_filter(g["y"], w, order)
-        g["vx"] = savgol_filter(g["x"], w, order, deriv=1, delta=dt)
-        g["vy"] = savgol_filter(g["y"], w, order, deriv=1, delta=dt)
-        speed = np.hypot(g["vx"], g["vy"])
-        motion = np.arctan2(g["vy"], g["vx"])
-        axis = g["axis"].to_numpy()
-        flip = np.cos(axis - motion) < 0
-        body = np.where(flip, axis + np.pi, axis)
-        g["yaw"] = np.where(speed > 0.5, motion, body)
-        g["length"] = g["length"].median()
-        g["width"] = g["width"].median()
-        out.append(g)
-    cols = ["id", "frame", "t", "x", "y", "vx", "vy", "yaw", "length", "width", "cls"]
-    return pd.concat(out, ignore_index=True)[cols] if out else pd.DataFrame(columns=cols)
+        g = g.drop_duplicates("frame")
+        for seg in _segments(g["frame"].to_numpy(), max_gap):
+            s = g.iloc[seg]
+            if len(s) < min_len:
+                continue
+            full = np.arange(s["frame"].iloc[0], s["frame"].iloc[-1] + 1)
+            x = np.interp(full, s["frame"], s["x"])
+            y = np.interp(full, s["frame"], s["y"])
+            axis = np.interp(full, s["frame"], np.unwrap(s["axis"].to_numpy()))
+            n = len(full)
+            w = min(window, n if n % 2 else n - 1)
+            order = 2 if w > 3 else 1
+            dt = 1.0 / fps
+            seg_df = pd.DataFrame({"id": tid, "frame": full, "t": full / fps,
+                                   "x": savgol_filter(x, w, order), "y": savgol_filter(y, w, order),
+                                   "vx": savgol_filter(x, w, order, deriv=1, delta=dt),
+                                   "vy": savgol_filter(y, w, order, deriv=1, delta=dt),
+                                   "length": s["length"].median(), "width": s["width"].median(),
+                                   "cls": s["cls"].iloc[0]})
+            speed = np.hypot(seg_df["vx"], seg_df["vy"])
+            motion = np.arctan2(seg_df["vy"], seg_df["vx"])
+            body = np.where(np.cos(axis - motion) < 0, axis + np.pi, axis)
+            seg_df["yaw"] = np.where(speed > 0.5, motion, body)
+            out.append(seg_df[cols])
+    return pd.concat(out, ignore_index=True) if out else pd.DataFrame(columns=cols)

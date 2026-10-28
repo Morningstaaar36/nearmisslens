@@ -152,6 +152,22 @@ def ttc_events(states: pd.DataFrame, th: Thresholds = Thresholds(), gap_frames: 
 MIN_CROSSING_DEG = 30.0
 
 
+def _footprint_cells(x: float, y: float, yaw: float, length: float, width: float, cell: float) -> list[tuple[int, int]]:
+    """Grid cells whose centres lie inside the oriented rectangle (at least the centre cell)."""
+    c = _corners(np.array(x), np.array(y), np.array(yaw), np.array(length), np.array(width))
+    gx = np.arange(np.floor(c[:, 0].min() / cell), np.floor(c[:, 0].max() / cell) + 1)
+    gy = np.arange(np.floor(c[:, 1].min() / cell), np.floor(c[:, 1].max() / cell) + 1)
+    if len(gx) == 0 or len(gy) == 0:
+        return [(int(np.floor(x / cell)), int(np.floor(y / cell)))]
+    X, Y = np.meshgrid((gx + 0.5) * cell, (gy + 0.5) * cell)
+    dx, dy = X - x, Y - y
+    u = dx * np.cos(yaw) + dy * np.sin(yaw)
+    v = -dx * np.sin(yaw) + dy * np.cos(yaw)
+    inside = (np.abs(u) <= length / 2) & (np.abs(v) <= width / 2)
+    cells = [(int(np.floor(a / cell)), int(np.floor(b / cell))) for a, b in zip(X[inside], Y[inside])]
+    return cells or [(int(np.floor(x / cell)), int(np.floor(y / cell)))]
+
+
 def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = GRID_M,
                min_angle: float = MIN_CROSSING_DEG) -> pd.DataFrame:
     """Grid-based post-encroachment time between users whose paths cross a shared cell at an angle."""
@@ -159,14 +175,8 @@ def pet_events(states: pd.DataFrame, max_pet: float = PET_MAX_S, cell: float = G
     moving = np.hypot(states["vx"], states["vy"]) > MIN_MOVING_MPS
     for r in states[moving].itertuples(index=False):
         course = float(np.arctan2(r.vy, r.vx))
-        c = _corners(np.array(r.x), np.array(r.y), np.array(r.yaw), np.array(r.length), np.array(r.width))
-        x0, y0 = c[:, 0].min(), c[:, 1].min()
-        x1, y1 = c[:, 0].max(), c[:, 1].max()
-        gx = np.arange(np.floor(x0 / cell), np.floor(x1 / cell) + 1)
-        gy = np.arange(np.floor(y0 / cell), np.floor(y1 / cell) + 1)
-        for i in gx:
-            for j in gy:
-                occ.append((int(i), int(j), r.id, r.t, r.cls, course))
+        for i, j in _footprint_cells(r.x, r.y, r.yaw, r.length, r.width, cell):
+            occ.append((i, j, r.id, r.t, r.cls, course))
     if not occ:
         return pd.DataFrame(columns=["id_1", "id_2", "cls_1", "cls_2", "pet", "t_first_exit", "t_second_entry"])
     o = pd.DataFrame(occ, columns=["i", "j", "id", "t", "cls", "course"])
