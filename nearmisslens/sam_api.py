@@ -16,7 +16,7 @@ MODEL = "sam-3.1"
 METADATA = {"mask_encoding": "one_bit", "include_confidence": "true"}
 
 
-def _png_data_url(image: np.ndarray) -> str:
+def png_data_url(image: np.ndarray) -> str:
     ok, buf = cv2.imencode(".png", image)
     if not ok:
         raise ValueError("PNG encode failed")
@@ -25,7 +25,7 @@ def _png_data_url(image: np.ndarray) -> str:
 
 def segment_image(client: MetaClient, image: np.ndarray, concept: str, tag: str,
                   dx: float = 0.0, dy: float = 0.0) -> list[Detection]:
-    url = _png_data_url(image)
+    url = png_data_url(image)
     request = {"model": MODEL, "metadata": METADATA, "concept": concept,
                "image_sha": hashlib.sha256(url.encode()).hexdigest()}
     payload = {"model": MODEL, "metadata": METADATA, "input": [{"type": "message", "role": "user", "content": [

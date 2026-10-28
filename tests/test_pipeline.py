@@ -51,3 +51,24 @@ def test_fast_parser_matches_official_parser():
     for a, b in zip(sorted(fast, key=lambda d: (d.frame, d.obj)), sorted(official, key=lambda d: (d.frame, d.obj))):
         assert (a.frame, a.obj, a.x1, a.y1, a.x2, a.y2) == (b.frame, b.obj, b.x1, b.y1, b.x2, b.y2)
         assert (a.mask == b.mask).all()
+
+
+def test_tile_clip_names_are_unique_per_crop(tmp_path, monkeypatch):
+    from nearmisslens import tiling, video
+
+    made = []
+    monkeypatch.setattr(video, "probe", lambda p: {"width": 3840, "height": 2160, "fps": 10.0, "frames": 100})
+    monkeypatch.setattr(video, "cut", lambda src, out, *a, **k: made.append(out.name) or out)
+    monkeypatch.setattr(tiling, "source_sha", lambda p: "sha")
+    monkeypatch.setattr(tiling.sam_api, "track_video", lambda *a, **k: [])
+
+    class C:
+        class meter:
+            @staticmethod
+            def check(*a):
+                pass
+
+    tiles = tiling.grid(3840, 2160)
+    for t in tiles:
+        tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [t])
+    assert len(set(made)) == len(tiles)

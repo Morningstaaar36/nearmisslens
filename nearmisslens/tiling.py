@@ -40,8 +40,8 @@ def track_tiles(client: MetaClient, src: Path, start_s: float, duration_s: float
 
     def cut(k):
         x, y, w, h = tiles[k]
-        return video.cut(src, work / f"{src.stem}_{start_s:.1f}_{duration_s:.1f}_t{k}.mp4", start_s, duration_s,
-                         crop=(x, y, w, h))
+        return video.cut(src, work / f"{src.stem}_{start_s:.1f}_{duration_s:.1f}_{x}-{y}-{w}x{h}.mp4", start_s,
+                         duration_s, crop=(x, y, w, h))
 
     with ThreadPoolExecutor(min(4, len(tiles))) as ex:
         clips = list(ex.map(cut, range(len(tiles))))
