@@ -1,0 +1,25 @@
+[project]
+name = "nearmisslens"
+version = "0.1.0"
+description = "NearMissLens: an AI road-safety audit agent"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "httpx>=0.28",
+    "meta-sam-parser>=0.1.0",
+    "numpy>=2.1",
+    "opencv-python-headless>=4.10",
+    "pandas>=2.2",
+    "scipy>=1.14",
+]
+
+[project.scripts]
+nml = "nearmisslens.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.3"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

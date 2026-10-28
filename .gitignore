@@ -5,6 +5,9 @@ runs/
 *.mp4
 *.mov
 *.webm
+*.avi
+*.zip
 __pycache__/
 .venv/
 *.pyc
+.pytest_cache/
