@@ -35,12 +35,14 @@ EXTRACT_INSTRUCTIONS = (
     "language of the transcript. Use only what the transcript says.")
 
 
-def transcribe(client: MetaClient, wav: Path, tag: str, language_bias: list[str] | None = None) -> dict:
-    """One-shot transcription of a mono 16-bit WAV at 16 or 24 kHz."""
+def transcribe(client: MetaClient, wav: Path, tag: str, language_bias: list[str] | None = None,
+               audio_key: str | None = None) -> dict:
+    """One-shot transcription of a mono 16-bit WAV at 16 or 24 kHz. audio_key names generated audio by what produced
+    it, so the cache does not depend on synthesis output bytes; recordings are keyed by their content."""
     settings = {"model": ASR_MODEL, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
     if language_bias:
         settings["languageBias"] = language_bias
-    request = {**settings, "audio": file_sha256(wav)}
+    request = {**settings, "audio": audio_key or file_sha256(wav)}
 
     def run():
         with open(wav, "rb") as f:
@@ -111,8 +113,8 @@ def word_error_rate(reference: str, hypothesis: str) -> float:
     return prev[-1] / max(len(r), 1)
 
 
-def intake(client: MetaClient, wav: Path, facts: dict, tag: str) -> dict:
-    t = transcribe(client, wav, tag)
+def intake(client: MetaClient, wav: Path, facts: dict, tag: str, audio_key: str | None = None) -> dict:
+    t = transcribe(client, wav, tag, audio_key=audio_key)
     complaint = extract(client, t["transcript"], tag)
     return {"audio": Path(wav).name, "transcript": t["transcript"], "audio_s": t.get("audioDurationMs", 0) / 1000,
             "complaint": complaint, "match": match(complaint, facts)}

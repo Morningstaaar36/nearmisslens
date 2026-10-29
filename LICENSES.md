@@ -11,6 +11,7 @@
 | MMS-TTS (`facebook/mms-tts-eng`, `-spa`, `-fra`) | CC BY-NC 4.0 | Generates synthetic test complaints locally. The audio is not published; only transcripts appear |
 | three.js 0.160.0 | MIT | Viewer 3D replay (CDN) |
 | marked 12.0.2 | MIT | Viewer memo rendering (CDN) |
+| DOMPurify 3.1.6 | Apache-2.0 or MPL-2.0 | Sanitises rendered markdown in the viewer (CDN) |
 | Overpass typeface | SIL Open Font License 1.1 | Viewer (Google Fonts) |
 
 Credit line used on screen: "FLUID dataset (Scientific Data, 2026), CC BY 4.0."

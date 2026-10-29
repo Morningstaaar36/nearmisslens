@@ -79,6 +79,10 @@ def expected(c: dict, facts: dict) -> set:
     return {f["rank"] for f in facts["findings"] if voice.consistent(truth, f)[0]}
 
 
+def audio_key(text: str, lang: str) -> str:
+    return f"facebook/mms-tts-{lang}|seed=0|{text}"
+
+
 def speak(text: str, lang: str, out_dir: Path) -> Path:
     """16 kHz mono WAV of the text from facebook/mms-tts-<lang>, cached by text."""
     out = Path(out_dir) / f"{lang}_{hashlib.sha256(text.encode()).hexdigest()[:12]}.wav"

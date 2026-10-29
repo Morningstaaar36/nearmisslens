@@ -53,10 +53,12 @@ def segment_starts(start_s: float, duration_s: float) -> list[float]:
 
 
 def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: float, concepts: list[str],
-              work: Path, cal: calibrate.Calibration, starts: list[float] | None = None) -> pd.DataFrame:
+              work: Path, cal: calibrate.Calibration, starts: list[float] | None = None,
+              cached_only: bool = False) -> pd.DataFrame:
     """Track [start_s, start_s + duration_s) in SEGMENT_S segments (plus OVERLAP_S) of tiled SAM 3.1 video requests.
 
     starts restricts the run to the given segment starts of that grid, for partial runs on cached segments.
+    cached_only raises FileNotFoundError instead of tracking when the result is not on disk.
     """
     starts = starts if starts is not None else segment_starts(start_s, duration_s)
     key = request_key("points", {"starts": starts, "start": start_s, "duration": duration_s, "concepts": sorted(concepts),
@@ -64,6 +66,8 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
     out = work / f"{c.site}_{c.stem}_{start_s:.0f}_{duration_s:.0f}_{key}_points.csv.gz"
     if out.exists():
         return pd.read_csv(out)
+    if cached_only:
+        raise FileNotFoundError(f"no SAM 3.1 tracks at {out}")
     info = video.probe(c.video)
     fps = info["fps"]
     tiles = tiling.grid(info["width"], info["height"])

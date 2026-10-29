@@ -132,6 +132,11 @@ class MetaClient:
         self.cache.put(namespace, key, result)
         return result
 
+    def check_budget(self, estimate_usd: float, what: str) -> None:
+        """Refuse a run whose estimate does not fit under the cap; replays make no calls and are not checked."""
+        if not self.s.replay:
+            self.meter.check(estimate_usd, what)
+
     def post_json(self, path: str, body: dict) -> dict:
         def call():
             r = self.http.post(path, json=body)

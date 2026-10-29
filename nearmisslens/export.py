@@ -14,7 +14,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-from . import calibrate, fluid, movements, runner
+from . import audit, calibrate, fluid, movements, runner
 from .config import ROOT, SETTINGS
 from .meta_client import MetaClient
 
@@ -77,10 +77,20 @@ def selftest_rows(path: Path) -> list[dict]:
     return rows
 
 
-def panel_view(path: Path) -> dict | None:
+def current(path: Path, facts_id: str) -> dict | None:
+    """A review stored next to an audit, if it reviewed this version of the audit's facts."""
     if not path.exists():
         return None
-    p = json.loads(path.read_text())
+    data = json.loads(path.read_text())
+    if data.get("facts_id") != facts_id:
+        print(f"skipping {path.name}: it reviewed an earlier version of this audit; run it again")
+        return None
+    return data
+
+
+def panel_view(p: dict | None) -> dict | None:
+    if p is None:
+        return None
     keep = ("status", "proposals", "objections", "decisions", "memo", "usd", "caught")
     return {**{k: p[k] for k in keep if k in p},
             "stages": [{k: s[k] for k in ("role", "model", "accepted", "stopped", "turns", "usd")}
@@ -99,7 +109,9 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
     run = SETTINGS.runs_dir / "audit" / f"{split}_{source}"
     if not (run / "facts.json").exists():
         raise FileNotFoundError(f"no audit at {run}; run: nml audit {split} --source {source}")
-    facts = json.loads((run / "facts.json").read_text())
+    facts_json = (run / "facts.json").read_text()
+    facts = json.loads(facts_json)
+    fid = audit.facts_id(facts_json)
     c, states = runner.site_states(split, source, client)
     key = f"{split}_{source}"
     data = docs / "data"
@@ -111,10 +123,10 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
     conflicts = pd.read_csv(run / "conflicts.csv") if (run / "conflicts.csv").exists() else pd.DataFrame()
     view = {"key": key, "split": split, "site": c.site, "clip": c.stem, "source": SOURCE_LABEL[source],
             "map": base_map(c, data / "media" / f"{c.site}_map.jpg"), "facts": facts,
-            "memo": (run / "memo.md").read_text(), "panel": panel_view(run / "panel.json"),
+            "memo": (run / "memo.md").read_text(), "panel": panel_view(current(run / "panel.json", fid)),
             "conflicts": conflicts[["measure", "value", "type", "cls_1", "cls_2", "t", "x", "y"]].round(2).to_dict("list")
             if len(conflicts) else {}, "signal_entry": signal_entry(states, signals),
-            "voice": json.loads((run / "voice.json").read_text()) if (run / "voice.json").exists() else None}
+            "voice": current(run / "voice.json", fid)}
     data.mkdir(parents=True, exist_ok=True)
     (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))
     index_path = data / "index.json"

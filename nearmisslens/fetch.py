@@ -72,13 +72,19 @@ def central_directory(url: str) -> dict[str, dict]:
         while j + 4 <= len(extra):
             tag, ln = struct.unpack("<HH", extra[j:j + 4])
             if tag == 1:
-                vals = list(struct.unpack(f"<{ln // 8}Q", extra[j + 4:j + 4 + ln]))
+                pos = j + 4
+
+                def take() -> int:
+                    nonlocal pos
+                    pos += 8
+                    return struct.unpack("<Q", extra[pos - 8:pos])[0]
+
                 if usize == 0xFFFFFFFF:
-                    usize = vals.pop(0)
+                    usize = take()
                 if csize == 0xFFFFFFFF:
-                    csize = vals.pop(0)
+                    csize = take()
                 if off == 0xFFFFFFFF:
-                    off = vals.pop(0)
+                    off = take()
             j += 4 + ln
         out[name] = {"method": method, "crc": crc, "csize": csize, "usize": usize, "offset": off}
         i += 46 + nlen + elen + clen
@@ -114,6 +120,8 @@ def fetch_member(url: str, member: str, out: Path) -> Path:
                         print(f"{out.name}: {(done + f.tell()) / 1e6:.0f} / {m['csize'] / 1e6:.0f} MB", flush=True)
         except (httpx.TransportError, RuntimeError) as err:
             print(f"{out.name}: retrying after {err}")
+    if not part.exists() or part.stat().st_size < m["csize"]:
+        raise RuntimeError(f"{member}: download incomplete; the partial file is kept, run again to resume")
     crc, inflate = 0, zlib.decompressobj(-15) if m["method"] == 8 else None
     tmp = out.with_name(f".{out.name}.tmp")
     with part.open("rb") as src, tmp.open("wb") as dst:

@@ -63,10 +63,9 @@ def test_tile_clip_names_are_unique_per_crop(tmp_path, monkeypatch):
     monkeypatch.setattr(tiling.sam_api, "track_video", lambda *a, **k: [])
 
     class C:
-        class meter:
-            @staticmethod
-            def check(*a):
-                pass
+        @staticmethod
+        def check_budget(*a):
+            pass
 
     tiles = tiling.grid(3840, 2160)
     for t in tiles:
@@ -100,10 +99,9 @@ def test_saturated_requests_split_in_time_and_relink(tmp_path, monkeypatch):
     monkeypatch.setattr(tiling.sam_api, "track_video", _fake_sam(lambda start, frames: 20 if frames > 60 else 10))
 
     class C:
-        class meter:
-            @staticmethod
-            def check(*a):
-                pass
+        @staticmethod
+        def check_budget(*a):
+            pass
 
     stats = {}
     dets = tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [(0, 0, 1984, 1144)], stats=stats)
@@ -123,10 +121,9 @@ def test_unsaturated_request_is_not_split(tmp_path, monkeypatch):
     monkeypatch.setattr(tiling.sam_api, "track_video", _fake_sam(lambda start, frames: 8))
 
     class C:
-        class meter:
-            @staticmethod
-            def check(*a):
-                pass
+        @staticmethod
+        def check_budget(*a):
+            pass
 
     stats = {}
     tiling.track_tiles(C, tmp_path / "v.mp4", 0.0, 10.0, ["car"], tmp_path, [(0, 0, 1984, 1144)], stats=stats)

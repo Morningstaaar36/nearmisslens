@@ -2,6 +2,7 @@
 to the data. Track ids are anonymous and per clip."""
 from __future__ import annotations
 
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -196,6 +197,11 @@ def _rejection_lines(rejected: list[dict]) -> list[str]:
         else:
             out.append(f"{psc}{f' (CMF {ids[0]})' if len(ids) == 1 else ''}: {kind}")
     return out
+
+
+def facts_id(facts_json: str) -> str:
+    """Identity of an audit's facts; reviews of the audit store it so a re-run audit does not show stale reviews."""
+    return hashlib.sha256(facts_json.encode()).hexdigest()[:16]
 
 
 def write(facts: dict, memo_md: str, out: Path, conflict_rows: pd.DataFrame | None = None) -> None:

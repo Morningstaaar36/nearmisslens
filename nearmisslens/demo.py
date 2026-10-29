@@ -188,14 +188,10 @@ def _voice_caption(v: dict | None) -> str:
 
 def reviewed_clip(view: dict) -> Segment | None:
     """The event clip of the first conflict Muse Spark reviewed in this audit, captioned with its verdict."""
-    from . import fluid, video
-    c = fluid.clip(view["site"], view["clip"])
-    fps = video.probe(c.video)["fps"]
     for f in view["facts"]["findings"]:
         for v in (f.get("verification") or {}).get("verdicts", []):
-            mid = int(round(v["t"] * fps))
-            path = SETTINGS.data_dir / "work" / "audit" / f"event_{v['id_1']}_{v['id_2']}_{mid}.mp4".replace(":", "-")
-            if path.exists():
+            path = Path(v.get("clip") or "")
+            if v.get("clip") and path.exists():
                 action = {"brake": "braking", "swerve": "swerving", "both": "braking and swerving"}.get(v["evasive_action"])
                 verdict = ("judged a real conflict" + (f", with {action}" if action else "")) if v["real_conflict"] \
                     else "judged not a real conflict"
@@ -254,7 +250,6 @@ def render(key: str | None = None, out: Path | None = None) -> Path:
     view = json.loads((DOCS / "data" / f"{key}.json").read_text())
     work = SETTINGS.data_dir / "work" / "demo"
     work.mkdir(parents=True, exist_ok=True)
-    facts = view["facts"]
     segs = [card("NearMissLens", "Near-misses happen long before crashes, and almost none are ever recorded. "
                                  "This finds them in ordinary traffic video and proposes cited fixes.", work / "c0", work)]
     ev = reviewed_clip(view)

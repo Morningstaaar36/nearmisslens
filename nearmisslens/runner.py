@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -16,7 +17,8 @@ VERIFY_USD = 0.002
 
 
 def site_states(split: str, source: str, client: MetaClient | None = None):
-    """Engine states for a split: FLUID reference trajectories, or SAM 3.1 tracks over the same frames."""
+    """Engine states for a split: FLUID reference trajectories, or the SAM 3.1 tracks that nml evaluate produced over
+    the same frames (never tracks here; raises FileNotFoundError when they are missing)."""
     site, limit_s = evaluate.SPLITS[split]
     c = fluid.clip(*site)
     info = video.probe(c.video)
@@ -29,7 +31,7 @@ def site_states(split: str, source: str, client: MetaClient | None = None):
         return c, st[st["isReal"] == 1].reset_index(drop=True)
     from . import tracks
     points = pipeline.track_api(client or MetaClient(SETTINGS), c, 0.0, duration, evaluate.CONCEPTS,
-                                SETTINGS.data_dir / "work" / split, pipeline.calibration_for(c))
+                                SETTINGS.data_dir / "work" / split, pipeline.calibration_for(c), cached_only=True)
     st = tracks.smooth_states(points, info["fps"])
     return c, st[st["frame"].between(*frames)].reset_index(drop=True)
 
@@ -46,11 +48,15 @@ def review_event(client: MetaClient, c: fluid.Clip, info: dict, states: pd.DataF
     fps = info["fps"]
     mid = int(round(e["t"] * fps))
     ids = (str(e["id_1"]), str(e["id_2"]))
-    clip = verifier.render_event_clip(c.video, work / f"event_{ids[0]}_{ids[1]}_{mid}.mp4".replace(":", "-"), pixels,
-                                      ids[0], ids[1], mid, fps, info["width"], info["height"])
+    pad = int(round(verifier.PAD_S * fps))
+    pair = pixels[pixels["id"].isin(ids) & pixels["frame"].between(mid - pad, mid + pad)].sort_values(["id", "frame"])
+    tracks_sha = hashlib.sha256(pair[["id", "frame", "px", "py"]].round(1).to_csv(index=False).encode()).hexdigest()[:12]
+    name = f"event_{c.stem}_{ids[0]}_{ids[1]}_{mid}_{tracks_sha}.mp4".replace(":", "-")
+    clip = verifier.render_event_clip(c.video, work / name, pixels, ids[0], ids[1], mid, fps, info["width"], info["height"])
     trace = verifier.speed_trace_png(states, ids[0], ids[1], mid, fps)
     metric = f"{e['measure']} {e['value']:.1f} s, {e['type'].replace('_', '-')}, A={e['cls_1']}, B={e['cls_2']}"
-    return verifier.verify(client, clip, trace, metric, tag, clip_key=verifier.event_key(c.video, ids[0], ids[1], mid, fps))
+    key = f"{verifier.event_key(c.video, ids[0], ids[1], mid, fps)}|tracks={tracks_sha}"
+    return {**verifier.verify(client, clip, trace, metric, tag, clip_key=key), "clip": str(clip)}
 
 
 def verify_finding(client: MetaClient, c: fluid.Clip, states: pd.DataFrame, pixels: pd.DataFrame, finding: dict,
@@ -65,6 +71,18 @@ def verify_finding(client: MetaClient, c: fluid.Clip, states: pd.DataFrame, pixe
             "evasive": sum(v["evasive_action"] in ("brake", "swerve", "both") for v in verdicts), "verdicts": verdicts}
 
 
+def severity_at_recall(cand: pd.DataFrame, ref: pd.DataFrame, recall: float) -> dict:
+    """The smallest set of most severe candidates (lowest PET or TTC) whose recall reaches the given recall: the
+    no-model comparison for the verifier at matched recall."""
+    from .baseline import score
+    ranked = cand.sort_values("value").reset_index(drop=True)
+    for k in range(len(ranked) + 1):
+        s = score(ranked.head(k), ref)
+        if s["recall"] == s["recall"] and s["recall"] >= recall - 1e-12:
+            return {**s, "kept": k}
+    return {**score(ranked, ref), "kept": len(ranked)}
+
+
 def run_verifier(split: str, client: MetaClient | None = None) -> dict:
     """Pre-registered verifier test: Muse Spark reviews every candidate conflict the pipeline finds on SAM 3.1 tracks;
     precision and recall against the reference conflict table before and after dropping the events it judges not real."""
@@ -75,7 +93,7 @@ def run_verifier(split: str, client: MetaClient | None = None) -> dict:
     cand = audit.conflict_table(ours)
     ref = audit.conflict_table(ref_states)
     usd = len(cand) * VERIFY_USD
-    client.meter.check(usd, f"verifier {split}")
+    client.check_budget(usd, f"verifier {split}")
     print(f"verifier: {len(cand)} candidate conflicts, up to ${usd:.2f} (cached calls are free)")
     info = video.probe(c.video)
     st = ours.assign(id=ours["id"].astype(str))
@@ -84,9 +102,10 @@ def run_verifier(split: str, client: MetaClient | None = None) -> dict:
     verdicts = [review_event(client, c, info, st, px, e, work, f"{split} event {k}")
                 for k, e in enumerate(cand.to_dict("records"))]
     kept = cand[[bool(v["real_conflict"]) for v in verdicts]]
+    after = score(kept, ref)
     out = {"split": split, "candidates": int(len(cand)), "judged_real": int(len(kept)),
            "artefact_share": round(1 - len(kept) / len(cand), 3) if len(cand) else None,
-           "before": score(cand, ref), "after": score(kept, ref),
+           "before": score(cand, ref), "after": after, "severity_at_matched_recall": severity_at_recall(cand, ref, after["recall"]),
            "usd_per_event": round(client.meter.spent_on(f"verify {split} event ") / len(cand), 5) if len(cand) else None}
     dest = ROOT / "validation" / "results" / split
     dest.mkdir(parents=True, exist_ok=True)
@@ -118,7 +137,7 @@ def run_audit(split: str, source: str, verify_n: int = 0, illustrate: bool = Fal
     out = (out_root or SETTINGS.runs_dir / "audit") / f"{split}_{source}"
     usd = estimate_usd(len(facts["findings"]), verify_n, illustrate)
     if usd:
-        client.meter.check(usd, f"audit {split}")
+        client.check_budget(usd, f"audit {split}")
         print(f"model calls for {len(facts['findings'])} hotspots: up to ${usd:.3f} (cached calls are free)")
     cal = pipeline.calibration_for(c) if (verify_n or illustrate) else None
     pixels = verifier.pixel_tracks(states, cal) if verify_n else None
@@ -151,17 +170,19 @@ def run_voice(split: str, source: str, audio: Path | None = None, client: MetaCl
     run = SETTINGS.runs_dir / "audit" / f"{split}_{source}"
     if not (run / "facts.json").exists():
         raise FileNotFoundError(f"no audit at {run}; run: nml audit {split} --source {source}")
-    facts = json.loads((run / "facts.json").read_text())
+    facts_json = (run / "facts.json").read_text()
+    facts = json.loads(facts_json)
     client = client or MetaClient(SETTINGS)
     work = SETTINGS.data_dir / "work" / "voice"
     tests = [] if audio else complaints.synthesize(facts)
     wavs = [as_wav(Path(audio), work)] if audio else [complaints.speak(c["text"], c["lang"], work) for c in tests]
     usd = sum(voice_usd(video.wav_seconds(w) + 1) + 0.002 for w in wavs)
-    client.meter.check(usd, f"voice {split}")
+    client.check_budget(usd, f"voice {split}")
     print(f"model calls for {len(wavs)} recordings: up to ${usd:.4f} (cached calls are free)")
     results = []
     for k, w in enumerate(wavs):
-        r = voice.intake(client, w, facts, f"{split} {k}")
+        r = voice.intake(client, w, facts, f"{split} {k}",
+                         audio_key=complaints.audio_key(tests[k]["text"], tests[k]["lang"]) if tests else None)
         if tests:
             c = tests[k]
             want = complaints.expected(c, facts)
@@ -175,5 +196,6 @@ def run_voice(split: str, source: str, audio: Path | None = None, client: MetaCl
                     "match_accuracy": round(sum(r["correct"] for r in results) / len(results), 3),
                     "mean_word_error_rate": round(sum(r["word_error_rate"] for r in results) / len(results), 3)}
     out = run / ("voice.json" if not audio else f"voice_{Path(audio).stem}.json")
-    out.write_text(json.dumps({"summary": summary, "results": results}, indent=1, default=str))
+    out.write_text(json.dumps({"facts_id": audit.facts_id(facts_json), "summary": summary, "results": results},
+                              indent=1, default=str))
     return out

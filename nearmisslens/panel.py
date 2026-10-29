@@ -22,11 +22,12 @@ SKEPTIC_MODEL = "muse-spark-1.3-contributor"
 JUDGE_MODEL = "muse-wonder-1.0"
 BUDGET_USD = {"proposer": 0.05, "skeptic": 0.05, "judge": 0.8}
 MAX_TURNS = 14
+MAX_OUTPUT_TOKENS = 16000
 MAX_PER_HOTSPOT = 2
 
 NUMBER = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 HOTSPOT_REF = re.compile(r"\bhotspot\s*#?\s*(\d+)", re.I)
-CMF_REF = re.compile(r"\b(?:CMF|ID)\s*(?:Clearinghouse\s*)?(?:ID\s*)?#?\s*(\d{3,6})\b")
+CMF_REF = re.compile(r"\bCMF\s*(?:Clearinghouse\s*)?(?:ID\s*)?#?\s*(\d{3,6})\b")
 CMF_FIELDS = ["crfid", "name", "cmf", "crf_pct", "stars", "crash_type", "severity", "control", "area", "country",
               "citation"]
 
@@ -211,11 +212,12 @@ def _stage(client: MetaClient, model: str, instructions: str, task: str, tools: 
 
     run = run_agent(client, model, instructions, task, tools + [Tool(finish.name, finish.description, finish.parameters,
                                                                      checked)],
-                    MAX_TURNS, BUDGET_USD[role], effort="medium", tag=f"{tag} {role}")
-    accepted = run.stopped == "finish_tool"
+                    MAX_TURNS, BUDGET_USD[role], effort="medium", tag=f"{tag} {role}", max_output_tokens=MAX_OUTPUT_TOKENS)
+    passed = [a for a in attempts if not a["errors"]]
+    accepted = run.stopped == "finish_tool" and bool(passed)
     return {"role": role, "model": model, "accepted": accepted, "stopped": run.stopped, "turns": run.turns,
             "usd": round(run.usd, 4), "rejected_attempts": [a for a in attempts if a["errors"]],
-            "output": attempts[-1]["arguments"] if accepted else None, "decision_log": run.decision_log()}
+            "output": passed[0]["arguments"] if accepted else None, "decision_log": run.decision_log()}
 
 
 def _finish(check: Callable[..., list[str]]) -> Callable[..., dict]:

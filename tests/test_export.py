@@ -40,10 +40,11 @@ def test_selftest_rows_parse_the_report(tmp_path):
 
 def test_panel_view_keeps_caught_claims(tmp_path):
     p = tmp_path / "panel.json"
-    p.write_text(json.dumps({"status": "complete", "memo": "m", "stages": [
+    p.write_text(json.dumps({"facts_id": "abc", "status": "complete", "memo": "m", "stages": [
         {"role": "judge", "model": "w", "accepted": True, "stopped": "finish_tool", "turns": 2, "usd": 0.1,
          "rejected_attempts": [{"arguments": {}, "errors": ["memo: number 9.9 does not appear"]}],
          "decision_log": []}]}))
-    v = export.panel_view(p)
+    v = export.panel_view(export.current(p, "abc"))
     assert v["stages"][0]["caught"] == ["memo: number 9.9 does not appear"] and "decision_log" not in v["stages"][0]
-    assert export.panel_view(tmp_path / "none.json") is None
+    assert export.current(p, "a newer audit") is None
+    assert export.current(tmp_path / "none.json", "abc") is None and export.panel_view(None) is None

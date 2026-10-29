@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from .cost import token_usd
-from .meta_client import MetaClient
+from .meta_client import IncompleteResponse, MetaClient
 
 
 @dataclass
@@ -57,7 +57,7 @@ def _message_text(response: dict) -> str:
 
 
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
-              budget_usd: float, effort: str = "medium", tag: str = "agent") -> AgentRun:
+              budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000) -> AgentRun:
     """Function-calling loop on the Responses API. Instructions, tools and reasoning effort are re-sent every turn
     because previous_response_id does not carry them. Every model response is cached, so a run replays exactly.
     A finish call whose result carries an error does not end the run; the model sees the error and can correct it."""
@@ -69,11 +69,12 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
     history: list = []
     for turn in range(1, max_turns + 1):
         payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": {"effort": effort},
-                   "max_output_tokens": 8000, "input": next_input}
+                   "max_output_tokens": max_output_tokens, "input": next_input}
         if previous_id:
             payload["previous_response_id"] = previous_id
         history.append(next_input)
-        request = {"model": model, "instructions": instructions, "tools": specs, "effort": effort, "history": history}
+        request = {"model": model, "instructions": instructions, "tools": specs, "effort": effort, "history": history,
+                   "max_output_tokens": max_output_tokens}
 
         def cost(resp):
             u = resp.get("usage") or {}
@@ -85,8 +86,13 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
         if remaining <= 0:
             run.stopped = "budget"
             break
-        resp = client.cached("agent", request, lambda: client.create_response(payload), cost,
-                             min(remaining, 0.5), f"{tag} turn {turn}")
+        try:
+            resp = client.cached("agent", request, lambda: client.create_response(payload), cost,
+                                 min(remaining, 0.5), f"{tag} turn {turn}")
+        except IncompleteResponse as e:
+            run.turns = turn
+            run.stopped = f"incomplete: {e}"
+            break
         run.usd += cost(resp)[0]
         run.turns = turn
         previous_id = resp.get("id")

@@ -6,7 +6,6 @@ from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 from . import sam_api, video
 from .assign import nearest_pairs, one_to_one
@@ -106,7 +105,7 @@ def track_tiles(client: MetaClient, src: Path, start_s: float, duration_s: float
     info = video.probe(src)
     tiles = tiles or grid(info["width"], info["height"])
     frames = int(round(duration_s * info["fps"]))
-    client.meter.check(estimate_usd(frames, len(tiles), len(concepts)), f"tiles {tag}")
+    client.check_budget(estimate_usd(frames, len(tiles), len(concepts)), f"tiles {tag}")
     src_sha = source_sha(src)
     stats = stats if stats is not None else {}
 

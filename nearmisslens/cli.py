@@ -54,6 +54,7 @@ def cmd_audit(args) -> int:
 
 def cmd_panel(args) -> int:
     from . import panel
+    from .audit import facts_id
     from .countermeasures import load_cmf
     from .meta_client import MetaClient
     src = SETTINGS.runs_dir / "audit" / f"{args.split}_{args.source}"
@@ -62,10 +63,12 @@ def cmd_panel(args) -> int:
         return 1
     client = MetaClient(SETTINGS)
     usd = sum(panel.BUDGET_USD.values())
-    client.meter.check(usd, f"panel {args.split}")
+    client.check_budget(usd, f"panel {args.split}")
     print(f"review panel: up to ${usd:.2f} (cached calls are free)")
-    result = panel.run_panel(client, json.loads((src / "facts.json").read_text()), (src / "memo.md").read_text(),
+    facts_json = (src / "facts.json").read_text()
+    result = panel.run_panel(client, json.loads(facts_json), (src / "memo.md").read_text(),
                              load_cmf(), f"panel {args.split}_{args.source}")
+    result["facts_id"] = facts_id(facts_json)
     panel.write(result, src, f"{args.split} ({args.source})")
     print((src / "panel.md").read_text())
     return 0 if result["status"] == "complete" else 1

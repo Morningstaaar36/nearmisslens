@@ -11,7 +11,7 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 
 from . import audit, video
-from .cache import ReplayMiss, file_sha256
+from .cache import file_sha256, source_sha
 from .config import ROOT, SETTINGS
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
@@ -37,8 +37,9 @@ INSTRUCTIONS = (
     "pedestrian. Return an empty list if there are none.")
 
 
-def ask(client: MetaClient, clip: Path, tag: str) -> list[dict]:
-    request = {"model": MODEL, "clip": file_sha256(clip), "instructions": INSTRUCTIONS, "schema": SCHEMA}
+def ask(client: MetaClient, clip: Path, tag: str, clip_key: str | None = None) -> list[dict]:
+    """clip_key identifies the clip by its source and cut, so the cache does not depend on encoder output bytes."""
+    request = {"model": MODEL, "clip": clip_key or file_sha256(clip), "instructions": INSTRUCTIONS, "schema": SCHEMA}
 
     def run():
         return client.create_response({
@@ -88,13 +89,14 @@ def run_b0(client: MetaClient | None = None, split: str = "test") -> dict:
     span = len(windows(min(ref_states["t"].max(), WINDOWS * WINDOW_S))) * WINDOW_S
     ref = audit.conflict_table(ref_states)
     ref = ref[ref["t"] < span].reset_index(drop=True)
-    client.meter.check(estimate_usd(), "b0")
+    client.check_budget(estimate_usd(), "b0")
     print(f"B0: {len(windows(span))} windows, up to ${estimate_usd():.2f} (cached calls are free)")
     work = SETTINGS.data_dir / "work" / "b0"
     rows = []
     for start in windows(span):
         clip = video.cut(c.video, work / f"{c.stem}_{start:.0f}.mp4", start, WINDOW_S, width=CLIP_WIDTH)
-        for e in ask(client, clip, f"{c.stem}@{start:.0f}"):
+        key = f"{source_sha(c.video)}|{start}|{WINDOW_S}|{CLIP_WIDTH}"
+        for e in ask(client, clip, f"{c.stem}@{start:.0f}", clip_key=key):
             rows.append({"t": start + min(max(float(e["t_s"]), 0.0), WINDOW_S), "cls_1": e["road_user_1"],
                          "cls_2": e["road_user_2"], "description": e["description"]})
     b0 = pd.DataFrame(rows, columns=["t", "cls_1", "cls_2", "description"])
@@ -104,8 +106,8 @@ def run_b0(client: MetaClient | None = None, split: str = "test") -> dict:
         _, ours = site_states(split, "sam", client)
         mine = audit.conflict_table(ours)
         out["pipeline"] = score(mine[mine["t"] < span], ref)
-    except (ReplayMiss, FileNotFoundError) as e:
-        out["pipeline"] = {"missing": f"SAM tracks for {split} are not cached ({e}); run nml evaluate {split}"}
+    except FileNotFoundError as e:
+        out["pipeline"] = {"missing": f"{e}; run nml evaluate {split}"}
     dest = ROOT / "validation" / "results" / split
     dest.mkdir(parents=True, exist_ok=True)
     b0.to_csv(dest / "b0_events.csv", index=False)

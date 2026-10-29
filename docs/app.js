@@ -3,7 +3,8 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const md = (s) => marked.parse(String(s ?? "").replace(/</g, "&lt;"));
+const md = (s) => DOMPurify.sanitize(marked.parse(String(s ?? "").replace(/</g, "&lt;")),
+  { FORBID_TAGS: ["img", "style", "iframe", "form"], FORBID_ATTR: ["style"] });
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const NAME = { vehicle: "car", two_wheeler: "two-wheeler", pedestrian: "pedestrian" };
 const HEIGHT_M = { vehicle: 1.5, two_wheeler: 1.3, pedestrian: 1.7 };
