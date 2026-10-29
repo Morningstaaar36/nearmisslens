@@ -17,6 +17,7 @@ PET_SERIOUS_S = 1.5
 MIN_HOTSPOT_EVENTS = 2
 EXAMPLES = 5
 SIGNAL_NAMES = {"G": "green", "y": "yellow", "r": "red"}
+SIGNAL_CLASSES = ("vehicle", "two_wheeler")
 CONFLICT_COLUMNS = ["measure", "value", "type", "id_1", "id_2", "cls_1", "cls_2", "t", "x", "y"]
 
 
@@ -52,14 +53,17 @@ def _pair(r) -> tuple[str, str]:
     return tuple(sorted((r.cls_1, r.cls_2)))
 
 
-def evidence(events: pd.DataFrame, routes: pd.DataFrame, signals: pd.DataFrame | None) -> dict:
-    """Movements, approach arms and signal states on entry of the non-pedestrian users in a set of conflicts."""
+def evidence(events: pd.DataFrame, routes: pd.DataFrame, signals: pd.DataFrame | None,
+             signal_classes: tuple[str, ...] = SIGNAL_CLASSES) -> dict:
+    """Movements and approach arms of the non-pedestrian users in a set of conflicts, and the signal state on entry of
+    those in signal_classes."""
     ids = set(events["id_1"]) | set(events["id_2"])
     r = routes[routes["id"].isin(ids) & (routes["cls"] != "pedestrian")]
     moves = Counter(r["movement"])
     entry = Counter()
     if signals is not None and len(signals):
-        entry = Counter(s for s in (movements.entry_signal(signals, x) for x in r.itertuples()) if s)
+        entry = Counter(s for s in (movements.entry_signal(signals, x) for x in r.itertuples()
+                                    if x.cls in signal_classes) if s)
     shown = set()
     if moves["left"] or moves["right"] or moves["u_turn"]:
         shown.add("a turning movement")
@@ -74,6 +78,7 @@ def evidence(events: pd.DataFrame, routes: pd.DataFrame, signals: pd.DataFrame |
 
 def audit(states: pd.DataFrame, cmf: pd.DataFrame, *, signals: pd.DataFrame | None, control: str | None,
           right_turn_signalised: bool, conditions: frozenset[str] = frozenset(), cell_m: float = CELL_M,
+          signal_classes: tuple[str, ...] = SIGNAL_CLASSES,
           top: int = 3) -> dict:
     """Rank cells by the lower 95% bound of conflicts per 1,000 road users, then match countermeasures to each
     cell's dominant conflict, keeping those whose condition the conflicts show and that pass the site checks.
@@ -91,7 +96,7 @@ def audit(states: pd.DataFrame, cmf: pd.DataFrame, *, signals: pd.DataFrame | No
         groups = Counter((_pair(r), r.type) for r in in_cell.itertuples())
         (pair, ctype), n = groups.most_common(1)[0]
         dominant = in_cell[[(_pair(r), r.type) == (pair, ctype) for r in in_cell.itertuples()]]
-        ev = evidence(dominant, route_table, signals)
+        ev = evidence(dominant, route_table, signals, signal_classes)
         cands, rejected = countermeasures.candidates(cmf, pair, ctype, control=control,
                                                      conditions=conditions | set(ev["shows"]))
         kept = []
@@ -118,6 +123,7 @@ def audit(states: pd.DataFrame, cmf: pd.DataFrame, *, signals: pd.DataFrame | No
     return {
         "observed_s": round(duration_s, 1), "users": {str(k): int(v) for k, v in users.items()},
         "control": control or "unknown", "right_turn_signalised": right_turn_signalised,
+        "signal_evidence_classes": list(signal_classes),
         "conflicts": {"total": int(len(table)), "by_measure": table["measure"].value_counts().to_dict(),
                       "by_type": table["type"].value_counts().to_dict()},
         "thresholds": {"pet_s": PET_SERIOUS_S, "ttc_s": conflicts.TTC_MAX_S, "cell_m": cell_m,
@@ -151,7 +157,8 @@ def memo(facts: dict, title: str, source: str) -> str:
                                      f"min TTC {d['min_ttc_s']} s" if d["min_ttc_s"] is not None else "") if s)
         mv = "; movements " + ", ".join(f"{v} {k.replace('_', '-')}" for k, v in d["movements"].items()) if d["movements"] else ""
         if d["entry_signal"]:
-            mv += "; signal on entry " + ", ".join(f"{v} {SIGNAL_NAMES.get(k, k)}" for k, v in d["entry_signal"].items())
+            who = " and ".join(f"{k.replace('_', '-')}s" for k in facts.get("signal_evidence_classes", SIGNAL_CLASSES))
+            mv += f"; signal on entry ({who}) " + ", ".join(f"{v} {SIGNAL_NAMES.get(k, k)}" for k, v in d["entry_signal"].items())
         lines += [f"## Hotspot {f['rank']} at ({f['x']}, {f['y']}) m", "",
                   f"{f['events']} conflicts among {f['users']} road users: {f['rate_per_1000']} per 1,000 "
                   f"(95% CI {f['ci95'][0]}–{f['ci95'][1]}). Dominant: {d['events']} {d['type'].replace('_', '-')} "

@@ -79,3 +79,7 @@ Made before any test or held-out run, after a literature review (`research/R6_pa
      - the events Muse Spark judges real;
      - the smallest set of most severe candidates (lowest PET or TTC) that reaches the same recall, which is the no-model ranking.
    - Precision and recall before filtering are reported as well.
+7. **Signal state on entry, decided after the test and held-out runs and disclosed as such.**
+   - **Observed entry:** a track that begins inside the 20 m entry radius, for example a fragment of a broken track, now has no entry time. Before, the fragment's start counted as its entry.
+   - **Evidence with SAM 3.1 tracks:** these tracks match the reference on vehicles. On two-wheelers they over-count red entries, probably because riders waiting in dense queues are missed more often than lone riders running the light. With SAM tracks, only vehicle entries now count as evidence for "an entry on yellow or red". Reference audits keep both classes.
+   - **Where the numbers are:** the agreement table per split is in `validation/results/<split>/signal_entry.json` and in RESULTS.md.

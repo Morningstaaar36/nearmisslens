@@ -14,6 +14,9 @@ from .cost import IMAGE_USD, SAM_IMAGE_USD, voice_usd
 from .meta_client import MetaClient
 
 VERIFY_USD = 0.002
+# Road-user classes whose signal state on entry is used as evidence. With SAM 3.1 tracks only vehicles agree with the
+# reference on the registered clips (validation/results/*/signal_entry.json, PREREG change 7).
+SIGNAL_CLASSES = {"reference": ("vehicle", "two_wheeler"), "sam": ("vehicle",)}
 
 
 def site_states(split: str, source: str, client: MetaClient | None = None):
@@ -133,7 +136,8 @@ def run_audit(split: str, source: str, verify_n: int = 0, illustrate: bool = Fal
     signals = fluid.load_signals(c)
     facts = audit.audit(states, countermeasures.load_cmf(), signals=signals,
                         control="Signalized" if len(signals) else None,
-                        right_turn_signalised=fluid.has_right_turn_control(signals))
+                        right_turn_signalised=fluid.has_right_turn_control(signals),
+                        signal_classes=SIGNAL_CLASSES[source])
     out = (out_root or SETTINGS.runs_dir / "audit") / f"{split}_{source}"
     usd = estimate_usd(len(facts["findings"]), verify_n, illustrate)
     if usd:

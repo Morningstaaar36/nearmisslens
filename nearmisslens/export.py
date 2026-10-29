@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import re
-import shutil
 from pathlib import Path
 
 import cv2
@@ -56,10 +55,10 @@ def event_window(states: pd.DataFrame, example: dict, x: float, y: float) -> dic
     return {**example, "users": users}
 
 
-def signal_entry(states: pd.DataFrame, signals: pd.DataFrame) -> list[dict]:
+def signal_entry(states: pd.DataFrame, signals: pd.DataFrame, classes=("vehicle", "two_wheeler")) -> list[dict]:
     """Signal state on entry per approach and road-user class, for users whose movement has a signal group."""
     r = movements.routes(states)
-    r = r[r["cls"] != "pedestrian"]
+    r = r[r["cls"].isin(classes)]
     r = r.assign(state=[movements.entry_signal(signals, x) for x in r.itertuples()]).dropna(subset=["state"])
     if r.empty:
         return []
@@ -98,11 +97,13 @@ def panel_view(p: dict | None) -> dict | None:
 
 
 def _media(src: str | None, out_dir: Path) -> str | None:
+    """Copy an image for the viewer, as a JPEG at the original size."""
     if not src or not Path(src).exists():
         return None
     out_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, out_dir / Path(src).name)
-    return f"media/{Path(src).name}"
+    name = f"{Path(src).stem}.jpg"
+    cv2.imwrite(str(out_dir / name), cv2.imread(str(src)), [cv2.IMWRITE_JPEG_QUALITY, 85])
+    return f"media/{name}"
 
 
 def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None = None) -> Path:
@@ -125,7 +126,7 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
             "map": base_map(c, data / "media" / f"{c.site}_map.jpg"), "facts": facts,
             "memo": (run / "memo.md").read_text(), "panel": panel_view(current(run / "panel.json", fid)),
             "conflicts": conflicts[["measure", "value", "type", "cls_1", "cls_2", "t", "x", "y"]].round(2).to_dict("list")
-            if len(conflicts) else {}, "signal_entry": signal_entry(states, signals),
+            if len(conflicts) else {}, "signal_entry": signal_entry(states, signals, facts.get("signal_evidence_classes", audit.SIGNAL_CLASSES)),
             "voice": current(run / "voice.json", fid)}
     data.mkdir(parents=True, exist_ok=True)
     (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))

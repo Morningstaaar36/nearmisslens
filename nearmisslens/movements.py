@@ -54,7 +54,8 @@ def routes(states: pd.DataFrame, centre: tuple[float, float] | None = None) -> p
 def entry_time(t: np.ndarray, dist: np.ndarray, speed: np.ndarray) -> float:
     """Time the user entered the junction on its passage: within ENTRY_RADIUS_M of the centre, on the uninterrupted
     stretch at ENTRY_MIN_SPEED or more that contains its closest approach. A vehicle that stops in a queue inside the
-    radius enters when it moves off."""
+    radius enters when it moves off. A track that begins inside the radius (for example a fragment of a broken track)
+    has no observed entry."""
     if len(t) == 0 or dist.min() > ENTRY_RADIUS_M:
         return float("nan")
     k = int(np.argmin(dist))
@@ -62,7 +63,9 @@ def entry_time(t: np.ndarray, dist: np.ndarray, speed: np.ndarray) -> float:
     while start > 0 and speed[start - 1] >= ENTRY_MIN_SPEED:
         start -= 1
     inside = np.nonzero(dist[start:k + 1] <= ENTRY_RADIUS_M)[0]
-    return float(t[start + inside[0]]) if len(inside) else float("nan")
+    if not len(inside) or start + inside[0] == 0:
+        return float("nan")
+    return float(t[start + inside[0]])
 
 
 def signal_group(move: str) -> str | None:

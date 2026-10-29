@@ -25,22 +25,24 @@ def cmd_selftest(args) -> int:
 
 
 def cmd_evaluate(args) -> int:
-    import json
-    from .config import ROOT
-    from .evaluate import SPLITS, results_markdown, run_split
+    from .evaluate import RESULTS_DIR, results_markdown, run_split, signal_agreement, write_results
     from .meta_client import MetaClient
     client = MetaClient(SETTINGS)
-    out_root = ROOT / "validation" / "results"
     summaries = []
     for name in args.splits:
-        summaries.append(run_split(name, client, SETTINGS.data_dir / "work", out_root))
-    existing = []
-    for name in SPLITS:
-        p = out_root / name / "summary.json"
-        if p.exists():
-            existing.append(json.loads(p.read_text()))
-    (ROOT / "validation" / "RESULTS.md").write_text(results_markdown(existing))
+        summaries.append(run_split(name, client, SETTINGS.data_dir / "work", RESULTS_DIR))
+        signal_agreement(name)
+    write_results()
     print(results_markdown(summaries))
+    return 0
+
+
+def cmd_results(_args) -> int:
+    from .evaluate import SPLITS, RESULTS_DIR, signal_agreement, write_results
+    for name in SPLITS:
+        if (RESULTS_DIR / name / "summary.json").exists():
+            signal_agreement(name)
+    print(write_results())
     return 0
 
 
@@ -126,6 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
     sub.add_parser("cost", help="Meta API spend so far")
+    sub.add_parser("results", help="regenerate validation/RESULTS.md from stored results (free)")
     sub.add_parser("metrics", help="latest logged metrics per stage, clip and class")
     ev = sub.add_parser("evaluate", help="track and score pre-registered splits (dev, test, heldout)")
     ev.add_argument("splits", nargs="+", choices=["dev", "test", "heldout"])
@@ -177,7 +180,7 @@ def run_command(args) -> int:
             "panel": cmd_panel, "export": cmd_export,
             "voice": cmd_voice, "baseline": cmd_baseline,
             "verifier": cmd_verifier, "fetch": cmd_fetch,
-            "demo": cmd_demo}[args.cmd](args)
+            "demo": cmd_demo, "results": cmd_results}[args.cmd](args)
 
 
 if __name__ == "__main__":
