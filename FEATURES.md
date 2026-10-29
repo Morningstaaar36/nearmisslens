@@ -19,7 +19,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [ ] Review panel, run on the test and held-out audits.
 - [ ] Fix illustration, run on real hotspots.
 - [ ] Voice complaints (Muse Voice Transcribe), matched to measured hotspots.
-- [ ] Signal-entry chart: red and yellow entries by approach and road-user class.
+- [x] **Signal-entry chart:** red and yellow entries by approach and road-user class. Verified by `tests/test_export.py`; shown in the viewer's "Who enters on red" section.
 
 ## Validation (pre-registered in `validation/PREREG.md`)
 - [x] Splits fixed before any test or held-out run: dev, test, and held-out intersection.
@@ -28,9 +28,9 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [ ] Verifier precision gain against reference events.
 
 ## Display
-- [ ] Viewer (GitHub Pages): hotspot map, memo and before/after.
-- [ ] 3D replay of top conflicts (three.js, measured boxes).
-- [ ] Panel debate view, showing the claims the checker caught.
+- [x] **Viewer (GitHub Pages, `docs/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).
+- [x] **3D replay of top conflicts:** three.js, measured positions, sizes and headings; heights are schematic. Verified by a headless WebGL screenshot.
+- [ ] Panel debate view, showing the claims the checker caught (built; to be ticked once a real panel run shows in it).
 - [ ] Scorecard page generated from `RESULTS.md`.
 
 ## Offline and open weights
@@ -41,6 +41,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [ ] README with quick start and "built during the hackathon".
 - [ ] LICENSES.md (FLUID CC BY 4.0, CMF Clearinghouse, FHWA) and PRIVACY.md.
 - [ ] 3-minute demo video rendered from real outputs, plus a 20 s X cut.
+- [ ] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
 - [ ] Repo public, Pages live, no keys in history.
 - [ ] Submitted on the portal before Nov 4, 12:00 Dhaka.
 

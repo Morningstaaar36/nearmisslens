@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NearMissLens</title>
+<meta name="description" content="Replay of a road-safety near-miss audit: hotspots, 3D conflict replays, cited countermeasures and the review panel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+</head>
+<body>
+<header class="top">
+  <h1>NearMissLens</h1>
+  <p class="lede">Near-misses measured from drone video, ranked by hotspot, and matched to cited safety countermeasures.</p>
+  <label class="pick">Audit <select id="audit"></select></label>
+</header>
+
+<main>
+  <section class="stage" aria-label="Junction">
+    <div class="viewbar">
+      <div class="seg" role="tablist">
+        <button id="v2d" role="tab" aria-selected="true">Map</button>
+        <button id="v3d" role="tab" aria-selected="false">3D replay</button>
+      </div>
+      <p id="source" class="source"></p>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="map" aria-label="Base map with conflicts and hotspot cells"></canvas>
+      <div id="three" hidden></div>
+    </div>
+    <div id="replaybar" class="replaybar" hidden>
+      <button id="play">Play</button>
+      <input id="time" type="range" min="-4" max="3" step="0.05" value="-4" aria-label="Time relative to the conflict">
+      <output id="tlabel">-4.0 s</output>
+      <select id="event" aria-label="Conflict to replay"></select>
+    </div>
+    <p class="legend" id="legend"></p>
+  </section>
+
+  <aside class="rail" id="rail" aria-live="polite"></aside>
+</main>
+
+<section class="band" id="panel-sec">
+  <h2>How the review panel decided</h2>
+  <p class="note">Three agents argue the recommendations: a Proposer and a Skeptic (Muse Spark) and a Judge (Muse Wonder). A checker rejects any hotspot, CMF or number that is not in the audit, and the agent must correct it.</p>
+  <div id="panel"></div>
+</section>
+
+<section class="band" id="signal-sec">
+  <h2>Who enters on red</h2>
+  <p class="note">Signal state when each road user entered the junction, by approach. From the tracks and the site's signal log.</p>
+  <div id="signals"></div>
+</section>
+
+<section class="band" id="score-sec">
+  <h2>Does it work?</h2>
+  <p class="note">Every row is recomputed from the data by <code>nml selftest</code>. Results on the pre-registered test and held-out clips appear below once evaluated.</p>
+  <div id="score"></div>
+  <div id="results" class="memo"></div>
+</section>
+
+<section class="band" id="memo-sec">
+  <h2>Audit memo</h2>
+  <div id="memo" class="memo"></div>
+</section>
+
+<footer>
+  <p>Video, trajectories, signal logs and base maps: FLUID dataset (Scientific Data, 2026), CC BY 4.0. Crash modification factors: FHWA CMF Clearinghouse. Countermeasures: FHWA Proven Safety Countermeasures. Road users are anonymous per-clip tracks.</p>
+  <p>A screening tool built on surrogate safety measures. It does not predict crashes, and a qualified traffic engineer must review any design.</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+"""Static data for the replay viewer (docs/, served by GitHub Pages): base map, audit facts, conflicts, the review
+panel, signal state on entry and short trajectory windows around each hotspot's most severe conflicts.
+
+Everything is read from an audit run and the same road-user states it used; nothing is computed in the browser
+except drawing."""
+from __future__ import annotations
+
+import json
+import re
+import shutil
+from pathlib import Path
+
+import cv2
+import numpy as np
+import pandas as pd
+
+from . import calibrate, fluid, movements, runner
+from .config import ROOT, SETTINGS
+from .meta_client import MetaClient
+
+DOCS = ROOT / "docs"
+MAP_WIDTH_PX = 2400
+EVENTS_PER_HOTSPOT = 3
+WINDOW_S = (-4.0, 3.0)
+NEIGHBOUR_M = 35.0
+REPLAY_HZ = 5.0
+SOURCE_LABEL = {"reference": "FLUID reference trajectories (YOLOv8-OBB + SparseTrack)",
+                "sam": "SAM 3.1 tiled video tracking (Meta Model API)"}
+
+
+def base_map(c: fluid.Clip, out: Path, width_px: int = MAP_WIDTH_PX) -> dict:
+    """Downscaled base map and its metric frame: x = x0 + col * mpp, y = y0 - row * mpp."""
+    img = cv2.imread(str(c.base_map), cv2.IMREAD_COLOR)
+    x0, y0, sx, sy = calibrate.geotiff_transform(c.base_map)
+    f = width_px / img.shape[1]
+    small = cv2.resize(img, None, fx=f, fy=f, interpolation=cv2.INTER_AREA)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(str(out), small, [cv2.IMWRITE_JPEG_QUALITY, 82])
+    return {"image": out.name, "width": small.shape[1], "height": small.shape[0], "x0": x0, "y0": y0,
+            "mpp_x": sx / f, "mpp_y": sy / f}
+
+
+def event_window(states: pd.DataFrame, example: dict, x: float, y: float) -> dict:
+    """Road users within NEIGHBOUR_M of the hotspot around one conflict, at REPLAY_HZ, times relative to the event."""
+    t0 = example["t"]
+    w = states[states["t"].between(t0 + WINDOW_S[0], t0 + WINDOW_S[1])]
+    near = w.loc[np.hypot(w["x"] - x, w["y"] - y) <= NEIGHBOUR_M, "id"].astype(str).unique()
+    w = w[w["id"].astype(str).isin(near)]
+    step = max(1, int(round(1 / (REPLAY_HZ * w["t"].diff().replace(0, np.nan).abs().min())))) if len(w) > 1 else 1
+    w = w[(w["frame"] % step) == 0]
+    users = []
+    for uid, tr in w.sort_values("t").groupby(w["id"].astype(str)):
+        users.append({"id": uid, "cls": tr["cls"].iloc[0], "length": round(float(tr["length"].median()), 2),
+                      "width": round(float(tr["width"].median()), 2),
+                      "track": np.round(np.stack([tr["t"] - t0, tr["x"], tr["y"], tr["yaw"]], axis=1), 3).tolist()})
+    return {**example, "users": users}
+
+
+def signal_entry(states: pd.DataFrame, signals: pd.DataFrame) -> list[dict]:
+    """Signal state on entry per approach and road-user class, for users whose movement has a signal group."""
+    r = movements.routes(states)
+    r = r[r["cls"] != "pedestrian"]
+    r = r.assign(state=[movements.entry_signal(signals, x) for x in r.itertuples()]).dropna(subset=["state"])
+    if r.empty:
+        return []
+    counts = r.groupby(["entry_arm", "cls", "state"]).size().unstack(fill_value=0)
+    return [{"arm": arm, "cls": cls, **{s: int(counts.loc[(arm, cls)].get(s, 0)) for s in ("G", "y", "r")}}
+            for arm, cls in counts.index]
+
+
+def selftest_rows(path: Path) -> list[dict]:
+    rows = []
+    for line in path.read_text().splitlines() if path.exists() else []:
+        m = re.match(r"^\| (\w+) \| (PASS|FAIL|SKIP) \| (.*) \| `(.*)` \|$", line)
+        if m:
+            rows.append({"check": m[1], "status": m[2], "criterion": m[3], "result": json.loads(m[4])})
+    return rows
+
+
+def panel_view(path: Path) -> dict | None:
+    if not path.exists():
+        return None
+    p = json.loads(path.read_text())
+    keep = ("status", "proposals", "objections", "decisions", "memo", "usd", "caught")
+    return {**{k: p[k] for k in keep if k in p},
+            "stages": [{k: s[k] for k in ("role", "model", "accepted", "stopped", "turns", "usd")}
+                       | {"caught": [e for a in s["rejected_attempts"] for e in a["errors"]]} for s in p["stages"]]}
+
+
+def _media(src: str | None, out_dir: Path) -> str | None:
+    if not src or not Path(src).exists():
+        return None
+    out_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, out_dir / Path(src).name)
+    return f"media/{Path(src).name}"
+
+
+def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None = None) -> Path:
+    run = SETTINGS.runs_dir / "audit" / f"{split}_{source}"
+    if not (run / "facts.json").exists():
+        raise FileNotFoundError(f"no audit at {run}; run: nml audit {split} --source {source}")
+    facts = json.loads((run / "facts.json").read_text())
+    c, states = runner.site_states(split, source, client)
+    key = f"{split}_{source}"
+    data = docs / "data"
+    signals = fluid.load_signals(c)
+    for f in facts["findings"]:
+        f["replays"] = [event_window(states, e, f["x"], f["y"]) for e in f["examples"][:EVENTS_PER_HOTSPOT]]
+        if f.get("illustration"):
+            f["illustration"]["image"] = _media(f["illustration"]["image"], data / "media")
+    conflicts = pd.read_csv(run / "conflicts.csv") if (run / "conflicts.csv").exists() else pd.DataFrame()
+    view = {"key": key, "split": split, "site": c.site, "clip": c.stem, "source": SOURCE_LABEL[source],
+            "map": base_map(c, data / "media" / f"{c.site}_map.jpg"), "facts": facts,
+            "memo": (run / "memo.md").read_text(), "panel": panel_view(run / "panel.json"),
+            "conflicts": conflicts[["measure", "value", "type", "cls_1", "cls_2", "t", "x", "y"]].round(2).to_dict("list")
+            if len(conflicts) else {}, "signal_entry": signal_entry(states, signals)}
+    data.mkdir(parents=True, exist_ok=True)
+    (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))
+    index_path = data / "index.json"
+    index = json.loads(index_path.read_text()) if index_path.exists() else {"audits": []}
+    index["audits"] = sorted([a for a in index["audits"] if a["key"] != key]
+                             + [{"key": key, "title": f"{c.site} {c.stem} ({split}, {source})"}], key=lambda a: a["key"])
+    index["selftest"] = selftest_rows(ROOT / "validation" / "SELFTEST.md")
+    results = ROOT / "validation" / "RESULTS.md"
+    index["results_md"] = results.read_text() if results.exists() else None
+    index_path.write_text(json.dumps(index, indent=1))
+    return data / f"{key}.json"

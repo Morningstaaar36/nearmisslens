@@ -71,6 +71,13 @@ def cmd_panel(args) -> int:
     return 0 if result["status"] == "complete" else 1
 
 
+def cmd_export(args) -> int:
+    from .export import export
+    path = export(args.split, args.source)
+    print(f"written {path} ({path.stat().st_size / 1e6:.1f} MB); preview: python -m http.server -d docs")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -90,13 +97,16 @@ def main(argv: list[str] | None = None) -> int:
     pa = sub.add_parser("panel", help="Proposer, Skeptic and Judge agents review an audit, held to the data by a checker")
     pa.add_argument("split", choices=["dev", "test", "heldout"])
     pa.add_argument("--source", choices=["reference", "sam"], default="reference")
+    ex = sub.add_parser("export", help="viewer data (docs/) from an audit run")
+    ex.add_argument("split", choices=["dev", "test", "heldout"])
+    ex.add_argument("--source", choices=["reference", "sam"], default="reference")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
     return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
-            "panel": cmd_panel}[args.cmd](args)
+            "panel": cmd_panel, "export": cmd_export}[args.cmd](args)
 
 
 if __name__ == "__main__":
