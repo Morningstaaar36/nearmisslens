@@ -140,6 +140,14 @@ class MetaClient:
             return r.json()
         return self._retrying(call)
 
+    def post_form(self, path: str, files: dict, headers: dict | None = None) -> dict:
+        def call():
+            r = self.http.post(path, files=files, headers=headers or {})
+            if r.status_code != 200:
+                raise ApiError(r.status_code, r.text)
+            return r.json()
+        return self._retrying(call)
+
     def upload_file(self, path: Path, expire_seconds: int = 7 * 24 * 3600) -> str:
         path = Path(path)
         req = {"sha256": file_sha256(path), "name": path.name}

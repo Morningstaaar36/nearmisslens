@@ -23,6 +23,9 @@ local = [
     "pycocotools",
     "decord; platform_machine == 'x86_64'",
 ]
+voice = [
+    "transformers>=4.45",
+]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }

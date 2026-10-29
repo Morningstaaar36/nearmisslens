@@ -52,7 +52,7 @@ def _pair(r) -> tuple[str, str]:
 
 
 def evidence(events: pd.DataFrame, routes: pd.DataFrame, signals: pd.DataFrame | None) -> dict:
-    """Movements and signal states on entry of the non-pedestrian users in a set of conflicts."""
+    """Movements, approach arms and signal states on entry of the non-pedestrian users in a set of conflicts."""
     ids = set(events["id_1"]) | set(events["id_2"])
     r = routes[routes["id"].isin(ids) & (routes["cls"] != "pedestrian")]
     moves = Counter(r["movement"])
@@ -66,7 +66,8 @@ def evidence(events: pd.DataFrame, routes: pd.DataFrame, signals: pd.DataFrame |
         shown.add("a left-turn movement")
     if entry["y"] or entry["r"]:
         shown.add("an entry on yellow or red")
-    return {"movements": dict(moves), "entry_signal": dict(entry), "shows": sorted(shown),
+    approaches = Counter(a for a in r["entry_arm"] if a in movements.ARMS)
+    return {"movements": dict(moves), "approaches": dict(approaches), "entry_signal": dict(entry), "shows": sorted(shown),
             "main_movement": moves.most_common(1)[0][0] if moves else "unknown"}
 
 

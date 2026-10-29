@@ -113,7 +113,8 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
             "map": base_map(c, data / "media" / f"{c.site}_map.jpg"), "facts": facts,
             "memo": (run / "memo.md").read_text(), "panel": panel_view(run / "panel.json"),
             "conflicts": conflicts[["measure", "value", "type", "cls_1", "cls_2", "t", "x", "y"]].round(2).to_dict("list")
-            if len(conflicts) else {}, "signal_entry": signal_entry(states, signals)}
+            if len(conflicts) else {}, "signal_entry": signal_entry(states, signals),
+            "voice": json.loads((run / "voice.json").read_text()) if (run / "voice.json").exists() else None}
     data.mkdir(parents=True, exist_ok=True)
     (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))
     index_path = data / "index.json"

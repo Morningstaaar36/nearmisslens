@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import wave
 from pathlib import Path
 
 import cv2
@@ -64,3 +65,8 @@ def frame_at(path: Path, index: int) -> np.ndarray:
     for _, img in frames(path, index, 1):
         return img
     raise IndexError(index)
+
+
+def wav_seconds(path: Path) -> float:
+    with wave.open(str(path), "rb") as w:
+        return w.getnframes() / w.getframerate()

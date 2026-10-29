@@ -78,6 +78,26 @@ def cmd_export(args) -> int:
     return 0
 
 
+def cmd_voice(args) -> int:
+    from .runner import run_voice
+    out = run_voice(args.split, args.source, args.audio)
+    report = json.loads(out.read_text())
+    for r in report["results"]:
+        m = r["match"]
+        where = f"hotspot {m['rank']} ({'; '.join(m['evidence'])})" if m["rank"] else "no hotspot in this audit shows it"
+        print(f"- {r['transcript']}\n  -> {r['complaint']['concern']} [{where}]"
+              + (f" {'correct' if r['correct'] else 'WRONG'}, WER {r['word_error_rate']}" if r.get("synthetic") else ""))
+    print(json.dumps(report["summary"]))
+    print(f"written to {out}")
+    return 0
+
+
+def cmd_baseline(args) -> int:
+    from .baseline import run_b0
+    print(json.dumps(run_b0(split=args.split), indent=1, default=float))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -100,13 +120,22 @@ def main(argv: list[str] | None = None) -> int:
     ex = sub.add_parser("export", help="viewer data (docs/) from an audit run")
     ex.add_argument("split", choices=["dev", "test", "heldout"])
     ex.add_argument("--source", choices=["reference", "sam"], default="reference")
+    vo = sub.add_parser("voice", help="match a spoken complaint to the audit's hotspots (Muse Voice Transcribe + Muse Spark); "
+                                      "without --audio, test on synthetic complaints spoken by MMS-TTS")
+    vo.add_argument("split", choices=["dev", "test", "heldout"])
+    vo.add_argument("--source", choices=["reference", "sam"], default="reference")
+    vo.add_argument("--audio", help="a recording in any format ffmpeg reads")
+    b0 = sub.add_parser("baseline", help="B0: Muse Spark alone watches 10 s windows and lists near-misses, scored "
+                                         "with the pipeline against the reference")
+    b0.add_argument("split", choices=["dev", "test", "heldout"], nargs="?", default="test")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
     return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
-            "panel": cmd_panel, "export": cmd_export}[args.cmd](args)
+            "panel": cmd_panel, "export": cmd_export,
+            "voice": cmd_voice, "baseline": cmd_baseline}[args.cmd](args)
 
 
 if __name__ == "__main__":

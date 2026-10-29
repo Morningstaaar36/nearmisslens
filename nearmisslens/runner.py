@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import json
+import subprocess
 from pathlib import Path
 
 import pandas as pd
 
-from . import audit, countermeasures, evaluate, fluid, pipeline, render, verifier, video
+from . import audit, complaints, countermeasures, evaluate, fluid, pipeline, render, verifier, video, voice
+from .cache import file_sha256
 from .config import SETTINGS
-from .cost import IMAGE_USD, SAM_IMAGE_USD
+from .cost import IMAGE_USD, SAM_IMAGE_USD, voice_usd
 from .meta_client import MetaClient
 
 VERIFY_USD = 0.002
@@ -95,4 +98,48 @@ def run_audit(split: str, source: str, verify_n: int = 0, illustrate: bool = Fal
     label = {"reference": "FLUID reference trajectories (YOLOv8-OBB + SparseTrack)",
              "sam": "SAM 3.1 tiled video tracking (Meta Model API)"}[source]
     audit.write(facts, audit.memo(facts, f"{c.site} {c.stem}", label), out, audit.conflict_table(states))
+    return out
+
+
+def as_wav(audio: Path, work: Path) -> Path:
+    """16 kHz mono 16-bit WAV copy of any audio file ffmpeg can read."""
+    out = work / f"input_{file_sha256(audio)[:12]}.wav"
+    if not out.exists():
+        work.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(audio), "-ac", "1", "-ar", "16000", "-sample_fmt", "s16",
+                        str(out)], check=True)
+    return out
+
+
+def run_voice(split: str, source: str, audio: Path | None = None, client: MetaClient | None = None) -> Path:
+    """Match a recording to the audit's hotspots, or, without one, test the intake on synthetic complaints spoken by
+    MMS-TTS: one per hotspot and a decoy that no hotspot shows."""
+    run = SETTINGS.runs_dir / "audit" / f"{split}_{source}"
+    if not (run / "facts.json").exists():
+        raise FileNotFoundError(f"no audit at {run}; run: nml audit {split} --source {source}")
+    facts = json.loads((run / "facts.json").read_text())
+    client = client or MetaClient(SETTINGS)
+    work = SETTINGS.data_dir / "work" / "voice"
+    tests = [] if audio else complaints.synthesize(facts)
+    wavs = [as_wav(Path(audio), work)] if audio else [complaints.speak(c["text"], c["lang"], work) for c in tests]
+    usd = sum(voice_usd(video.wav_seconds(w) + 1) + 0.002 for w in wavs)
+    client.meter.check(usd, f"voice {split}")
+    print(f"model calls for {len(wavs)} recordings: up to ${usd:.4f} (cached calls are free)")
+    results = []
+    for k, w in enumerate(wavs):
+        r = voice.intake(client, w, facts, f"{split} {k}")
+        if tests:
+            c = tests[k]
+            want = complaints.expected(c, facts)
+            r |= {"synthetic": True, "source": c["source"], "lang": complaints.LANGS[c["lang"]], "spoken_text": c["text"],
+                  "expected": sorted(want), "correct": (r["match"]["rank"] in want) if want else r["match"]["rank"] is None,
+                  "word_error_rate": round(voice.word_error_rate(c["text"], r["transcript"]), 3)}
+        results.append(r)
+    summary = {"recordings": len(results)}
+    if tests:
+        summary |= {"correct": sum(r["correct"] for r in results),
+                    "match_accuracy": round(sum(r["correct"] for r in results) / len(results), 3),
+                    "mean_word_error_rate": round(sum(r["word_error_rate"] for r in results) / len(results), 3)}
+    out = run / ("voice.json" if not audio else f"voice_{Path(audio).stem}.json")
+    out.write_text(json.dumps({"summary": summary, "results": results}, indent=1, default=str))
     return out

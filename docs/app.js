@@ -60,6 +60,7 @@ async function load(key) {
   renderRail();
   renderPanel();
   renderSignals();
+  renderVoice();
   $("memo").innerHTML = md(st.view.memo);
   if (three) disposeTextures();
   drawMap();
@@ -396,6 +397,28 @@ function renderPanel() {
   }
   if (p.memo) h += `<h3>Judge's memo</h3><div class="memo">${md(p.memo)}</div>`;
   $("panel").innerHTML = h;
+}
+
+/* ---------- complaints ---------- */
+
+function renderVoice() {
+  const v = st.view.voice;
+  if (!v) {
+    $("voice").innerHTML = `<p class="empty">No complaints have been checked for this audit. Run <code>nml voice ${esc(st.view.split)}</code>, or add <code>--audio</code> with a recording.</p>`;
+    return;
+  }
+  const s = v.summary;
+  let h = s.match_accuracy !== undefined
+    ? `<p>Test on ${s.recordings} synthetic complaints spoken by Meta MMS-TTS from the audit's own hotspots, plus a decoy no hotspot shows: ` +
+      `${s.correct} of ${s.recordings} matched correctly, mean word error rate ${fmt(s.mean_word_error_rate * 100, 0)}%. These are test recordings, not residents' reports.</p>`
+    : "";
+  h += `<div class="stages">${v.results.map((r) => {
+    const m = r.match;
+    const verdict = m.rank ? `Matches hotspot ${m.rank}: ${esc(m.evidence.join(", "))}.` : "No hotspot in this audit shows it.";
+    const check = r.synthetic ? `<p class="meta">Built from ${esc(r.source)}, spoken in ${esc(r.lang)}. ${r.correct ? "Correct." : "Wrong."} Word error rate ${fmt(r.word_error_rate * 100, 0)}%.</p>` : "";
+    return `<div class="stagecard ${m.rank ? "ok" : ""}"><p>“${esc(r.transcript)}”</p><p class="meta">${esc(r.complaint.concern)}</p><p><strong>${verdict}</strong></p>${check}</div>`;
+  }).join("")}</div>`;
+  $("voice").innerHTML = h;
 }
 
 /* ---------- signals ---------- */
