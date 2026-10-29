@@ -104,10 +104,18 @@ def cmd_verifier(args) -> int:
     return 0
 
 
+def cmd_fetch(_args) -> int:
+    from .fetch import fetch_all
+    for p in fetch_all():
+        print(f"ok {p}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
     sub = parser.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
     sub.add_parser("cost", help="Meta API spend so far")
     sub.add_parser("metrics", help="latest logged metrics per stage, clip and class")
     ev = sub.add_parser("evaluate", help="track and score pre-registered splits (dev, test, heldout)")
@@ -157,7 +165,7 @@ def run_command(args) -> int:
     return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
             "panel": cmd_panel, "export": cmd_export,
             "voice": cmd_voice, "baseline": cmd_baseline,
-            "verifier": cmd_verifier}[args.cmd](args)
+            "verifier": cmd_verifier, "fetch": cmd_fetch}[args.cmd](args)
 
 
 if __name__ == "__main__":

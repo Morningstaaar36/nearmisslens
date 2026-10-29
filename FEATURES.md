@@ -18,14 +18,17 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Fix illustration (Muse Image + SAM 3.1 check), built:** road users protected, edit checked by SAM. Verified by `tests/test_render.py`.
 - [ ] Review panel, run on the test and held-out audits.
 - [ ] Fix illustration, run on real hotspots.
-- [ ] Voice complaints (Muse Voice Transcribe), matched to measured hotspots.
+- [x] **Voice complaints, built:** Muse Voice Transcribe, then Muse Spark extraction, then a fixed matching rule. Synthetic complaints in 3 languages are spoken by MMS-TTS. Verified by `tests/test_voice.py`.
+- [ ] Voice complaints, run on real audits.
 - [x] **Signal-entry chart:** red and yellow entries by approach and road-user class. Verified by `tests/test_export.py`; shown in the viewer's "Who enters on red" section.
 
 ## Validation (pre-registered in `validation/PREREG.md`)
 - [x] Splits fixed before any test or held-out run: dev, test, and held-out intersection.
 - [ ] Evaluation of dev, test and held-out, written to `validation/RESULTS.md`.
-- [ ] B0 baseline: Muse Spark alone watching the video, compared with the pipeline.
-- [ ] Verifier precision gain against reference events.
+- [x] **B0 baseline, built:** scorer and windows as pre-registered. Verified by `tests/test_baseline.py`.
+- [ ] B0 baseline, run on the test clip.
+- [x] **Verifier precision-gain test, built:** command `nml verifier`.
+- [ ] Verifier precision gain, run on the test clip.
 
 ## Display
 - [x] **Viewer (GitHub Pages, `docs/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).
@@ -38,8 +41,9 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [ ] Muse Glimmer offline answers (subject to a 2-hour feasibility check).
 
 ## Submission
-- [ ] README with quick start and "built during the hackathon".
-- [ ] LICENSES.md (FLUID CC BY 4.0, CMF Clearinghouse, FHWA) and PRIVACY.md.
+- [x] **README** with quick start, Meta tools table and "built during the hackathon".
+- [x] **LICENSES.md and PRIVACY.md.**
+- [x] **Data download:** `nml fetch` reads clips out of remote ZIP64 archives with resumable range requests and a CRC32 check, verifies MD5s, and completes the CMF server's certificate chain from its AIA URL. Verified by `tests/test_fetch.py`.
 - [ ] 3-minute demo video rendered from real outputs, plus a 20 s X cut.
 - [ ] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
 - [ ] Repo public, Pages live, no keys in history.
