@@ -52,6 +52,25 @@ def cmd_audit(args) -> int:
     return 0
 
 
+def cmd_panel(args) -> int:
+    from . import panel
+    from .countermeasures import load_cmf
+    from .meta_client import MetaClient
+    src = SETTINGS.runs_dir / "audit" / f"{args.split}_{args.source}"
+    if not (src / "facts.json").exists():
+        print(f"no audit at {src}; run: nml audit {args.split} --source {args.source}")
+        return 1
+    client = MetaClient(SETTINGS)
+    usd = sum(panel.BUDGET_USD.values())
+    client.meter.check(usd, f"panel {args.split}")
+    print(f"review panel: up to ${usd:.2f} (cached calls are free)")
+    result = panel.run_panel(client, json.loads((src / "facts.json").read_text()), (src / "memo.md").read_text(),
+                             load_cmf(), f"panel {args.split}_{args.source}")
+    panel.write(result, src, f"{args.split} ({args.source})")
+    print((src / "panel.md").read_text())
+    return 0 if result["status"] == "complete" else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -68,12 +87,16 @@ def main(argv: list[str] | None = None) -> int:
                     help="Muse Spark reviews the video of each hotspot's N most severe conflicts")
     au.add_argument("--illustrate", action="store_true",
                     help="Muse Image before/after of the first illustratable countermeasure per hotspot, checked by SAM 3.1")
+    pa = sub.add_parser("panel", help="Proposer, Skeptic and Judge agents review an audit, held to the data by a checker")
+    pa.add_argument("split", choices=["dev", "test", "heldout"])
+    pa.add_argument("--source", choices=["reference", "sam"], default="reference")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
-    return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit}[args.cmd](args)
+    return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
+            "panel": cmd_panel}[args.cmd](args)
 
 
 if __name__ == "__main__":

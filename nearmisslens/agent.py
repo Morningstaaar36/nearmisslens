@@ -59,7 +59,8 @@ def _message_text(response: dict) -> str:
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
               budget_usd: float, effort: str = "medium", tag: str = "agent") -> AgentRun:
     """Function-calling loop on the Responses API. Instructions, tools and reasoning effort are re-sent every turn
-    because previous_response_id does not carry them. Every model response is cached, so a run replays exactly."""
+    because previous_response_id does not carry them. Every model response is cached, so a run replays exactly.
+    A finish call whose result carries an error does not end the run; the model sees the error and can correct it."""
     specs = [t.spec() for t in tools]
     by_name = {t.name: t for t in tools}
     run = AgentRun()
@@ -113,7 +114,7 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             run.steps.append(Step(turn, name, args, result, round(time.time() - t, 2)))
             outputs.append({"type": "function_call_output", "call_id": call["call_id"],
                             "output": json.dumps(result, default=str)[:20000]})
-            if name == "finish":
+            if name == "finish" and "error" not in result:
                 finished = True
         next_input = outputs
         if finished:

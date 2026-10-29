@@ -5,6 +5,7 @@ With NML_REPLAY=1 no API call is made, and a check whose cached responses are mi
 """
 from __future__ import annotations
 
+import functools
 import json
 import time
 from dataclasses import dataclass, field
@@ -132,9 +133,8 @@ def check_routes(min_accuracy: float = 0.9) -> Check:
     return ch
 
 
-def check_audit() -> Check:
-    ch = Check("audit", criterion="audit of the dev reference finds hotspots, each with countermeasures that cite CMF Clearinghouse "
-                                  "ids present in the database and pass the site checks")
+@functools.lru_cache(maxsize=1)
+def _dev_audit() -> tuple[dict, str, frozenset[str]]:
     from . import audit, countermeasures
     c = fluid.clip(*fluid.DEV)
     ref = pipeline.reference_states(c, (1, 10 ** 9))
@@ -142,12 +142,45 @@ def check_audit() -> Check:
     sig = fluid.load_signals(c)
     cmf = countermeasures.load_cmf()
     facts = audit.audit(ref, cmf, signals=sig, control="Signalized", right_turn_signalised=fluid.has_right_turn_control(sig))
-    known = set(cmf["crfid"])
+    return facts, audit.memo(facts, f"{c.site} {c.stem}", "FLUID reference trajectories"), frozenset(cmf["crfid"])
+
+
+def check_audit() -> Check:
+    ch = Check("audit", criterion="audit of the dev reference finds hotspots, each with countermeasures that cite CMF Clearinghouse "
+                                  "ids present in the database and pass the site checks")
+    facts, _, known = _dev_audit()
     cited = [m["crfid"] for f in facts["findings"] for m in f["countermeasures"]]
     ch.detail = {"conflicts": facts["conflicts"], "hotspots": [
         {"rate_per_1000": f["rate_per_1000"], "ci95": f["ci95"], "dominant": f"{f['dominant']['type']} {'-'.join(f['dominant']['pair'])}",
          "countermeasures": [m["psc"] for m in f["countermeasures"]]} for f in facts["findings"]]}
     ch.status = "PASS" if facts["findings"] and cited and all(i in known for i in cited) else "FAIL"
+    return ch
+
+
+def check_grounding() -> Check:
+    ch = Check("grounding", criterion="on the dev reference audit, the panel's checker accepts the audit's own memo and "
+                                      "recommendations stated with its numbers, and rejects a fabricated CMF id, a rejected "
+                                      "countermeasure, a non-existent hotspot and a number absent from the data")
+    from . import panel
+    facts, memo, known = _dev_audit()
+    g = panel.Grounding(facts, memo)
+    honest = [{"rank": f["rank"], "crfid": f["countermeasures"][0]["crfid"],
+               "reason": f"{f['events']} conflicts, {f['rate_per_1000']} per 1,000 (95% CI {f['ci95'][0]}-{f['ci95'][1]}); "
+                         f"CMF {f['countermeasures'][0]['crfid']} is {f['countermeasures'][0]['cmf']:.2f}"}
+              for f in facts["findings"] if f["countermeasures"]]
+    accepted = not panel.check_proposals(g, honest) and not g.text(memo)
+    first = facts["findings"][0]
+    fake_id = str(max(int(i) for i in known if i.isdigit()) + 1)
+    rejected_id = next((r["crfid"] for f in facts["findings"] for r in f["rejected"] if r.get("crfid")), None)
+    invented = round(first["rate_per_1000"] * 1.37, 1)
+    while not g.text(f"{invented}") == [f"number {invented} does not appear in the audit or the tool results"]:
+        invented = round(invented + 0.1, 1)
+    planted = {"fabricated_cmf": g.recommendation(first["rank"], fake_id),
+               "rejected_countermeasure": g.recommendation(first["rank"], rejected_id) if rejected_id else "none in audit",
+               "missing_hotspot": g.recommendation(max(g.ranks) + 1, first["countermeasures"][0]["crfid"] if first["countermeasures"] else fake_id),
+               "invented_number": "; ".join(g.text(f"Hotspot {first['rank']} has {invented} conflicts per 1,000 road users"))}
+    ch.detail = {"honest_recommendations": len(honest), "honest_accepted": accepted, "planted_caught": planted}
+    ch.status = "PASS" if accepted and honest and all(planted.values()) else "FAIL"
     return ch
 
 
@@ -220,7 +253,7 @@ def run(replay: bool = True) -> list[Check]:
     data = check_data()
     checks = [data]
     if data.status == "PASS":
-        checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_audit(), check_tracking(client), check_verifier(client)]
+        checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_audit(), check_grounding(), check_tracking(client), check_verifier(client)]
     return checks
 
 
