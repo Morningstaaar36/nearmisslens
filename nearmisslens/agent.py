@@ -56,25 +56,38 @@ def _message_text(response: dict) -> str:
     return "".join(parts)
 
 
+def replay_items(response: dict) -> list[dict]:
+    """A response's output as input items for the next turn: encrypted reasoning, function calls and assistant text,
+    in their original order."""
+    items = []
+    for o in response.get("output", []):
+        kind = o.get("type")
+        if kind == "reasoning" and o.get("encrypted_content"):
+            items.append({"type": "reasoning", "summary": o.get("summary") or [], "encrypted_content": o["encrypted_content"]})
+        elif kind == "function_call":
+            items.append({"type": "function_call", "call_id": o["call_id"], "name": o.get("name", ""),
+                          "arguments": o.get("arguments") or "{}"})
+        elif kind == "message":
+            text = "".join(c.get("text", "") for c in o.get("content", []) or [] if c.get("type") == "output_text")
+            items.append({"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": text}]})
+    return items
+
+
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
               budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000) -> AgentRun:
-    """Function-calling loop on the Responses API. Instructions, tools and reasoning effort are re-sent every turn
-    because previous_response_id does not carry them. Every model response is cached, so a run replays exactly.
+    """Function-calling loop on the Responses API with stateless replay: every turn resends the whole conversation,
+    with the model's reasoning as encrypted reasoning items, and nothing is stored on the server. The cache key is the
+    full request, so a run replays exactly and runs with different data never share a turn.
     A finish call whose result carries an error does not end the run; the model sees the error and can correct it."""
     specs = [t.spec() for t in tools]
     by_name = {t.name: t for t in tools}
     run = AgentRun()
-    previous_id: str | None = None
-    next_input: list = [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": task}]}]
-    history: list = []
+    conversation: list = [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": task}]}]
     for turn in range(1, max_turns + 1):
         payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": {"effort": effort},
-                   "max_output_tokens": max_output_tokens, "input": next_input}
-        if previous_id:
-            payload["previous_response_id"] = previous_id
-        history.append(next_input)
-        request = {"model": model, "instructions": instructions, "tools": specs, "effort": effort, "history": history,
-                   "max_output_tokens": max_output_tokens}
+                   "max_output_tokens": max_output_tokens, "store": False,
+                   "include": ["reasoning.encrypted_content"], "input": list(conversation)}
+        request = {k: v for k, v in payload.items() if k != "include"}
 
         def cost(resp):
             u = resp.get("usage") or {}
@@ -95,7 +108,7 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             break
         run.usd += cost(resp)[0]
         run.turns = turn
-        previous_id = resp.get("id")
+        conversation += replay_items(resp)
         calls = _function_calls(resp)
         if not calls:
             run.final_text = _message_text(resp)
@@ -122,7 +135,7 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
                             "output": json.dumps(result, default=str)[:20000]})
             if name == "finish" and "error" not in result:
                 finished = True
-        next_input = outputs
+        conversation += outputs
         if finished:
             run.stopped = "finish_tool"
             break
