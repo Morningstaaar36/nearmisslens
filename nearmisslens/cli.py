@@ -111,6 +111,12 @@ def cmd_fetch(_args) -> int:
     return 0
 
 
+def cmd_demo(args) -> int:
+    from .demo import render
+    render(args.audit)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -145,6 +151,8 @@ def main(argv: list[str] | None = None) -> int:
     vf = sub.add_parser("verifier", help="Muse Spark reviews every candidate conflict on SAM tracks; precision and "
                                          "recall against the reference before and after")
     vf.add_argument("split", choices=["dev", "test", "heldout"])
+    de = sub.add_parser("demo", help="render the demo video from viewer recordings and run outputs")
+    de.add_argument("--audit", help="viewer audit key, e.g. heldout_sam (default: the best available)")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
@@ -165,7 +173,8 @@ def run_command(args) -> int:
     return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
             "panel": cmd_panel, "export": cmd_export,
             "voice": cmd_voice, "baseline": cmd_baseline,
-            "verifier": cmd_verifier, "fetch": cmd_fetch}[args.cmd](args)
+            "verifier": cmd_verifier, "fetch": cmd_fetch,
+            "demo": cmd_demo}[args.cmd](args)
 
 
 if __name__ == "__main__":

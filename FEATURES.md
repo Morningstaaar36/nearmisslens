@@ -44,7 +44,8 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **README** with quick start, Meta tools table and "built during the hackathon".
 - [x] **LICENSES.md and PRIVACY.md.**
 - [x] **Data download:** `nml fetch` reads clips out of remote ZIP64 archives with resumable range requests and a CRC32 check, verifies MD5s, and completes the CMF server's certificate chain from its AIA URL. Verified by `tests/test_fetch.py`.
-- [ ] 3-minute demo video rendered from real outputs, plus a 20 s X cut.
+- [x] **Demo video renderer, built:** `nml demo` records the viewer with headless Chrome, adds the reviewed event clip with Spark's verdict, and makes title cards from run outputs. A trial render on dev data was checked frame by frame.
+- [ ] Final 3-minute demo video from the paid runs, plus a 20 s X cut.
 - [ ] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
 - [ ] Repo public, Pages live, no keys in history.
 - [ ] Submitted on the portal before Nov 4, 12:00 Dhaka.

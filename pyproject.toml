@@ -26,6 +26,9 @@ local = [
 voice = [
     "transformers>=4.45",
 ]
+demo = [
+    "playwright>=1.64.1",
+]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
