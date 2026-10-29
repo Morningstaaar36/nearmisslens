@@ -13,8 +13,10 @@ CLASSES = ("vehicle", "two_wheeler", "pedestrian")
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "validation" / "results"
 
 
-def evaluate_tracks(points: pd.DataFrame, c: fluid.Clip, frames: tuple[int, int], label: str) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
-    ours = tracks.smooth_states(points, pipeline.clip_fps(c))
+def evaluate_tracks(points: pd.DataFrame, c: fluid.Clip, frames: tuple[int, int], label: str,
+                    stitch: bool = False) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
+    fps = pipeline.clip_fps(c)
+    ours = tracks.smooth_states(tracks.stitch(points, fps) if stitch else points, fps)
     ours = ours[ours["frame"].between(*frames)]
     ref = pipeline.reference_states(c, frames)
     ref_real = ref[ref["isReal"] == 1]
@@ -64,8 +66,9 @@ SPLITS = {"dev": (fluid.DEV, None), "test": (fluid.TEST, 600.0), "heldout": (flu
 CONCEPTS = ["car", "scooter"]
 
 
-def run_split(name: str, client, work_root: Path, out_root: Path) -> dict:
-    """Track a pre-registered split with the tiled SAM 3.1 API, then score tracking and conflicts against the reference."""
+def run_split(name: str, client, work_root: Path, out_root: Path, stitch: bool = False) -> dict:
+    """Track a pre-registered split with the tiled SAM 3.1 API, then score tracking and conflicts against the reference.
+    stitch scores the same tracks after track stitching (PREREG change 9), written under <split>/stitched."""
     from . import video
     site, limit_s = SPLITS[name]
     c = fluid.clip(*site)
@@ -76,12 +79,14 @@ def run_split(name: str, client, work_root: Path, out_root: Path) -> dict:
     cal = pipeline.calibration_for(c)
     points = pipeline.track_api(client, c, 0.0, duration, CONCEPTS, work_root / name, cal)
     frames = (1, int(round(duration * info["fps"])))
-    ours, ref, rows = evaluate_tracks(points, c, frames, name)
-    res = evaluate_conflicts(ours, ref, name)
-    write_events(res, out_root / name)
+    label = f"{name} stitched" if stitch else name
+    ours, ref, rows = evaluate_tracks(points, c, frames, label, stitch=stitch)
+    res = evaluate_conflicts(ours, ref, label)
+    dest = out_root / name / ("stitched" if stitch else "")
+    write_events(res, dest)
     summary = {"split": name, "clip": f"{c.site}_{c.stem}", "frames": frames, "tracking": rows,
-               "conflicts": res["summary"]}
-    (out_root / name / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
+               "conflicts": res["summary"], "stitched": stitch}
+    (dest / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
     return summary
 
 
@@ -168,6 +173,17 @@ def _extra_results(split: str) -> list[str]:
     """Signal-entry agreement, the verifier test and B0, where they have been run for the split."""
     lines = [""]
     d = RESULTS_DIR / split
+    if (d / "stitched" / "summary.json").exists() and (d / "summary.json").exists():
+        reg, st = (json.loads((p / "summary.json").read_text()) for p in (d, d / "stitched"))
+        lines += ["Same tracks after track stitching (PREREG change 9):", "",
+                  "| measure | registered | stitched |", "|---|---|---|"]
+        for r0, r1 in zip(reg["tracking"], st["tracking"]):
+            if r0["class"] != "pedestrian":
+                for k in ("recall", "idf1"):
+                    lines.append(f"| {r0['class']} {k} | {_rate(r0.get(k))} | {_rate(r1.get(k))} |")
+        for k in ("all", "pet<=1.5", "pet<=3.0"):
+            lines.append(f"| conflicts {k} F1 | {_rate(reg['conflicts'][k]['f1'])} | {_rate(st['conflicts'][k]['f1'])} |")
+        lines.append("")
     if (d / "signal_entry.json").exists():
         se = json.loads((d / "signal_entry.json").read_text())
         lines += ["Signal state on entry, SAM 3.1 tracks against the reference (share of entries):", "",

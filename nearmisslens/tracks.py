@@ -77,7 +77,10 @@ def detections_to_points(dets: list[Detection], cal: Calibration, fps: float, fr
     return df
 
 
-def stitch(points: pd.DataFrame, fps: float, max_gap_s: float = 1.0, max_dist_m: float = 2.0,
+STITCH_GAP_S, STITCH_DIST_M = 1.5, 3.0
+
+
+def stitch(points: pd.DataFrame, fps: float, max_gap_s: float = STITCH_GAP_S, max_dist_m: float = STITCH_DIST_M,
            edge_frames: int = 5) -> pd.DataFrame:
     """Join broken tracks: a track that ends is continued by a track of the same class that starts within max_gap_s,
     within max_dist_m of the position predicted from the first track's final velocity. Ends and starts are paired

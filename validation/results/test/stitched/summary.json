@@ -1,0 +1,124 @@
+{
+ "split": "test",
+ "clip": "FIDRT_20250526_video",
+ "frames": [
+  1,
+  6000
+ ],
+ "tracking": [
+  {
+   "t": "2026-10-29 20:14:28",
+   "commit": "d77d08c",
+   "stage": "tracking",
+   "clip": "test stitched",
+   "class": "vehicle",
+   "ref_points": 134715,
+   "pred_points": 117379,
+   "recall": 0.8132427717774561,
+   "precision": 0.9333526439993525,
+   "position_rmse_m": 0.573917949990227,
+   "idf1": 0.8416305029076455,
+   "id_switches_per_min": 5.7,
+   "speed_mae_mps": 0.1310526163789495,
+   "speed_bias_mps": 0.008097048539611067
+  },
+  {
+   "t": "2026-10-29 20:14:31",
+   "commit": "d77d08c",
+   "stage": "tracking",
+   "clip": "test stitched",
+   "class": "two_wheeler",
+   "ref_points": 115650,
+   "pred_points": 78228,
+   "recall": 0.5936186770428016,
+   "precision": 0.8775885872066268,
+   "position_rmse_m": 0.46780686460305465,
+   "idf1": 0.5439503192729448,
+   "id_switches_per_min": 27.9,
+   "speed_mae_mps": 0.1903991946982523,
+   "speed_bias_mps": -0.03085068160269699
+  },
+  {
+   "t": "2026-10-29 20:14:31",
+   "commit": "d77d08c",
+   "stage": "tracking",
+   "clip": "test stitched",
+   "class": "pedestrian",
+   "ref_points": 16748,
+   "pred_points": 0,
+   "recall": 0.0,
+   "precision": NaN
+  }
+ ],
+ "conflicts": {
+  "all": {
+   "ref_events": 307,
+   "pred_events": 94,
+   "tp": 24,
+   "precision": 0.2553191489361702,
+   "recall": 0.0781758957654723,
+   "f1": 0.11970074812967581
+  },
+  "ttc<=0.5": {
+   "ref_events": 94,
+   "pred_events": 36,
+   "tp": 6,
+   "precision": 0.16666666666666666,
+   "recall": 0.06382978723404255,
+   "f1": 0.09230769230769229
+  },
+  "ttc<=1.0": {
+   "ref_events": 183,
+   "pred_events": 55,
+   "tp": 8,
+   "precision": 0.14545454545454545,
+   "recall": 0.04371584699453552,
+   "f1": 0.06722689075630253
+  },
+  "rear_end": {
+   "ref_events": 96,
+   "pred_events": 51,
+   "tp": 13,
+   "precision": 0.2549019607843137,
+   "recall": 0.13541666666666666,
+   "f1": 0.17687074829931973
+  },
+  "crossing": {
+   "ref_events": 167,
+   "pred_events": 30,
+   "tp": 7,
+   "precision": 0.23333333333333334,
+   "recall": 0.041916167664670656,
+   "f1": 0.07106598984771574
+  },
+  "lane_change": {
+   "ref_events": 44,
+   "pred_events": 13,
+   "tp": 3,
+   "precision": 0.23076923076923078,
+   "recall": 0.06818181818181818,
+   "f1": 0.10526315789473682
+  },
+  "pet<=1.5": {
+   "ref_events": 248,
+   "pred_events": 117,
+   "tp": 46,
+   "precision": 0.39316239316239315,
+   "recall": 0.18548387096774194,
+   "f1": 0.2520547945205479,
+   "pet_bias_s": 0.10217391304347354,
+   "pet_mae_s": 0.11956521739130258
+  },
+  "pet<=3.0": {
+   "ref_events": 480,
+   "pred_events": 221,
+   "tp": 107,
+   "precision": 0.4841628959276018,
+   "recall": 0.22291666666666668,
+   "f1": 0.30527817403708984,
+   "pet_bias_s": 0.14579439252336182,
+   "pet_mae_s": 0.1906542056074758
+  }
+ },
+ "stitched": true
+}

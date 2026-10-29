@@ -31,6 +31,7 @@ def cmd_evaluate(args) -> int:
     summaries = []
     for name in args.splits:
         summaries.append(run_split(name, client, SETTINGS.data_dir / "work", RESULTS_DIR))
+        run_split(name, client, SETTINGS.data_dir / "work", RESULTS_DIR, stitch=True)
         signal_agreement(name)
     write_results()
     print(results_markdown(summaries))

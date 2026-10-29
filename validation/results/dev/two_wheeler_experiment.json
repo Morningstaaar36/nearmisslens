@@ -1,0 +1,63 @@
+[
+ {
+  "concept": "scooter",
+  "grid": [
+   2,
+   2
+  ],
+  "recall": 0.5755913101505153,
+  "precision": 0.8631309762063598,
+  "position_rmse_m": 0.3383015401851515,
+  "idf1": 0.5616298207375117,
+  "ref_points": 13487,
+  "pred_points": 8994
+ },
+ {
+  "concept": "motorcycle",
+  "grid": [
+   2,
+   2
+  ],
+  "recall": 0.6397271446578187,
+  "precision": 0.8737215189873417,
+  "position_rmse_m": 0.416192568717304,
+  "idf1": 0.5561167708244157,
+  "ref_points": 13487,
+  "pred_points": 9875
+ },
+ {
+  "concept": "motorbike",
+  "grid": [
+   2,
+   2
+  ],
+  "recall": 0.4717135018907096,
+  "precision": 0.8656960130630018,
+  "position_rmse_m": 0.45812444946355685,
+  "idf1": 0.44192743328853906,
+  "ref_points": 13487,
+  "pred_points": 7349
+ },
+ {
+  "concept": "person riding a scooter",
+  "grid": [
+   2,
+   2
+  ],
+  "recall": 0.0,
+  "precision": NaN
+ },
+ {
+  "concept": "scooter",
+  "grid": [
+   3,
+   3
+  ],
+  "recall": 0.33914139541780974,
+  "precision": 0.7483638743455497,
+  "position_rmse_m": 0.4799098719426625,
+  "idf1": 0.3440991887341191,
+  "ref_points": 13487,
+  "pred_points": 6112
+ }
+]

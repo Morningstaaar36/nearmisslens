@@ -7,8 +7,8 @@
  ],
  "tracking": [
   {
-   "t": "2026-10-29 18:25:00",
-   "commit": "3ed0cd1",
+   "t": "2026-10-29 20:13:42",
+   "commit": "d77d08c",
    "stage": "tracking",
    "clip": "test",
    "class": "vehicle",
@@ -16,15 +16,15 @@
    "pred_points": 117368,
    "recall": 0.8131685409939502,
    "precision": 0.9333549178651762,
-   "position_rmse_m": 0.5739144932748553,
+   "position_rmse_m": 0.5739144932748554,
    "idf1": 0.8393108618986603,
    "id_switches_per_min": 7.0,
-   "speed_mae_mps": 0.1314499903701538,
-   "speed_bias_mps": 0.00872896516831318
+   "speed_mae_mps": 0.13144999037015384,
+   "speed_bias_mps": 0.00872896516831319
   },
   {
-   "t": "2026-10-29 18:25:03",
-   "commit": "3ed0cd1",
+   "t": "2026-10-29 20:13:45",
+   "commit": "d77d08c",
    "stage": "tracking",
    "clip": "test",
    "class": "two_wheeler",
@@ -32,15 +32,15 @@
    "pred_points": 78187,
    "recall": 0.5933073929961089,
    "precision": 0.8775883458887027,
-   "position_rmse_m": 0.4678331154036068,
+   "position_rmse_m": 0.46783311540360684,
    "idf1": 0.46311075800801704,
    "id_switches_per_min": 41.7,
-   "speed_mae_mps": 0.19058977531118448,
-   "speed_bias_mps": -0.030939342785689966
+   "speed_mae_mps": 0.19058977531118457,
+   "speed_bias_mps": -0.030939342785689952
   },
   {
-   "t": "2026-10-29 18:25:03",
-   "commit": "3ed0cd1",
+   "t": "2026-10-29 20:13:45",
+   "commit": "d77d08c",
    "stage": "tracking",
    "clip": "test",
    "class": "pedestrian",
@@ -119,5 +119,6 @@
    "pet_bias_s": 0.13888888888888695,
    "pet_mae_s": 0.18333333333333324
   }
- }
+ },
+ "stitched": false
 }

@@ -90,3 +90,23 @@ Made before any test or held-out run, after a literature review (`research/R6_pa
      - "scooter" with 3×3 tiles.
    - **Rule:** a variant replaces "scooter" with 2×2 tiles only if its two-wheeler recall is at least 0.10 higher and its precision is no more than 0.05 lower.
    - **If a variant wins:** test and held-out are tracked again for two-wheelers only. RESULTS.md then reports both the registered numbers and the new ones.
+   - **Outcome (dev, frames 601–1200):** two-wheeler recall was:
+     - "scooter" 2×2 tiles, 0.576 (precision 0.863);
+     - "motorcycle", 0.640 (precision 0.874);
+     - "motorbike", 0.472;
+     - "person riding a scooter", 0.000;
+     - "scooter" 3×3 tiles, 0.339 (precision 0.748).
+
+     No variant met the rule, so "scooter" with 2×2 tiles stays and test and held-out are not re-tracked. Results are in `validation/results/dev/two_wheeler_experiment.json`.
+9. **Track stitching, registered after evaluation on the development clip only.**
+   - **Rule:** a SAM 3.1 track that ends is continued by a same-class track that starts within 1.5 s. The start must lie within 3 m of the position predicted from the first track's final velocity. Ends and starts are paired one to one by Hungarian assignment.
+   - **Dev effect, frames 601–1200, "scooter":**
+     - two-wheeler IDF1 0.562 → 0.623;
+     - ID switches 33 → 21 per minute;
+     - recall and precision unchanged.
+
+     Settings tried: 0.5 s/1.5 m, 1 s/2 m, 1.5 s/3 m and 2 s/3 m. The gain levels off after 1.5 s/3 m.
+   - **Older dev window, frames 1–1810:**
+     - vehicles unchanged;
+     - two-wheeler IDF1 0.485 → 0.500.
+   - **Reporting:** test and held-out are re-scored from the same cached tracks, with no new tracking. RESULTS.md reports the registered numbers and the stitched numbers side by side. The audits use stitched tracks from now on.

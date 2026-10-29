@@ -35,7 +35,7 @@ def site_states(split: str, source: str, client: MetaClient | None = None):
     from . import tracks
     points = pipeline.track_api(client or MetaClient(SETTINGS), c, 0.0, duration, evaluate.CONCEPTS,
                                 SETTINGS.data_dir / "work" / split, pipeline.calibration_for(c), cached_only=True)
-    st = tracks.smooth_states(points, info["fps"])
+    st = tracks.smooth_states(tracks.stitch(points, info["fps"]), info["fps"])
     return c, st[st["frame"].between(*frames)].reset_index(drop=True)
 
 
