@@ -13,6 +13,7 @@ from .meta_client import MetaClient
 
 SEGMENT_S = 10.0
 OVERLAP_S = 0.5
+SEGMENT_WORKERS = 2
 
 
 def link_segments(points: pd.DataFrame, overlap_frames: int, radius_m: float = 1.5) -> pd.DataFrame:
@@ -82,7 +83,7 @@ def track_api(client: MetaClient, c: fluid.Clip, start_s: float, duration_s: flo
             pts["segment"] = k
         return pts
 
-    with ThreadPoolExecutor(3) as ex:
+    with ThreadPoolExecutor(SEGMENT_WORKERS) as ex:
         parts = [p for p in ex.map(segment, enumerate(starts)) if not p.empty]
     if not parts:
         return pd.DataFrame()

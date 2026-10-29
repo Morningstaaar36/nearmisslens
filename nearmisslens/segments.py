@@ -13,6 +13,7 @@ from meta_sam_parser import (CompletedOutcome, SegmentationMask, SegmentationMas
 
 ENCODING = {"!": "one_bit", "~": "lossless"}
 FRAME_RE = re.compile(r"<(\d+)f>")
+MAX_DECODE_WORKERS = 4
 OBJECT_RE = re.compile(r"(\d+)<\|box;([^|]*)\|>(?:<\|mask;([^|]*)\|>)?")
 
 
@@ -89,7 +90,7 @@ def decode_masks(dets: list[Detection], workers: int | None = None) -> None:
     todo = [d for d in dets if d.mask is None and d.payload is not None]
     if not todo:
         return
-    n = workers or max(1, (os.cpu_count() or 2) - 1)
+    n = workers or min(MAX_DECODE_WORKERS, max(1, (os.cpu_count() or 2) - 1))
     if n == 1 or len(todo) < 32:
         masks = [_decode(d.payload) for d in todo]
     else:

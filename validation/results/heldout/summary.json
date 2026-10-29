@@ -1,0 +1,123 @@
+{
+ "split": "heldout",
+ "clip": "FI_20250530_video-1",
+ "frames": [
+  1,
+  5352
+ ],
+ "tracking": [
+  {
+   "t": "2026-10-29 18:37:21",
+   "commit": "3ed0cd1",
+   "stage": "tracking",
+   "clip": "heldout",
+   "class": "vehicle",
+   "ref_points": 95033,
+   "pred_points": 84772,
+   "recall": 0.8419601612071597,
+   "precision": 0.9438729769263436,
+   "position_rmse_m": 0.36019452688565806,
+   "idf1": 0.8588192764383638,
+   "id_switches_per_min": 13.004484304932735,
+   "speed_mae_mps": 0.17401607842350728,
+   "speed_bias_mps": -0.026112300611358347
+  },
+  {
+   "t": "2026-10-29 18:37:22",
+   "commit": "3ed0cd1",
+   "stage": "tracking",
+   "clip": "heldout",
+   "class": "two_wheeler",
+   "ref_points": 57121,
+   "pred_points": 22334,
+   "recall": 0.35627877663206176,
+   "precision": 0.9112116056237127,
+   "position_rmse_m": 0.30447015293025004,
+   "idf1": 0.3687370209552577,
+   "id_switches_per_min": 16.816143497757846,
+   "speed_mae_mps": 0.22673800293526186,
+   "speed_bias_mps": -0.05671149413921898
+  },
+  {
+   "t": "2026-10-29 18:37:22",
+   "commit": "3ed0cd1",
+   "stage": "tracking",
+   "clip": "heldout",
+   "class": "pedestrian",
+   "ref_points": 2019,
+   "pred_points": 0,
+   "recall": 0.0,
+   "precision": NaN
+  }
+ ],
+ "conflicts": {
+  "all": {
+   "ref_events": 377,
+   "pred_events": 129,
+   "tp": 36,
+   "precision": 0.27906976744186046,
+   "recall": 0.09549071618037135,
+   "f1": 0.14229249011857706
+  },
+  "ttc<=0.5": {
+   "ref_events": 69,
+   "pred_events": 49,
+   "tp": 4,
+   "precision": 0.08163265306122448,
+   "recall": 0.057971014492753624,
+   "f1": 0.06779661016949153
+  },
+  "ttc<=1.0": {
+   "ref_events": 216,
+   "pred_events": 83,
+   "tp": 11,
+   "precision": 0.13253012048192772,
+   "recall": 0.05092592592592592,
+   "f1": 0.07357859531772575
+  },
+  "rear_end": {
+   "ref_events": 95,
+   "pred_events": 76,
+   "tp": 19,
+   "precision": 0.25,
+   "recall": 0.2,
+   "f1": 0.22222222222222224
+  },
+  "crossing": {
+   "ref_events": 272,
+   "pred_events": 43,
+   "tp": 15,
+   "precision": 0.3488372093023256,
+   "recall": 0.05514705882352941,
+   "f1": 0.09523809523809523
+  },
+  "lane_change": {
+   "ref_events": 10,
+   "pred_events": 10,
+   "tp": 1,
+   "precision": 0.1,
+   "recall": 0.1,
+   "f1": 0.10000000000000002
+  },
+  "pet<=1.5": {
+   "ref_events": 162,
+   "pred_events": 144,
+   "tp": 37,
+   "precision": 0.2569444444444444,
+   "recall": 0.22839506172839505,
+   "f1": 0.24183006535947707,
+   "pet_bias_s": 0.08918918918919141,
+   "pet_mae_s": 0.20270270270270693
+  },
+  "pet<=3.0": {
+   "ref_events": 363,
+   "pred_events": 296,
+   "tp": 101,
+   "precision": 0.34121621621621623,
+   "recall": 0.27823691460055094,
+   "f1": 0.306525037936267,
+   "pet_bias_s": 0.13762376237623428,
+   "pet_mae_s": 0.238613861386138
+  }
+ }
+}
