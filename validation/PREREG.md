@@ -83,3 +83,10 @@ Made before any test or held-out run, after a literature review (`research/R6_pa
    - **Observed entry:** a track that begins inside the 20 m entry radius, for example a fragment of a broken track, now has no entry time. Before, the fragment's start counted as its entry.
    - **Evidence with SAM 3.1 tracks:** these tracks match the reference on vehicles. On two-wheelers they over-count red entries, probably because riders waiting in dense queues are missed more often than lone riders running the light. With SAM tracks, only vehicle entries now count as evidence for "an entry on yellow or red". Reference audits keep both classes.
    - **Where the numbers are:** the agreement table per split is in `validation/results/<split>/signal_entry.json` and in RESULTS.md.
+8. **Two-wheeler experiment on the development clip, registered before it was run.**
+   - **Why:** after the test and held-out runs, two-wheeler recall (0.59 test, 0.36 held-out) limits conflict agreement, while vehicles are tracked well. Only 8% of the cached SAM 3.1 requests reached the 16-object cap, so small apparent size is the likely cause.
+   - **Variants:** on development frames 601–1200 (60–120 s), each scored against the reference:
+     - "scooter", "motorcycle", "motorbike" and "person riding a scooter" with the 2×2 tiles;
+     - "scooter" with 3×3 tiles.
+   - **Rule:** a variant replaces "scooter" with 2×2 tiles only if its two-wheeler recall is at least 0.10 higher and its precision is no more than 0.05 lower.
+   - **If a variant wins:** test and held-out are tracked again for two-wheelers only. RESULTS.md then reports both the registered numbers and the new ones.

@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import conflicts, fluid, match, movements, pipeline, tracks
+from .config import SETTINGS
 from .runlog import log_metrics
 
 CLASSES = ("vehicle", "two_wheeler", "pedestrian")
@@ -103,6 +104,43 @@ def signal_agreement(split: str) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "signal_entry.json").write_text(json.dumps(out, indent=1))
     return out
+
+
+EXPERIMENT_WINDOW_S = (60.0, 60.0)
+TWO_WHEELER_VARIANTS = [("scooter", (2, 2)), ("motorcycle", (2, 2)), ("motorbike", (2, 2)),
+                        ("person riding a scooter", (2, 2)), ("scooter", (3, 3))]
+
+
+def experiment_usd(variants=TWO_WHEELER_VARIANTS, window=EXPERIMENT_WINDOW_S) -> float:
+    from .tiling import estimate_usd
+    frames = int(window[1] * 10)
+    return sum(estimate_usd(frames, cols * rows, 1) for _, (cols, rows) in variants)
+
+
+def two_wheeler_experiment(client, variants=TWO_WHEELER_VARIANTS, window=EXPERIMENT_WINDOW_S) -> list[dict]:
+    """Two-wheeler tracking on the development clip only, one SAM 3.1 concept and tile grid per variant, scored
+    against the reference on the same frames (PREREG change 8)."""
+    c = fluid.clip(*fluid.DEV)
+    fps = pipeline.clip_fps(c)
+    cal = pipeline.calibration_for(c)
+    start, duration = window
+    frames = (int(round(start * fps)) + 1, int(round((start + duration) * fps)))
+    rows = []
+    for concept, grid in variants:
+        points = pipeline.track_api(client, c, start, duration, [concept], Path(SETTINGS.data_dir) / "work" / "experiment",
+                                    cal, grid=grid)
+        label = f"dev {concept} {grid[0]}x{grid[1]}"
+        if points.empty:
+            rows.append({"concept": concept, "grid": list(grid), "recall": 0.0, "precision": float("nan")})
+            continue
+        _, _, metrics = evaluate_tracks(points, c, frames, label)
+        m = next((r for r in metrics if r["class"] == "two_wheeler"), {})
+        rows.append({"concept": concept, "grid": list(grid), **{k: m.get(k) for k in
+                     ("recall", "precision", "position_rmse_m", "idf1", "ref_points", "pred_points")}})
+    dest = RESULTS_DIR / "dev"
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / "two_wheeler_experiment.json").write_text(json.dumps(rows, indent=1, default=float))
+    return rows
 
 
 def results_markdown(summaries: list[dict]) -> str:

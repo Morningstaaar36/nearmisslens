@@ -9,7 +9,8 @@ from .segments import Detection, decode_masks
 
 CONCEPT_CLASS = {"car": "vehicle", "bus": "vehicle", "truck": "vehicle", "van": "vehicle", "tricycle": "vehicle",
                  "scooter": "two_wheeler", "motorcycle": "two_wheeler", "moped": "two_wheeler",
-                 "bicycle": "two_wheeler", "pedestrian": "pedestrian"}
+                 "bicycle": "two_wheeler", "motorbike": "two_wheeler", "person riding a scooter": "two_wheeler",
+                 "pedestrian": "pedestrian"}
 
 
 def _rect_px(d: Detection) -> tuple[float, float, float, float, float]:

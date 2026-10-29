@@ -122,12 +122,25 @@ def cmd_demo(args) -> int:
     return 0
 
 
+def cmd_experiment(_args) -> int:
+    from .evaluate import experiment_usd, two_wheeler_experiment
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    usd = experiment_usd()
+    client.check_budget(usd, "two-wheeler experiment")
+    print(f"two-wheeler experiment on dev: up to ${usd:.2f} (cached calls are free)")
+    for r in two_wheeler_experiment(client):
+        print(json.dumps(r, default=float))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
     sub.add_parser("cost", help="Meta API spend so far")
+    sub.add_parser("experiment", help="two-wheeler concepts and tile grids on the development clip (PREREG change 8)")
     sub.add_parser("results", help="regenerate validation/RESULTS.md from stored results (free)")
     sub.add_parser("metrics", help="latest logged metrics per stage, clip and class")
     ev = sub.add_parser("evaluate", help="track and score pre-registered splits (dev, test, heldout)")
@@ -180,7 +193,8 @@ def run_command(args) -> int:
             "panel": cmd_panel, "export": cmd_export,
             "voice": cmd_voice, "baseline": cmd_baseline,
             "verifier": cmd_verifier, "fetch": cmd_fetch,
-            "demo": cmd_demo, "results": cmd_results}[args.cmd](args)
+            "demo": cmd_demo, "results": cmd_results,
+            "experiment": cmd_experiment}[args.cmd](args)
 
 
 if __name__ == "__main__":
