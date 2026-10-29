@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import linear_sum_assignment
 from scipy.signal import savgol_filter
 
 from .calibrate import Calibration
@@ -74,6 +75,53 @@ def detections_to_points(dets: list[Detection], cal: Calibration, fps: float, fr
     if not df.empty:
         df["t"] = df["frame"] / fps
     return df
+
+
+def stitch(points: pd.DataFrame, fps: float, max_gap_s: float = 1.0, max_dist_m: float = 2.0,
+           edge_frames: int = 5) -> pd.DataFrame:
+    """Join broken tracks: a track that ends is continued by a track of the same class that starts within max_gap_s,
+    within max_dist_m of the position predicted from the first track's final velocity. Ends and starts are paired
+    one to one by total distance (Hungarian), so chains of fragments join up."""
+    if points.empty:
+        return points
+    ends, starts = [], []
+    for tid, g in points.sort_values("frame").groupby("id"):
+        tail, head = g.tail(edge_frames), g.head(edge_frames)
+        v = _velocity(tail, fps)
+        ends.append((tid, g["cls"].iloc[0], int(g["frame"].iloc[-1]), tail[["x", "y"]].to_numpy()[-1], v))
+        starts.append((tid, g["cls"].iloc[0], int(g["frame"].iloc[0]), head[["x", "y"]].to_numpy()[0]))
+    gap = max_gap_s * fps
+    cost = np.full((len(ends), len(starts)), np.inf)
+    for i, (ta, ca, fa, pa, va) in enumerate(ends):
+        for j, (tb, cb, fb, pb) in enumerate(starts):
+            if ta != tb and ca == cb and 0 < fb - fa <= gap:
+                d = float(np.linalg.norm(pa + va * (fb - fa) / fps - pb))
+                if d <= max_dist_m:
+                    cost[i, j] = d
+    ok = np.isfinite(cost)
+    if not ok.any():
+        return points
+    rows, cols = linear_sum_assignment(np.where(ok, cost, 1e9))
+    parent: dict[str, str] = {}
+
+    def root(a: str) -> str:
+        while parent.get(a, a) != a:
+            a = parent[a]
+        return a
+
+    for i, j in zip(rows, cols):
+        if ok[i, j] and root(ends[i][0]) != starts[j][0]:
+            parent[starts[j][0]] = root(ends[i][0])
+    out = points.copy()
+    out["id"] = out["id"].map(lambda a: root(a))
+    return out
+
+
+def _velocity(g: pd.DataFrame, fps: float) -> np.ndarray:
+    if len(g) < 2:
+        return np.zeros(2)
+    t = g["frame"].to_numpy(float) / fps
+    return np.array([np.polyfit(t, g["x"].to_numpy(float), 1)[0], np.polyfit(t, g["y"].to_numpy(float), 1)[0]])
 
 
 def _segments(frames: np.ndarray, max_gap: int) -> list[np.ndarray]:
