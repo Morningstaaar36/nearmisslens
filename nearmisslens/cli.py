@@ -98,6 +98,12 @@ def cmd_baseline(args) -> int:
     return 0
 
 
+def cmd_verifier(args) -> int:
+    from .runner import run_verifier
+    print(json.dumps(run_verifier(args.split), indent=1, default=float))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
@@ -128,14 +134,30 @@ def main(argv: list[str] | None = None) -> int:
     b0 = sub.add_parser("baseline", help="B0: Muse Spark alone watches 10 s windows and lists near-misses, scored "
                                          "with the pipeline against the reference")
     b0.add_argument("split", choices=["dev", "test", "heldout"], nargs="?", default="test")
+    vf = sub.add_parser("verifier", help="Muse Spark reviews every candidate conflict on SAM tracks; precision and "
+                                         "recall against the reference before and after")
+    vf.add_argument("split", choices=["dev", "test", "heldout"])
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
+    from .cache import ReplayMiss
+    from .cost import BudgetExceeded
+    try:
+        return run_command(args)
+    except ReplayMiss as e:
+        print(f"not in the replay cache: {e}. Run without --replay to fetch it from the Meta Model API (paid).")
+    except BudgetExceeded as e:
+        print(f"stopped by the spending cap: {e}")
+    return 2
+
+
+def run_command(args) -> int:
     return {"cost": cmd_cost, "metrics": cmd_metrics, "selftest": cmd_selftest, "evaluate": cmd_evaluate, "audit": cmd_audit,
             "panel": cmd_panel, "export": cmd_export,
-            "voice": cmd_voice, "baseline": cmd_baseline}[args.cmd](args)
+            "voice": cmd_voice, "baseline": cmd_baseline,
+            "verifier": cmd_verifier}[args.cmd](args)
 
 
 if __name__ == "__main__":

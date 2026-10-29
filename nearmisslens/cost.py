@@ -46,6 +46,13 @@ class CostMeter:
             return 0.0
         return sum(json.loads(line)["usd"] for line in self.ledger.read_text().splitlines() if line.strip())
 
+    def spent_on(self, prefix: str) -> float:
+        """Recorded spend on calls whose description starts with prefix (cached replays are not recorded)."""
+        if not self.ledger.exists():
+            return 0.0
+        rows = (json.loads(line) for line in self.ledger.read_text().splitlines() if line.strip())
+        return sum(r["usd"] for r in rows if r["what"].startswith(prefix))
+
     def check(self, estimate_usd: float, what: str) -> None:
         """Raise if the estimate does not fit under the cap, counting spend and in-flight reservations."""
         with self._lock:

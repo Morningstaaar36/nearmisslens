@@ -8,7 +8,7 @@ import pandas as pd
 
 from . import audit, complaints, countermeasures, evaluate, fluid, pipeline, render, verifier, video, voice
 from .cache import file_sha256
-from .config import SETTINGS
+from .config import ROOT, SETTINGS
 from .cost import IMAGE_USD, SAM_IMAGE_USD, voice_usd
 from .meta_client import MetaClient
 
@@ -39,26 +39,60 @@ def estimate_usd(n_findings: int, verify_n: int, illustrate: bool) -> float:
     return n_findings * (verify_n * VERIFY_USD + (per_render if illustrate else 0.0))
 
 
+def review_event(client: MetaClient, c: fluid.Clip, info: dict, states: pd.DataFrame, pixels: pd.DataFrame, e: dict,
+                 work: Path, tag: str) -> dict:
+    """Muse Spark verdict on one conflict (a conflict-table row) from its event-centred video and speed trace.
+    states and pixels must carry string ids."""
+    fps = info["fps"]
+    mid = int(round(e["t"] * fps))
+    ids = (str(e["id_1"]), str(e["id_2"]))
+    clip = verifier.render_event_clip(c.video, work / f"event_{ids[0]}_{ids[1]}_{mid}.mp4".replace(":", "-"), pixels,
+                                      ids[0], ids[1], mid, fps, info["width"], info["height"])
+    trace = verifier.speed_trace_png(states, ids[0], ids[1], mid, fps)
+    metric = f"{e['measure']} {e['value']:.1f} s, {e['type'].replace('_', '-')}, A={e['cls_1']}, B={e['cls_2']}"
+    return verifier.verify(client, clip, trace, metric, tag, clip_key=verifier.event_key(c.video, ids[0], ids[1], mid, fps))
+
+
 def verify_finding(client: MetaClient, c: fluid.Clip, states: pd.DataFrame, pixels: pd.DataFrame, finding: dict,
                    n: int, work: Path) -> dict:
     """Muse Spark review of the finding's n most severe conflicts from event-centred video and speed traces."""
     info = video.probe(c.video)
-    fps = info["fps"]
-    verdicts = []
-    for k, e in enumerate(finding["examples"][:n]):
-        mid = int(round(e["t"] * fps))
-        ids = (e["id_1"], e["id_2"])
-        st = states.assign(id=states["id"].astype(str))
-        px = pixels.assign(id=pixels["id"].astype(str))
-        clip = verifier.render_event_clip(c.video, work / f"event_{ids[0]}_{ids[1]}_{mid}.mp4".replace(":", "-"), px,
-                                          ids[0], ids[1], mid, fps, info["width"], info["height"])
-        trace = verifier.speed_trace_png(st, ids[0], ids[1], mid, fps)
-        metric = f"{e['measure']} {e['value']:.1f} s, {e['type'].replace('_', '-')}, A={e['cls_1']}, B={e['cls_2']}"
-        v = verifier.verify(client, clip, trace, metric, f"audit {c.stem} h{finding['rank']} e{k}",
-                            clip_key=verifier.event_key(c.video, ids[0], ids[1], mid, fps))
-        verdicts.append({**e, **v})
+    st = states.assign(id=states["id"].astype(str))
+    px = pixels.assign(id=pixels["id"].astype(str))
+    verdicts = [{**e, **review_event(client, c, info, st, px, e, work, f"audit {c.stem} h{finding['rank']} e{k}")}
+                for k, e in enumerate(finding["examples"][:n])]
     return {"reviewed": len(verdicts), "real": sum(bool(v["real_conflict"]) for v in verdicts),
             "evasive": sum(v["evasive_action"] in ("brake", "swerve", "both") for v in verdicts), "verdicts": verdicts}
+
+
+def run_verifier(split: str, client: MetaClient | None = None) -> dict:
+    """Pre-registered verifier test: Muse Spark reviews every candidate conflict the pipeline finds on SAM 3.1 tracks;
+    precision and recall against the reference conflict table before and after dropping the events it judges not real."""
+    from .baseline import score
+    client = client or MetaClient(SETTINGS)
+    c, ours = site_states(split, "sam", client)
+    _, ref_states = site_states(split, "reference")
+    cand = audit.conflict_table(ours)
+    ref = audit.conflict_table(ref_states)
+    usd = len(cand) * VERIFY_USD
+    client.meter.check(usd, f"verifier {split}")
+    print(f"verifier: {len(cand)} candidate conflicts, up to ${usd:.2f} (cached calls are free)")
+    info = video.probe(c.video)
+    st = ours.assign(id=ours["id"].astype(str))
+    px = verifier.pixel_tracks(st, pipeline.calibration_for(c))
+    work = SETTINGS.data_dir / "work" / f"verify_{split}"
+    verdicts = [review_event(client, c, info, st, px, e, work, f"{split} event {k}")
+                for k, e in enumerate(cand.to_dict("records"))]
+    kept = cand[[bool(v["real_conflict"]) for v in verdicts]]
+    out = {"split": split, "candidates": int(len(cand)), "judged_real": int(len(kept)),
+           "artefact_share": round(1 - len(kept) / len(cand), 3) if len(cand) else None,
+           "before": score(cand, ref), "after": score(kept, ref),
+           "usd_per_event": round(client.meter.spent_on(f"verify {split} event ") / len(cand), 5) if len(cand) else None}
+    dest = ROOT / "validation" / "results" / split
+    dest.mkdir(parents=True, exist_ok=True)
+    cand.assign(**{k: [v[k] for v in verdicts] for k in verdicts[0]} if verdicts else {}).to_csv(dest / "verifier_events.csv", index=False)
+    (dest / "verifier.json").write_text(json.dumps(out, indent=1, default=float))
+    return out
 
 
 def illustrate_finding(client: MetaClient, c: fluid.Clip, cal, finding: dict, out: Path) -> dict | None:
