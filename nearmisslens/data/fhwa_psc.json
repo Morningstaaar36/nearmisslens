@@ -103,7 +103,7 @@
    "site_control": "any",
    "condition": "a turning movement",
    "render": {
-    "prompt": "Mark a dedicated turn lane on the approach nearest the centre of the image: a solid white lane line separating it and white turn-arrow pavement markings inside the lane.",
+    "prompt": "Paint a dedicated turn lane through the area at the centre of the image: a bold solid white lane line separating it from the through lanes, and two large white turn-arrow pavement markings inside it, clearly visible from above.",
     "check": "arrow road marking"
    }
   },

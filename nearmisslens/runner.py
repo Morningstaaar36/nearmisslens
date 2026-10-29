@@ -122,7 +122,7 @@ def illustrate_finding(client: MetaClient, c: fluid.Clip, cal, finding: dict, ou
     info = video.probe(c.video)
     t = finding["examples"][0]["t"] if finding["examples"] else 0.0
     frame = video.frame_at(c.video, int(round(t * info["fps"])))
-    return render.render_fix(client, frame, cal, (finding["x"], finding["y"]), finding["cell_m"] / 2, chosen["psc"],
+    return render.render_fix(client, frame, cal, (finding["x"], finding["y"]), finding["cell_m"], chosen["psc"],
                              specs[chosen["psc"]], out, f"hotspot{finding['rank']}_{c.stem}")
 
 
