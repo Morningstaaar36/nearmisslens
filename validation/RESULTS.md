@@ -50,6 +50,13 @@ Muse Spark verifier on 175 candidate conflicts: 36 judged real (artefact share 0
 | judged real by Muse Spark | 36 | 25 | 0.694 | 0.057 | 0.106 |
 | most severe, same recall | 54 | 25 | 0.463 | 0.057 | 0.102 |
 
+B0, event level (same class pair, within 1.0 s) against 435 reference conflicts in 600 s:
+
+| method | events | matched | precision | recall | F1 |
+|---|---|---|---|---|---|
+| Muse Spark alone (B0) | 43 | 5 | 0.116 | 0.011 | 0.021 |
+| NearMissLens pipeline | 176 | 97 | 0.551 | 0.223 | 0.318 |
+
 ## heldout: FI_20250530_video-1, frames 1-5352
 
 | class | recall | precision | position RMSE (m) | speed MAE (m/s) | IDF1 |

@@ -16,25 +16,28 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Review panel, built:** Proposer (Muse Spark), Skeptic (Muse Spark) and Judge (Muse Wonder). Command: `nml panel`. Verified by `tests/test_panel.py`.
 - [x] **Grounding checker:** rejects fabricated CMF ids, rejected countermeasures, missing hotspots and invented numbers on the real dev audit. Verified by the `grounding` row.
 - [x] **Fix illustration (Muse Image + SAM 3.1 check), built:** road users protected, edit checked by SAM. Verified by `tests/test_render.py`.
-- [ ] Review panel, run on the test and held-out audits.
-- [ ] Fix illustration, run on real hotspots.
+- [x] **Review panel run** on the test and held-out SAM audits. The Judge rejected recommendations the video review showed were tracking artefacts or mismatches (`runs/audit/*_sam/panel.md`).
+- [x] **Fix illustration run:** 5 of 6 pass the SAM 3.1 check on the current audits.
 - [x] **Voice complaints, built:** Muse Voice Transcribe, then Muse Spark extraction, then a fixed matching rule. Synthetic complaints in 3 languages are spoken by MMS-TTS. Verified by `tests/test_voice.py`.
-- [ ] Voice complaints, run on real audits.
+- [x] **Voice complaints run:** 8 of 8 synthetic complaints matched correctly (English, Spanish, French, plus decoys). Mean word error rate 7–13%.
 - [x] **Signal-entry chart:** red and yellow entries by approach and road-user class. Verified by `tests/test_export.py`; shown in the viewer's "Who enters on red" section.
 
 ## Validation (pre-registered in `validation/PREREG.md`)
+- [x] **Two-wheeler experiment (change 8, dev only):** negative result. No prompt or tile size met the registered rule.
+- [x] **Track stitching (change 9):** two-wheeler IDF1 0.46→0.54 on test and 0.37→0.42 on held-out. Reported next to the registered numbers.
+- [x] **Signal-entry evidence (change 7):** limited to vehicles for SAM tracks after the agreement check. Disclosed as decided after the test run.
 - [x] Splits fixed before any test or held-out run: dev, test, and held-out intersection.
-- [ ] Evaluation of dev, test and held-out, written to `validation/RESULTS.md`.
+- [x] **Evaluation of test and held-out:** written to `validation/RESULTS.md`. Dev was used for development only.
 - [x] **B0 baseline, built:** scorer and windows as pre-registered. Verified by `tests/test_baseline.py`.
-- [ ] B0 baseline, run on the test clip.
+- [x] **B0 run:** near-miss F1 is 0.32 for the pipeline against 0.02 for Muse Spark alone.
 - [x] **Verifier precision-gain test, built:** command `nml verifier`.
-- [ ] Verifier precision gain, run on the test clip.
+- [x] **Verifier run:** precision 0.69 for events judged real, against 0.46 for the severity ranking at matched recall.
 
 ## Display
 - [x] **Viewer (GitHub Pages, `docs/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).
 - [x] **3D replay of top conflicts:** three.js, measured positions, sizes and headings; heights are schematic. Verified by a headless WebGL screenshot.
-- [ ] Panel debate view, showing the claims the checker caught (built; to be ticked once a real panel run shows in it).
-- [ ] Scorecard page generated from `RESULTS.md`.
+- [x] **Panel debate view:** shows real panel runs.
+- [x] **Scorecard:** generated from the self-test and `RESULTS.md`.
 
 ## Offline and open weights
 - [x] Replay mode: every paid result is cached, and `nml --replay ...` costs nothing. Verified by the `selftest` replay run.

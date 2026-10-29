@@ -19,6 +19,7 @@ from .export import DOCS
 
 W, H, FPS = 1920, 1080, 30
 ZOOM = 1.25
+LOAD_S = 2.5
 INK, PAPER, MARKING = (29, 42, 51), (238, 241, 242), (232, 184, 30)
 FONT_URL = "https://github.com/google/fonts/raw/main/ofl/overpass/Overpass%5Bwght%5D.ttf"
 FALLBACK_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -30,6 +31,8 @@ class Segment:
     path: Path
     seconds: float
     caption: str = ""
+    skip: float = 0.0
+    caption_top: bool = False
 
 
 def font(size: int, work: Path) -> ImageFont.FreeTypeFont:
@@ -98,7 +101,7 @@ def record(base: str, name: str, steps, out_dir: Path) -> Path:
         browser = p.chromium.launch(executable_path=shutil.which("google-chrome") or shutil.which("chromium"),
                                     args=["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--ignore-gpu-blocklist"])
         ctx = browser.new_context(viewport={"width": int(W / ZOOM), "height": int(H / ZOOM)}, record_video_dir=str(out_dir),
-                                  record_video_size={"width": W, "height": H})
+                                  record_video_size={"width": int(W / ZOOM), "height": int(H / ZOOM)})
         page = ctx.new_page()
         steps(page, base)
         video = page.video.path()
@@ -144,16 +147,11 @@ def _scenes(key: str, view: dict) -> list[tuple[str, str, object]]:
                               f"{r['cls_1'].replace('_', '-')} and a {r['cls_2'].replace('_', '-')}.", replay_steps))
     illustrated = next((f for f in fs if (f.get("illustration") or {}).get("image")), None)
     if illustrated:
-        def fix_steps(page, base):
-            page.goto(f"{base}#audit={key}&hotspot={illustrated['rank']}&view=2d")
-            page.wait_for_timeout(2000)
-            page.locator(".fig").scroll_into_view_if_needed()
-            page.wait_for_timeout(7000)
         il = illustrated["illustration"]
         m = next((m for m in illustrated["countermeasures"] if m["psc"] == il["countermeasure"]), None)
         cite = f" (CMF {m['crfid']}: {m['crf_pct']:.0f}% fewer {m['crash_type'].lower()} crashes)" if m else ""
         out.append(("fix", f"Muse Image illustrates {il['countermeasure']}{cite}. SAM 3.1 checks the edit: "
-                           f"{'found' if il['check_passed'] else 'not found'}.", fix_steps))
+                           f"{'found' if il['check_passed'] else 'not found'}.", DOCS / "data" / il["image"]))
     for name, section, caption in (
             ("panel", "#panel-sec", _panel_caption(view.get("panel"))),
             ("voice", "#voice-sec", _voice_caption(view.get("voice"))),
@@ -174,8 +172,11 @@ def _scenes(key: str, view: dict) -> list[tuple[str, str, object]]:
 def _panel_caption(p: dict | None) -> str:
     if not p or p.get("status") != "complete":
         return ""
-    return (f"Proposer and Skeptic (Muse Spark) and Judge (Muse Wonder) decide; the checker rejected "
-            f"{p['caught']} ungrounded claim{'s' if p['caught'] != 1 else ''} before accepting.")
+    rejected = sum(not d["accept"] for d in p["decisions"])
+    checker = (f"the grounding checker caught {p['caught']} unsupported claim{'s' if p['caught'] != 1 else ''}"
+               if p["caught"] else "every claim passed the grounding checker")
+    return (f"Proposer and Skeptic (Muse Spark) argue, the Judge (Muse Wonder) decides: {rejected} of "
+            f"{len(p['decisions'])} recommendations rejected on the evidence; {checker}.")
 
 
 def _voice_caption(v: dict | None) -> str:
@@ -234,10 +235,10 @@ def _to_clip(seg: Segment, out: Path, work: Path) -> Path:
         f = font(40, work)
         txt.write_text("\n".join(wrap(ImageDraw.Draw(Image.new("RGB", (1, 1))), seg.caption, f, W - 240)))
         vf.insert(2, f"drawtext=fontfile={f.path}:textfile={txt}:expansion=none:fontsize=40:line_spacing=12:"
-                     "fontcolor=white:x=(w-tw)/2:y=h-th-70:box=1:boxcolor=0x1d2a33@0.82:boxborderw=22")
-    still = seg.path.suffix == ".png"
+                     f"fontcolor=white:x=(w-tw)/2:y={'50' if seg.caption_top else 'h-th-70'}:box=1:boxcolor=0x1d2a33@0.82:boxborderw=22")
+    still = seg.path.suffix in (".png", ".jpg")
     cmd = ["ffmpeg", "-v", "error", "-y"] + (["-loop", "1", "-t", f"{seg.seconds}"] if still else []) + \
-          ["-i", str(seg.path)] + ([] if still else ["-t", f"{seg.seconds}"]) + \
+          (["-ss", f"{seg.skip}"] if seg.skip else []) + ["-i", str(seg.path)] + ([] if still else ["-t", f"{seg.seconds}"]) + \
           ["-vf", ",".join(vf), "-an", "-c:v", "libx264", "-preset", "medium", "-crf", "20", str(out)]
     subprocess.run(cmd, check=True)
     return out
@@ -258,8 +259,11 @@ def render(key: str | None = None, out: Path | None = None) -> Path:
     srv, base = _serve(DOCS)
     try:
         for name, caption, steps in _scenes(key, view):
+            if isinstance(steps, Path):
+                segs.append(Segment(steps, 8.0, caption, caption_top=True))
+                continue
             webm = record(base, name, steps, work / "rec")
-            segs.append(Segment(webm, float(_duration(webm)), caption))
+            segs.append(Segment(webm, float(_duration(webm)) - LOAD_S, caption, skip=LOAD_S))
     finally:
         srv.shutdown()
     lines = score_lines()

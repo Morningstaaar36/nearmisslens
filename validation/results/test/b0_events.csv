@@ -1,0 +1,44 @@
+t,cls_1,cls_2,description
+2.2,vehicle,two_wheeler,"A northbound box truck moving through the center of the intersection passes just in front of an eastbound two-wheeler crossing the intersection, the two-wheeler reaches the truck's path less than 1.5s later."
+8.5,vehicle,two_wheeler,"A white sedan maneuvering in the center of the intersection passes very close to a two-wheeler traveling through the center, with the two-wheeler passing through the sedan's path within 1.5s."
+25.2,vehicle,vehicle,"A southbound vehicle turning left toward the east and a crossing vehicle meet in the center of the intersection, passing within about a car length of each other."
+49.3,vehicle,vehicle,"A white car traveling west in the eastbound lanes has a head-on encounter with an eastbound car traveling east, passing within less than 1.5 seconds of colliding."
+58.3,vehicle,two_wheeler,"White vehicle traveling east then turning south through center of intersection cuts across path of northbound two_wheeler, passing through same point less than 1.5s ahead with lateral clearance of less than a car length."
+64.0,vehicle,vehicle,"Southbound white vehicle from the north approach passes through the center just ahead of a west to north left-turning dark vehicle, the turning vehicle reaches the same point less than 1.5s later."
+65.5,vehicle,vehicle,Southbound white vehicle continues south through the intersection passing just in front of the queue of west to north left-turning white vehicles in the center.
+68.2,vehicle,vehicle,"Left-turning white box truck from the west approach cuts across the southbound lane, a following southbound white vehicle passes just ahead/behind it with less than 1.5s separation."
+105.2,vehicle,two_wheeler,"Southbound vehicle traveling through the center of the intersection passes through a conflict point that an east-to-west crossing two-wheeler reaches less than 1.5 seconds later, with minimum separation at the center of the intersection."
+138.3,vehicle,vehicle,"Northbound blue vehicle proceeding straight through the center conflicts with a southbound white vehicle turning left from the north approach, the turning vehicle passes just ahead of the through vehicle."
+137.5,vehicle,two_wheeler,Westbound white vehicle from the east approach passes through the central conflict point less than 1.5 seconds ahead of a northbound two_wheeler crossing the intersection.
+148.0,vehicle,vehicle,southbound cars turning west pass very close in front of the eastbound bus in the center of the intersection
+156.2,vehicle,two_wheeler,"Southbound car/bus passes just in front of a two-wheeler crossing the centre of the intersection from east to west, the two-wheeler reaches the vehicle's path less than 1.5s later."
+157.0,vehicle,two_wheeler,"Same southbound bus continues and narrowly misses a second following two-wheeler crossing the centre, passing within less than 1.5s of colliding."
+168.5,vehicle,two_wheeler,"An eastbound vehicle in the southern carriageway proceeds east while a northbound two-wheeler from the south side crosses the eastbound lanes, the car passes through the two-wheeler's path less than 1.5s before the two-wheeler arrives."
+165.5,vehicle,vehicle,"A vehicle turning left from the north approach to go east cuts across the center of the intersection in front of a vehicle turning from the east approach to go south, both pass through the same central conflict point within about 1s."
+197.5,vehicle,vehicle,white car turning in center of intersection and black car crossing pass within a car length of each other
+219.5,vehicle,vehicle,A southbound vehicle traveling through the center of the intersection and a northbound vehicle entering from the south approach head-on in conflicting paths and pass each other with very small clearance.
+228.5,vehicle,vehicle,Eastbound white vehicle crossing the intersection from the west conflicts with the southbound platoon released from the north; the southbound lead vehicle passes through the crossing point less than 1.5s after the eastbound vehicle.
+229.0,vehicle,pedestrian,Northbound bus approaching the southern crosswalk from the south conflicts with pedestrians crossing west from the southeast island; the bus reaches the crosswalk point less than 1.5s after pedestrians occupy it.
+295.2,vehicle,two_wheeler,Southbound white vehicle proceeding straight through the center passes through the same point less than 1.5s ahead of an eastbound two-wheeler crossing the middle of the intersection.
+296.8,vehicle,vehicle,Southbound through vehicle and a crossing blue turning vehicle converge in the middle of the intersection and pass with less than 1.5s gap.
+306.2,vehicle,two_wheeler,"A southbound vehicle turning right from the north approach to go east cuts across the path of an eastbound two-wheeler crossing the intersection, passing just in front of it with less than 1.5s gap."
+323.0,vehicle,two_wheeler,"Eastbound box truck in the center of the intersection passes through the crossing point of a north to south crossing two-wheeler waiting/moving in the middle of the eastbound lanes, the two-wheeler reaches the truck's path less than 1.5s after the truck."
+324.5,vehicle,two_wheeler,"Second eastbound van following the box truck passes through the same central point just before/after the same crossing two-wheeler, with less than 1.5s separation."
+338.8,vehicle,vehicle,"A white car turning left across the center of the intersection passes very closely in front of a through vehicle traveling east, the through vehicle reaches the same conflict point less than 1.5 seconds after the turning car."
+341.2,vehicle,vehicle,Eastbound vehicle crossing from west passes through the path of a northbound turning vehicle in the center of the intersection with less than 1.5s gap.
+345.0,vehicle,two_wheeler,South-east bound vehicle in the center-east of the intersection passes close to a southbound two_wheeler on the eastern crosswalk area with less than 1.5s gap.
+358.3,vehicle,vehicle,"A white car traveling west from the east and turning left to go south merges into the southbound lane directly in front of a white car traveling south from the north, passing through the merge point less than 1.5 seconds ahead of the southbound car."
+368.8,vehicle,two_wheeler,"Southbound vehicle through central intersection passes just in front of a crossing two-wheeler moving west, with less than 1.5s separation at the crossing point."
+426.5,vehicle,two_wheeler,"A southbound vehicle from the north approach proceeding through the center of the intersection passes through the path of an eastbound two-wheeler crossing the intersection, the two passing within about one second of each other."
+432.0,vehicle,vehicle,"A southbound vehicle in the center of the intersection and a northwest-bound vehicle coming from the east approach cross the same point with less than 1.5s separation, passing within a few meters of each other."
+437.8,vehicle,vehicle,A southbound bus turning toward the east and a westbound vehicle from the east approach pass in front of each other in the center-southeast of the intersection with less than 1.5s separation.
+458.3,vehicle,vehicle,Southbound white van turning left from the westbound approach cuts south across the eastbound through lanes passing just in front of an eastbound silver car
+479.3,vehicle,vehicle,"White sedan driving southwest through center of intersection cuts across path of eastbound dark sedan, passing just ahead of it"
+486.5,vehicle,vehicle,"Eastbound white car follows a large vehicle through the northeast right-turn from east to north, passing through the same turn point less than 1.5s after the lead vehicle with converging paths at closest approach."
+504.5,vehicle,vehicle,northbound teal truck and southbound red truck pass each other closely in the center of the intersection
+515.5,vehicle,two_wheeler,"Northbound white vehicle proceeds through intersection while an eastbound two_wheeler crosses its path from east to west, passing through the same point less than 1.5 seconds ahead of the vehicle"
+516.5,vehicle,two_wheeler,"Westbound silver vehicle crosses the intersection while a two_wheeler traveling north cuts across its lane, the vehicle passing just in front of the two_wheeler"
+562.0,vehicle,vehicle,white vehicle from north turning west and white vehicle traveling south cross the same central point with less than 1.5s separation
+586.2,vehicle,vehicle,"North-to-south white car passes just behind the left-turning semi-trailer turning from north to east, crossing the trailer's swept path less than 1.5s after it clears."
+587.0,vehicle,vehicle,Following north-to-south red car passes just behind the same left-turning semi-trailer with under 1.5s gap as the trailer exits east.
+593.8,vehicle,two_wheeler,Eastbound white vehicle passes through the south crosswalk point just under 1.5s after / before a group of northbound two_wheelers cross the eastbound lanes
