@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import base64
 import json
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable
 
 from .cost import token_usd
@@ -37,9 +39,42 @@ class AgentRun:
     usd: float = 0.0
     turns: int = 0
     stopped: str = ""
+    thoughts: list[dict] = field(default_factory=list)
+    refusals: int = 0
 
     def decision_log(self) -> list[dict]:
         return [{"turn": s.turn, "tool": s.tool, "arguments": s.arguments, "result": s.result} for s in self.steps]
+
+    def timeline(self) -> list[dict]:
+        """Reasoning summaries and tool calls in order, with timings: the mission-control view of a run."""
+        events = [{"turn": t["turn"], "kind": "thought", "text": t["text"]} for t in self.thoughts]
+        events += [{"turn": s.turn, "kind": "tool", "tool": s.tool, "arguments": s.arguments,
+                    "result": _public(s.result), "seconds": s.seconds} for s in self.steps]
+        return sorted(events, key=lambda e: (e["turn"], e["kind"] != "thought"))
+
+
+MEDIA_KEY = "_images"
+
+
+def _public(result: dict) -> dict:
+    return {k: v for k, v in result.items() if k != MEDIA_KEY} if isinstance(result, dict) else result
+
+
+def image_part(path: Path) -> dict:
+    """An input_image part from a PNG or JPEG file, for tool results that show the model evidence."""
+    path = Path(path)
+    mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+    return {"type": "input_image", "image_url": f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"}
+
+
+def tool_output(result: dict) -> str | list[dict]:
+    """A function_call_output payload: JSON text, or text plus images when the result lists image files under
+    MEDIA_KEY (the Responses API accepts input_text and input_image parts in tool results)."""
+    text = json.dumps(_public(result), default=str)[:20000]
+    images = result.get(MEDIA_KEY) if isinstance(result, dict) else None
+    if not images:
+        return text
+    return [{"type": "input_text", "text": text}] + [image_part(p) for p in images]
 
 
 def _function_calls(response: dict) -> list[dict]:
@@ -74,17 +109,21 @@ def replay_items(response: dict) -> list[dict]:
 
 
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
-              budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000) -> AgentRun:
+              budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000,
+              summaries: bool = False, escalate_after: int | None = None) -> AgentRun:
     """Function-calling loop on the Responses API with stateless replay: every turn resends the whole conversation,
     with the model's reasoning as encrypted reasoning items, and nothing is stored on the server. The cache key is the
     full request, so a run replays exactly and runs with different data never share a turn.
-    A finish call whose result carries an error does not end the run; the model sees the error and can correct it."""
+    A finish call whose result carries an error does not end the run; the model sees the error and can correct it.
+    summaries asks for reasoning summaries (kept in run.thoughts). escalate_after stops the run with "escalated" after
+    that many refused finish calls, so a person decides (Meta's verifiable-agent pattern)."""
     specs = [t.spec() for t in tools]
     by_name = {t.name: t for t in tools}
     run = AgentRun()
     conversation: list = [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": task}]}]
     for turn in range(1, max_turns + 1):
-        payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": {"effort": effort},
+        reasoning = {"effort": effort, **({"summary": "auto"} if summaries else {})}
+        payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": reasoning,
                    "max_output_tokens": max_output_tokens, "store": False,
                    "include": ["reasoning.encrypted_content"], "input": list(conversation)}
         request = {k: v for k, v in payload.items() if k != "include"}
@@ -108,6 +147,11 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             break
         run.usd += cost(resp)[0]
         run.turns = turn
+        for o in resp.get("output", []):
+            if o.get("type") == "reasoning":
+                text = " ".join(x.get("text", "") for x in o.get("summary") or [] if isinstance(x, dict)).strip()
+                if text:
+                    run.thoughts.append({"turn": turn, "text": text})
         conversation += replay_items(resp)
         calls = _function_calls(resp)
         if not calls:
@@ -131,13 +175,18 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
                 except Exception as e:
                     result = {"error": f"{type(e).__name__}: {e}"}
             run.steps.append(Step(turn, name, args, result, round(time.time() - t, 2)))
-            outputs.append({"type": "function_call_output", "call_id": call["call_id"],
-                            "output": json.dumps(result, default=str)[:20000]})
-            if name == "finish" and "error" not in result:
-                finished = True
+            outputs.append({"type": "function_call_output", "call_id": call["call_id"], "output": tool_output(result)})
+            if name == "finish":
+                if "error" not in result:
+                    finished = True
+                else:
+                    run.refusals += 1
         conversation += outputs
         if finished:
             run.stopped = "finish_tool"
+            break
+        if escalate_after is not None and run.refusals >= escalate_after:
+            run.stopped = "escalated"
             break
     else:
         run.stopped = "max_turns"

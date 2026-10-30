@@ -9,6 +9,16 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Routes and signal state on entry.** Verified by `routes` (route accuracy 0.947 / 0.947 / 0.955).
 - [x] **Hotspots:** 15 m cells ranked by the exact Poisson 95% lower bound. Verified by `audit` and `tests/test_audit.py`.
 
+## Junction Safety Copilot
+- [x] **Safety Brief for any address** (`nml brief`): official crash record, city designations and recorded treatments, FHWA countermeasures ranked by expected crashes avoided (CMF method), condition-scaled where the record gives darkness or wet-road shares, verify-on-site flags, aerial and street photos. Verified by `tests/test_v2.py` and real briefs in `runs/briefs/`.
+- [x] **Checked memo:** code builds the ranking; the agent writes the narrative; a checker rejects any number not in the facts. Verified by T8 (0 of 34 ungrounded with the checker vs 4 of 34 without).
+- [x] **Open-data registry and data agent** (`nml discover`): any city's crash data as a validated adapter; validator inside the agent's tool. Run on Seattle (no hand-written support): adapter accepted after two validator refusals.
+- [x] **Citywide screen** (`nml citywide`): all 304 NYC Vision Zero priority intersections; 225 plan gaps. Verified by T9 in `validation/BENCH.md`.
+- [x] **Fix illustration on the city's aerial photo:** Muse Image edit composited around the junction, real road users protected by SAM 3.1 masks, SAM 3.1 check. 13 of 20 pass on the top-20 briefs.
+- [x] **Web app** (`nml app`): map with the citywide layer, search, briefs. Verified by headless Chrome screenshots and the demo recording.
+- [x] **Open-weights tier:** the same agents on Muse Spark Open (Baseten) and Muse Glimmer (Modal GPU). Complaint accuracy 78% and 87.5%; memos 0 of 34 ungrounded on both.
+- [x] **Near-miss and crash fusion** (`fusion.py`): negative binomial + Empirical Bayes with near-miss counts; tested on held-out DC blocks and future years (T10, negative result for residents' reports).
+
 ## Decision support
 - [x] **Countermeasures:** FHWA Proven Safety Countermeasures with CMF Clearinghouse citations, checked against road user, site control and observed condition. Verified by `audit` and `tests/test_countermeasures.py`.
 - [x] **Audit memo:** every number traced to the data, with rejections listed. Command: `nml audit`. Verified by `tests/test_audit.py`.
@@ -41,16 +51,17 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 
 ## Offline and open weights
 - [x] Replay mode: every paid result is cached, and `nml --replay ...` costs nothing. Verified by the `selftest` replay run.
-- [ ] Muse Glimmer offline answers (subject to a 2-hour feasibility check).
+- [x] Muse Glimmer served on a Modal L4 GPU (`nearmisslens/glimmer_modal.py`): its Q4 weights need more than this PC's 16 GB, so it runs on partner hardware, not locally.
 
 ## Submission
 - [x] **README** with quick start, Meta tools table and "built during the hackathon".
 - [x] **LICENSES.md and PRIVACY.md.**
 - [x] **Data download:** `nml fetch` reads clips out of remote ZIP64 archives with resumable range requests and a CRC32 check, verifies MD5s, and completes the CMF server's certificate chain from its AIA URL. Verified by `tests/test_fetch.py`.
 - [x] **Demo video renderer, built:** `nml demo` records the viewer with headless Chrome, adds the reviewed event clip with Spark's verdict, and makes title cards from run outputs. A trial render on dev data was checked frame by frame.
-- [ ] Final 3-minute demo video from the paid runs, plus a 20 s X cut.
-- [ ] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
-- [ ] Repo public, Pages live, no keys in history.
+- [x] Final demo video (2:09, `nml demo --copilot`, narrated with Kokoro) and a 20 s X cut; attached to the release.
+- [x] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
+- [x] No keys in the tree, the git history, the replay cache or run outputs (scanned for every key value in `.env` and the Modal token).
+- [ ] Repo public, Pages live.
 - [ ] Submitted on the portal before Nov 4, 12:00 Dhaka.
 
 ## How to check

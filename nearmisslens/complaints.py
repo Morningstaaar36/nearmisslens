@@ -100,3 +100,51 @@ def speak(text: str, lang: str, out_dir: Path) -> Path:
     pcm = np.clip(wave / max(np.abs(wave).max(), 1e-6) * 0.9, -1, 1)
     wavfile.write(out, model.config.sampling_rate, (pcm * 32767).astype(np.int16))
     return out
+
+
+VAGUE = ["This junction is badly designed and the traffic lights take far too long.",
+         "There is too much horn noise here at night, please do something about it."]
+
+
+def benchmark_set(facts: dict) -> list[dict]:
+    """NML-Bench T4 complaints for one audit, built only from the audit's own slots: per hotspot a full complaint in
+    English and in Spanish or French, one naming only the road users, and one with an approach the hotspot's dominant
+    conflicts never use; plus one complaint per road-user pair that no hotspot shows, and two vague complaints. The
+    expected verdict comes from ask.truth."""
+    out = []
+    langs = [l for l in LANGS if l != "eng"]
+    for k, f in enumerate(facts["findings"]):
+        d = f["dominant"]
+        move, arm = _top(d.get("movements", {}), voice.MOVES), _top(d.get("approaches", {}), voice.ARMS)
+        pair = tuple(d["pair"]) if d["pair"][0] != "pedestrian" else tuple(reversed(d["pair"]))
+        src = f"hotspot {f['rank']}"
+        if move and arm:
+            for lang in ("eng", langs[k % len(langs)]):
+                out.append({"source": src, "kind": "full", "lang": lang, "pair": list(pair), "movement": move,
+                            "approach": arm, "text": sentence(lang, pair, move, arm)})
+        u1 = SUBJECT["eng"][pair[0]]
+        u2 = OTHER["eng"][pair[1]] if pair[0] == pair[1] else OBJECT["eng"][pair[1]]
+        out.append({"source": src, "kind": "users_only", "lang": "eng", "pair": list(pair), "movement": None,
+                    "approach": None, "text": f"{u1[0].upper() + u1[1:]} and {u2} keep nearly crashing into each other "
+                                              f"at this junction."})
+        unused = [a for a in voice.ARMS if not d.get("approaches", {}).get(a)]
+        if move and unused:
+            out.append({"source": src, "kind": "other_approach", "lang": "eng", "pair": list(pair), "movement": None,
+                        "approach": unused[0],
+                        "text": f"Every day at this junction, {u1} coming from the {ARM_WORD['eng'][unused[0]]} side "
+                                f"nearly hit {u2}. Someone is going to get hurt."})
+    seen = {frozenset(f["dominant"]["pair"]) for f in facts["findings"]}
+    for a in voice.USERS:
+        for b in voice.USERS:
+            if a <= b and frozenset((a, b)) not in seen:
+                pair = (a, b) if a != "pedestrian" else (b, a)
+                u1 = SUBJECT["eng"][pair[0]]
+                u2 = OTHER["eng"][pair[1]] if pair[0] == pair[1] else OBJECT["eng"][pair[1]]
+                out.append({"source": "decoy", "kind": "absent_pair", "lang": "eng", "pair": list(pair),
+                            "movement": None, "approach": None,
+                            "text": f"{u1[0].upper() + u1[1:]} and {u2} keep nearly crashing into each other at "
+                                    f"this junction."})
+    out += [{"source": "vague", "kind": "vague", "lang": "eng", "pair": [], "movement": None, "approach": None,
+             "text": t} for t in VAGUE]
+    seen_text: set[str] = set()
+    return [c for c in out if not (c["text"] in seen_text or seen_text.add(c["text"]))]

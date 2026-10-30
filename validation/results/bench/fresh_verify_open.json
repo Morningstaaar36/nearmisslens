@@ -1,0 +1,279 @@
+{
+ "windows": [
+  {
+   "site": "FIDRT",
+   "flight": "20250120_video",
+   "candidates": 6,
+   "kept": 1,
+   "before": {
+    "ref_events": 25,
+    "pred_events": 6,
+    "tp": 4,
+    "precision": 0.6666666666666666,
+    "recall": 0.16,
+    "f1": 0.25806451612903225
+   },
+   "after": {
+    "ref_events": 25,
+    "pred_events": 1,
+    "tp": 1,
+    "precision": 1.0,
+    "recall": 0.04,
+    "f1": 0.07692307692307693
+   },
+   "usd": 0.0155
+  },
+  {
+   "site": "FI",
+   "flight": "20250120_video",
+   "candidates": 35,
+   "kept": 4,
+   "before": {
+    "ref_events": 54,
+    "pred_events": 35,
+    "tp": 24,
+    "precision": 0.6857142857142857,
+    "recall": 0.4444444444444444,
+    "f1": 0.5393258426966292
+   },
+   "after": {
+    "ref_events": 54,
+    "pred_events": 4,
+    "tp": 3,
+    "precision": 0.75,
+    "recall": 0.05555555555555555,
+    "f1": 0.10344827586206895
+   },
+   "usd": 0.1004
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-1",
+   "candidates": 26,
+   "kept": 5,
+   "before": {
+    "ref_events": 65,
+    "pred_events": 26,
+    "tp": 22,
+    "precision": 0.8461538461538461,
+    "recall": 0.3384615384615385,
+    "f1": 0.48351648351648346
+   },
+   "after": {
+    "ref_events": 65,
+    "pred_events": 5,
+    "tp": 4,
+    "precision": 0.8,
+    "recall": 0.06153846153846154,
+    "f1": 0.1142857142857143
+   },
+   "usd": 0.0849
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-2",
+   "candidates": 29,
+   "kept": 3,
+   "before": {
+    "ref_events": 56,
+    "pred_events": 29,
+    "tp": 19,
+    "precision": 0.6551724137931034,
+    "recall": 0.3392857142857143,
+    "f1": 0.44705882352941173
+   },
+   "after": {
+    "ref_events": 56,
+    "pred_events": 3,
+    "tp": 3,
+    "precision": 1.0,
+    "recall": 0.05357142857142857,
+    "f1": 0.10169491525423728
+   },
+   "usd": 0.0852
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-3",
+   "candidates": 25,
+   "kept": 2,
+   "before": {
+    "ref_events": 57,
+    "pred_events": 25,
+    "tp": 12,
+    "precision": 0.48,
+    "recall": 0.21052631578947367,
+    "f1": 0.2926829268292683
+   },
+   "after": {
+    "ref_events": 57,
+    "pred_events": 2,
+    "tp": 2,
+    "precision": 1.0,
+    "recall": 0.03508771929824561,
+    "f1": 0.06779661016949151
+   },
+   "usd": 0.0706
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-1",
+   "candidates": 21,
+   "kept": 0,
+   "before": {
+    "ref_events": 28,
+    "pred_events": 21,
+    "tp": 13,
+    "precision": 0.6190476190476191,
+    "recall": 0.4642857142857143,
+    "f1": 0.5306122448979592
+   },
+   "after": {
+    "ref_events": 28,
+    "pred_events": 0,
+    "tp": 0,
+    "precision": NaN,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "usd": 0.0592
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-2",
+   "candidates": 31,
+   "kept": 3,
+   "before": {
+    "ref_events": 63,
+    "pred_events": 31,
+    "tp": 22,
+    "precision": 0.7096774193548387,
+    "recall": 0.3492063492063492,
+    "f1": 0.4680851063829788
+   },
+   "after": {
+    "ref_events": 63,
+    "pred_events": 3,
+    "tp": 2,
+    "precision": 0.6666666666666666,
+    "recall": 0.031746031746031744,
+    "f1": 0.06060606060606061
+   },
+   "usd": 0.0913
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-2",
+   "candidates": 25,
+   "kept": 2,
+   "before": {
+    "ref_events": 36,
+    "pred_events": 25,
+    "tp": 17,
+    "precision": 0.68,
+    "recall": 0.4722222222222222,
+    "f1": 0.5573770491803278
+   },
+   "after": {
+    "ref_events": 36,
+    "pred_events": 2,
+    "tp": 2,
+    "precision": 1.0,
+    "recall": 0.05555555555555555,
+    "f1": 0.10526315789473684
+   },
+   "usd": 0.0761
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-1",
+   "candidates": 1,
+   "kept": 0,
+   "before": {
+    "ref_events": 4,
+    "pred_events": 1,
+    "tp": 1,
+    "precision": 1.0,
+    "recall": 0.25,
+    "f1": 0.4
+   },
+   "after": {
+    "ref_events": 4,
+    "pred_events": 0,
+    "tp": 0,
+    "precision": NaN,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "usd": 0.0029
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-2",
+   "candidates": 0,
+   "kept": 0,
+   "before": {
+    "ref_events": 1,
+    "pred_events": 0,
+    "tp": 0,
+    "precision": NaN,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "after": {
+    "ref_events": 1,
+    "pred_events": 0,
+    "tp": 0,
+    "precision": NaN,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "usd": 0.0
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-3",
+   "candidates": 1,
+   "kept": 0,
+   "before": {
+    "ref_events": 2,
+    "pred_events": 1,
+    "tp": 1,
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1": 0.6666666666666666
+   },
+   "after": {
+    "ref_events": 2,
+    "pred_events": 0,
+    "tp": 0,
+    "precision": NaN,
+    "recall": 0.0,
+    "f1": 0.0
+   },
+   "usd": 0.0028
+  }
+ ],
+ "before": {
+  "tp": 135,
+  "ref_events": 391,
+  "pred_events": 200,
+  "precision": 0.675,
+  "recall": 0.3452685421994885,
+  "f1": 0.45685279187817257
+ },
+ "after": {
+  "tp": 17,
+  "ref_events": 391,
+  "pred_events": 20,
+  "precision": 0.85,
+  "recall": 0.043478260869565216,
+  "f1": 0.0827250608272506
+ },
+ "f1_diff_ci95": [
+  -0.4290838498123943,
+  -0.3078232867776628
+ ],
+ "baseten_usd": 0.589,
+ "claim_verifier_better": false
+}

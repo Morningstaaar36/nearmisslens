@@ -59,6 +59,11 @@ def clip(site: str, stem: str, data_dir: Path | None = None) -> Clip:
 DEV = ("FIDRT", "20250525_video")
 TEST = ("FIDRT", "20250526_video")
 HELDOUT = ("FI", "20250530_video-1")
+# Every FLUID flight (site, stem): 3 at FIDRT, 8 at FI, 3 at TI. NML-Bench uses all of them.
+FLIGHTS = (("FIDRT", "20250120_video"), DEV, TEST,
+           ("FI", "20250120_video"), ("FI", "20250121_video-1"), ("FI", "20250121_video-2"), ("FI", "20250121_video-3"),
+           ("FI", "20250525_video-1"), ("FI", "20250525_video-2"), HELDOUT, ("FI", "20250530_video-2"),
+           ("TI", "20250529_video-1"), ("TI", "20250529_video-2"), ("TI", "20250529_video-3"))
 
 
 def load_trajectories(c: Clip, real_only: bool = False) -> pd.DataFrame:

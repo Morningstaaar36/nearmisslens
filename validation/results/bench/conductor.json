@@ -1,0 +1,2955 @@
+{
+ "clip": "FI_20250530_video-1",
+ "sam_budget_usd": 1.0,
+ "policies": {
+  "uniform": {
+   "reference": 373,
+   "spent_usd": 0.96,
+   "jobs": 16,
+   "recovered": 19,
+   "recall": 0.05093833780160858,
+   "vru_reference": 85,
+   "vru_recall": 0.03529411764705882,
+   "recovered_per_usd": 19.791666666666668
+  },
+  "greedy": {
+   "reference": 373,
+   "spent_usd": 0.9408,
+   "jobs": 16,
+   "recovered": 100,
+   "recall": 0.2680965147453083,
+   "vru_reference": 85,
+   "vru_recall": 0.058823529411764705,
+   "recovered_per_usd": 106.29251700680273
+  },
+  "wonder_agent": {
+   "reference": 373,
+   "spent_usd": 0.96,
+   "jobs": 16,
+   "recovered": 45,
+   "recall": 0.12064343163538874,
+   "vru_reference": 85,
+   "vru_recall": 0.16470588235294117,
+   "agent_usd": 0.4165,
+   "turns": 17,
+   "stopped": "finish_tool",
+   "jobs_chosen": [
+    [
+     1,
+     11,
+     "pedestrian"
+    ],
+    [
+     1,
+     11,
+     "scooter"
+    ],
+    [
+     1,
+     11,
+     "car"
+    ],
+    [
+     0,
+     14,
+     "pedestrian"
+    ],
+    [
+     0,
+     14,
+     "scooter"
+    ],
+    [
+     0,
+     14,
+     "car"
+    ],
+    [
+     1,
+     14,
+     "scooter"
+    ],
+    [
+     1,
+     14,
+     "car"
+    ],
+    [
+     2,
+     14,
+     "motorcycle"
+    ],
+    [
+     2,
+     14,
+     "car"
+    ],
+    [
+     2,
+     11,
+     "motorcycle"
+    ],
+    [
+     2,
+     11,
+     "car"
+    ],
+    [
+     1,
+     16,
+     "pedestrian"
+    ],
+    [
+     1,
+     16,
+     "scooter"
+    ],
+    [
+     2,
+     10,
+     "pedestrian"
+    ],
+    [
+     2,
+     10,
+     "scooter"
+    ]
+   ],
+   "recovered_per_usd": 32.69160915365056
+  }
+ },
+ "decision_log": [
+  {
+   "turn": 1,
+   "tool": "site_summary",
+   "arguments": {},
+   "result": {
+    "tiles": [
+     {
+      "id": 0,
+      "rect_px": [
+       0,
+       0,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 1,
+      "rect_px": [
+       1856,
+       0,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 2,
+      "rect_px": [
+       0,
+       1016,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 3,
+      "rect_px": [
+       1856,
+       1016,
+       1984,
+       1144
+      ]
+     }
+    ],
+    "windows": [
+     {
+      "id": 0,
+      "start_s": 0.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 1,
+      "start_s": 30.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 2,
+      "start_s": 60.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 3,
+      "start_s": 90.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 4,
+      "start_s": 120.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 5,
+      "start_s": 150.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 6,
+      "start_s": 180.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 7,
+      "start_s": 210.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 8,
+      "start_s": 240.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 9,
+      "start_s": 270.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 10,
+      "start_s": 300.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 11,
+      "start_s": 330.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 12,
+      "start_s": 360.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 13,
+      "start_s": 390.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 14,
+      "start_s": 420.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 15,
+      "start_s": 450.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 16,
+      "start_s": 480.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 17,
+      "start_s": 510.0,
+      "length_s": 25.200000000000045
+     }
+    ],
+    "cost_per_job_usd": 0.06,
+    "remaining_usd": 1.0,
+    "default_concepts": [
+     "car",
+     "scooter"
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 0
+   },
+   "result": {
+    "window": 0,
+    "energy_by_tile": [
+     1.09,
+     1.41,
+     1.0,
+     1.09
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 1
+   },
+   "result": {
+    "window": 1,
+    "energy_by_tile": [
+     1.2,
+     1.94,
+     1.54,
+     1.33
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 2
+   },
+   "result": {
+    "window": 2,
+    "energy_by_tile": [
+     1.24,
+     1.92,
+     1.55,
+     1.39
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 3
+   },
+   "result": {
+    "window": 3,
+    "energy_by_tile": [
+     1.11,
+     1.27,
+     1.38,
+     1.16
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 4
+   },
+   "result": {
+    "window": 4,
+    "energy_by_tile": [
+     1.4,
+     1.53,
+     1.57,
+     1.13
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 5
+   },
+   "result": {
+    "window": 5,
+    "energy_by_tile": [
+     1.42,
+     1.86,
+     1.73,
+     1.73
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 6
+   },
+   "result": {
+    "window": 6,
+    "energy_by_tile": [
+     0.92,
+     1.49,
+     1.15,
+     1.41
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 7
+   },
+   "result": {
+    "window": 7,
+    "energy_by_tile": [
+     1.05,
+     1.6,
+     1.47,
+     1.07
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 8
+   },
+   "result": {
+    "window": 8,
+    "energy_by_tile": [
+     1.74,
+     2.44,
+     2.0,
+     1.7
+    ]
+   }
+  },
+  {
+   "turn": 2,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 9
+   },
+   "result": {
+    "window": 9,
+    "energy_by_tile": [
+     1.08,
+     1.47,
+     1.41,
+     1.18
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 10
+   },
+   "result": {
+    "window": 10,
+    "energy_by_tile": [
+     1.25,
+     1.92,
+     1.64,
+     1.36
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 11
+   },
+   "result": {
+    "window": 11,
+    "energy_by_tile": [
+     1.79,
+     2.76,
+     2.23,
+     2.1
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 12
+   },
+   "result": {
+    "window": 12,
+    "energy_by_tile": [
+     1.59,
+     2.36,
+     1.79,
+     1.66
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 13
+   },
+   "result": {
+    "window": 13,
+    "energy_by_tile": [
+     1.23,
+     1.87,
+     1.42,
+     1.35
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 14
+   },
+   "result": {
+    "window": 14,
+    "energy_by_tile": [
+     1.8,
+     2.77,
+     1.91,
+     1.74
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 15
+   },
+   "result": {
+    "window": 15,
+    "energy_by_tile": [
+     1.98,
+     2.63,
+     1.72,
+     1.9
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 16
+   },
+   "result": {
+    "window": 16,
+    "energy_by_tile": [
+     1.4,
+     2.68,
+     1.65,
+     1.95
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "motion_energy",
+   "arguments": {
+    "window": 17
+   },
+   "result": {
+    "window": 17,
+    "energy_by_tile": [
+     1.46,
+     2.13,
+     1.76,
+     1.73
+    ]
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 0
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.8,
+     "W": 0.8
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 1
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.3,
+     "N": 0.6,
+     "S": 0.6,
+     "W": 0.3
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 3,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 2
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "N": 0.3,
+     "S": 0.3
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 3
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.6,
+     "W": 0.6
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 4
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.5,
+     "N": 0.4,
+     "S": 0.4,
+     "W": 0.5
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 5
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "N": 0.5,
+     "S": 0.5
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 6
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.4,
+     "W": 0.4
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 7
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.7,
+     "N": 0.2,
+     "S": 0.2,
+     "W": 0.7
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 8
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "N": 0.7,
+     "S": 0.7
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 9
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.2,
+     "W": 0.2
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 10
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.9,
+     "W": 0.9
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 11
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "N": 0.9,
+     "S": 0.9
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 4,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 12
+   },
+   "result": {
+    "walk_fraction_by_approach": {},
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 5,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 13
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 1.0,
+     "W": 1.0
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 5,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 14
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.1,
+     "N": 0.8,
+     "S": 0.8,
+     "W": 0.1
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 5,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 15
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "N": 0.1,
+     "S": 0.1
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 5,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 16
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.8,
+     "W": 0.8
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 5,
+   "tool": "pedestrian_phase",
+   "arguments": {
+    "window": 17
+   },
+   "result": {
+    "walk_fraction_by_approach": {
+     "E": 0.36,
+     "N": 0.52,
+     "S": 0.52,
+     "W": 0.36
+    },
+    "right_turns_signalised": false
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 11
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "truck"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 14
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 6,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 15
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 9,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 16
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 8
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 10
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 13
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 9,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "blue truck"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 5
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "taxi"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 11
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 5,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 6,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 11
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 5,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 7,
+   "tool": "site_summary",
+   "arguments": {},
+   "result": {
+    "tiles": [
+     {
+      "id": 0,
+      "rect_px": [
+       0,
+       0,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 1,
+      "rect_px": [
+       1856,
+       0,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 2,
+      "rect_px": [
+       0,
+       1016,
+       1984,
+       1144
+      ]
+     },
+     {
+      "id": 3,
+      "rect_px": [
+       1856,
+       1016,
+       1984,
+       1144
+      ]
+     }
+    ],
+    "windows": [
+     {
+      "id": 0,
+      "start_s": 0.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 1,
+      "start_s": 30.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 2,
+      "start_s": 60.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 3,
+      "start_s": 90.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 4,
+      "start_s": 120.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 5,
+      "start_s": 150.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 6,
+      "start_s": 180.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 7,
+      "start_s": 210.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 8,
+      "start_s": 240.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 9,
+      "start_s": 270.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 10,
+      "start_s": 300.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 11,
+      "start_s": 330.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 12,
+      "start_s": 360.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 13,
+      "start_s": 390.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 14,
+      "start_s": 420.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 15,
+      "start_s": 450.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 16,
+      "start_s": 480.0,
+      "length_s": 30.0
+     },
+     {
+      "id": 17,
+      "start_s": 510.0,
+      "length_s": 25.200000000000045
+     }
+    ],
+    "cost_per_job_usd": 0.06,
+    "remaining_usd": 1.0,
+    "default_concepts": [
+     "car",
+     "scooter"
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 11
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "small truck"
+     },
+     {
+      "approx_count": 7,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 14
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pickup truck"
+     },
+     {
+      "approx_count": 7,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 14
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     },
+     {
+      "approx_count": 9,
+      "noun_phrase": "motorcycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 14
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 15
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 15
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 15
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 16
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 16
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bicycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 8,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 16
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 8
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 10,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 8
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 9,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 8
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 7,
+      "noun_phrase": "motorcycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 10
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 10
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 5,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "cargo tricycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 10
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 13
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 13
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 13
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 9,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 12
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 10,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "blue truck"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "motor scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 0
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 0
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 0
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "taxi"
+     },
+     {
+      "approx_count": 5,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 0
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 1
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 1
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 1
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 1
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 2
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 10,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 2
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "motorcycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 2
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 2
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 9,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 3
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "motorcycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 3
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 3
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 3
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 4
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 2,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 4
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 4
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "small truck"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "cargo tricycle"
+     },
+     {
+      "approx_count": 9,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 11,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 4
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 5
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 5,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 5
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 5
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 8,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 6
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 6
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 6
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "truck"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 6
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 7
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pedestrian"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 7
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 7,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 12,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 7
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 10,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "bus"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "small truck"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 7
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 9
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 5,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 9
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 9
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 2,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 6,
+      "noun_phrase": "motorcycle"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo truck"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 9
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 12
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 12
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 12
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 9,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 17
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 2,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 13,
+   "tool": "look",
+   "arguments": {
+    "tile": 1,
+    "window": 17
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "pickup truck"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "van"
+     },
+     {
+      "approx_count": 3,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 14,
+   "tool": "look",
+   "arguments": {
+    "tile": 2,
+    "window": 17
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 4,
+      "noun_phrase": "scooter"
+     },
+     {
+      "approx_count": 1,
+      "noun_phrase": "cargo tricycle"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 14,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 17
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 4,
+      "noun_phrase": "car"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 14,
+   "tool": "look",
+   "arguments": {
+    "tile": 3,
+    "window": 6
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 3,
+      "noun_phrase": "car"
+     },
+     {
+      "approx_count": 2,
+      "noun_phrase": "scooter"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 14,
+   "tool": "look",
+   "arguments": {
+    "tile": 0,
+    "window": 2
+   },
+   "result": {
+    "road_users": [
+     {
+      "approx_count": 6,
+      "noun_phrase": "car"
+     }
+    ]
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 11,
+    "concept": "pedestrian",
+    "reason": "Highest motion 2.76, WALK N/S 0.9, ped with 4 scooters/8 cars in tile1"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 2,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.94
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 11,
+    "concept": "scooter",
+    "reason": "Pair with pedestrian/car in highest-motion cell w11 tile1"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 9,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.88
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 11,
+    "concept": "car",
+    "reason": "8 cars co-located with ped/scooters, w11 tile1, for ped-car and scooter-car near-misses"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 21,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.82
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 0,
+    "window": 14,
+    "concept": "pedestrian",
+    "reason": "3 pedestrians, most seen, WALK N/S 0.8 in w14 tile0"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 0,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.76
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 0,
+    "window": 14,
+    "concept": "scooter",
+    "reason": "7 scooters with 3 pedestrians in w14 tile0, priority ped-two-wheeler pair"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 11,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.7
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 0,
+    "window": 14,
+    "concept": "car",
+    "reason": "5 cars with peds/scooters in w14 tile0 for ped-car/scooter-car pairs"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 13,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.64
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 14,
+    "concept": "scooter",
+    "reason": "6 scooters, motion 2.77 highest, w14 tile1 paired with car"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 19,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.58
+   }
+  },
+  {
+   "turn": 15,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 14,
+    "concept": "car",
+    "reason": "8 cars with 6 scooters in highest-motion w14 tile1"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 22,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.52
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 14,
+    "concept": "motorcycle",
+    "reason": "9 motorcycles, exact look label, in w14 tile2 paired with car"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 16,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.46
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 14,
+    "concept": "car",
+    "reason": "Cars co-located with 9 motorcycles in w14 tile2"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 15,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.4
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 11,
+    "concept": "motorcycle",
+    "reason": "5 motorcycles, motion tile2 2.23 in w11, paired with car"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 14,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.34
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 11,
+    "concept": "car",
+    "reason": "Cars with motorcycles in high-motion w11 tile2"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 21,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.28
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 16,
+    "concept": "pedestrian",
+    "reason": "Pedestrian in w16 tile1, motion 2.68, WALK E/W 0.8, paired with scooter"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 1,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.22
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 1,
+    "window": 16,
+    "concept": "scooter",
+    "reason": "3 scooters with pedestrian in high-motion w16 tile1, priority pair"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 10,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.16
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 10,
+    "concept": "pedestrian",
+    "reason": "Pedestrian w10 tile2, WALK E/W 0.9, paired with scooter"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 2,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.1
+   }
+  },
+  {
+   "turn": 16,
+   "tool": "track",
+   "arguments": {
+    "tile": 2,
+    "window": 10,
+    "concept": "scooter",
+    "reason": "5 scooters with pedestrian in w10 tile2, priority ped-two-wheeler pair"
+   },
+   "result": {
+    "status": "tracked",
+    "tracks": 1,
+    "cost_usd": 0.06,
+    "remaining_usd": 0.04
+   }
+  },
+  {
+   "turn": 17,
+   "tool": "finish",
+   "arguments": {
+    "reason": "Budget exhausted for tracking: $0.96 spent on 16 paired/triple jobs, $0.04 left < $0.06/job. Targeted highest-motion windows 10,11,14,16 with co-located pedestrian+scooter+car in tile1/w11, tile0/w14, tile1/w16, tile2/w10, and scooter/motorcycle+car in tile1/w14, tile2/w14, tile2/w11, prioritising pedestrian and two-wheeler interactions."
+   },
+   "result": {
+    "ok": true,
+    "spent_usd": 0.96
+   }
+  }
+ ]
+}

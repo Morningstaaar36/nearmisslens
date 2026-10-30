@@ -110,3 +110,23 @@ Made before any test or held-out run, after a literature review (`research/R6_pa
      - vehicles unchanged;
      - two-wheeler IDF1 0.485 → 0.500.
    - **Reporting:** test and held-out are re-scored from the same cached tracks, with no new tracking. RESULTS.md reports the registered numbers and the stitched numbers side by side. The audits use stitched tracks from now on.
+10. **Robust kinematics, registered after the test and held-out runs and disclosed as such.**
+   - **Why:** a diagnostic on cached tracks (`research/R11_recall_waterfall.md`) found that velocity noise dominates the disagreement on tracked pairs. Error is 0.53 m/s within 5 frames of a Savitzky–Golay segment edge against 0.07 m/s inside, and 937 test rows imply speeds above 15 m/s. That diagnostic used the test split, so test and held-out are no longer untouched for this change.
+   - **Method:** a constant-velocity Kalman filter per track (`tracks.kalman_states`) with:
+     - innovation gating (rejected measurements are skipped, and a run of rejections restarts the track);
+     - gaps bridged by prediction instead of splitting segments;
+     - an RTS smoother;
+     - a per-class size-bias correction.
+   - **Tuning rule:** parameters are chosen on the development clip only (frames 1–1810, the cached 61 s-window tracks) by mean vector velocity error at matched points (`evaluate.tune_kinematics`). Conflict scores are never used to choose them. The grid and the choice are in `validation/results/dev/kinematics_tuning.json`.
+   - **Reporting:** test and held-out are re-scored once from the same cached tracks, with stitching, next to the registered and stitched numbers. The clean test of this change is change 11.
+11. **Fresh-flight confirmation (NML-Bench), registered before any of these flights was tracked or scored.**
+   - **Flights:** the 11 FLUID flights never used so far: FIDRT 20250120; FI 20250120, 20250121-1/2/3, 20250525-1/2, 20250530-2; TI 20250529-1/2/3. TI is a third junction never seen.
+   - **Window:** seconds 120–180 of each flight (frames 1201–1800). The rule was fixed before any of these videos was viewed.
+   - **Pipeline, frozen:** SAM 3.1 "car" and "scooter", 2×2 tiles, 10 s windows, stitching (change 9), and the kinematics chosen in change 10. v0 (Savitzky–Golay) is scored on the same tracks as the comparison.
+   - **Metrics:**
+     - tracking per class;
+     - TTC event F1 and recall-weighted F2 = 5TP/(5TP+4FN+FP) (USDOT Intersection Safety Challenge);
+     - PET ≤ 1.5 s and ≤ 3.0 s F1;
+     - recall on tracked classes (pairs without a pedestrian) as a secondary metric.
+   - **Rule:** v1 is reported as better than v0 only if pooled TTC F1 is higher and a 95% bootstrap interval over flights (2,000 resamples, seed 0) for the difference excludes zero. Otherwise both are reported and no improvement is claimed.
+   - **Cost:** about $0.17 per 10 s (2 concepts × 4 tiles), about $11–12 for the 11 minutes. It runs only after the user approves the estimate.

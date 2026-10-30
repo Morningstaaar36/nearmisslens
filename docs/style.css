@@ -136,3 +136,14 @@ select { max-width: 100%; text-overflow: ellipsis; }
 }
 #score, #panel, .memo { overflow-x: auto; }
 pre { word-break: break-word; }
+
+.timeline { list-style: none; padding: 0; margin: 12px 0; border-left: 2px solid var(--line, #2a2f3a); }
+.timeline li { margin: 0 0 8px; padding: 2px 0 2px 14px; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: -6px; top: 10px; width: 10px; height: 10px; border-radius: 50%; background: var(--muted, #888); }
+.timeline li.tool::before { background: var(--amber, #f5a524); }
+.timeline li.refused::before { background: var(--conflict, #ef5350); }
+.timeline li.thought { color: var(--muted, #9aa0a6); font-style: italic; }
+.timeline .args { color: var(--muted, #9aa0a6); font-size: 0.85em; word-break: break-word; }
+.timeline .secs { font-size: 0.8em; opacity: 0.7; }
+.signoff { border-left: 3px solid var(--conflict, #ef5350); padding-left: 10px; }
+.signoff.ok { border-color: var(--go, #3ecf8e); }

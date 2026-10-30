@@ -1,0 +1,162 @@
+# NML-Bench: pre-registration
+
+NML-Bench measures each part of the NearMissLens agent system on all 14 FLUID flights (3 junctions, about 5 h), plus open city data. Perception and conflict detection on fresh flights are registered in `PREREG.md` change 11. This file registers the other tasks before they are computed. `nml bench` writes the results to `BENCH.md`. Anything decided after seeing a result is marked there as post-hoc.
+
+All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + SparseTrack pipeline). It is not ground truth.
+
+## T3 Hotspot persistence (reference trajectories, $0)
+- **Question:** does one recording's hotspot ranking predict another recording's ranking at the same junction?
+- **Data:** each flight's full reference trajectories. The conflict table, cells and ranking come from `audit.conflict_table` and `risk.hotspots` (15 m cells, PET ≤ 1.5 s or TTC ≤ 1.5 s, exact Poisson lower bound per 1,000 road users).
+- **Pairs:**
+  - every pair of flights at the same site (FIDRT 3, FI 8, TI 3: 3 + 28 + 3 = 34 pairs);
+  - separately, the pairs recorded on different days.
+- **Metrics:**
+  - Kendall tau-b of the conflict rate over the union of cells with at least 1 event in either flight;
+  - top-3 overlap (0–3).
+- **Null:** cell labels shuffled within the second flight, 1,000 permutations, seed 0. The reported p-value is one-sided.
+- **Claim rule:** "hotspots persist" only if median tau over different-day pairs is > 0 and the pooled permutation p < 0.05.
+
+## T7 Fix test with controls (reference trajectories, $0)
+- **Intervention:** remove every road user that entered the junction on red (`movements.entry_signal`, vehicles and two-wheelers), then re-run the conflict engine.
+- **Control:** remove the same number of randomly chosen road users of the same classes that did not enter on red. 200 draws, seed 0.
+- **Metric:** conflicts removed (PET ≤ 1.5 s or TTC ≤ 1.5 s), compared with the control distribution (percentile and ratio to the control median), per flight and pooled.
+- **Wording:**
+  - an upper bound on conflicts in edited trajectories, never "crashes avoided";
+  - "the targeted fix removes more conflicts than chance" only if the pooled targeted removal is above the 95th percentile of the pooled control.
+
+## T5 Grounding of agent claims
+- **Planted errors:** fabricated CMF id, rejected countermeasure, non-existent hotspot, number absent from the data, inserted into the audit memo (as in the self-test). Metric: share caught by the checker. Target: all.
+- **Ablation:** the review panel runs on the test and held-out audits with the checker and without it (finish accepts anything).
+- **Metric:** ungrounded items per memo (hotspots, CMF ids or numbers not in the facts), counted by the same checker after the run.
+- **Cost:** about $0.2.
+
+## T6 Budgeted perception (as registered in PREREG: held-out site)
+- **Policies:** uniform, greedy (motion energy) and the Muse Wonder conductor. Each spends the same SAM budget on the held-out clip (`conductor.py`).
+- **Metric:** share of reference TTC events whose two users are tracked at the event frame, per dollar.
+- **Budget:** $1.50 SAM per policy plus at most $3 of Wonder. It runs only after the user approves the estimate.
+
+## T4 Complaint verification (registered 2026-10-30, before any agent answered a complaint)
+- **Complaints:** `complaints.benchmark_set` on the two SAM audits (test, held-out): 32 complaints built only from the audit's own slots.
+  - per hotspot: a full complaint in English and in Spanish or French, one naming only the road users, and one with an approach the hotspot never shows;
+  - one complaint per road-user pair that no hotspot shows;
+  - two vague complaints.
+- **Expected verdict** (`ask.truth`):
+  - "supported" by the hotspots whose dominant pair matches and whose movements and approaches do not contradict a stated slot;
+  - otherwise "not_observed";
+  - "unclear" when no road users are named.
+- **Methods:**
+  - the fixed rule (Muse Spark extraction + `voice.match`);
+  - the intake agent on Muse Spark Contributor with the checker;
+  - the same without the checker;
+  - Muse Wonder with the checker. Wonder is capped at $0.12 per complaint and Spark at $0.02.
+- **Metrics:**
+  - accuracy (verdict right and, when supported, a correct hotspot);
+  - answers with ungrounded claims (judged by the same checker);
+  - cost per complaint.
+- **Scope:** these complaints are templated text, not recordings. The demo's spoken complaints are separate and not scored here.
+
+## T8 City context (registered 2026-10-30, before any memo was written)
+- **Junctions:** `nearmisslens/data/t8_junctions.json` (seed 0), 34 in total:
+  - NYC: 10 Vision Zero priority intersections and 10 random 2025 crash locations;
+  - DC: 10 random 2025 crash locations;
+  - 4 demo junctions.
+- **Dossier:**
+  - OSM within 80 m;
+  - police-reported crashes within 100 m over 5 years;
+  - city designations and projects within 150 m;
+  - a plan gap is at least 10 injury crashes and no project in the period.
+- **Metrics:**
+  - success rate and latency per source;
+  - memos with any number not in the dossier, with and without the fact checker (Muse Spark Contributor);
+  - cost per memo.
+- **Descriptive only:** the share of NYC priority vs random junctions with a plan gap. No accuracy claim is made, since there is no ground truth for "should have a project".
+
+## Scout trial (registered 2026-10-30, before it was run)
+- **Data:** development clip frames 601, 721, 841, 961, 1081, 2×2 tiles (20 tile images). Two-wheelers and pedestrians are scored separately.
+- **SAM alone:** the image concept prompt ("scooter" / "pedestrian").
+- **SAM + Scout:**
+  - Muse Spark Contributor points at every instance of the kind (count mode);
+  - points not covered by a SAM box are sent back to SAM 3.1 as point prompts;
+  - the new masks are added.
+- **Scoring:** one-to-one matching of box centres to reference centres within 25 px.
+- **Go rule:** recall rises by at least 0.10 and precision stays at least 0.8. Otherwise the Scout is reported as a negative result and not used.
+- **Cost:** about $0.25.
+
+## Re-seeding trial for two-wheelers (registered 2026-10-30, before it was run)
+- **Why:** on single frames SAM 3.1 finds 91% of two-wheelers (Scout trial), while video tracking keeps 36–59%. Each video request is capped at 16 objects, so road users are lost in tracking, not in detection.
+- **Method, per 10 s segment and tile:**
+  - SAM 3.1 image detection ("scooter") on 2 keyframes, at segment frames 0 and 50;
+  - every detection whose centre is not inside a box of the existing video tracks on that frame becomes a box prompt;
+  - box prompts go to extra SAM 3.1 video requests on the same tile clip, up to 16 objects per request;
+  - re-seeded tracks that overlap an existing track (IoU > 0.5 on at least half of their shared frames) are dropped;
+  - the rest are merged with the existing tracks by the unchanged pipeline (tile merge, window linking, stitching).
+- **Trial data:** development frames 601–1200, "scooter", 2×2 tiles, the same window as PREREG change 8. The baseline is recomputed by the same code without re-seeding.
+- **Go rule:** two-wheeler recall rises by at least 0.10 and precision stays at least 0.8.
+  - If it passes, the 11 fresh windows are re-seeded and both versions are scored, reported as a post-hoc change.
+  - Otherwise it is reported as a negative result.
+- **Cost:** trial at most about $1.20; fresh windows about $5, only after approval.
+
+## T9 Citywide plan-gap screen, New York City (registered 2026-10-31, before it was run)
+- **Junctions:** all 304 NYC Vision Zero priority intersections (`tmt9-43em`), with no sampling.
+- **Per intersection** (open data only; the Context agent's code, without OpenStreetMap):
+  - police-reported crashes within 100 m over the last 5 years;
+  - injury crashes, and pedestrians and cyclists injured or killed;
+  - Street Improvement Projects within 150 m (`shr7-eqdc`, `if4c-w48d`), with their years.
+- **Plan gap, as in T8:** at least 10 injury crashes in the 5 years and no Street Improvement Project dated in that period.
+- **Output:**
+  - the ranked list and the share with a plan gap;
+  - checked memos for the 20 intersections with the most injury crashes.
+- **Descriptive only:** "no project" means none in the city's open Street Improvement Project datasets within 150 m. Work recorded elsewhere is not seen, so this is a screening list for a person to review, not a finding of neglect.
+
+## Re-seeding confirmation on the fresh windows (registered 2026-10-31, before it was run)
+- **Why now:** the dev trial failed its point-precision rule (two-wheeler recall 0.58 → 0.82, precision 0.86 → 0.62). An exploratory check on the same 60 s dev window then matched more conflicts (TTC 1 → 3 of 23; PET ≤ 3 s 2 → 6 of 28). That window is too small to decide anything, so the question goes to data not yet used for re-seeding.
+- **Data and method:** the 11 fresh windows of PREREG change 11.
+  - "car" and "scooter" tracking exactly as before;
+  - re-seeding of "scooter" as in the dev trial (2 keyframes per segment);
+  - the Kalman/RTS kinematics of change 10;
+  - baseline and re-seeded runs produced by the same code (`reseed.track_with_reseed`), differing only in re-seeding.
+- **Rule:** re-seeding is reported as an improvement only if pooled PET ≤ 1.5 s F1 rises and its 95% bootstrap interval over flights (2,000 resamples, seed 0) is above 0. TTC F1 and both measures' precision and recall are reported either way.
+- **Cost:** about $10 of SAM 3.1, approved.
+- **Change after the first T9 run (2026-10-31, disclosed):** the first run counted only Street Improvement Projects and found a plan gap at 267 of 304 intersections. NYC records other treatments elsewhere, so "no project" in that run could be wrong. The definition now also counts:
+  - Leading Pedestrian Interval signals within 60 m (`xc4v-ntf4`);
+  - turn traffic calming within 60 m (`sm2x-35i7`);
+  - 25 mph signal-retiming corridors within 60 m (`d8dp-wfee`).
+
+  Both runs are reported; the headline uses the wider definition.
+
+## T10 Near-miss and crash fusion, tested on unseen places and future years (registered 2026-10-31, before any data was downloaded)
+- **Question:** do near-miss reports, added to the crash history, predict where future injury crashes happen better than crash history alone?
+- **Data (Washington DC, open data):**
+  - near-miss and safety reports: the 5,593 residents' Vision Zero reports (`DDOT/VisionZero/FeatureServer/0`, collected 2015), each with a type (speeding, failure to stop for pedestrians, red-light running and others);
+  - crashes: DC police crash records (`Public_Safety_WebMercator/MapServer/24`).
+- **Units:** 100 m grid cells in a local metric projection. Every cell with at least one crash or report in any period of the study is included.
+- **Periods:**
+  - history: crashes from 2013-01-01 to 2016-12-31;
+  - target: injury crashes from 2017-01-01 to 2019-12-31 (before the pandemic's traffic changes);
+  - secondary target: 2021-01-01 to 2024-12-31.
+- **Unseen places:**
+  - cells are grouped into 1 km blocks;
+  - 30% of blocks, chosen by a seeded hash (seed 0), form the test set;
+  - the models are fitted only on the other 70%;
+  - test cells are never used for fitting or choices.
+- **Models:**
+  - M0, crash history only: rank by past injury crashes;
+  - M1, crash history EB: a negative binomial regression of the future count on past injury and all crashes, used as the prior in an Empirical Bayes estimate;
+  - M2, reports only: rank by near-miss reports;
+  - M3, fusion: M1 plus near-miss report counts, overall and for three groups (pedestrian failure to yield and crosswalk issues; speeding and red or stop-sign running; cycling issues).
+- **Metrics on test cells:**
+  - precision of the top 5% and top 10% of cells against the true top 5% and 10% by future injury crashes (the Highway Safety Manual's site-screening task);
+  - Spearman rank correlation;
+  - negative binomial log-likelihood per cell.
+- **Rule:** fusion (M3) is reported as better than crash history (M1) only if its top-5% precision is higher and a 95% bootstrap interval over test blocks (2,000 resamples, seed 0) for the difference excludes 0. Every model and metric is reported either way.
+- **Scope:** residents' reports are a near-miss proxy, not video measurement. The method takes any near-miss source (video conflicts, reports) as the same input; video-measured near-misses cannot be tested here because no public dataset links them to a city's crash records.
+
+## Open-weights verifier on re-seeded fresh windows (registered 2026-10-31, before it was run)
+- **Why:** re-seeding raised recall but lowered precision (PET ≤ 1.5 s: 0.61 → 0.47). The verifier ablation on the test split found that Muse Spark judges better from the speed trace and the measured metric than from video (F1 0.20 vs 0.11).
+- **Method:**
+  - every candidate conflict in the audit's conflict table (PET ≤ 1.5 s or TTC ≤ 1.5 s) from the 11 fresh windows, tracked with re-seeding and the change-10 kinematics, is judged by Muse Spark Open on Baseten;
+  - the inputs are the speed trace and the metric, without video, with the same instructions as the hosted verifier;
+  - candidates judged not real are dropped.
+- **Scoring:** as in PREREG change 6 (same class pair, within 1 s, one-to-one) against the reference conflict table of the same frames, before and after the verifier.
+- **Rule:** the verifier is reported as an improvement only if pooled F1 rises and a 95% bootstrap interval over windows (2,000 resamples, seed 0) for the difference is above 0.
+- **Cost:** Baseten credit only.

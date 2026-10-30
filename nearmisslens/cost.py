@@ -8,6 +8,8 @@ from pathlib import Path
 TOKEN_USD_PER_M = {
     "muse-spark-1.3": (1.25, 4.25, 0.15),
     "muse-spark-1.3-contributor": (0.10, 0.20, 0.002),
+    "muse-spark-open": (1.25, 4.25, 0.15),  # Baseten partner inference (meta-models/muse-spark-open-1026)
+    "muse-glimmer": (0.0, 0.0, 0.0),  # Modal GPU, billed by time (runs/ledger_modal.jsonl), not by token
     "muse-wonder-1.0": (4.00, 20.00, 0.20),
 }
 SAM_FRAME_USD = 0.0002

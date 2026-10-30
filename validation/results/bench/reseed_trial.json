@@ -1,0 +1,24 @@
+{
+ "baseline": {
+  "recall": 0.5755913101505153,
+  "precision": 0.8631309762063598,
+  "idf1": 0.6234598105066501,
+  "ref_points": 13487,
+  "pred_points": 8994,
+  "stats": {}
+ },
+ "reseeded": {
+  "recall": 0.8201972269592941,
+  "precision": 0.6151023131672598,
+  "idf1": 0.564837469416288,
+  "ref_points": 13487,
+  "pred_points": 17984,
+  "stats": {
+   "images": 48,
+   "requests": 39,
+   "seeds": 148,
+   "kept_tracks": 107
+  }
+ },
+ "go": false
+}

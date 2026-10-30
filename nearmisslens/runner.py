@@ -45,7 +45,7 @@ def estimate_usd(n_findings: int, verify_n: int, illustrate: bool) -> float:
 
 
 def review_event(client: MetaClient, c: fluid.Clip, info: dict, states: pd.DataFrame, pixels: pd.DataFrame, e: dict,
-                 work: Path, tag: str) -> dict:
+                 work: Path, tag: str, arm: str = "full") -> dict:
     """Muse Spark verdict on one conflict (a conflict-table row) from its event-centred video and speed trace.
     states and pixels must carry string ids."""
     fps = info["fps"]
@@ -59,7 +59,7 @@ def review_event(client: MetaClient, c: fluid.Clip, info: dict, states: pd.DataF
     trace = verifier.speed_trace_png(states, ids[0], ids[1], mid, fps)
     metric = f"{e['measure']} {e['value']:.1f} s, {e['type'].replace('_', '-')}, A={e['cls_1']}, B={e['cls_2']}"
     key = f"{verifier.event_key(c.video, ids[0], ids[1], mid, fps)}|tracks={tracks_sha}"
-    return {**verifier.verify(client, clip, trace, metric, tag, clip_key=key), "clip": str(clip)}
+    return {**verifier.verify(client, clip, trace, metric, tag, clip_key=key, arm=arm), "clip": str(clip)}
 
 
 def verify_finding(client: MetaClient, c: fluid.Clip, states: pd.DataFrame, pixels: pd.DataFrame, finding: dict,
@@ -86,7 +86,7 @@ def severity_at_recall(cand: pd.DataFrame, ref: pd.DataFrame, recall: float) -> 
     return {**score(ranked, ref), "kept": len(ranked)}
 
 
-def run_verifier(split: str, client: MetaClient | None = None) -> dict:
+def run_verifier(split: str, client: MetaClient | None = None, arm: str = "full") -> dict:
     """Pre-registered verifier test: Muse Spark reviews every candidate conflict the pipeline finds on SAM 3.1 tracks;
     precision and recall against the reference conflict table before and after dropping the events it judges not real."""
     from .baseline import score
@@ -102,18 +102,23 @@ def run_verifier(split: str, client: MetaClient | None = None) -> dict:
     st = ours.assign(id=ours["id"].astype(str))
     px = verifier.pixel_tracks(st, pipeline.calibration_for(c))
     work = SETTINGS.data_dir / "work" / f"verify_{split}"
-    verdicts = [review_event(client, c, info, st, px, e, work, f"{split} event {k}")
-                for k, e in enumerate(cand.to_dict("records"))]
+    spent0 = client.meter.spent_on(f"verify {split} event ")
+    verdicts = [review_event(client, c, info, st, px, e, work, f"{split} event {k}" + ("" if arm == "full" else f" {arm}"),
+                             arm=arm) for k, e in enumerate(cand.to_dict("records"))]
     kept = cand[[bool(v["real_conflict"]) for v in verdicts]]
     after = score(kept, ref)
-    out = {"split": split, "candidates": int(len(cand)), "judged_real": int(len(kept)),
+    out = {"split": split, "arm": arm, "candidates": int(len(cand)), "judged_real": int(len(kept)),
            "artefact_share": round(1 - len(kept) / len(cand), 3) if len(cand) else None,
            "before": score(cand, ref), "after": after, "severity_at_matched_recall": severity_at_recall(cand, ref, after["recall"]),
-           "usd_per_event": round(client.meter.spent_on(f"verify {split} event ") / len(cand), 5) if len(cand) else None}
+           "usd_per_event": (round(client.meter.spent_on(f"verify {split} event ") / len(cand), 5) if arm == "full" else
+                             round((client.meter.spent_on(f"verify {split} event ") - spent0) / len(cand), 5))
+           if len(cand) else None}
     dest = ROOT / "validation" / "results" / split
     dest.mkdir(parents=True, exist_ok=True)
-    cand.assign(**{k: [v[k] for v in verdicts] for k in verdicts[0]} if verdicts else {}).to_csv(dest / "verifier_events.csv", index=False)
-    (dest / "verifier.json").write_text(json.dumps(out, indent=1, default=float))
+    suffix = "" if arm == "full" else f"_{arm}"
+    cand.assign(**{k: [v[k] for v in verdicts] for k in verdicts[0]} if verdicts else {}).to_csv(
+        dest / f"verifier_events{suffix}.csv", index=False)
+    (dest / f"verifier{suffix}.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
 

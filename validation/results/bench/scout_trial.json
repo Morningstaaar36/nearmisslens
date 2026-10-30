@@ -1,0 +1,30 @@
+{
+ "two_wheeler": {
+  "ref": 118,
+  "sam_pred": 127,
+  "sam_tp": 107,
+  "scout_pred": 224,
+  "scout_tp": 113,
+  "spark_points": 153,
+  "added": 97,
+  "sam_recall": 0.9067796610169492,
+  "sam_precision": 0.84251968503937,
+  "scout_recall": 0.9576271186440678,
+  "scout_precision": 0.5044642857142857,
+  "go": false
+ },
+ "pedestrian": {
+  "ref": 7,
+  "sam_pred": 24,
+  "sam_tp": 1,
+  "scout_pred": 89,
+  "scout_tp": 3,
+  "spark_points": 78,
+  "added": 65,
+  "sam_recall": 0.14285714285714285,
+  "sam_precision": 0.041666666666666664,
+  "scout_recall": 0.42857142857142855,
+  "scout_precision": 0.033707865168539325,
+  "go": false
+ }
+}

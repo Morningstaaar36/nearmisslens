@@ -1,0 +1,472 @@
+{
+ "note": "Open-data adapters: one entry per dataset. Seeds were written by hand; entries found by the data agent carry their catalog id and validation result.",
+ "adapters": [
+  {
+   "id": "nyc-crashes",
+   "kind": "crash",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/h9gi-nx95.json",
+   "geo_field": "location",
+   "date_field": "crash_date",
+   "source": "NYC Open Data, Motor Vehicle Collisions - Crashes (h9gi-nx95)",
+   "injured": {
+    "pedestrian": [
+     "number_of_pedestrians_injured"
+    ],
+    "cyclist": [
+     "number_of_cyclist_injured"
+    ],
+    "motorist": [
+     "number_of_motorist_injured"
+    ]
+   },
+   "killed": {
+    "pedestrian": [
+     "number_of_pedestrians_killed"
+    ],
+    "cyclist": [
+     "number_of_cyclist_killed"
+    ],
+    "motorist": [
+     "number_of_motorist_killed"
+    ]
+   },
+   "factor_fields": [
+    "contributing_factor_vehicle_1"
+   ],
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-crashes",
+   "kind": "crash",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Safety_WebMercator/MapServer/24",
+   "date_field": "REPORTDATE",
+   "source": "Open Data DC, Crashes in DC (DCGIS Public_Safety MapServer/24)",
+   "injured": {
+    "pedestrian": [
+     "MAJORINJURIES_PEDESTRIAN",
+     "MINORINJURIES_PEDESTRIAN"
+    ],
+    "cyclist": [
+     "MAJORINJURIES_BICYCLIST",
+     "MINORINJURIES_BICYCLIST"
+    ],
+    "motorist": [
+     "MAJORINJURIES_DRIVER",
+     "MINORINJURIES_DRIVER",
+     "MAJORINJURIESPASSENGER",
+     "MINORINJURIESPASSENGER"
+    ]
+   },
+   "killed": {
+    "pedestrian": [
+     "FATAL_PEDESTRIAN"
+    ],
+    "cyclist": [
+     "FATAL_BICYCLIST"
+    ],
+    "motorist": [
+     "FATAL_DRIVER",
+     "FATALPASSENGER"
+    ]
+   },
+   "serious_injured": [
+    "MAJORINJURIES_PEDESTRIAN",
+    "MAJORINJURIES_BICYCLIST",
+    "MAJORINJURIES_DRIVER",
+    "MAJORINJURIESPASSENGER"
+   ],
+   "pedestrian_involved": [
+    "TOTAL_PEDESTRIANS"
+   ],
+   "cyclist_involved": [
+    "TOTAL_BICYCLES"
+   ],
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "chicago-crashes",
+   "kind": "crash",
+   "place": "Chicago",
+   "bbox": [
+    41.64,
+    -87.94,
+    42.03,
+    -87.52
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofchicago.org/resource/85ca-t3if.json",
+   "geo_field": "location",
+   "date_field": "crash_date",
+   "source": "Chicago Data Portal, Traffic Crashes - Crashes (85ca-t3if)",
+   "injured": {
+    "any": [
+     "injuries_total"
+    ]
+   },
+   "killed": {
+    "any": [
+     "injuries_fatal"
+    ]
+   },
+   "crash_type_fields": [
+    "first_crash_type"
+   ],
+   "factor_fields": [
+    "prim_contributory_cause"
+   ],
+   "light_fields": [
+    "lighting_condition"
+   ],
+   "surface_fields": [
+    "roadway_surface_cond"
+   ],
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-sip-intersections",
+   "kind": "project",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/shr7-eqdc.json",
+   "geo_field": "the_geom",
+   "name_field": "pjct_name",
+   "year_field": "sip_year",
+   "radius_m": 150,
+   "source": "NYC DOT Street Improvement Projects (intersections)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-sip-corridors",
+   "kind": "project",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/if4c-w48d.json",
+   "geo_field": "the_geom",
+   "name_field": "pjct_name",
+   "year_field": "sip_year",
+   "radius_m": 150,
+   "source": "NYC DOT Street Improvement Projects (corridors)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-lpi",
+   "kind": "project",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/xc4v-ntf4.json",
+   "geo_field": "the_geom",
+   "date_field": "install_da",
+   "label": "Leading Pedestrian Interval signal",
+   "radius_m": 60,
+   "source": "NYC Vision Zero View, Leading Pedestrian Interval Signals",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-turn-calming",
+   "kind": "project",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/sm2x-35i7.json",
+   "geo_field": "the_geom",
+   "date_field": "completion",
+   "label": "turn traffic calming",
+   "radius_m": 60,
+   "source": "NYC Vision Zero View, Turn Traffic Calming",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-retiming",
+   "kind": "project",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/d8dp-wfee.json",
+   "geo_field": "the_geom",
+   "year_field": "yr",
+   "label": "signal retiming (25 mph)",
+   "radius_m": 60,
+   "source": "NYC Vision Zero View, Signal Timing/25 MPH Retiming",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-vz-intersections",
+   "kind": "designation",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/tmt9-43em.json",
+   "geo_field": "the_geom",
+   "name_field": "street_1",
+   "label": "Vision Zero priority intersection",
+   "radius_m": 150,
+   "source": "NYC Vision Zero priority intersections",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-vz-corridors",
+   "kind": "designation",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/36nr-7fbp.json",
+   "geo_field": "the_geom",
+   "label": "Vision Zero priority corridor",
+   "radius_m": 150,
+   "source": "NYC Vision Zero priority corridors",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-hin",
+   "kind": "designation",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/MoveDC/MapServer/17",
+   "name_field": "ROUTENAME",
+   "label": "High Injury Network",
+   "radius_m": 150,
+   "source": "DDOT moveDC High Injury Network",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-protrack-points",
+   "kind": "project",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Plans_Projects_Study_WebMercator/MapServer/136",
+   "name_field": "PROJECTNAME",
+   "year_field": "BUDGETYEAR",
+   "radius_m": 150,
+   "source": "DDOT ProTrack projects (points)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-protrack-lines",
+   "kind": "project",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Plans_Projects_Study_WebMercator/MapServer/138",
+   "name_field": "PROJECTNAME",
+   "year_field": "BUDGETYEAR",
+   "radius_m": 150,
+   "source": "DDOT ProTrack projects (lines)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "la-hin",
+   "kind": "designation",
+   "place": "Los Angeles",
+   "bbox": [
+    33.7,
+    -118.67,
+    34.34,
+    -118.15
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps.lacity.org/lahub/rest/services/LADOT/MapServer/15",
+   "label": "LA High Injury Network",
+   "radius_m": 150,
+   "source": "LADOT High Injury Network",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nys-ortho",
+   "kind": "imagery",
+   "place": "New York State",
+   "bbox": [
+    40.49,
+    -79.77,
+    45.02,
+    -71.85
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://orthos.its.ny.gov/arcgis/rest/services/wms/Latest/MapServer/export",
+   "source": "NYS GIS Program Office orthoimagery (latest)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-ortho-2023",
+   "kind": "imagery",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://imagery.dcgis.dc.gov/dcgis/rest/services/Ortho/Ortho_2023/ImageServer/exportImage",
+   "source": "DC Office of the CTO orthophoto 2023",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "auto-seattle-5b98ff2b96b34af5b1e774cd9ec1f202",
+   "kind": "crash",
+   "place": "Seattle, Washington",
+   "bbox": [
+    47.38512220625224,
+    -122.66621381718583,
+    47.83427779374775,
+    -121.99998618281417
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/SDOT_Collisions_All_Years_1/FeatureServer/0",
+   "date_field": "INCDATE",
+   "source": "SDOT Collisions All Years (arcgis 5b98ff2b96b34af5b1e774cd9ec1f202)",
+   "injured": {
+    "any": [
+     "INJURIES",
+     "SERIOUSINJURIES"
+    ]
+   },
+   "killed": {
+    "any": [
+     "FATALITIES"
+    ]
+   },
+   "crash_type_fields": [
+    "SDOT_COLCODE",
+    "SDOT_COLDESC",
+    "ST_COLCODE",
+    "ST_COLDESC",
+    "ST_COLLISIONTYPE"
+   ],
+   "factor_fields": [
+    "INATTENTIONIND",
+    "UNDERINFL",
+    "SPEEDING",
+    "PEDROWNOTGRNT",
+    "HITPARKEDCAR"
+   ],
+   "light_fields": [
+    "LIGHTCOND"
+   ],
+   "surface_fields": [
+    "ROADCOND"
+   ],
+   "pedestrian_involved": [
+    "PEDCOUNT"
+   ],
+   "cyclist_involved": [
+    "PEDCYLCOUNT"
+   ],
+   "provenance": {
+    "found_by": "data agent",
+    "catalog_id": "5b98ff2b96b34af5b1e774cd9ec1f202",
+    "model": "muse-spark-1.3-contributor",
+    "mapping_reason": "Dataset is one record per crash. INCDATE is epoch date. INJURIES/SERIOUSINJURIES numeric go to injured.any, FATALITIES numeric to killed.any (no ped/cyclist/motorist split). NONSERIOUSINJURY excluded as it's Y/N flag not numeric.",
+    "validation": {
+     "ok": true,
+     "problems": [],
+     "records_near": 37856,
+     "latest": "2026-10-18"
+    },
+    "attempts": 3
+   }
+  }
+ ]
+}

@@ -37,6 +37,7 @@ async function init() {
   $("map").onclick = pickHotspot;
   addEventListener("resize", () => { drawMap(); sizeThree(); });
   renderScore();
+  renderContext();
   await load(sel.value);
   if (hash.get("hotspot")) selectHotspot(+hash.get("hotspot"));
   if (hash.get("view") === "3d") setMode("3d");
@@ -60,6 +61,7 @@ async function load(key) {
     `<i class="sq"></i>Hotspot, ${st.view.facts.thresholds.cell_m} m cell`;
   renderRail();
   renderPanel();
+  renderOffice();
   renderSignals();
   renderVoice();
   $("memo").innerHTML = md(st.view.memo);
@@ -452,6 +454,40 @@ function renderScore() {
         `<details><summary>Result</summary><pre>${esc(JSON.stringify(r.result, null, 1))}</pre></details></td></tr>`).join("")}</tbody></table>`
     : '<p class="empty">No self-test report found. Run <code>nml selftest</code>.</p>';
   $("results").innerHTML = st.index.results_md ? md(st.index.results_md) : "";
+}
+
+/* ---------- mission control ---------- */
+
+function renderOffice() {
+  const o = st.view.office;
+  if (!o) {
+    $("office").innerHTML = `<p class="empty">The manager agent has not run on this audit. Run <code>nml office ${esc(st.view.split)}</code>.</p>`;
+    return;
+  }
+  const wo = o.work_order;
+  let h = `<p class="meta">Muse Wonder, ${o.turns} turns, $${fmt(o.usd, 3)}, ${o.refusals} work orders rejected by the checker, stopped: ${esc(o.stopped)}.</p>`;
+  if (o.complaints?.length) h += `<p class="meta">Complaints given: ${o.complaints.map((c) => `“${esc(c)}”`).join(" ")}</p>`;
+  h += `<ol class="timeline">${o.timeline.map((e) => e.kind === "thought"
+    ? `<li class="thought">${esc(e.text)}</li>`
+    : `<li class="tool${e.error ? " refused" : ""}"><code>${esc(e.tool)}</code> <span class="args">${esc(JSON.stringify(e.arguments)).slice(0, 160)}</span>` +
+      `${e.seconds != null ? ` <span class="secs">${fmt(e.seconds, 1)} s</span>` : ""}` +
+      `${e.errors?.length ? `<ul class="caught">${e.errors.map((x) => `<li>Rejected: ${esc(x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ol>`;
+  for (const s of o.signoffs || []) h += `<p class="signoff ${s.approved ? "ok" : ""}">Sign-off ${s.approved ? "approved" : "refused"} by ${esc(s.by)}: ${esc(s.summary)}</p>`;
+  if (wo) h += `<h3>Work order</h3><div class="memo">${md(wo.work_order)}</div><p class="meta">Hotspots ${wo.ranks.join(", ")}; CMF ${wo.cmf_ids.join(", ") || "none"}.</p>`;
+  $("office").innerHTML = h;
+}
+
+/* ---------- city context and benchmark ---------- */
+
+function renderContext() {
+  const rows = st.index.context || [];
+  $("context").innerHTML = rows.length
+    ? `<div class="stages">${rows.map((r) => `<div class="stagecard ${r.plan_gap ? "" : "ok"}"><h3>${esc(r.name)}</h3>` +
+      `<p class="meta">${esc((r.city || "").toUpperCase())} · ${r.injury_crashes ?? "n/a"} injury crashes in 5 years · ` +
+      `${r.designated ? "on the city's priority network" : "not designated"} · ${r.plan_gap ? "plan gap" : "no plan gap"}</p>` +
+      `<div class="memo">${md(r.memo || "")}</div></div>`).join("")}</div>`
+    : '<p class="empty">No city dossiers yet. Run <code>nml bench --agents</code>.</p>';
+  $("bench").innerHTML = st.index.bench_md ? md(st.index.bench_md) : '<p class="empty">Run <code>nml bench</code>.</p>';
 }
 
 init().catch((e) => {

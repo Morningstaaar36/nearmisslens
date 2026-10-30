@@ -1,0 +1,84 @@
+{
+ "per_window": [
+  {
+   "site": "FIDRT",
+   "flight": "20250120_video",
+   "cells": 13,
+   "tau": 0.0922285951821433,
+   "top3_overlap": 2
+  },
+  {
+   "site": "FI",
+   "flight": "20250120_video",
+   "cells": 20,
+   "tau": 0.4939508599788984,
+   "top3_overlap": 2
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-1",
+   "cells": 18,
+   "tau": -0.21226112837853892,
+   "top3_overlap": 0
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-2",
+   "cells": 21,
+   "tau": 0.4542014699297186,
+   "top3_overlap": 1
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-3",
+   "cells": 20,
+   "tau": 0.10180787029692102,
+   "top3_overlap": 2
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-1",
+   "cells": 15,
+   "tau": 0.4165673409962518,
+   "top3_overlap": 0
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-2",
+   "cells": 21,
+   "tau": 0.5004560813331335,
+   "top3_overlap": 1
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-2",
+   "cells": 16,
+   "tau": 0.25033977563316356,
+   "top3_overlap": 2
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-1",
+   "cells": 4,
+   "tau": -0.7745966692414834,
+   "top3_overlap": 2
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-2",
+   "cells": 1,
+   "tau": NaN,
+   "top3_overlap": 1
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-3",
+   "cells": 2,
+   "tau": NaN,
+   "top3_overlap": 2
+  }
+ ],
+ "median_tau": 0.25033977563316356,
+ "mean_top3_overlap": 1.3636363636363635,
+ "note": "conflict counts per 15 m cell in each one-minute window, ours (v1 + re-seeding) vs the reference"
+}

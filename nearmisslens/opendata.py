@@ -1,0 +1,204 @@
+"""One engine for any city's open crash and safety-plan data. A city is not code but an adapter in the registry
+(nearmisslens/data/registry.json): where the dataset lives (Socrata or ArcGIS), and which of its fields hold the
+date, the injuries and deaths by road-user mode, the crash type and the conditions. Seed adapters were written by hand
+for New York, Washington DC, Chicago and Los Angeles; the data agent (datascout.py) writes new ones for other cities
+and they are kept only if they pass the validation checks below."""
+from __future__ import annotations
+
+import datetime as dt
+import json
+import math
+from collections import Counter
+from pathlib import Path
+
+from . import context
+
+REGISTRY = Path(__file__).resolve().parent / "data" / "registry.json"
+MODES = ("pedestrian", "cyclist", "motorist", "any")
+PAGE = 2000
+
+
+def load_registry() -> list[dict]:
+    return json.loads(REGISTRY.read_text())["adapters"] if REGISTRY.exists() else []
+
+
+def save_adapter(adapter: dict) -> None:
+    reg = json.loads(REGISTRY.read_text()) if REGISTRY.exists() else {"adapters": []}
+    reg["adapters"] = [a for a in reg["adapters"] if a["id"] != adapter["id"]] + [adapter]
+    REGISTRY.write_text(json.dumps(reg, indent=1))
+
+
+def adapters_for(lat: float, lon: float, kind: str) -> list[dict]:
+    out = []
+    for a in load_registry():
+        s, w, n, e = a["bbox"]
+        if a["kind"] == kind and s <= lat <= n and w <= lon <= e:
+            out.append(a)
+    return out
+
+
+def _since(years: int) -> dt.date:
+    t = dt.date.today()
+    return t.replace(year=t.year - years)
+
+
+def _date(v) -> dt.date | None:
+    if v is None or v == "":
+        return None
+    if isinstance(v, (int, float)):
+        return dt.datetime.utcfromtimestamp(v / 1000).date()
+    text = str(v).strip()
+    try:
+        return dt.date.fromisoformat(text[:10])
+    except ValueError:
+        pass
+    for fmt in ("%m/%d/%Y %I:%M:%S %p", "%m/%d/%Y %H:%M:%S", "%m/%d/%Y %H:%M", "%m/%d/%Y", "%Y/%m/%d %H:%M:%S",
+                "%Y/%m/%d", "%d-%b-%Y", "%b %d, %Y"):
+        try:
+            return dt.datetime.strptime(text, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def _num(v) -> float:
+    try:
+        return float(v or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def rows_near(a: dict, lat: float, lon: float, radius_m: float, since: dt.date | None = None) -> list[dict]:
+    """Raw records within radius_m of the point (and, for Socrata, since the date), from either platform."""
+    if a["platform"] == "socrata":
+        where = f"within_circle({a['geo_field']},{lat},{lon},{radius_m})"
+        if since and a.get("date_field"):
+            where += f" AND {a['date_field']} >= '{since.isoformat()}'"
+        js, _ = context.fetch(a["endpoint"], {"$where": where, "$limit": 5000})
+        return js if isinstance(js, list) else []
+    rows, offset = [], 0
+    while True:
+        js, _ = context.fetch(f"{a['endpoint']}/query", {
+            "geometry": f"{lon},{lat}", "geometryType": "esriGeometryPoint", "inSR": 4326, "distance": radius_m,
+            "units": "esriSRUnit_Meter", "outFields": "*", "returnGeometry": "false", "f": "json",
+            "resultOffset": offset, "resultRecordCount": PAGE, "where": a.get("where", "1=1")})
+        feats = [f["attributes"] for f in js.get("features", [])]
+        rows += feats
+        # servers cap a page at their own maxRecordCount (often 1000) and flag exceededTransferLimit
+        if not feats or not js.get("exceededTransferLimit"):
+            break
+        offset += len(feats)
+    if since and a.get("date_field"):
+        rows = [r for r in rows if (_date(r.get(a["date_field"])) or dt.date.min) >= since]
+    return rows
+
+
+def _sum(r: dict, fields: list[str]) -> float:
+    return sum(_num(r.get(f)) for f in fields or [])
+
+
+def _text(r: dict, fields: list[str]) -> str:
+    return " ".join(str(r.get(f) or "") for f in fields or []).lower()
+
+
+def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years: int = 5) -> dict:
+    """The common crash profile from any crash adapter: counts, injuries and deaths by mode, crash groups, and the
+    share of crashes in darkness and on wet or icy surfaces."""
+    since = _since(years)
+    rows = rows_near(a, lat, lon, radius_m, since)
+    inj, kil = a.get("injured", {}), a.get("killed", {})
+    sums = Counter()
+    injury_crashes, groups, factors, years_c = 0, Counter(), Counter(), Counter()
+    dark = wet = 0
+    for r in rows:
+        d = _date(r.get(a.get("date_field")))
+        years_c[str(d.year) if d else "unknown"] += 1
+        per = {}
+        for mode in MODES:
+            per[f"{mode}_injured"] = _sum(r, inj.get(mode, []))
+            per[f"{mode}_killed"] = _sum(r, kil.get(mode, []))
+        for k, v in per.items():
+            sums[k] += v
+        if any(v > 0 for v in per.values()) or _sum(r, a.get("serious_injured", [])) > 0:
+            injury_crashes += 1
+        kind = _text(r, a.get("crash_type_fields", []))
+        fac = _text(r, a.get("factor_fields", []))
+        if per["pedestrian_injured"] + per["pedestrian_killed"] > 0 or _sum(r, a.get("pedestrian_involved", [])) > 0 \
+                or "pedestrian" in kind:
+            groups["pedestrian"] += 1
+        if per["cyclist_injured"] + per["cyclist_killed"] > 0 or _sum(r, a.get("cyclist_involved", [])) > 0 \
+                or "cycl" in kind or "bicycl" in kind:
+            groups["cyclist"] += 1
+        if "rear" in kind or "following too closely" in fac:
+            groups["rear_end"] += 1
+        if "angle" in kind or "turn" in kind:
+            groups["angle_turning"] += 1
+        light = _text(r, a.get("light_fields", []))
+        surface = _text(r, a.get("surface_fields", []))
+        dark += "dark" in light
+        wet += any(w in surface for w in ("wet", "ice", "snow", "slush"))
+        for f in a.get("factor_fields", []):
+            v = str(r.get(f) or "").strip()
+            if v.lower() in ("y", "yes", "true", "1"):  # a flag field: the field name is the factor
+                factors[f.lower()] += 1
+            elif v and v.lower() not in ("unspecified", "does not apply", "unknown", "n", "no", "false", "none", "0"):
+                factors[v] += 1
+    n = len(rows)
+    return {"source": a["source"], "adapter": a["id"], "radius_m": radius_m, "since": since.isoformat(),
+            "crashes": n, "injury_crashes": injury_crashes, "by_year": dict(sorted(years_c.items())),
+            **{k: int(v) for k, v in sums.items() if v}, "crash_groups": dict(groups),
+            "crash_type_recorded": bool(a.get("crash_type_fields")),
+            "dark_share": round(dark / n, 3) if n and a.get("light_fields") else None,
+            "wet_share": round(wet / n, 3) if n and a.get("surface_fields") else None,
+            "top_factors": [{"factor": f, "crashes": c} for f, c in factors.most_common(3)],
+            "factor_counts": dict(factors.most_common(15))}
+
+
+def projects_near(a: dict, lat: float, lon: float, radius_m: float | None = None) -> list[dict]:
+    rows = rows_near(a, lat, lon, radius_m or a.get("radius_m", 150))
+    out = []
+    for r in rows:
+        d = _date(r.get(a.get("date_field"))) if a.get("date_field") else None
+        y = r.get(a.get("year_field")) if a.get("year_field") else None
+        year = int(y) if str(y or "").isdigit() else (d.year if d else None)
+        out.append({"name": str(r.get(a.get("name_field")) or a.get("label") or a["id"]), "year": year,
+                    "dataset": a["id"]})
+    return out
+
+
+def designated_near(a: dict, lat: float, lon: float, radius_m: float | None = None) -> list[str]:
+    rows = rows_near(a, lat, lon, radius_m or a.get("radius_m", 150))
+    return [str(r.get(a.get("name_field")) or a.get("label") or a["id"]) for r in rows]
+
+
+def validate_crash_adapter(a: dict, lat: float, lon: float) -> dict:
+    """Checks before an adapter is trusted: records come back near a point inside its area, dates parse and are
+    recent, and the mapped injury fields hold numbers."""
+    problems = []
+    try:
+        rows = rows_near(a, lat, lon, 400)
+    except Exception as e:  # an unusable endpoint or field name
+        return {"ok": False, "problems": [f"query failed: {type(e).__name__}: {e}"]}
+    if not rows:
+        problems.append("no records within 400 m of a point in the area")
+    dates = [d for d in (_date(r.get(a.get("date_field"))) for r in rows) if d]
+    if rows and not dates:
+        problems.append(f"date field {a.get('date_field')!r} does not parse")
+    if dates and max(dates) < _since(3):
+        problems.append(f"latest record is {max(dates)}: the dataset looks stale")
+    fields = [f for m in (a.get("injured", {}), a.get("killed", {})) for fs in m.values() for f in fs]
+    if not fields:
+        problems.append("no injury or death fields mapped")
+    for f in fields:
+        vals = [r.get(f) for r in rows[:50] if r.get(f) not in (None, "")]
+        if rows and vals and not all(isinstance(v, (int, float)) or str(v).replace(".", "", 1).isdigit() for v in vals):
+            problems.append(f"field {f!r} is not numeric")
+        if rows and f not in rows[0]:
+            problems.append(f"field {f!r} is not in the records")
+    return {"ok": not problems, "problems": problems, "records_near": len(rows),
+            "latest": max(dates).isoformat() if dates else None}
+
+
+def bbox_around(lat: float, lon: float, km: float = 25) -> list[float]:
+    d = km / 111.32
+    return [lat - d, lon - d / math.cos(math.radians(lat)), lat + d, lon + d / math.cos(math.radians(lat))]

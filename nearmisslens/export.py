@@ -106,6 +106,34 @@ def _media(src: str | None, out_dir: Path) -> str | None:
     return f"media/{name}"
 
 
+def office_view(path: Path) -> dict | None:
+    """The manager run as a mission-control timeline: reasoning summaries, tool calls with timings, refusals, sign-off
+    and the accepted work order (tool results are trimmed to what the viewer shows)."""
+    if not path.exists():
+        return None
+    o = json.loads(path.read_text())
+    tl = []
+    for e in o.get("timeline", []):
+        if e["kind"] == "thought":
+            tl.append({"turn": e["turn"], "kind": "thought", "text": e["text"][:600]})
+        else:
+            res = e.get("result") or {}
+            tl.append({"turn": e["turn"], "kind": "tool", "tool": e["tool"], "arguments": e["arguments"],
+                       "seconds": e.get("seconds"), "error": res.get("error"), "errors": res.get("errors", [])[:4]})
+    return {"turns": o.get("turns"), "usd": o.get("usd"), "refusals": o.get("refusals"), "stopped": o.get("stopped"),
+            "signoffs": o.get("signoffs"), "work_order": o.get("work_order"), "complaints": o.get("complaints"),
+            "timeline": tl}
+
+
+def context_view(path: Path) -> list[dict]:
+    """The demo junctions' city-context dossiers and memos (NML-Bench T8)."""
+    if not path.exists():
+        return []
+    rows = json.loads(path.read_text())["rows"]
+    return [{k: r.get(k) for k in ("name", "city", "lat", "lon", "plan_gap", "designated", "injury_crashes")}
+            | {"memo": (r.get("checked") or {}).get("memo")} for r in rows if r.get("group") == "demo"]
+
+
 def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None = None) -> Path:
     run = SETTINGS.runs_dir / "audit" / f"{split}_{source}"
     if not (run / "facts.json").exists():
@@ -127,7 +155,7 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
             "memo": (run / "memo.md").read_text(), "panel": panel_view(current(run / "panel.json", fid)),
             "conflicts": conflicts[["measure", "value", "type", "cls_1", "cls_2", "t", "x", "y"]].round(2).to_dict("list")
             if len(conflicts) else {}, "signal_entry": signal_entry(states, signals, facts.get("signal_evidence_classes", audit.SIGNAL_CLASSES)),
-            "voice": current(run / "voice.json", fid)}
+            "voice": current(run / "voice.json", fid), "office": office_view(run / "office.json")}
     data.mkdir(parents=True, exist_ok=True)
     (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))
     index_path = data / "index.json"
@@ -137,5 +165,8 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
     index["selftest"] = selftest_rows(ROOT / "validation" / "SELFTEST.md")
     results = ROOT / "validation" / "RESULTS.md"
     index["results_md"] = results.read_text() if results.exists() else None
+    bench_md = ROOT / "validation" / "BENCH.md"
+    index["bench_md"] = bench_md.read_text() if bench_md.exists() else None
+    index["context"] = context_view(ROOT / "validation" / "results" / "bench" / "context.json")
     index_path.write_text(json.dumps(index, indent=1))
     return data / f"{key}.json"

@@ -1,0 +1,28 @@
+{
+ "test_sam": {
+  "unchecked": {
+   "status": "complete",
+   "ungrounded_items": 0,
+   "ungrounded": [],
+   "usd": 0.0877
+  },
+  "checked": {
+   "status": "complete",
+   "caught": 0,
+   "usd": 0.0877
+  }
+ },
+ "heldout_sam": {
+  "unchecked": {
+   "status": "complete",
+   "ungrounded_items": 0,
+   "ungrounded": [],
+   "usd": 0.0874
+  },
+  "checked": {
+   "status": "complete",
+   "caught": 0,
+   "usd": 0.0874
+  }
+ }
+}

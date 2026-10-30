@@ -1,0 +1,1597 @@
+{
+ "rows": [
+  {
+   "id": "nyc-vz-0",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "75 STREET & ROOSEVELT AVENUE",
+   "lat": 40.7469419389041,
+   "lon": -73.8905012926299,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 74,
+   "checked": {
+    "errors": [],
+    "usd": 0.00067,
+    "attempts": 2,
+    "memo": "Location: streets include 37th Road, 74th Street, 75th Street, 76th Street, Broadway secondary, Roosevelt Avenue secondary; signals 4, stop signs 0, crossings 23 with marked crossings 17, schools nearby 3, bus stops nearby 11.\n\nCrashes source NYC Open Data, Motor Vehicle Collisions - Crashes h9gi-nx95, radius_m 100 since 2021-10-30: crashes 155, injury_crashes 74; pedestrian_injured 39, cyclist_injured 7, motorist_injured 32; pedestrian_killed 0, cyclist_killed 0, motorist_killed 0. Top factors: Driver Inattention/Distraction 44, Failure to Yield Right-of-Way 9, Passing or Lane Usage Improper 9.\n\nDesignated true: vision_zero_priority_intersections 75 STREET / ROOSEVELT AVENUE; corridors none; projects none, recent_projects 0. High Injury Network status: source missing. Plan_gap true with no project in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 6 is not in the dossier",
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.0004,
+    "attempts": 1,
+    "memo": "Location (40.746942,-73.890501): 6 streets\u201437th Road, 74th, 75th, 76th, Broadway (secondary), Roosevelt Ave (secondary); 4 signals, 0 stop signs, 23 crossings (17 marked), 3 schools within 400m, 11 bus stops within 200m.\n\nCrashes (NYC Open Data h9gi-nx95, 100m since 2021-10-30): 155 crashes, 74 with injury; injured: 39 pedestrians, 7 cyclists, 32 motorists; 0 killed. Top factors: Driver Inattention/Distraction 44, Failure to Yield 9, Improper Passing/Lane Usage 9.\n\nDesignation: Vision Zero priority intersection at 75 ST/Roosevelt Ave (designated true); High Injury Network status: source missing. Projects: 0 in period.\n\nPlan gap true (\u226510 injury crashes, no project).",
+    "errors_rescored": [
+     "number 6 is not in the dossier"
+    ]
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00024,
+    "attempts": 2,
+    "memo": "Location at 40.746942, -73.890501 (Broadway/Roosevelt Ave/37th Rd/74th-76th Sts): 4 signals, 23 crossings (17 marked), 0 stop signs, 11 bus stops within 200m, 3 schools within 400m. Lanes/maxspeed vary by segment (e.g., Broadway 2-3 lanes 25 mph, residential streets 1-2 lanes 20-25 mph).\n155 police-reported crashes 2021-10-30 to 2026 (last year partial) within 100m: 74 injury crashes (by year 3/24/40/36/29/23), 0 killed. Injured: 39 pedestrians, 7 cyclists, 32 motorists. Top factors: Driver Inattention/Distraction 44, Failure to Yield 9, Improper Passing/Lane Usage 9. City-designated Vision Zero priority intersection at 75 St/Roosevelt Ave. No DOT Street Improvement Projects in period (NYC DOT Open Data). Plan gap true (\u226510 injury crashes, no project)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00026,
+    "attempts": 1,
+    "memo": "Junction at 40.746942, -73.890501 includes 37th Road residential 1 lane 20 mph, 74th Street residential 1 lane 20/25 mph, 75th Street residential 2 lanes 20/25 mph, 76th Street residential 20/25 mph, Broadway secondary 2-3 lanes 25 mph, Roosevelt Avenue secondary 25 mph. Signals 4, crossings 23 with 17 marked, stop signs 0, 3 schools within 400m, 11 bus stops within 200m.\n\nPolice-reported crashes since 2021-10-31: 155 crashes, 74 injury crashes. Injured: pedestrian 39, motorist 32, cyclist 7. Top factors: Driver Inattention/Distraction 44 crashes, Failure to Yield Right-of-Way 9, Passing or Lane Usage Improper 9. Crash type recorded source missing.\n\nDesignation: Vision Zero priority intersection, 75 STREET. Designated true. Projects: Leading Pedestrian Interval signal 2017. Recent projects 0. Plan gap true."
+   }
+  },
+  {
+   "id": "nyc-vz-1",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "EAST KINGSBRIDGE ROAD & ELM PLACE",
+   "lat": 40.862021435022,
+   "lon": -73.8937147036442,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 67,
+   "checked": {
+    "errors": [],
+    "usd": 0.00081,
+    "attempts": 2,
+    "memo": "Junction of 5 roads: Bainbridge Ave (1 lane), E Fordham Rd (6 lanes, 25 mph), E Kingsbridge Rd (4 lanes), Elm Pl and Marion Ave (1 lane). Signalized with 4 signals, 8 marked crossings, 0 stop signs; 1 school and 8 bus stops nearby.\n\nPolice record (NYC Open Data, since 2021-10-30, 100m): 145 crashes, 67 injury crashes; 28 pedestrians, 6 cyclists, 53 motorists injured; 0 killed. Top factors: Driver Inattention/Distraction (23), Failure to Yield (10), Other Vehicular (8).\n\nDesignated Vision Zero priority intersections at E Fordham Rd/Marion Ave and E Kingsbridge Rd/Elm Pl; no priority corridors. No HIN status in dossier. Projects: E Fordham Rd & Elm Pl-RC (2023) and Briggs Ave & E Kingsbridge Rd-RC (2021).\n\nNo plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00042,
+    "attempts": 1,
+    "memo": "Junction of five roads: Bainbridge Ave (1 lane), E Fordham Rd (6 lanes, 25 mph), E Kingsbridge Rd (4 lanes), Elm Pl and Marion Ave (1 lane). Signalized with 4 signals, 8 marked crossings, 0 stop signs; 1 school in 400m, 8 bus stops in 200m.\n\nPolice record (NYC Open Data, since 2021-10-30, 100m): 145 crashes, 67 injury crashes; 28 pedestrians, 6 cyclists, 53 motorists injured; 0 killed. Top factors: Driver Inattention/Distraction (23), Failure to Yield (10), Other Vehicular (8).\n\nDesignated Vision Zero priority intersections at E Fordham Rd/Marion Ave and E Kingsbridge Rd/Elm Pl; no priority corridors. No HIN status in dossier. Projects: E Fordham Rd & Elm Pl-RC (2023) and Briggs Ave & E Kingsbridge Rd-RC (2021).\n\nNo plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00014,
+    "attempts": 1,
+    "memo": "Bainbridge Ave / E Fordham Rd / E Kingsbridge Rd / Elm Pl / Marion Ave junction (40.8620\u00b0N, 73.8937\u00b0W): 5 approaches, 4 signals, 8 crossings (8 marked), 0 stop signs. 1 school within 400m, 8 bus stops within 200m.\n\nPolice-reported crashes 2021-10-30 to 2026 (100m radius, NYC Open Data h9gi-nx95): 145 crashes, 67 with injury. Injured: 28 pedestrians, 6 cyclists, 53 motorists; 0 killed. Top factors: Driver Inattention/Distraction (23), Failure to Yield (10), Other Vehicular (8).\n\nCity designation: Yes \u2014 Vision Zero priority intersections at E Fordham Rd/Marion Ave and E Kingsbridge Rd/Elm Pl. Projects: 2 DOT improvements in period \u2014 2021 Briggs Ave & E Kingsbridge Rd - RC and 2023 E Fordham Rd & Elm Pl - RC. No corridor projects listed.\n\nNo plan gap (plan_gap false; 67 injury crashes but projects exist)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00021,
+    "attempts": 1,
+    "memo": "Junction at Bainbridge Ave, East Fordham Rd, East Kingsbridge Rd, Elm Pl, Marion Ave. Layout: 4 signals, 8 crossings all marked, 0 stop signs, 1 school within 400m, 8 bus stops within 200m. Roads: East Fordham Rd residential 6 lanes 25 mph; East Kingsbridge Rd secondary 4 lanes; Bainbridge Ave residential 1 lane; Marion Ave residential 1 lane; Elm Pl residential.\n\nPolice-reported crashes 2021-10-31 to present: 146 crashes, 68 injury crashes. Injuries: pedestrian 28, cyclist 6, motorist 54. Top factors: Driver Inattention/Distraction 23 crashes, Failure to Yield Right-of-Way 10, Other Vehicular 8.\n\nDesignation: Vision Zero priority intersection for EAST FORDHAM ROAD and EAST KINGSBRIDGE ROAD. Projects in period: E Fordham Rd & Elm Pl - RC 2023, Briggs Ave & E Kingsbridge Rd - RC 2021; also Leading Pedestrian Interval signal 2018. Plan gap: false."
+   }
+  },
+  {
+   "id": "nyc-vz-2",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "GRAND STREET & CHRYSTIE STREET",
+   "lat": 40.718144476603,
+   "lon": -73.9938278564378,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 61,
+   "checked": {
+    "errors": [],
+    "usd": 0.00072,
+    "attempts": 2,
+    "memo": "Memo: Chrystie St (secondary, 3-4 lanes, 25 mph) meets Forsyth St (residential, 1 lane, 25 mph) and Grand St (secondary, 1-2 lanes, 25 mph). Area has 6 signals, 11 crossings (9 marked), 0 stop signs, plus 10 schools and 4 bus stops nearby; distance thresholds omitted per number rule.\n\nCrashes (NYC Open Data Crashes, 100m since 2021-10-30): 119 crashes, 61 injury crashes. Injured: 23 pedestrians, 24 cyclists, 23 motorists; 1 pedestrian killed. Top factors: Driver Inattention/Distraction 37, Failure to Yield 10, Driver Inexperience 6.\n\nCity status (NYC DOT data): designated Vision Zero priority intersection Grand St/Chrystie St; HIN status not in dossier. Projects: 0, no corridors.\n\nPlan gap true: 61 injury crashes with 0 projects in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00038,
+    "attempts": 1,
+    "memo": "Memo: Chrystie St (secondary, 3-4 lanes, 25 mph) meets Forsyth St (residential, 1 lane, 25 mph) and Grand St (secondary, 1-2 lanes, 25 mph). Area has 6 signals, 11 crossings (9 marked), 0 stop signs, 10 schools within 400m, 4 bus stops within 200m.\n\nCrashes (NYC Open Data Crashes, 100m since 2021-10-30): 119 crashes, 61 injury crashes. Injured: 23 pedestrians, 24 cyclists, 23 motorists; 1 pedestrian killed. Top factors: Driver Inattention/Distraction 37, Failure to Yield 10, Driver Inexperience 6.\n\nCity status (NYC DOT data): designated Vision Zero priority intersection Grand St/Chrystie St; HIN status not in dossier. Projects: 0, no corridors.\n\nPlan gap true: 61 injury crashes (\u226510) with 0 projects in period.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Chrystie St/Grand St/Forsyth St intersection: 2 secondary + 1 residential roads, 1-4 lanes, 25 mph limit, 6 signals, 11 crossings (9 marked), 0 stop signs, 10 schools within 400m.\n\nPolice-reported (NYC Open Data, 2021-10-30 to present, 100m radius): 119 crashes, 61 with injuries. Pedestrians 23 injured, 1 killed; cyclists 24 injured, 0 killed; motorists 23 injured, 0 killed. Top factors: Driver Inattention/Distraction (37), Failure to Yield (10), Driver Inexperience (6).\n\nCity-designated: Yes - Vision Zero priority intersection Grand St/Chrystie St; also on High Injury Network flag. No DOT street improvement projects/corridors in period (0 projects).\n\nPlan gap: True (61 injury crashes \u226510 with no project)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.0002,
+    "attempts": 1,
+    "memo": "Junction of Chrystie Street secondary 3-4 lanes 25 mph, Forsyth Street residential 1 lane 25 mph, Grand Street secondary 1-2 lanes 25 mph. Signals 6, crossings 11 with 9 marked, stop signs 0. Schools 10 within 400m, bus stops 4 within 200m.\n\nPolice-reported crashes since 2021-10-31: 119 crashes, 61 injury crashes. Pedestrian injured 23, pedestrian killed 1, cyclist injured 24, motorist injured 23. Top factors: Driver Inattention/Distraction 37 crashes, Failure to Yield Right-of-Way 10, Driver Inexperience 6. Crash type recorded false; dark_share and wet_share missing.\n\nDesignation: Vision Zero priority intersection for GRAND STREET, designated true.\n\nProjects: Leading Pedestrian Interval signal 1996, turn traffic calming 2017. Recent projects 0 in period.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-vz-3",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "UNION STREET & NORTHERN BOULEVARD",
+   "lat": 40.763941059706,
+   "lon": -73.8281474373839,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 43,
+   "checked": {
+    "errors": [],
+    "usd": 0.00087,
+    "attempts": 2,
+    "memo": "Memo: Leavitt Street residential / Northern Boulevard primary with 3 to 4 lanes / Union Street tertiary with 4 lanes. Has 2 signals, 10 crossings with 7 marked, 1 stop sign, 2 schools, 6 bus stops.\n\nPolice-reported record per NYC Open Data Motor Vehicle Collisions Crashes in radius 100 over 5 year period: 98 crashes, 43 injury crashes. Injured: 23 pedestrians, 5 cyclists, 27 motorists; 0 killed. Top factors: Failure to Yield Right-of-Way in 15 crashes, Driver Inattention in 12, Following Too Closely in 12.\n\nCity per NYC Open Data DOT: designated Vision Zero priority intersection Union Street and Northern Boulevard; High Injury Network status source missing. No improvement projects, 0 recent.\n\nPlan gap true with 43 injury crashes and no project.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00037,
+    "attempts": 1,
+    "memo": "Memo: Leavitt St (residential) / Northern Blvd (primary, 3-4 lanes) / Union St (tertiary, 4 lanes) junction. Has 2 signals, 10 crossings (7 marked), 1 stop sign; 2 schools within 400m, 6 bus stops within 200m.\n\nPolice-reported record (NYC Open Data Crashes h9gi-nx95, 100m since 2021-10-30): 98 crashes, 43 injury crashes (2021:3, 2022:13, 2023:18, 2024:23, 2025:25, 2026:16). Injured: 23 pedestrians, 5 cyclists, 27 motorists; 0 killed. Top factors: Failure to Yield (15), Driver Inattention (12), Following Too Closely (12).\n\nCity (NYC DOT data): designated Vision Zero priority intersection Union St/Northern Blvd; High Injury Network status: source missing. No improvement projects/corridors (0 recent).\n\nPlan gap true: \u226510 injury crashes (43) with no project.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Intersection: Leavitt St (residential), Northern Blvd (primary, 3-4 lanes), Union St (tertiary, 4 lanes). Layout: 2 signals, 10 crossings (7 marked), 1 stop sign, 6 bus stops within 200m, 2 schools within 400m. Speed limit data missing.\n\nCrashes (100m radius, 2021-10-30 to present, NYC Open Data h9gi-nx95): 98 crashes, 43 injury crashes. Casualties: 23 pedestrians injured, 5 cyclists, 27 motorists; 0 killed. Top factors: Failure to Yield (15), Driver Inattention/Distraction (12), Following Too Closely (12). By year 2022-2025: 13/18/23/25.\n\nDesignation: NYC DOT Vision Zero Priority intersection (UNION ST / NORTHERN BLVD). Projects: No DOT street improvement projects/corridors at location per source.\n\nPlan gap: TRUE (>=10 injury crashes and no projects in period).\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00019,
+    "attempts": 1,
+    "memo": "Junction of Leavitt Street residential, Northern Boulevard primary 3-4 lanes, and Union Street tertiary 4 lanes. Signals 2, crossings 10 with 7 marked, stop signs 1, 2 schools within 400m, 6 bus stops within 200m.\n\nPolice-reported crashes 2021-10-31 to present: 98 crashes, 43 injury crashes. By year: 2021 3, 2022 13, 2023 18, 2024 23, 2025 25, 2026 16. Injured: pedestrian 23, cyclist 5, motorist 27. Top factors: Failure to Yield Right-of-Way 15, Driver Inattention/Distraction 12, Following Too Closely 12. Crash type recorded source missing; dark/wet share source missing.\n\nDesignation: Vision Zero priority intersection, UNION STREET. Designated true. Projects in period: none; recent projects 0. Prior project: Leading Pedestrian Interval signal 2019.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-vz-4",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "PENNSYLVANIA AVENUE & BLAKE AVENUE",
+   "lat": 40.6678335023913,
+   "lon": -73.8948312611268,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 31,
+   "checked": {
+    "errors": [],
+    "usd": 0.00095,
+    "attempts": 2,
+    "memo": "Pennsylvania Avenue and Blake Avenue: Pennsylvania Avenue primary, 4 lanes, 25 mph; Blake Avenue residential, 1 lane, 20 mph. Layout has 1 signal, 7 crossings with 4 marked, 0 stop signs, 6 schools nearby and 7 bus stops nearby - street source missing.\n\nPolice record for the period (NYC Open Data): 65 crashes, 31 with injury. Injured: 39 motorists, 7 pedestrians, 2 cyclists; 1 pedestrian killed, 0 cyclists and 0 motorists killed. Top factors: Driver Inattention/Distraction with 11, Failure to Yield Right-of-Way with 5, Following Too Closely with 5.\n\nCity (NYC DOT data): designated Vision Zero priority intersection; no High Injury Network status in dossier; 0 projects. Plan_gap true with injury crashes above threshold and no project.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00053,
+    "attempts": 1,
+    "memo": "Blake Avenue - Pennsylvania Avenue: Pennsylvania Avenue primary, 4 lanes, 25 mph; Blake Avenue residential, 1 lane, 20 mph. Layout has 1 signal, 7 crossings with 4 marked, 0 stop signs, 6 schools within 400m and 7 bus stops within 200m - street source missing.\n\nPolice crashes within 100m since 2021-10-30 (NYC Open Data): 65 crashes, 31 with injury. Injured: 39 motorists, 7 pedestrians, 2 cyclists; 1 pedestrian killed, 0 cyclists and 0 motorists killed. By year 2021:3, 2022:17, 2023:17, 2024:14, 2025:9, 2026:5. Top factors: Driver Inattention/Distraction 11, Failure to Yield Right-of-Way 5, Following Too Closely 5.\n\nCity (NYC DOT data): designated Vision Zero priority intersection; no High Injury Network status in dossier; 0 projects. Plan_gap true - injury crashes exceed threshold with no project in period.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Junction of Blake Avenue (residential, 1 lane, 20 mph) and Pennsylvania Avenue (primary, 4 lanes, 25 mph). Layout: 1 signal, 7 crossings (4 marked), 0 stop signs, 6 schools within 400m, 7 bus stops within 200m.\n\nPolice-reported crashes within 100m since 2021-10-30 (NYC Open Data): 65 crashes (31 with injury). By year: 2021:3, 2022:17, 2023:17, 2024:14, 2025:9, 2026:5. Injured: 7 pedestrians, 2 cyclists, 39 motorists; 1 pedestrian killed. Top factors: Driver Inattention/Distraction (11), Failure to Yield (5), Following Too Closely (5).\n\nCity designation: Vision Zero priority intersection (Pennsylvania Ave/Blake Ave), designated true. No DOT street improvement projects/corridors found in period (0 projects).\n\nPlan gap: true (\u226510 injury crashes and no project in period)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00016,
+    "attempts": 1,
+    "memo": "Junction of Blake Avenue residential 1 lane 20 mph and Pennsylvania Avenue primary 4 lanes 25 mph. Street layout: 1 signal, 7 crossings with 4 marked, 0 stop signs, 6 schools within 400m, 7 bus stops within 200m.\n\nPolice-reported crashes 2021-10-31 to present: 65 crashes, 31 injury crashes. Injuries: 7 pedestrians injured, 1 pedestrian killed, 2 cyclists injured, 39 motorists injured. Crash groups: pedestrian 7, rear end 5, cyclist 2. Top factors: Driver Inattention/Distraction 11 crashes, Failure to Yield Right-of-Way 5, Following Too Closely 5.\n\nDesignation: Vision Zero priority intersection for PENNSYLVANIA AVENUE, designated true. Projects: Leading Pedestrian Interval signal 2016; turn traffic calming 2016 and 2021. Plan gap false."
+   }
+  },
+  {
+   "id": "nyc-vz-5",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "UTICA AVENUE & CLARKSON AVENUE",
+   "lat": 40.6566103554164,
+   "lon": -73.9309035498809,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 39,
+   "checked": {
+    "errors": [],
+    "usd": 0.00067,
+    "attempts": 2,
+    "memo": "Memo: Clarkson Avenue (residential) x Utica Avenue (secondary): 1 signal, 5 crossings (5 marked), 0 stop signs, 2 nearby schools, 4 nearby bus stops; lanes/speeds missing.\n\nPolice-reported NYC Open Data since 2021-10-30, radius 100: 96 crashes, 39 injury crashes; 10 pedestrians injured, 2 cyclists injured, 44 motorists injured, 0 killed. Top factors: Driver Inattention/Distraction 19, Other Vehicular 5, Failure to Yield 4.\n\nCity designated Vision Zero priority intersection; no priority corridors, 0 projects in period. High Injury Network source missing. Plan gap true: at least 10 injury crashes with no project.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00034,
+    "attempts": 1,
+    "memo": "Memo: Clarkson Avenue (residential) x Utica Avenue (secondary): 1 signal, 5 crossings (5 marked), 0 stop signs, 2 schools within 400m, 4 bus stops within 200m; lanes/speeds missing.\n\nPolice-reported NYC Open Data since 2021-10-30, 100m radius: 96 crashes, 39 injury crashes; 10 pedestrians injured, 2 cyclists injured, 44 motorists injured, 0 killed. Top factors: Driver Inattention/Distraction 19, Other Vehicular 5, Failure to Yield 4.\n\nCity designated Vision Zero priority intersection; no priority corridors, 0 projects in period. High Injury Network source missing. Plan gap true: \u226510 injury crashes with no project.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00018,
+    "attempts": 1,
+    "memo": "Memo: Clarkson Avenue / Utica Avenue (40.65661, -73.930904), NYC. Layout: signalized intersection (1 signal, 0 stop signs, 5 crossings/5 marked), residential \u00d7 secondary streets, high pedestrian activity context (2 schools within 400m, 4 bus stops 200m); lanes/speed limits not in dossier.\n\nCrash record (NYC Open Data Motor Vehicle Collisions h9gi-nx95, 100m, since 2021-10-30, 5yr): 96 crashes (39 injury crashes, 0 killed). By year: 2021:7, 2022:21, 2023:26, 2024:10, 2025:22, 2026:10. Injured: 10 pedestrians, 2 cyclists, 44 motorists. Top factors: Driver Inattention/Distraction 19, Other Vehicular 5, Failure to Yield 4.\n\nCity action: Designated \u2014 Vision Zero priority intersection (Utica Ave/Clarkson Ave). No DOT street improvement projects or corridors in period (recent_projects 0), no HIN corridor listed.\n\nPlan gap: true (\u226510 injury crashes and no project in period).\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction of Clarkson Avenue residential and Utica Avenue secondary. 1 signal, 5 crossings all marked, 0 stop signs. 2 schools within 400m, 4 bus stops within 200m.\n\nPolice-reported crashes since 2021-10-31, 5-year window: 96 crashes, 39 injury crashes. Injured: pedestrian 10, cyclist 2, motorist 44. Crash groups: pedestrian 10, cyclist 2, rear_end 1. Top factors: Driver Inattention/Distraction 19, Other Vehicular 5, Failure to Yield Right-of-Way 4. Crash type recorded false; dark/wet share source missing.\n\nDesignation: Vision Zero priority intersection for Utica Avenue, designated true. Projects in dossier: Leading Pedestrian Interval signal 2018. Recent projects 0. Plan gap true."
+   }
+  },
+  {
+   "id": "nyc-vz-6",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "WHITE PLAINS ROAD & NEREID AVENUE",
+   "lat": 40.898449654556,
+   "lon": -73.8542988276157,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 31,
+   "checked": {
+    "errors": [],
+    "usd": 0.00087,
+    "attempts": 2,
+    "memo": "Junction Nereid Avenue [4 lanes, 25 mph] x White Plains Road [2 lanes, 25 mph]: 1 signal, 5 crossings (5 marked), 0 stop signs, 8 bus stops, 0 schools.\n\nNYC Open Data crashes since 2021-10-30: 64 crashes, 31 injury crashes. Injured: 24 pedestrians, 1 cyclist, 17 motorists. Killed: 0. Top factors: Driver Inattention/Distraction (11), Failure to Yield Right-of-Way (6), Turning Improperly (4).\n\nNYC DOT data: designated Vision Zero priority intersection (WHITE PLAINS ROAD / NEREID AVENUE); 0 street improvement projects/corridors. HIN status: source missing.\n\nPlan gap true: injury crashes with no project in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 200 is not in the dossier",
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00044,
+    "attempts": 1,
+    "memo": "Junction Nereid Avenue [4 lanes, 25 mph] x White Plains Road [2 lanes, 25 mph]: 1 signal, 5 crossings (5 marked), 0 stop signs, 8 bus stops within 200m, 0 schools within 400m.\n\nNYC Open Data crashes since 2021-10-30 (100m): 64 crashes, 31 injury crashes. Injured: 24 pedestrians, 1 cyclist, 17 motorists. Killed: 0. Top factors: Driver Inattention/Distraction (11), Failure to Yield Right-of-Way (6), Turning Improperly (4).\n\nNYC DOT data: designated Vision Zero priority intersection (WHITE PLAINS ROAD / NEREID AVENUE); 0 street improvement projects/corridors. HIN status: source missing.\n\nPlan gap true: \u226510 injury crashes with no project in period.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00015,
+    "attempts": 2,
+    "memo": "Nereid Ave (4 lanes, 25 mph) and White Plains Rd (2 lanes, 25 mph) intersect with 1 signal and 5 marked crossings, 8 bus stops within 200m. NYC Open Data crashes (2021-10-30 onward, 100m radius): 64 crashes, 31 with injuries, 0 killed: 24 pedestrians, 1 cyclist, 17 motorists injured. Leading factors: Driver Inattention/Distraction (11), Failure to Yield (6), Turning Improperly (4). City designates Vision Zero priority intersection (Nereid Ave/White Plains Rd), with no DOT projects in period. Plan gap true: >=10 injury crashes with no project."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction of Nereid Avenue secondary 4 lanes 25 mph and White Plains Road secondary 2 lanes 25 mph. Signals 1, crossings 5 all marked, stop signs 0, schools_400m 0, bus stops_200m 8.\n\nPolice-reported crashes since 2021-10-31: 64 crashes, 31 injury crashes. Injured: pedestrian 24, motorist 17, cyclist 1. Main factors: Driver Inattention/Distraction 11 crashes, Failure to Yield Right-of-Way 6, Turning Improperly 4.\n\nCity designation: Vision Zero priority intersection for WHITE PLAINS ROAD, designated true. Projects per dossier: Leading Pedestrian Interval signal 2016. Recent projects 0.\n\nPlan gap true: \u226510 injury crashes in period with no project in period."
+   }
+  },
+  {
+   "id": "nyc-vz-7",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "MYRTLE AVENUE & NORTH PORTLAND AVENUE",
+   "lat": 40.6933608181606,
+   "lon": -73.9758481580474,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 11,
+   "checked": {
+    "errors": [],
+    "usd": 0.00056,
+    "attempts": 2,
+    "memo": "Memo \u2013 Myrtle Ave / N Portland Ave\n\nLayout: Myrtle Ave primary, 2 lanes, 25 mph; N Portland Ave residential (lanes/speed missing). 1 signal, 0 stop signs, 5 crossings (3 marked), 2 schools nearby, 2 bus stops nearby.\n\nCrashes (NYC Open Data Crashes, since 2021-10-30): 35 crashes, 11 injury crashes. Injured: 2 pedestrians, 5 cyclists, 5 motorists; 1 pedestrian killed, 0 cyclist/motorist killed. Top factors: Driver Inattention/Distraction 7, Backing Unsafely 2, Turning Improperly 1.\n\nDesignation/Projects (NYC DOT): Vision Zero priority intersection; HIN source missing. 1 project: Myrtle Ave & N Portland Ave - RC, 2023 (ended 2023-12-28). No corridor projects.\n\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00033,
+    "attempts": 1,
+    "memo": "Memo \u2013 Myrtle Ave / N Portland Ave (40.693361,-73.975848)\n\nLayout: Myrtle Ave primary, 2 lanes, 25 mph; N Portland Ave residential (lanes/speed missing). 1 signal, 0 stop signs, 5 crossings (3 marked), 2 schools within 400m, 2 bus stops within 200m.\n\nCrashes (NYC Open Data Crashes, 100m since 2021-10-30): 35 crashes, 11 injury crashes. Injured: 2 pedestrians, 5 cyclists, 5 motorists; 1 pedestrian killed, 0 cyclist/motorist killed. Top factors: Driver Inattention/Distraction 7, Backing Unsafely 2, Turning Improperly 1.\n\nDesignation/Projects (NYC DOT): Vision Zero priority intersection; HIN source missing. 1 project: Myrtle Ave & N Portland Ave - RC, 2023 (ended 2023-12-28). No corridor projects.\n\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00022,
+    "attempts": 2,
+    "memo": "Myrtle Ave (primary, 2 lanes, 25 mph) at N Portland Ave (residential), NYC. Layout: 1 signal, 0 stop signs, 5 crossings (3 marked), 2 bus stops within 200m and 2 schools within 400m.\n\nCrashes (NYC Open Data 2021-10-30 to present, 100m radius): 35 crashes, 11 injury crashes; 1 pedestrian killed; injured: 2 pedestrians, 5 cyclists, 5 motorists. Top factors: Driver Inattention/Distraction 7, Backing Unsafely 2, Turning Improperly 1.\n\nDesignation: Vision Zero priority intersection listed (Myrtle Ave/N Portland Ave). High Injury Network status not in dossier source.\n\nProjects: 1 DOT project in period \u2013 Myrtle Ave & N Portland Ave - RC (2023). No plan_gap (plan_gap false: 11 injury crashes but project present)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00021,
+    "attempts": 1,
+    "memo": "Memo: Myrtle Avenue & North Portland Avenue, NYC\n\nStreet layout: Myrtle Avenue is primary, 2 lanes, 25 mph. North Portland Avenue is residential with no lane/speed data in dossier. Junction has 1 signal, 5 crossings, 3 marked crossings, 0 stop signs, 2 schools within 400m, 2 bus stops within 200m.\n\nCrash record since 2021-10-31, 100m radius: 35 crashes total, 11 injury crashes. By year: 2021 1, 2022 10, 2023 5, 2024 6, 2025 2, 2026 11. Injuries: pedestrian injured 2, pedestrian killed 1, cyclist injured 5, motorist injured 5. Crash groups: cyclist 5, pedestrian 3, rear_end 1. Top factors: Driver Inattention/Distraction 7 crashes, Backing Unsafely 2, Turning Improperly 1. Crash type recorded false; dark_share and wet_share missing.\n\nDesignation: Vision Zero priority intersection for MYRTLE AVENUE. Designated true. High Injury Network status not provided in dossier.\n\nProjects in period: Myrtle Ave & N Portland Ave - RC 2023; Leading Pedestrian Interval signal 2021; Leading Pedestrian Interval signal 2023. Recent projects 3.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "nyc-vz-8",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "EAST 61 STREET & YORK AVENUE",
+   "lat": 40.7599127857448,
+   "lon": -73.9588095546709,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 37,
+   "checked": {
+    "errors": [],
+    "usd": 0.00093,
+    "attempts": 2,
+    "memo": "Location near E 60th, E 61st, E 62nd, FDR Drive, York Ave (25 mph; 1-6 lanes). Layout: 3 signals, 12 crossings (9 marked), 0 stop signs, 0 schools nearby, 2 bus stops nearby.\n\nPolice-reported (NYC Open Data Crashes h9gi-nx95, 100m radius): 137 crashes, 37 injury crashes (11/20/36/35/20/15 by year in order). Injured: 8 pedestrians, 2 cyclists, 34 motorists; 0 killed. Top factors: Driver Inattention/Distraction 44, Other Vehicular 12, Unsafe Lane Changing 7.\n\nCity designation (NYC DOT): designated true; Vision Zero priority intersection EAST 61 ST / YORK AVE; no priority corridors; 0 projects.\n\nPlan gap true: injury crashes meet threshold with no project in period. HIN status missing from dossier.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00042,
+    "attempts": 1,
+    "memo": "Location near E 60th, E 61st, E 62nd, FDR Drive, York Ave (25 mph; 1-6 lanes). Layout: 3 signals, 12 crossings (9 marked), 0 stop signs, 0 schools within 400m, 2 bus stops within 200m.\n\nPolice-reported (NYC Open Data Crashes h9gi-nx95, 100m since 2021-10-30): 137 crashes, 37 injury crashes (11/20/36/35/20/15 in 2021-2026). Injured: 8 pedestrians, 2 cyclists, 34 motorists; 0 killed. Top factors: Driver Inattention/Distraction 44, Other Vehicular 12, Unsafe Lane Changing 7.\n\nCity designation (NYC DOT, 6.99s): designated true; Vision Zero priority intersection EAST 61 ST / YORK AVE; no priority corridors; 0 projects.\n\nPlan gap true: 37 injury crashes (\u226510) with no project in period. HIN status missing from dossier.",
+    "errors_rescored": [
+     "number 6.99 is not in the dossier"
+    ]
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Junction near York Ave/E 60th-62nd St/FDR Dr, NYC (40.7599,-73.9588). Layout: 5 roads, 3 signals, 12 crossings (9 marked), 0 stop signs, 2 bus stops in 200m, 0 schools in 400m; York Ave 4-6 lanes secondary 25mph, E 61 St 3-4 lanes secondary 25mph, others tertiary 1-2 lanes 25mph. Record 2021-10-30 to 2026: 137 crashes, 37 injury crashes (8 ped, 2 cyclist, 34 motorist injured; 0 killed). Top factors: Driver Inattention 44, Other Vehicular 12, Unsafe Lane Changing 7. Designated Vision Zero priority intersection (E 61 St/York Ave). No city projects in period (0 SIPs). Plan gap true: 37 injury crashes \u226510 with no project.\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.0002,
+    "attempts": 1,
+    "memo": "Junction at East 60th/61st/62nd St, York Ave and FDR Drive. Layout: East 60th St tertiary 2 lanes 25 mph; East 61st St secondary 3-4 lanes 25 mph; East 62nd St secondary 2 lanes 25 mph; FDR Drive tertiary 1 lane 25 mph; York Avenue secondary 4-6 lanes 25 mph. Signals 3, crossings 12 with 9 marked, stop signs 0, bus stops 2 within 200m, schools 0 within 400m.\n\nPolice-reported crashes 2021-10-31 to present, 100 m radius: 137 crashes, 37 injury crashes. Injuries: pedestrian 8, cyclist 2, motorist 34. Top factors: Driver Inattention/Distraction 44 crashes, Other Vehicular 12, Unsafe Lane Changing 7.\n\nDesignation: Vision Zero priority intersection, EAST 61 STREET. High Injury Network designation source missing. Projects in period: none, recent_projects 0.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-vz-9",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "SOUTH CONDUIT AVENUE & HOOK CREEK BOULEVARD",
+   "lat": 40.6653476116936,
+   "lon": -73.729849442902,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 64,
+   "checked": {
+    "errors": [],
+    "usd": 0.00065,
+    "attempts": 2,
+    "memo": "Memo: Junction near 40.665348,-73.729849 \u2013 complex junction: 248th St, 249th St (residential), Hook Creek Blvd (tertiary, 5 lanes, 25 mph), South Conduit Ave (trunk, 4-5 lanes), Sunrise Hwy (trunk, 3-4 lanes). 2 signals, 7 crossings (7 marked), 2 stop signs, 0 schools, 2 bus stops.\n\nPolice-reported (NYC Open Data since 2021-10-30, 100m): 122 crashes, 64 injury. Injured: 15 pedestrians, 7 cyclists, 63 motorists; killed: 1 motorist, 0 pedestrians/cyclists. Top factors: Driver Inattention/Distraction 27, Failure to Yield 13, Passing/Lane Usage Improper 6.\n\nCity: designated Vision Zero priority intersection SOUTH CONDUIT AVE/HOOK CREEK BLVD; High Injury Network status missing. No projects/corridors in period (0 recent projects). Plan gap true (\u226510 injury crashes, no project).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00039,
+    "attempts": 1,
+    "memo": "Memo: Junction near 40.665348,-73.729849 \u2013 complex 5-way: 248th St, 249th St (residential), Hook Creek Blvd (tertiary, 5 lanes, 25 mph), South Conduit Ave (trunk, 4-5 lanes), Sunrise Hwy (trunk, 3-4 lanes). 2 signals, 7 crossings (7 marked), 2 stop signs, 0 schools within 400m, 2 bus stops within 200m.\n\nPolice-reported (NYC Open Data since 2021-10-30, 100m): 122 crashes, 64 injury. Injured: 15 pedestrians, 7 cyclists, 63 motorists; killed: 1 motorist, 0 pedestrians/cyclists. Top factors: Driver Inattention/Distraction 27, Failure to Yield 13, Passing/Lane Usage Improper 6.\n\nCity: designated Vision Zero priority intersection SOUTH CONDUIT AVE/HOOK CREEK BLVD; High Injury Network status missing. No projects/corridors in period (0 recent projects). Plan gap true (\u226510 injury crashes, no project).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00019,
+    "attempts": 1,
+    "memo": "Junction of Hook Creek Blvd (5-lane tertiary, 25 mph), South Conduit Ave and Sunrise Hwy (trunk, 4-5 and 3-4 lanes). Layout: 2 signals, 7 marked crossings, 2 stop signs, 2 bus stops within 200m, no schools within 400m [street_seconds=0.0].\n\nNYC Open Data (h9gi-nx95) 2021-10-30 to present (122 crashes, 64 injury crashes within 100m): 63 motorists injured +1 killed, 15 pedestrians injured, 7 cyclists injured. Top factors: Driver Inattention/Distraction 27, Failure to Yield 13, Improper Passing/Lane Usage 6.\n\nCity designated Vision Zero priority intersection: SOUTH CONDUIT AVENUE / HOOK CREEK BOULEVARD (High Injury Network not specified). Projects in period: 0 street improvement projects/corridors per NYC DOT Open Data [plans_seconds=0.0].\n\nPlan gap true: 64 injury crashes (>=10) with no projects in period."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00021,
+    "attempts": 1,
+    "memo": "Junction at 40.665348, -73.729849 involves 248th St residential, 249th St residential, Hook Creek Blvd tertiary 5 lanes 25 mph, South Conduit Ave trunk 4-5 lanes, Sunrise Highway trunk 3-4 lanes. 2 signals, 7 crossings all marked, 2 stop signs, 0 schools within 400m, 2 bus stops within 200m.\n\nPolice-reported crashes from NYC Open Data Motor Vehicle Collisions since 2021-10-31: 122 crashes, 64 injury crashes. Injury by year: 2021 5, 2022 22, 2023 27, 2024 19, 2025 26, 2026 23. Pedestrian injured 15, cyclist injured 7, motorist injured 63, motorist killed 1. Top factors: Driver Inattention/Distraction 27, Failure to Yield Right-of-Way 13, Passing or Lane Usage Improper 6.\n\nDesignation: Vision Zero priority intersection for SOUTH CONDUIT AVENUE, designated true. Projects in period: none, recent_projects 0. Plan gap true."
+   }
+  },
+  {
+   "id": "nyc-crash-10",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "ST NICHOLAS AVE & GROVE ST",
+   "lat": 40.701923,
+   "lon": -73.91216,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 16,
+   "checked": {
+    "errors": [],
+    "usd": 0.0007,
+    "attempts": 2,
+    "memo": "Junction of Grove St, Linden St, Menahan St and Saint Nicholas Ave (residential; 25 mph posted on Linden St and Saint Nicholas Ave; Saint Nicholas Ave 2 lanes; 2 signals, 2 stop signs, 10 crossings all marked; 2 schools nearby, 5 bus stops nearby). Street data source missing.\n\nPolice data (NYC Open Data Crashes, 100m since 2021-10-30): 52 crashes, 16 injury crashes; 7 pedestrians injured, 0 cyclists, 11 motorists; 0 killed. Top factors: Driver Inattention/Distraction 9, Failure to Yield 9, Improper Passing/Lane Use 4.\n\nDOT source: not designated (no Vision Zero priority intersection/corridor); 0 projects/corridors. Plan gap: true (at least 10 injury crashes, no project in period).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00035,
+    "attempts": 1,
+    "memo": "Junction of Grove St, Linden St, Menahan St and Saint Nicholas Ave (residential; 25 mph posted on Linden St and Saint Nicholas Ave; Saint Nicholas Ave 2 lanes; 2 signals, 2 stop signs, 10 crossings all marked; 2 schools within 400m, 5 bus stops within 200m). Street data source missing.\n\nPolice data (NYC Open Data Crashes, 100m since 2021-10-30): 52 crashes, 16 injury crashes; 7 pedestrians injured, 0 cyclists, 11 motorists; 0 killed. Top factors: Driver Inattention/Distraction 9, Failure to Yield 9, Improper Passing/Lane Use 4.\n\nDOT source: not designated (no Vision Zero priority intersection/corridor); 0 projects/corridors. Plan gap: true (\u226510 injury crashes, no project in period).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Intersection of Grove St, Linden St, Menahan St, St Nicholas Ave (2 lanes, 25 mph posted where posted). Signalized (2 signals, 2 stop signs, 10 crossings all marked, 5 bus stops, 2 schools within 400m).\n\nPolice-reported crashes within 100m since 2021-10-30 (5-year period, NYC Open Data h9gi-nx95): 52 crashes, 16 injury crashes. Injured: 7 pedestrians, 0 cyclists, 11 motorists; 0 killed. Top factors: Driver Inattention/Distraction (9), Failure to Yield (9), Passing/Lane Usage Improper (4).\n\nNo DOT project listed in dossier, no Vision Zero/HIN designation in dossier (designated false; source listed as NYC Open Data DOT, 0 recent projects). Plan gap true: \u226510 injury crashes with no project in period."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction at Grove St, Linden St, Menahan St and Saint Nicholas Ave, NYC. All residential; Saint Nicholas Ave and Linden St posted 25 mph. Signals 2, stop signs 2, 10 crossings all marked. 2 schools within 400 m, 5 bus stops within 200 m.\n\nPolice-reported crashes, 100 m radius since 2021-10-31: 52 crashes total, 16 injury crashes. By year: 2021 2, 2022 12, 2023 11, 2024 12, 2025 9, 2026 6. Pedestrian injured 7, motorist injured 11. Crash groups: pedestrian 7, rear_end 1. Top factors: Driver Inattention/Distraction 9 crashes, Failure to Yield Right-of-Way 9, Passing or Lane Usage Improper 4.\n\nDesignations per NYC DOT/Vision Zero data: none. Designated false. Projects in period: 0 recent. Historical project: Leading Pedestrian Interval signal, 2016. Plan gap true."
+   }
+  },
+  {
+   "id": "nyc-crash-11",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "FULTON ST & PENNSYLVANIA AVE",
+   "lat": 40.677208,
+   "lon": -73.89724,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": true,
+   "injury_crashes": 52,
+   "checked": {
+    "errors": [],
+    "usd": 0.00064,
+    "attempts": 2,
+    "memo": "Junction Fulton St [primary, 1 lane] x Pennsylvania Ave [primary, 5 lanes, 25 mph]: 1 signal, 0 stop signs, 5 crossings (4 marked), 7 bus stops, 0 schools.\n\nNYC Open Data crashes within 100m since 2021-10-30: 118 crashes, 52 injury crashes. Injured: 65 motorists, 10 pedestrians, 5 cyclists. Killed: 0. Top factors: Driver Inattention/Distraction (12), Passing or Lane Usage Improper (6), Failure to Yield Right-of-Way (6).\n\nCity: Vision Zero priority intersection (Pennsylvania Ave/Fulton St), designated true. High Injury Network status: source missing. Projects: 1 DOT project Jamaica Ave at Jackie Robinson Pkwy (2016), 0 recent projects in period.\n\nPlan gap true: 52 injury crashes with no project in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 200 is not in the dossier",
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00029,
+    "attempts": 1,
+    "memo": "Junction Fulton St [primary, 1 lane] x Pennsylvania Ave [primary, 5 lanes, 25 mph]: 1 signal, 0 stop signs, 5 crossings (4 marked), 7 bus stops in 200m, 0 schools in 400m.\n\nNYC Open Data crashes within 100m since 2021-10-30 (5y): 118 crashes, 52 injury crashes. Injured: 65 motorists, 10 pedestrians, 5 cyclists. Killed: 0. Top factors: Driver Inattention/Distraction (12), Passing or Lane Usage Improper (6), Failure to Yield Right-of-Way (6).\n\nCity: Vision Zero priority intersection (Pennsylvania Ave/Fulton St), designated true. High Injury Network status: source missing. Projects: 1 DOT project Jamaica Ave at Jackie Robinson Pkwy (2016), 0 recent projects in period.\n\nPlan gap true: 52 injury crashes with no project in period.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Intersection of Fulton St and Pennsylvania Ave, Brooklyn: two primary roads (Fulton St 1 lane, Pennsylvania Ave 5 lanes, 25 mph), 1 signal, 5 crossings (4 marked), 7 bus stops within 200m, no schools within 400m or stop signs.\n\nPolice-reported crashes within 100m (5 years since 2021-10-30): 118 crashes, 52 with injury. Injured: 65 motorists, 10 pedestrians, 5 cyclists; 0 killed. Top factors: Driver Inattention/Distraction (12), Passing or Lane Usage Improper (6), Failure to Yield Right-of-Way (6).\n\nCity designated: Yes - Vision Zero priority intersection (Pennsylvania Ave/Fulton St); High Injury Network status not in dossier. Street improvement projects: 0 in period; only project listed is 2016 Jamaica Ave at Jackie Robinson Pkwy (outside period).\n\nPlan gap: true - at least 10 injury crashes (52) and no recent project."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00018,
+    "attempts": 1,
+    "memo": "Junction of Fulton Street primary 1 lane and Pennsylvania Avenue primary 5 lanes, maxspeed 25 mph on Pennsylvania Avenue. Signals 1, crossings 5 with 4 marked, stop signs 0, 0 schools within 400m, 7 bus stops within 200m.\n\nPolice-reported crashes since 2021-10-31 within 100m: 118 crashes, 52 injury crashes. Injured: pedestrian 10, cyclist 5, motorist 65. Top factors: Driver Inattention/Distraction 12 crashes, Passing or Lane Usage Improper 6, Failure to Yield Right-of-Way 6.\n\nCity designation: Vision Zero priority intersection for PENNSYLVANIA AVENUE, designated true. Projects listed: Jamaica Ave at Jackie Robinson Pkwy 2016, turn traffic calming 2018. Recent projects in period: 0.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-crash-12",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "39 AVE & 31 ST",
+   "lat": 40.752693,
+   "lon": -73.93291,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 8,
+   "checked": {
+    "errors": [],
+    "usd": 0.00053,
+    "attempts": 2,
+    "memo": "Memo: 31st St (secondary, 2 lanes)/32nd St (residential, 1 lane)/39th Ave (residential, lanes missing; maxspeed missing for all). Layout: 1 signal, 0 stop signs, 6 crossings (5 marked), 4 nearby schools, 7 nearby bus stops.\n\nCrash record since 2021-10-30 (NYC Open Data h9gi-nx95, 100m): 35 crashes, 8 injury crashes. Hurt: 2 pedestrians injured +1 killed, 2 cyclists injured, 3 motorists injured. Top factors: Driver Inattention/Distraction (6), Passing Too Closely (4), Failure to Yield (4).\n\nDesignation/Projects (NYC DOT): not designated, no Vision Zero priority intersection/corridor, 0 projects. Plan gap: false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00032,
+    "attempts": 1,
+    "memo": "Memo: 31st St (secondary, 2 lanes)/32nd St (residential, 1 lane)/39th Ave (residential, lanes missing; maxspeed missing for all). Layout: 1 signal, 0 stop signs, 6 crossings (5 marked), 4 schools within 400m, 7 bus stops within 200m.\n\nCrash record 2021-10-30\u2013present (NYC Open Data h9gi-nx95, 100m): 35 crashes, 8 injury crashes. Hurt: 2 pedestrians injured +1 killed, 2 cyclists injured, 3 motorists injured. Top factors: Driver Inattention/Distraction (6), Passing Too Closely (4), Failure to Yield (4).\n\nDesignation/Projects (NYC DOT): not designated, no Vision Zero priority intersection/corridor, 0 projects. Plan gap: false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Layout: 3 roads (31st St secondary 2 lanes, 32nd St residential 1 lane, 39th Ave residential). Street has 1 signal, 0 stop signs, 6 crossings (5 marked). Context: 4 schools within 400m, 7 bus stops within 200m. Maxspeed data missing.\n\nCrash record (NYC Open Data Motor Vehicle Collisions, 2021-10-30 to present, 100m radius): 35 crashes, 8 injury crashes (2021:1, 2022:7, 2023:7, 2024:7, 2025:10, 2026:3). Injured: 2 pedestrians, 2 cyclists, 3 motorists; killed: 1 pedestrian. Top factors: Driver Inattention/Distraction (6), Passing Too Closely (4), Failure to Yield Right-of-Way (4).\n\nDesignation/Projects: Not designated (High Injury Network/Vision Zero priority false). No DOT street improvement projects/corridors per NYC DOT data.\n\nPlan gap: false (<10 injury crashes and no projects in period)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00018,
+    "attempts": 1,
+    "memo": "Junction layout: 31st Street secondary 2 lanes, 32nd Street residential 1 lane, 39th Avenue residential. 1 signal, 6 crossings 5 marked, 0 stop signs. 4 schools within 400m, 7 bus stops within 200m.\n\nPolice-reported crashes, NYC Open Data Motor Vehicle Collisions, 100m radius since 2021-10-31: 35 crashes, 8 injury crashes. Injured/killed: pedestrian injured 2, pedestrian killed 1, cyclist injured 2, motorist injured 3. Crash type not recorded, dark/wet share source missing. Top factors: Driver Inattention/Distraction 6 crashes, Passing Too Closely 4, Failure to Yield Right-of-Way 4.\n\nDesignations: none; designated false. Projects in period: Leading Pedestrian Interval signal 2025, 1 recent project. Plan gap: false."
+   }
+  },
+  {
+   "id": "nyc-crash-13",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "HEGEMAN AVE & LINDEN BLVD",
+   "lat": 40.657257,
+   "lon": -73.90003,
+   "sources_ok": {
+    "street": false,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 38,
+   "checked": {
+    "errors": [],
+    "usd": 0.00068,
+    "attempts": 2,
+    "memo": "Memo: NYC junction review since 2021-10-30.\n\nStreet layout: source missing \u2013 Overpass API RuntimeError, no layout available.\n\nCrash record (NYC Open Data, Motor Vehicle Collisions - Crashes, 100m radius): 81 crashes, 38 injury crashes. Injured: 41 motorists, 6 pedestrians, 5 cyclists. Killed: 0 pedestrians, 0 cyclists, 0 motorists. Top factors: Driver Inattention/Distraction 9 crashes, Other Vehicular 7 crashes, Failure to Yield Right-of-Way 4 crashes.\n\nCity status (NYC Open Data DOT): designated false \u2013 no Vision Zero priority intersections or corridors, no street improvement projects or corridors. Projects none.\n\nPlan gap true \u2013 38 injury crashes with no project in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00028,
+    "attempts": 1,
+    "memo": "Memo: Junction 40.657257, -73.90003 (NYC) \u2013 5-year review since 2021-10-30.\n\nStreet layout: source missing \u2013 Overpass API RuntimeError HTTP 502; no layout available.\n\nCrash record (NYC Open Data h9gi-nx95, 100m): 81 crashes, 38 injury crashes. By year: 2021:2, 2022:20, 2023:14, 2024:12, 2025:19, 2026:14. Hurt: 41 motorists, 6 pedestrians, 5 cyclists injured; 0 killed. Top factors: Driver Inattention/Distraction 9, Other Vehicular 7, Failure to Yield Right-of-Way 4.\n\nCity status (NYC DOT): designated false \u2013 no Vision Zero priority intersections/corridors, no improvement projects/corridors. Projects 0.\n\nPlan gap true \u2013 38 injury crashes (\u226510) with no project in period.",
+    "errors_rescored": [
+     "number 502 is not in the dossier"
+    ]
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Powell St / Linden Blvd / Hegeman Ave, Brooklyn: 6-way junction of Linden Blvd (tertiary, 1-4 lanes) with secondary streets (Van Sinderen Ave, secondary_link), residential streets (Powell, Junius, Hegeman). 2 signals, 13 crossings (12 marked), 2 stop signs. No schools within 400m, 3 bus stops within 200m.\n\nPolice-reported crashes within 100m 2021-10-30-present: 81 crashes, 38 with injuries (motorist 41 injured, pedestrian 6, cyclist 5; zero killed). Top factors: Driver Inattention/Distraction (9), Other Vehicular (7), Failure to Yield (4).\n\nCity status: Not designated on High Injury Network/Vision Zero priority; no DOT improvement projects or corridors in dossier period (source: NYC Open Data (DOT)). Recent_projects: 0.\n\nPlan gap: true (\u226510 injury crashes and no project)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00018,
+    "attempts": 1,
+    "memo": "Junction at Hegeman Ave, Junius St, Linden Blvd, Powell St, Van Sinderen Ave and unnamed secondary_link. Linden Blvd is tertiary with 4 lanes; others are residential/secondary. Signals 2, crossings 13 with 12 marked, stop signs 2, 3 bus stops within 200m, 0 schools within 400m.\n\nPolice-reported crashes in 100m since 2021-10-31: 81 crashes, 38 injury crashes. By year: 2021 2, 2022 20, 2023 14, 2024 12, 2025 19, 2026 14. Injured: pedestrian 6, cyclist 5, motorist 41. Top factors: Driver Inattention/Distraction 9 crashes, Other Vehicular 7, Failure to Yield Right-of-Way 4.\n\nCity designations: none. Designated false, no High Injury Network or Vision Zero priority listed. Projects: none in period, recent_projects 0.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-crash-14",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "18 AVE & MCDONALD AVE",
+   "lat": 40.630745,
+   "lon": -73.977165,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 33,
+   "checked": {
+    "errors": [],
+    "usd": 0.00072,
+    "attempts": 2,
+    "memo": "Junction 18th Ave (tertiary, 2 lanes) / McDonald Ave (secondary, lane count missing; speed limits missing). Layout: 1 signal, 0 stop signs, 6 crossings (4 marked), 0 schools nearby, 4 bus stops nearby.\n\nPolice-reported (NYC Open Data h9gi-nx95, since 2021-10-30): 61 crashes, 33 injury crashes. Injured: 6 pedestrians, 9 cyclists, 22 motorists. Killed: 1 pedestrian, 1 cyclist, 0 motorists. Top factors: Driver Inattention/Distraction 10, Failure to Yield 6, Following Too Closely 2.\n\nDesignation/projects (NYC Open Data DOT): not designated, no Vision Zero priority intersection/corridor, 0 projects.\n\nPlan gap: true (33 injury crashes and 0 projects).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00035,
+    "attempts": 1,
+    "memo": "Junction 18th Ave (tertiary, 2 lanes) / McDonald Ave (secondary, lane count missing; speed limits missing). Layout: 1 signal, 0 stop signs, 6 crossings (4 marked), 0 schools within 400m, 4 bus stops within 200m.\n\nPolice-reported (NYC Open Data h9gi-nx95, 100m since 2021-10-30, 5yr): 61 crashes, 33 injury crashes. Injured: 6 pedestrians, 9 cyclists, 22 motorists. Killed: 1 pedestrian, 1 cyclist, 0 motorists. Top factors: Driver Inattention/Distraction 10, Failure to Yield 6, Following Too Closely 2.\n\nDesignation/projects (NYC Open Data DOT): not designated, no Vision Zero priority intersection/corridor, 0 projects.\n\nPlan gap: true (33 injury crashes \u226510 and 0 projects).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Junction of 18th Avenue (2 lanes, tertiary) and McDonald Avenue (secondary) in NYC. Layout: signalized intersection (1 signal, 0 stop signs), 6 crossings (4 marked), 4 bus stops within 200m, no schools within 400m. No speed limit data in dossier.\n\nCrash record 2021-10-30 to present (100m radius, NYC Open Data h9gi-nx95): 61 reported crashes, 33 with injury. By year: 2021:2, 2022:7, 2023:16, 2024:10, 2025:13, 2026:13. Injured: 22 motorists, 9 cyclists, 6 pedestrians. Killed: 1 pedestrian, 1 cyclist, 0 motorists. Top factors: Driver Inattention/Distraction (10), Failure to Yield (6), Following Too Closely (2).\n\nDesignation: Not on High Injury Network/corridor and not a Vision Zero priority intersection/corridor per NYC Open Data (DOT). No DOT street improvement projects/corridors recorded; no recent projects. Plan gap true (\u226510 injury crashes and no project in period)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction of 18th Avenue (tertiary, 2 lanes) and McDonald Avenue (secondary, lanes unspecified). Street layout: 1 signal, 6 crossings (4 marked), 0 stop signs, 0 schools within 400m, 4 bus stops within 200m.\n\nPolice-reported crashes in 100 m radius since 2021-10-31: 61 crashes, 33 injury crashes. Pedestrian injured 6, pedestrian killed 1; cyclist injured 9, cyclist killed 1; motorist injured 22. Top factors: Driver Inattention/Distraction 10 crashes, Failure to Yield Right-of-Way 6 crashes, Following Too Closely 2 crashes. Crash type recorded false; dark/wet share missing.\n\nDesignations: none. Designated false. Projects: Leading Pedestrian Interval signal in 2020; recent_projects 0 in period. Plan gap true."
+   }
+  },
+  {
+   "id": "nyc-crash-15",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "FULTON ST & BEDFORD AVE",
+   "lat": 40.68064,
+   "lon": -73.95337,
+   "sources_ok": {
+    "street": false,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 62,
+   "checked": {
+    "errors": [],
+    "usd": 0.00036,
+    "attempts": 1,
+    "memo": "Memo: Junction near 40.68064, -73.95337, NYC.\n\nStreet layout: source missing (Overpass API error); cannot describe layout.\n\nCrash record (NYC Open Data, since 2021-10-30, 100m, 144 crashes, 62 injury crashes): 18 pedestrians injured and 1 killed, 13 cyclists injured, 41 motorists injured. Top factors: Driver Inattention/Distraction (51), Following Too Closely (12), Failure to Yield Right-of-Way (10).\n\nDesignation/projects (NYC DOT): not designated (no Vision Zero priority intersections/corridors). One project: Fulton St and Bedford Ave (2016); 0 recent projects in period.\n\nPlan gap: true (62 injury crashes and no project in period).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [],
+    "usd": 0.00036,
+    "attempts": 1,
+    "memo": "Memo: Junction near 40.68064, -73.95337, NYC.\n\nStreet layout: source missing (Overpass API error); cannot describe layout.\n\nCrash record (NYC Open Data, since 2021-10-30, 100m, 144 crashes, 62 injury crashes): 18 pedestrians injured and 1 killed, 13 cyclists injured, 41 motorists injured. Top factors: Driver Inattention/Distraction (51), Following Too Closely (12), Failure to Yield Right-of-Way (10).\n\nDesignation/projects (NYC DOT): not designated (no Vision Zero priority intersections/corridors). One project: Fulton St and Bedford Ave (2016); 0 recent projects in period.\n\nPlan gap: true (62 injury crashes and no project in period).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Memo: Bedford Ave / Fulton St / Brevoort Pl (nyc). Signalized intersection (2 signals, 8 marked crossings, no stop signs). Adjacent to 4 schools within 400m and 9 bus stops within 200m. Fulton St: secondary, 2 lanes; Bedford Ave: secondary, 3 lanes; Brevoort Pl: residential.\n\nPolice-reported crashes within 100m, 2021-10-30 to present (~5yr): 144 crashes, 62 injury crashes. By year total crashes: 2021:6, 2022:33, 2023:31, 2024:24, 2025:27, 2026:23 (partial). Injuries: 18 pedestrians injured, 13 cyclists injured, 41 motorists injured; 1 pedestrian killed, no cyclist/motorist deaths. Top factors: Driver Inattention/Distraction (51), Following Too Closely (12), Failure to Yield (10).\n\nDesignation: Not High Injury Network / Vision Zero priority (designated false); no corridors. No projects in period (recent_projects 0). Last SIP: Fulton St and Bedford Ave (2016).\n\nPlan gap true: \u226510 injury crashes with no period project."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00019,
+    "attempts": 1,
+    "memo": "Junction at Bedford Avenue (secondary, 3 lanes), Brevoort Place (residential) and Fulton Street (secondary, 2 lanes). Signals 2, crossings 8 marked 8, stop signs 0. Schools 4 within 400m, bus stops 9 within 200m.\n\nPolice-reported crashes within 100 m since 2021-10-31: 144 crashes, 62 injury crashes. By year: 2021 6, 2022 33, 2023 31, 2024 24, 2025 27, 2026 23. Injuries: pedestrian injured 18, pedestrian killed 1, cyclist injured 13, motorist injured 41. Crash groups: pedestrian 19, cyclist 13, rear_end 12. Top factors: Driver Inattention/Distraction 51, Following Too Closely 12, Failure to Yield Right-of-Way 10. Crash type recorded false; dark_share and wet_share missing.\n\nDesignations: none; designated false. Projects done: Fulton St and Bedford Ave 2016; Leading Pedestrian Interval signal 2016 and 2019; turn traffic calming 2018. Recent projects 0.\n\nPlan gap true."
+   }
+  },
+  {
+   "id": "nyc-crash-16",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "AVENUE U & E 69 ST",
+   "lat": 40.618877,
+   "lon": -73.90893,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 9,
+   "checked": {
+    "errors": [],
+    "usd": 0.00066,
+    "attempts": 2,
+    "memo": "Location: Avenue U / East 69th Street, residential-residential. Layout: 1 signal, 0 stop signs, 7 crossings with 4 marked, 6 bus stops nearby, 0 schools nearby; lanes and maxspeed missing in dossier.\n\nPolice-reported crashes (NYC Open Data, 100m radius, 5-year period): 16 crashes, 9 injury crashes, annual counts of 3, 3, 3, 6 and 1. Injured: 15 motorists, 1 pedestrian, 0 cyclists; 0 killed. Top factors: Failure to Yield Right-of-Way in 3, Unsafe Speed in 1, Lost Consciousness in 1.\n\nDesignation/projects (NYC DOT data): not designated, no priority intersection or corridor; 0 projects.\n\nPlan gap: false, with 9 injury crashes and no projects.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 200 is not in the dossier",
+     "number 400 is not in the dossier",
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00033,
+    "attempts": 1,
+    "memo": "Location: Avenue U / East 69th Street, residential-residential. Layout: 1 signal, 0 stop signs, 7 crossings (4 marked), 6 bus stops within 200m, 0 schools within 400m; lanes and maxspeed missing in dossier.\n\nPolice-reported crashes (NYC Open Data, 100m, since 2021-10-30): 16 crashes, 9 injury crashes [2022:3, 2023:3, 2024:3, 2025:6, 2026:1]. Injured: 15 motorists, 1 pedestrian, 0 cyclists; 0 killed. Top factors: Failure to Yield Right-of-Way (3), Unsafe Speed (1), Lost Consciousness (1).\n\nDesignation/projects (NYC DOT data): not designated (no High Injury Network/Vision Zero priority intersection or corridor); 0 projects/corridors.\n\nPlan gap: false (9 injury crashes <10 threshold, no projects).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Memo \u2013 Avenue U / East 69th Street (NYC) \u2013 100m radius, 5-year period since 2021-10-30 (NYC Open Data, Motor Vehicle Collisions - Crashes [h9gi-nx95]).\n\nStreet layout: Signalized (1 signal) residential intersection of Avenue U and East 69th Street. 7 crossings (4 marked), 0 stop signs, 6 bus stops within 200m, no schools within 400m.\n\nCrash record (16 crashes, 9 injury crashes): 1 pedestrian injured, 0 cyclist injured, 15 motorists injured; 0 killed. Top reported factors: Failure to Yield Right-of-Way (3), Unsafe Speed (1), Lost Consciousness (1).\n\nDesignation/projects: Per NYC Open Data (DOT) source in dossier, location not designated (designated: false) \u2013 not on High Injury Network / no Vision Zero priority intersections/corridors. No street improvement projects/corridors listed; 0 recent projects in period.\n\nPlan gap: plan_gap false (<10 injury crashes and no project \u2013 threshold not met; 9 injury crashes per dossier)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00015,
+    "attempts": 1,
+    "memo": "Junction of Avenue U residential and East 69th Street residential. Street layout: 1 signal, 7 crossings, 4 marked crossings, 0 stop signs, 0 schools within 400m, 6 bus stops within 200m.\n\nPolice-reported crashes, 100m radius since 2021-10-31, 5-year window: 16 crashes total, 9 injury crashes. By year: 2022 3, 2023 3, 2024 3, 2025 6, 2026 1. Injuries: pedestrian injured 1, motorist injured 15. Crash groups recorded: pedestrian 1. Top factors: Failure to Yield Right-of-Way 3 crashes, Unsafe Speed 1, Lost Consciousness 1.\n\nDesignations: none per dossier; designated false. No High Injury Network or Vision Zero priority listed.\n\nProjects in period: Leading Pedestrian Interval signal, year 2024, 1 recent project. Plan gap: false."
+   }
+  },
+  {
+   "id": "nyc-crash-17",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "MAURICE AVE & BORDEN AVE",
+   "lat": 40.727207,
+   "lon": -73.90741,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 102,
+   "checked": {
+    "errors": [],
+    "usd": 0.00064,
+    "attempts": 2,
+    "memo": "Memo: Junction at 40.727207,-73.90741 (55th Road/residential, Borden Ave/secondary 3 lanes 25 mph, Maurice Ave/secondary 4 lanes). Layout: 1 signal, 6 crossings (4 marked), 0 stop signs, 0 schools, 0 bus stops in dossier buffers. Lanes for 55th Road missing; maxspeed missing for 55th Road and Maurice Ave.\n\nPolice-reported (NYC Open Data Crashes h9gi-nx95, 100m radius since 2021-10-30): 213 crashes, 102 injury crashes. Injured: 168 motorists, 4 pedestrians, 3 cyclists. Killed: 1 pedestrian, 0 cyclists, 0 motorists. Top factors: Driver Inattention/Distraction 58, Following Too Closely 16, Traffic Control Disregarded 12.\n\nCity (NYC Open Data DOT): not designated (no Vision Zero priority intersection/corridor); 0 projects. Plan gap true: at least 10 injury crashes and no project in period.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00036,
+    "attempts": 1,
+    "memo": "Memo: Junction at 40.727207,-73.90741 (55th Road/residential, Borden Ave/secondary 3 lanes 25 mph, Maurice Ave/secondary 4 lanes). Layout: 1 signal, 6 crossings (4 marked), 0 stop signs, 0 schools within 400m, 0 bus stops within 200m. Lanes for 55th Road missing; maxspeed missing for 55th Road and Maurice Ave.\n\nPolice-reported (NYC Open Data Crashes h9gi-nx95, 100m since 2021-10-30): 213 crashes, 102 injury crashes. Injured: 168 motorists, 4 pedestrians, 3 cyclists. Killed: 1 pedestrian, 0 cyclists, 0 motorists. Top factors: Driver Inattention/Distraction 58, Following Too Closely 16, Traffic Control Disregarded 12.\n\nCity (NYC Open Data DOT): not designated (no Vision Zero priority intersection/corridor); 0 projects. Plan gap true: \u226510 injury crashes and no project in period.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Memo: Intersection near Maurice Ave/Borden Ave/55th Rd, Maspeth, Queens. Street layout: signalized junction (1 signal, 0 stop signs), 6 crossings (4 marked). Borden Ave (secondary, 3 lanes, 25 mph) and Maurice Ave (secondary, 4 lanes); 55th Rd residential. No schools within 400m or bus stops within 200m per dossier.\n\nPolice-reported crashes (NYC Open Data, 2021-10-30 to date, 100m radius): 213 crashes, 102 with injury. By year: 2021:10, 2022:43, 2023:37, 2024:37, 2025:44, 2026:42. Injured: 168 motorists, 4 pedestrians, 3 cyclists; 1 pedestrian killed. Top factors: Driver Inattention/Distraction (58), Following Too Closely (16), Traffic Control Disregarded (12).\n\nDesignated: No \u2014 not on Vision Zero priority or High Injury Network per DOT source; designated false. Projects: none found in period (0 recent projects). Plan gap: true \u2014 \u226510 injury crashes with no project per definition.\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00021,
+    "attempts": 1,
+    "memo": "Junction is 55th Road (residential) with Borden Avenue (secondary, 3 lanes, 25 mph) and Maurice Avenue (secondary, 4 lanes). Signals 1, crossings 6 with 4 marked, stop signs 0.\n\nPolice-reported crashes since 2021-10-31, 100 m radius: 213 crashes, 102 injury crashes. Injuries: pedestrian injured 4, pedestrian killed 1, cyclist injured 3, motorist injured 168. Top factors: Driver Inattention/Distraction 58 crashes, Following Too Closely 16, Traffic Control Disregarded 12. Crash type recorded false; dark/wet share source missing.\n\nCity designation: none. Designated false, no High Injury Network or Vision Zero priority. Projects: 0 recent projects, projects list empty.\n\nPlan gap true: \u226510 injury crashes with no project in period."
+   }
+  },
+  {
+   "id": "nyc-crash-18",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "81 ST & 20 AVE",
+   "lat": 40.607445,
+   "lon": -73.9953,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 13,
+   "checked": {
+    "errors": [],
+    "usd": 0.00087,
+    "attempts": 2,
+    "memo": "Memo \u2013 20th Ave at 80th / 81st / 82nd St: 20th Ave tertiary with 2 lanes; 80th residential lanes missing; 81st residential lanes missing; 82nd residential with 1 lane; maxspeed missing. Layout has 3 signals, 9 crossings with 9 marked, 0 stop signs, 1 school nearby, 0 bus stops nearby. NYC crash data over 5-year 100m period: 23 crashes with 13 injury; 3 pedestrians, 3 cyclists and 9 motorists injured; 0 killed. Top factors: Driver Inattention with 7, Failure to Yield with 2, Alcohol Involvement with 2. City not designated, no Vision Zero priority, 0 projects. Plan gap true with injury crashes and no project.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00044,
+    "attempts": 1,
+    "memo": "Memo \u2013 20th Ave at 80th/81st/82nd St (40.607445, -73.9953): 20th Ave tertiary, 2 lanes; 80th residential lanes missing; 81st residential lanes missing; 82nd residential 1 lane; maxspeed missing. 3 signals, 9 crossings (9 marked), 0 stop signs, 1 school in 400m, 0 bus stops in 200m. NYC crash data 100m since 2021-10-30: 23 crashes, 13 injury (2021:1, 2022:3, 2023:2, 2024:5, 2025:6, 2026:6); 3 pedestrians, 3 cyclists, 9 motorists injured; 0 killed. Factors: Inattention 7, Failure to Yield 2, Alcohol 2. Not designated; no Vision Zero priority; 0 projects. Plan gap true.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00011,
+    "attempts": 1,
+    "memo": "Street layout: 20th Ave (tertiary, 2 lanes), 80th St, 81st St, 82nd St (residential, 1 lane); 3 signals, 9 marked crossings, 0 stop signs, 1 school within 400m, 0 bus stops within 200m.\n\nCrash record (2021-10-30 - 2026, 100m radius, NYC Open Data h9gi-nx95): 23 crashes (13 injury crashes): 3 pedestrians injured, 3 cyclists injured, 9 motorists injured; 0 killed. Top factors: Driver Inattention/Distraction (7), Failure to Yield (2), Alcohol Involvement (2).\n\nDesignation/Projects: Not on High Injury Network/Vision Zero priority per NYC DOT data (designated false, 0 priority corridors/intersections). No DOT street improvement projects in period.\n\nPlan gap: true \u2014 13 injury crashes (\u226510) with no projects.\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction at 20th Avenue with 80th, 81st and 82nd Streets, NYC. Layout: 20th Avenue tertiary 2 lanes; 80th St, 81st St residential, lanes unspecified; 82nd St residential 1 lane. Signals 3, crossings 9 all marked, stop signs 0, schools within 400m 1, bus stops within 200m 0.\n\nPolice-reported crashes, NYC Open Data Motor Vehicle Collisions, 100m radius since 2021-10-31, 5-year window: 23 crashes, 13 injury crashes. Injured: pedestrian 3, cyclist 3, motorist 9. Main factors: Driver Inattention/Distraction 7 crashes, Failure to Yield Right-of-Way 2, Alcohol Involvement 2. Crash type recorded false; dark_share and wet_share source missing.\n\nDesignations: none; High Injury Network/Vision Zero priority not designated. Projects in period: 0. Plan gap true: \u226510 injury crashes with no project."
+   }
+  },
+  {
+   "id": "nyc-crash-19",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "ST NICHOLAS AVE & GATES AVE",
+   "lat": 40.701046,
+   "lon": -73.910675,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 17,
+   "checked": {
+    "errors": [],
+    "usd": 0.00089,
+    "attempts": 2,
+    "memo": "Junction of Gates Ave, Palmetto St and St Nicholas Ave, all residential; St Nicholas has 2 lanes with 25 mph limit, with 2 signals, 10 crossings with 7 marked, 1 stop sign, 3 schools nearby and 10 bus stops nearby.\n\nPolice-reported record per NYC Open Data Motor Vehicle Collisions - Crashes over 5-year period in 100m radius: 39 crashes, 17 injury crashes: 7 pedestrians injured and 1 killed, 1 cyclist injured, 11 motorists injured, zero cyclist and motorist deaths. Top factors: Driver Inattention/Distraction in 11, Failure to Yield Right-of-Way in 7, Passing Too Closely in 3.\n\nCity per NYC Open Data DOT: not designated, no Vision Zero priority intersection or corridor, zero projects. Plan gap true with at least 10 injury crashes and no project. No source missing.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2022 is not in the dossier",
+     "number 2023 is not in the dossier",
+     "number 2024 is not in the dossier",
+     "number 2025 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00044,
+    "attempts": 1,
+    "memo": "Junction at 40.701046,-73.910675 (Gates Ave/Palmetto St/St Nicholas Ave residential; St Nicholas 2 lanes, 25 mph) has 2 signals, 10 crossings (7 marked), 1 stop sign, 3 schools within 400m, 10 bus stops within 200m.\n\nPolice-reported (NYC Open Data Crashes h9gi-nx95, 100m since 2021-10-30, 5 years): 39 crashes, 17 injury crashes: 7 pedestrians injured +1 killed, 1 cyclist injured, 11 motorists injured. No cyclist/motorist deaths. By year: 2021:2, 2022:4, 2023:10, 2024:5, 2025:12, 2026:6. Top factors: Driver Inattention/Distraction 11, Failure to Yield 7, Passing Too Closely 3.\n\nCity (NYC DOT): not designated (no Vision Zero priority intersection/corridor), 0 projects. Plan gap true (\u226510 injury crashes, no project).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Memo: Junction St Nicholas Av/Gates Av/Palmetto St, NYC. Layout: 3 roads (St Nicholas Av residential, 2 lanes, 25 mph; Gates Av residential; Palmetto St residential), 2 signals, 1 stop sign, 10 crossings (7 marked), 3 schools within 400m, 10 bus stops within 200m. Crash record (2021-10-30 to 5-yr period, 100m radius, NYC Open Data h9gi-nx95): 39 crashes, 17 injury crashes (2021:2, 2022:4, 2023:10, 2024:5, 2025:12, 2026:6). Injured: 7 pedestrians, 1 cyclist, 11 motorists; killed: 1 pedestrian. Top factors: Driver Inattention/Distraction (11), Failure to Yield (7), Passing Too Closely (3). Designation: Not on High Injury Network/Vision Zero priority (designated: false). Projects: 0 street improvement projects/corridors (NYC DOT). Plan gap: true \u2014 \u226510 injury crashes and no project in period."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00016,
+    "attempts": 1,
+    "memo": "Junction of Gates Avenue, Palmetto Street and Saint Nicholas Avenue, residential. Saint Nicholas Avenue is 2 lanes, 25 mph. Signals 2, crossings 10 with 7 marked, stop signs 1. Schools within 400m: 3, bus stops within 200m: 10.\n\nPolice-reported crashes, NYC Open Data Motor Vehicle Collisions, 100 m radius since 2021-10-31: 39 crashes, 17 injury crashes. Pedestrian injured 7, pedestrian killed 1, cyclist injured 1, motorist injured 11. Crash groups: pedestrian 8, rear_end 1, cyclist 1. Top factors: Driver Inattention/Distraction 11, Failure to Yield Right-of-Way 7, Passing Too Closely 3. Crash type recorded false; dark_share and wet_share missing.\n\nDesignations: none. Designated false. Projects: none, recent_projects 0. Plan gap true."
+   }
+  },
+  {
+   "id": "dc-crash-20",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "655 MICHIGAN AVENUE NE",
+   "lat": 38.932865,
+   "lon": -76.996898,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 13,
+   "checked": {
+    "errors": [],
+    "usd": 0.00083,
+    "attempts": 2,
+    "memo": "Junction of Michigan Ave NE (primary, 4-5 lanes, 25 mph) with Monroe St NE (secondary, 2 lanes), 7th St NE (residential, 2 lanes), Alumni Ln and University Dr (lane/speed source missing). Signalized (1 signal, 0 stop signs) with 12 crossings (9 marked), 3 bus stops, 0 schools.\n\nPolice (Open Data DC, since 2021-10-30): 80 crashes, 13 injury crashes. Hurt: 10 motorists, 2 pedestrians, 1 cyclist; 0 killed. Top factor: speeding involved (2). Yearly counts 5,7,21,17,14,16 for 2021-2026.\n\nNot High Injury Network/designated false. 13 recent projects, including 2023 protected bike lanes (completed), 2022 speed feedback sign, Monroe cycletrack bus platform. Location details missing for many. No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00045,
+    "attempts": 1,
+    "memo": "Junction of Michigan Ave NE (primary, 4-5 lanes, 25 mph) with Monroe St NE (secondary, 2 lanes), 7th St NE (residential, 2 lanes), Alumni Ln and University Dr (lane/speed source missing). Signalized (1 signal, 0 stop signs) with 12 crossings (9 marked), 3 bus stops, 0 schools in 400m.\n\nPolice (Open Data DC, since 2021-10-30, 100m): 80 crashes, 13 injury crashes. Hurt: 10 motorists, 2 pedestrians, 1 cyclist; 0 killed. Top factor: speeding involved (2). Yearly counts 5,7,21,17,14,16 for 2021-2026.\n\nNot High Injury Network/designated false. 13 recent projects, including 2023 protected bike lanes (completed), 2022 speed feedback sign, Monroe cycletrack bus platform. Location details missing for many. No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction of Michigan Ave NE (primary, 4-5 lanes, 25 mph) with 7th St NE, Monroe St NE, Alumni Ln and University Dr. Signalized (1 signal), 12 crossings (9 marked), 3 bus stops within 200m; no stop signs or schools 400m per OSM.\n\nPolice-reported crashes within 100m since 2021-10-30 (Open Data DC, 5-year): 80 crashes, 13 injury crashes. Injured: 10 motorists, 2 pedestrians, 1 cyclist; 0 killed. Top factor: speeding (2 crashes).\n\nNot on High Injury Network; not designated priority. DDOT ProTrack lists 13 recent projects (2022-2026) including protected bike lane (2023, completed), driver speed feedback sign (2022), pavement/sidewalk restoration, shared-use path widening and pavement markings. With 13 injury crashes, plan_gap false \u2014 projects exist in period."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00024,
+    "attempts": 1,
+    "memo": "Junction at 7th St NE, Alumni Lane, Michigan Ave NE, Monroe St NE and University Dr. Michigan Ave NE is primary 4-5 lanes, 25 mph; 7th St NE and Monroe St NE are 2-lane residential/secondary; Alumni Lane and University Dr are unclassified. Signals 1, crossings 12, marked crossings 9, stop signs 0, 0 schools within 400m, 3 bus stops within 200m.\n\nPolice-reported crashes 100 m radius since 2021-10-31: 80 crashes, 16 injury crashes. By year: 2021 5, 2022 7, 2023 21, 2024 17, 2025 14, 2026 16. Injured: pedestrian 2, cyclist 1, motorist 16. Main crash factors not provided; source missing for crash_type, dark_share, wet_share, top_factors.\n\nDesignated High Injury Network/Vision Zero: no. Projects in period: Bike/Ped Improvements Construction 2023, Citywide Federal Safety Improvements Construction 2022, Federal Aid Pavement Restoration 2023, Local Sidewalk Restoration Citywide 2025, Local Roadway Paving Restoration 2024, Thermoplastic Pavement Markings 2024. Recent projects 13. Plan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-21",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "2250 SOUTHERN AVENUE SE",
+   "lat": 38.845008,
+   "lon": -76.971114,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 17,
+   "checked": {
+    "errors": [],
+    "usd": 0.00092,
+    "attempts": 2,
+    "memo": "Memo: 23rd Pkwy/23rd St SE/Southern Ave SE.\n\nLayout: 1 signal, 0 stop signs, 6 crossings (4 marked); 3 bus stops, 0 schools (distance thresholds missing in dossier). 23rd Parkway: tertiary, 4 lanes (maxspeed missing); 23rd St SE: residential (lanes/maxspeed missing); Southern Ave SE: secondary, 2, 3, 4 lanes, 25 mph.\n\nCrashes (Open Data DC, 100m since 2021-10-30): 67 crashes, 17 injury crashes. Injured: 1 pedestrian, 1 cyclist, 18 motorists; 0 killed. Top factor: speeding involved (3).\n\nDesignation/Projects (DDOT HIN/ProTrack): HIN Tier 1 on SOUTHERN AVE SE. Recent projects 8, incl. 2022 safety improvements at intersection (crosswalk, curb extension, backplates) and 2023 speed feedback sign; others paving/sidewalk (where details missing).\n\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 200 is not in the dossier",
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00046,
+    "attempts": 1,
+    "memo": "Memo: 23rd Pkwy/23rd St SE/Southern Ave SE (38.845008,-76.971114).\n\nLayout: 1 signal, 0 stop signs, 6 crossings (4 marked); 3 bus stops within 200m, 0 schools within 400m. 23rd Parkway: tertiary, 4 lanes (maxspeed missing); 23rd St SE: residential (lanes/maxspeed missing); Southern Ave SE: secondary, 2-4 lanes, 25 mph.\n\nCrashes (Open Data DC, 100m since 2021-10-30): 67 crashes, 17 injury crashes. Injured: 1 pedestrian, 1 cyclist, 18 motorists; 0 killed. Top factor: speeding involved (3).\n\nDesignation/Projects (DDOT HIN/ProTrack): HIN Tier 1 on SOUTHERN AVE SE. Recent projects 8, incl. 2022 safety improvements at intersection (crosswalk, curb extension, backplates) and 2023 speed feedback sign; others paving/sidewalk (details where missing).\n\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00016,
+    "attempts": 1,
+    "memo": "Junction of Southern Ave SE, 23rd St SE & 23rd Pkwy SE (DC): secondary/tertiary/residential junction with 1 signal, 6 crossings (4 marked), 3 bus stops within 200m, no schools within 400m.\n\nPolice-reported crashes (2021-10-30 to 2026, 100m radius, Open Data DC): 67 crashes, 17 injury crashes. Injured: 18 motorists, 1 pedestrian, 1 cyclist; 0 killed. Top factor: speeding involved (3 crashes). By year: 3 (2021), 21 (2022), 11 (2023), 15 (2024), 8 (2025), 9 (2026).\n\nCity designation: High Injury Network Tier 1 on SOUTHERN AVE SE (DDOT MoveDC).\n\nProjects in dossier (8 recent): includes 2022 Citywide Federal Safety Improvements at this intersection (high-visibility crosswalk, curb extension, backplates) \u2013 100% complete; plus paving/speed feedback sign projects.\n\nPlan gap: false (\u226510 injury crashes threshold but projects present)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00017,
+    "attempts": 1,
+    "memo": "Junction at 23rd Parkway (tertiary, 4 lanes), 23rd Street SE (residential) and Southern Avenue SE (secondary, 2-4 lanes, 25 mph). 1 signal, 6 crossings (4 marked), 0 stop signs, 3 bus stops within 200m, 0 schools within 400m.\n\nPolice-reported crashes since 2021-10-31 within 100m: 67 total, 18 injury crashes. Injuries: pedestrian 1, cyclist 1, motorist 22. Crash type recorded false; top factors missing from source.\n\nDesignation: High Injury Network \u2013 Southern Ave SE. Designated true.\n\nProjects in period: Citywide Federal Safety Improvements (Construction) 2022, Federal Aid Pavement Restoration 2021, Local Sidewalk Restoration Citywide 2023, Citywide Federal Safety Improvements (Construction) 2023. Recent projects count 8.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-22",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "3230 WHEELER ROAD SE",
+   "lat": 38.842589,
+   "lon": -76.993493,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 13,
+   "checked": {
+    "errors": [],
+    "usd": 0.00114,
+    "attempts": 2,
+    "memo": "Junction at 9th Place SE, Savannah St SE (residential, 20 mph), Wheeler Hill Dr SE and Wheeler Rd SE (secondary, 2 lanes, 25 mph): 0 signals, 0 stop signs, 4 crossings (2 marked), 1 nearby school, 6 nearby bus stops. Since 2021-10-30 (Open Data DC): 58 crashes, 13 injury crashes (2021:2, 2022:8, 2023:14, 2024:10, 2025:13, 2026:11). Casualties: 1 pedestrian injured, 1 pedestrian killed, 13 motorists injured; no cyclist injuries/deaths, no motorist deaths. Factor: speeding involved (1). Designated High Injury Network Tier 1 (ALABAMA AVE SE). Vision Zero priority: source missing. Projects (19): 2021 IDIQ Safety at ALABAMA & WHEELER, 2022 Pedestrian Flasher at ALABAMA & 9TH PL, plus Wheeler Road (2023, 75%). No plan gap.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00057,
+    "attempts": 1,
+    "memo": "Junction at 9th Place SE, Savannah St SE (residential, 20 mph), Wheeler Hill Dr SE and Wheeler Rd SE (secondary, 2 lanes, 25 mph): 0 signals, 0 stop signs, 4 crossings (2 marked), 1 school in 400m, 6 bus stops in 200m. Since 2021-10-30 (Open Data DC): 58 crashes, 13 injury crashes (2021:2, 2022:8, 2023:14, 2024:10, 2025:13, 2026:11). Casualties: 1 pedestrian injured, 1 pedestrian killed, 13 motorists injured; no cyclist injuries/deaths, no motorist deaths. Factor: speeding involved (1). Designated High Injury Network Tier 1 (ALABAMA AVE SE). Vision Zero priority: source missing. Projects (19): 2021 IDIQ Safety at ALABAMA & WHEELER, 2022 Pedestrian Flasher at ALABAMA & 9TH PL, plus Wheeler Road (2023, 75%). No plan gap.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00024,
+    "attempts": 1,
+    "memo": "MEMO \u2013 Junction ~ Wheeler Rd SE / Alabama Ave SE (near 38.8426,-76.9935)\n\nStreet: 4-way junction; Wheeler Rd SE (secondary, 2 lanes, 25 mph), Alabama Ave SE vicinity, plus residential legs (Savannah St 20 mph, 9th Pl, Wheeler Hill Dr). No signals; 4 crossings (2 marked), 1 school ~400m, 6 bus stops ~200m.\n\nCrashes (30 Oct 2021\u2013period, 100m, DCGIS data): 58 total, 13 injury crashes. By year 2021:2, 2022:8, 2023:14, 2024:10, 2025:13, 2026:11. Injuries: 1 pedestrian injured, 1 pedestrian killed, 0 cyclist injured/killed, 13 motorist injured, 0 motorist killed. Top factor: speeding involved (1).\n\nDesignation: High Injury Network Tier 1 on ALABAMA AVE SE \u2013 designated. Projects in period: 19 recent. At this intersection: City-Wide IDIQ Traffic Safety Construction (2021, ALABAMA & WHEELER) and Citywide Federal Safety Improvements \u2013 Pedestrian Flasher at ALABAMA & 9TH PL SE (2022). No Vision Zero priority source in dossier.\n\nPlan gap: false (\u226510 injury crashes threshold not triggering gap; projects exist)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00024,
+    "attempts": 1,
+    "memo": "Junction at 9th Place SE, Savannah St SE, Wheeler Hill Dr SE and Wheeler Rd SE, DC. Layout: 4 crossings, 2 marked, 0 signals, 0 stop signs; 1 school within 400m, 6 bus stops within 200m. Roads are residential except Wheeler Rd SE secondary, 2 lanes, 25 mph; Savannah St SE 20 mph.\n\nPolice-reported crashes since 2021-10-31: 58 total, 13 injury crashes. Pedestrian injured 1, pedestrian killed 1; motorist injured 16. Crash type recorded false; top factors and factor counts missing in source.\n\nDesignated High Injury Network: Alabama Ave SE. Designated true. Projects in period include City-Wide IDIQ Traffic Safety Construction 2021, Citywide Federal Safety Improvements 2022, Local Roadway Paving Restoration 2021-2024, Local Sidewalk Restoration Citywide 2023-2025, Wheeler Road 2023, among 19 recent projects. Plan gap false."
+   }
+  },
+  {
+   "id": "dc-crash-23",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "2718 GOOD HOPE ROAD SE",
+   "lat": 38.860346,
+   "lon": -76.968375,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 26,
+   "checked": {
+    "errors": [],
+    "usd": 0.00081,
+    "attempts": 2,
+    "memo": "Memo: Marion Barry Ave SE (secondary, 2-4 lanes, 25 mph) x Naylor Rd SE (secondary, 2-3 lanes, 25 mph): 1 signal, 3 crossings (3 marked), 0 stop signs, 0 schools, 8 bus stops.\n\nCrashes (Open Data DC, since 2021-10-30, 100m radius): 143 crashes, 26 injury crashes; 3 pedestrians injured, 2 cyclists injured, 26 motorists injured, 0 killed. Top factor: speeding involved in 6. By year: 5 in 2021, 30 in 2022, 24 in 2023, 23 in 2024, 28 in 2025, 33 in 2026.\n\nHIN designated true (Alabama Ave SE Tier 1, Good Hope Rd SE Tier 3); Vision Zero priority source missing. 16 recent projects including safety construction and markings. Plan gap false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00051,
+    "attempts": 1,
+    "memo": "Memo: Marion Barry Ave SE (secondary, 2-4 lanes, 25 mph) x Naylor Rd SE (secondary, 2-3 lanes, 25 mph): 1 signal, 3 crossings (3 marked), 0 stop signs, 0 schools in 400m, 8 bus stops in 200m.\n\nCrashes (Open Data DC, 2021-10-30 to present, 100m): 143 crashes, 26 injury crashes; 3 pedestrians injured, 2 cyclists injured, 26 motorists injured, 0 killed. Top factor: speeding involved in 6. By year: 5/30/24/23/28/33 (2021-2026).\n\nHIN designated true (Alabama Ave SE Tier 1, Good Hope Rd SE Tier 3); Vision Zero priority source missing. 16 recent projects including safety construction and markings. Plan gap false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00019,
+    "attempts": 1,
+    "memo": "Junction: Marion Barry Ave SE (2-4 lanes, 25 mph) and Naylor Rd SE (2-3 lanes, 25 mph); 1 signal, 3 marked crossings, 8 bus stops within 200m. Crash record 2021-10-30 to 2026 (143 total, 26 with injuries): 3 pedestrians injured, 2 cyclists injured, 26 motorists injured; 0 killed. Top factor speeding (6 crashes). Designated High Injury Network: Alabama Ave SE Tier 1 and Good Hope Rd SE Tier 3 (Open Data DC DDOT). Projects in period: e.g., 2023 Citywide Federal Safety Improvements 50% corridor Marion Barry Ave SE Minnesota Ave to Alabama Ave; 2023 bus signal heads at Alabama Ave & Marion Barry Ave; 2021 Traffic Safety Construction at Alabama Ave & Good Hope Rd. With 16 recent projects and 26 injury crashes, plan_gap false = not a gap.\n"
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00023,
+    "attempts": 1,
+    "memo": "Junction of Marion Barry Ave SE (secondary, 2/4 lanes, 25 mph) and Naylor Rd SE (secondary, 2/3 lanes, 25 mph). Signals 1, crossings 3 all marked, stop signs 0, schools 400m 0, bus stops 200m 8.\n\nPolice-reported crashes, Open Data DC Crashes in DC, 100 m radius since 2021-10-31: 143 crashes, 30 injury crashes. By year: 2021 5, 2022 30, 2023 24, 2024 23, 2025 28, 2026 33. Injured: pedestrian 3, cyclist 2, motorist 35. Crash groups: pedestrian 6, cyclist 2. Crash type recorded false; top factors and dark/wet share missing in dossier.\n\nDesignated: High Injury Network true. Designations listed: ALABAMA AVE SE, GOOD HOPE RD SE. Projects in period: 16 recent projects including Local Sidewalk Restoration Citywide, Thermoplastic Pavement Marking/Markings, City-Wide IDIQ Traffic Safety Construction, Citywide Federal Safety Improvements, Federal Aid Pavement Restoration, Local Roadway Paving Restoration, Local Sidewalk Restoration Citywide Maintenance.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-24",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "",
+   "lat": 38.919775,
+   "lon": -76.992873,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 5,
+   "checked": {
+    "errors": [],
+    "usd": 0.00068,
+    "attempts": 2,
+    "memo": "Junction memo, period since 2021-10-30, radius 100:\nLayout: road names missing in dossier; 0 signals, 0 crossings, 0 marked crossings, 0 stop signs; 1 school nearby, 2 bus stops nearby.\nCrash record (Open Data DC, Crashes in DC): 29 crashes, 5 injury crashes: 3 pedestrians injured, 2 motorists injured; 0 killed; 0 cyclists injured or killed. Yearly counts were 2, 8, 6, 8, 5. Top factors missing in dossier.\nCity action: not designated, not on High Injury Network. 7 recent projects including Citywide Federal Safety Improvements, Thermoplastic Markings, Paving and Sidewalk Restoration.\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00031,
+    "attempts": 1,
+    "memo": "Junction memo (38.919775, -76.992873, 5-yr since 2021-10-30, 100m radius):\nLayout: road names missing in dossier; 0 signals, 0 crossings, 0 marked crossings, 0 stop signs; 1 school within 400m, 2 bus stops within 200m.\nCrash record (Open Data DC, Crashes in DC): 29 crashes, 5 injury crashes: 3 pedestrians injured, 2 motorists injured; 0 killed; 0 cyclists injured/killed. By year: 2022:2, 2023:8, 2024:6, 2025:8, 2026:5. Top factors missing in dossier.\nCity action: not designated, not on High Injury Network. 7 recent projects, incl. Citywide Federal Safety Improvements 2024-2025, Thermoplastic Markings, Paving and Sidewalk Restoration.\nPlan gap: false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00014,
+    "attempts": 1,
+    "memo": "MEMO - DC (38.919775,-76.992873) - 5yr to 2021-10-30\n\nStreet layout: Roads data missing per dossier (0 roads listed). No signals (0), no crossings (0, 0 marked), no stop signs (0). Near 2 bus stops (200m) and 1 school (400m).\n\nCrash record: [Open Data DC] 29 crashes (radius 100m), 5 with injuries. By year: 2022:2, 2023:8, 2024:6, 2025:8, 2026:5. Injured: 3 pedestrians, 2 motorists; 0 pedestrian/cyclist/motorist killed; 0 cyclists injured. Top factors not listed in dossier.\n\nDesignation/Projects: Not on High Injury Network (designated false) per [DDOT MoveDC/ProTrack]. Recent projects (2018-2025) =7, including 2025/2024 Citywide Federal Safety Improvements (0% - Vision Zero/VRU), thermoplastic markings 2018/2021/2023, paving restoration 2022/2023, sidewalk restoration 2024. No Vision Zero priority indicated.\n\nPlan gap: false (<10 injury crashes; projects exist)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00016,
+    "attempts": 1,
+    "memo": "Memo: Junction at 38.919775, -76.992873, DC.\n\nStreet layout per dossier: signals 0, crossings 0, marked_crossings 0, stop_signs 0, seconds 0.0, schools_400m 1, bus_stops_200m 2, roads []. Layout detail limited.\n\nPolice-reported crash record, Open Data DC Crashes in DC, radius 100m since 2021-10-31: 29 crashes, 5 injury crashes. By year: 2022 2, 2023 8, 2024 6, 2025 8, 2026 5. Pedestrian injured 3, motorist injured 2. Crash groups: pedestrian 3. Crash type recorded false; top factors missing.\n\nDesignations: DDOT moveDC High Injury Network source shows designated false, designations [].\n\nProjects in period from DDOT ProTrack: 7 recent projects, including Thermoplastic Pavement Marking 2018, 2021; Thermoplastic Pavement Markings 2023; Local Roadway Paving Restoration 2022; Local Sidewalk Restoration Citywide 2024; Federal Aid Pavement Restoration 2023; Citywide Federal Safety Improvements (Construction) 2024, 2025.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-25",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "403 COLUMBIA ROAD NW",
+   "lat": 38.929003,
+   "lon": -77.018599,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 23,
+   "checked": {
+    "errors": [],
+    "usd": 0.00074,
+    "attempts": 2,
+    "memo": "Junction near Columbia Rd NW, Irving St NW, Michigan Ave NW, Park Pl NW, Warder St NW, Hobart Pl NW has 2 signals, 3 stop signs, 14 crossings with 11 marked, 2 bus stops, 0 schools; maxspeeds 20 mph to 25 mph.\n\nPolice (Open Data DC, since 2021-10-30): 97 crashes, 23 injury crashes; 0 pedestrian injured, 0 pedestrian killed, 1 cyclist injured, 0 cyclist killed, 25 motorist injured, 0 motorist killed. Top factor: speeding involved in 1.\n\nNot on High Injury Network, designated false. DDOT ProTrack shows 23 recent projects including 2020 Thermoplastic Pavement Marking at MICHIGAN AVE NW & COLUMBIA RD NW & WARDER ST NW, plus paving and safety work. No plan gap: plan_gap false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00047,
+    "attempts": 1,
+    "memo": "Junction at Columbia Rd NW/Irving St NW area (38.929,-77.019) is complex 7-way with 2 signals, 3 stop signs, 14 crossings (11 marked), 2 bus stops, 0 schools within 400m; speeds 20-25 mph.\n\nPolice (Open Data DC, 2021-10-30 to present, 100m): 97 crashes, 23 injury crashes; 0 ped injured/killed, 1 cyclist injured, 25 motorists injured, 0 killed. Top factor: speeding involved (1).\n\nNot on High Injury Network/designated false. DDOT ProTrack shows 23 recent projects including 2020 Thermoplastic Pavement Marking at Michigan Ave/Columbia/Warder, paving, safety improvements. No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00025,
+    "attempts": 1,
+    "memo": "Irving St/Michigan Ave/Columbia Rd junction, DC: 7 roads, 2 signals, 14 crossings (11 marked), 3 stops, 0 schools 400m, 2 bus stops 200m. \n5-yr crashes (Open Data DC 2021-10-30+): 97 crashes, 23 injury crashes; 0 ped killed/injured, 1 cyclist injured, 0 cyclist killed, 25 motorists injured, 0 killed; top factor speeding (1).\nNot High Injury Network, not designated Vision Zero priority. \n23 projects in period (e.g., thermoplastic marking 2020 at Michigan/Columbia/Warder, citywide safety/paving). \nNo plan gap (plan_gap false: \u226510 injury crashes requires no project)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00031,
+    "attempts": 1,
+    "memo": "Junction at 38.929003, -77.018599, DC. Layout: 7 roads meet \u2013 Columbia Road NW residential 1 lane 20 mph, Hobart Place NW secondary 1 lane 25 mph, Irving St NW primary 1-2 lanes 25 mph, Michigan Ave NW secondary 2 lanes 25 mph, Park Place NW tertiary 2 lanes 25 mph, Warder St NW tertiary 1 lane 25 mph, unnamed secondary_link 1 lane. Signals 2, crossings 14 with 11 marked, stop signs 3, bus stops 200m 2, schools 400m 0.\n\nPolice-reported crashes since 2021-10-31, 100 m radius: 97 crashes, 26 injury crashes. By year: 2021 10, 2022 18, 2023 19, 2024 22, 2025 21, 2026 7. Cyclist injured 1, motorist injured 35, crash groups cyclist 2. Top factors missing; crash type not recorded; dark/wet share missing.\n\nDesignated: no High Injury Network/Vision Zero priority per DDOT moveDC.\n\nProjects in dossier: recent projects 23 including Citywide Federal Safety Improvements Construction 2022, 2025, 2026, 2029; Thermoplastic Pavement Marking/Markings 2020, 2018, 2024, 2027; Local Roadway Paving Restoration 2023, 2024, 2026, 2027, 2028; Federal Aid Pavement Restoration 2020, 2024; Citywide Alley Restoration 2016-2017; Local Sidewalk Restoration 2029, 2031. Plan gap false."
+   }
+  },
+  {
+   "id": "dc-crash-26",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "1911 8TH STREET NW",
+   "lat": 38.915947,
+   "lon": -77.022943,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 44,
+   "checked": {
+    "errors": [],
+    "usd": 0.00082,
+    "attempts": 2,
+    "memo": "Junction of 8th Street Northwest (residential, 25 mph), Florida Avenue Northwest (primary, 4 lanes, 25 mph), and T Street Northwest (tertiary, 1 lane, 25 mph) with 0 signals, 1 stop sign, 8 crossings (5 marked), 2 schools and 7 bus stops nearby.\n\nPolice-reported crashes since 2021-10-30 (Open Data DC): 287 crashes, 44 injury crashes: 13 pedestrians injured (0 killed), 14 cyclists injured (0 killed), 19 motorists injured (0 killed). Top factor: speeding involved (12).\n\nCity designated High Injury Network (Florida Ave NW tier 1, nearby U St NW and Georgia Ave NW tier 1, 7th St NW tier 2) with 34 recent projects, including signal/signing/marking and cycle track work. No plan gap (plan_gap false). No source missing.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00055,
+    "attempts": 1,
+    "memo": "Junction of 8th Street Northwest (residential, 25 mph), Florida Avenue Northwest (primary, 4 lanes, 25 mph), and T Street Northwest (tertiary, 1 lane, 25 mph) with 0 signals, 1 stop sign, 8 crossings (5 marked), 2 schools within 400m and 7 bus stops within 200m.\n\nPolice-reported crashes since 2021-10-30 (Open Data DC): 287 crashes, 44 injury crashes: 13 pedestrians injured (0 killed), 14 cyclists injured (0 killed), 19 motorists injured (0 killed). Top factor: speeding involved (12).\n\nCity designated High Injury Network (Florida Ave NW tier 1, nearby U St NW and Georgia Ave NW tier 1, 7th St NW tier 2) with 34 recent projects, including signal/signing/marking and cycle track work. No plan gap (plan_gap false). No source missing.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.0003,
+    "attempts": 1,
+    "memo": "Intersection of Florida Ave NW (primary, 4 lanes), 8th St NW (residential), T St NW (tertiary, 1 lane) \u2014 25 mph limit. Street has 0 signals, 1 stop sign, 8 crossings (5 marked), 2 schools within 400m, 7 bus stops within 200m.\n\nCrash record 2021-10-30 to present (radius 100m, source: Open Data DC Crashes): 287 crashes, 44 with injury. By year: 2021:9, 2022:58, 2023:61, 2024:53, 2025:51, 2026:55. Injured: 13 pedestrians, 14 cyclists, 19 motorists; 0 killed. Top factor: speeding involved (12 crashes).\n\nDesignated High Injury Network: true (Florida Ave NW Tier 1, U St NW Tier 1, Georgia Ave NW Tier 1, 7th St NW Tier 2). Projects in period: 34 citywide/DDOT projects recorded, so plan_gap false (\u226510 injury crashes but projects exist). No Vision Zero priority source missing \u2014 HIN only."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00029,
+    "attempts": 1,
+    "memo": "Junction: 8th Street NW residential, Florida Ave NW primary 4 lanes, T Street NW tertiary 1 lane; all 25 mph. Signals 0, crossings 8 with 5 marked, stop signs 1. Schools 400m 2, bus stops 200m 7.\n\nPolice-reported crashes since 2021-10-31 within 100m: 375 crashes, 58 injury crashes. By year: 2021 18, 2022 116, 2023 82, 2024 53, 2025 51, 2026 55. Injured: pedestrian 15, cyclist 16, motorist 35. Crash groups: pedestrian 20, cyclist 18. Top factors, dark/wet share missing; crash type recorded false.\n\nDesignated High Injury Network: FLORIDA AVE NW plus 7TH ST NW, GEORGIA AVE NW, U ST NW. Projects in period: 34 recent projects including Citywide Federal Safety Improvements Construction 2023-2025, Thermoplastic Pavement Marking 2018-2020, etc.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-27",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "3837 ALBEMARLE STREET NW",
+   "lat": 38.948146,
+   "lon": -77.076802,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 6,
+   "checked": {
+    "errors": [],
+    "usd": 0.00096,
+    "attempts": 2,
+    "memo": "Memo \u2013 junction Nebraska Ave NW / Albemarle St NW / 39th St NW / Grant Rd NW (DC).\n\nLayout: mix \u2013 Nebraska Ave primary 4 lanes 25 mph; Albemarle tertiary 2 and 3 lanes 25 mph; 39th residential 2 lanes speed missing; Grant residential speed 20 mph lanes missing. 1 signal, 4 stop signs, 8 crossings (8 marked), 1 school nearby, 2 bus stops nearby.\n\nCrashes in 5-year period (100m, Open Data DC): 16 crashes, 6 injury crashes; 8 motorists injured, 0 pedestrians/cyclists injured/killed, 0 killed. Top factor: speeding involved (1).\n\nDesignation: not High Injury Network/designated false. Projects: 16 recent \u2013 paving, sidewalk, markings plus 2024 Citywide Federal Safety Improvements (Speed Limit Reduction, 100%). No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00048,
+    "attempts": 1,
+    "memo": "Memo \u2013 junction Nebraska Ave NW / Albemarle St NW / 39th St NW / Grant Rd NW (DC).\n\nLayout: 4-way mix \u2013 Nebraska Ave primary 4 lanes 25 mph; Albemarle tertiary 2-3 lanes 25 mph; 39th residential 2 lanes speed missing; Grant residential speed 20 mph lanes missing. 1 signal, 4 stop signs, 8 crossings (8 marked), 1 school within 400m, 2 bus stops within 200m.\n\nCrashes 2021-10-30\u20132026 (100m, Open Data DC): 16 crashes, 6 injury crashes; 8 motorists injured, 0 pedestrians/cyclists injured/killed, 0 killed. Top factor: speeding involved (1).\n\nDesignation: not High Injury Network/designated false. Projects: 16 recent \u2013 paving, sidewalk, markings plus 2024 Citywide Federal Safety Improvements (Speed Limit Reduction, 100%). No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00019,
+    "attempts": 1,
+    "memo": "Junction of Nebraska Ave NW (primary, 4 lanes, 25 mph) with Albemarle St NW (tertiary, 2-3 lanes, 25 mph), 39th St NW and Grant Rd NW (residential). Layout: 1 signal, 4 stop signs, 8 marked crossings, 1 school within 400m, 2 bus stops within 200m.\n\nPolice-reported crashes (Open Data DC, 2021-10-30 to ~2026, 100m radius): 16 crashes, 6 with injuries. Injured: 8 motorists, 0 pedestrians, 0 cyclists; 0 killed. Top factor: speeding involved in 1 crash (source missing breakdown).\n\nCity designation: Not on High Injury Network, not Vision Zero priority. Recent projects (2021-2026): 16 citywide maintenance/paving/marking projects listed (e.g., pavement restoration, thermoplastic marking, sidewalk restoration); no location-specific project where/description missing.\n\nPlan gap false: 6 injury crashes (<10 threshold) with projects present."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00022,
+    "attempts": 1,
+    "memo": "Junction layout: 39th Street Northwest residential 2 lanes; Albemarle Street Northwest tertiary 2-3 lanes, 25 mph; Grant Road Northwest residential, 20 mph; Nebraska Avenue Northwest primary 4 lanes, 25 mph. Signals 1, crossings 8 marked 8, stop signs 4, schools within 400m 1, bus stops within 200m 2.\n\nPolice-reported crashes 2021-10-31 to present, 100 m radius: 16 crashes total, 6 injury crashes. By year: 2022 2, 2023 3, 2024 5, 2025 3, 2026 3. Motorist injured 9. Crash type, top factors, dark/wet share not available in source.\n\nDesignations: none. Designated High Injury Network/Vision Zero priority: false.\n\nProjects in period: 16 recent projects per dossier, including Local Roadway Paving Restoration 2016, 2019, 2020, 2021, 2023; Federal Aid Pavement Restoration 2021; Thermoplastic Pavement Marking 2021; Local Sidewalk Restoration Citywide 2024; Citywide Alley Restoration 2022; NHS - Federal Aid Pavement Restoration - NHPP Streets 2023, 2026; Citywide Federal Safety Improvements (Construction) 2024; Local Sidewalk Restoration Citywide Maintenance 2026.\n\nPlan gap: false."
+   }
+  },
+  {
+   "id": "dc-crash-28",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "1620 KENILWORTH AVENUE NE",
+   "lat": 38.912075,
+   "lon": -76.934561,
+   "sources_ok": {
+    "street": false,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 26,
+   "checked": {
+    "errors": [],
+    "usd": 0.00089,
+    "attempts": 2,
+    "memo": "Junction in DC, 100m radius since 2021-10-30. Street layout: source missing \u2014 street lookup failed.\n\nPolice-reported (Open Data DC): 223 crashes, 26 injury crashes. Hurt: 27 motorists injured, 0 pedestrians injured/killed, 0 cyclists injured/killed, 0 motorists killed. Top factor: speeding involved in 9 crashes.\n\nCity status (DDOT MoveDC/ProTrack): Designated High Injury Network \u2014 EASTERN AVE NE Tier 1. Recent projects: 5, including Local Roadway Paving Restoration and Thermoplastic Pavement Markings, both at 100%.\n\nPlan gap: false \u2014 injury crashes meet 10-crash threshold but projects present, so no gap.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 2022 is not in the dossier",
+     "number 2025 is not in the dossier"
+    ],
+    "usd": 0.00035,
+    "attempts": 1,
+    "memo": "Location 38.912075, -76.934561, DC, 100m radius since 2021-10-30 (5 years). Street layout: source missing \u2014 Overpass API HTTP 502.\n\nPolice-reported (Open Data DC): 223 crashes, 26 injury crashes. By year 2021:8, 2022:34, 2023:45, 2024:49, 2025:43, 2026:44. Hurt: 27 motorists injured, 0 pedestrians injured/killed, 0 cyclists injured/killed, 0 motorists killed. Top factor: speeding involved in 9 crashes.\n\nCity status (DDOT MoveDC/ProTrack): Designated High Injury Network Tier 1 \u2014 EASTERN AVE NE. Recent projects: 5, including Local Roadway Paving Restoration (2024, 100%) and Thermoplastic Pavement Markings (2023, 100%).\n\nPlan gap: false \u2014 26 injury crashes but projects present, so no gap.",
+    "errors_rescored": [
+     "number 502 is not in the dossier"
+    ]
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00016,
+    "attempts": 1,
+    "memo": "Junction: Eastern Ave NE / Kenilworth Ave (secondary roads, 1-4 lanes, 25 mph). Signalized (3 signals, 6 marked crossings), near 1 school, 3 bus stops within 200m.\n\nCrashes (2021-10-30 to 2026, 100m radius, DDOT Open Data): 223 crashes, 26 with injuries. 27 motorists injured, 0 pedestrians/cyclists killed or injured. Top factor: speeding involved (9 crashes). Yearly counts 8 (2021 partial) to 49 (2024).\n\nDesignation: On High Injury Network Tier 1 (EASTERN AVE NE) \u2013 designated=true. Projects in period: 5 recent projects, including Local Roadway Paving Restoration (2024, 100%) and Thermoplastic Pavement Markings (2023 100%, 2026 planned).\n\nNo plan gap per dossier (plan_gap false): \u226510 injury crashes but projects exist."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.0002,
+    "attempts": 1,
+    "memo": "Junction at Eastern Avenue Northeast, Kenilworth Avenue, Kenilworth Avenue Northeast and unnamed secondary_link. Signals 3, crossings 6 with 6 marked, stop signs 0. Schools within 400m: 1, bus stops within 200m: 3. Roads are secondary with maxspeed 25 mph.\n\nPolice-reported crashes since 2021-10-31 within 100m: 223 crashes, 31 injury crashes. By year: 2021 8, 2022 34, 2023 45, 2024 49, 2025 43, 2026 44. Motorist injured 44. Crash groups recorded: pedestrian 1. Crash type recorded false; top factors and factor counts missing from source.\n\nDesignation: High Injury Network for EASTERN AVE NE, designated true. Projects in period: Local Roadway Paving Restoration 2018, 2024; NHS - Federal Aid Pavement Restoration - NHPP Streets 2018, 2020 x4, 2027 x2; Thermoplastic Pavement Marking 2019; Thermoplastic Pavement Markings 2023, 2026. Recent projects 5. Plan gap false."
+   }
+  },
+  {
+   "id": "dc-crash-29",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "",
+   "lat": 38.937936,
+   "lon": -77.085883,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": false,
+   "injury_crashes": 13,
+   "checked": {
+    "errors": [],
+    "usd": 0.0006,
+    "attempts": 2,
+    "memo": "Ward Circle: Massachusetts Ave NW, Nebraska Ave NW and Ward Circle NW meet; all primary, 25 mph (Massachusetts also 30 mph), 12 signals, 8 crossings (8 marked), 0 stop signs, 1 school, 10 bus stops.\n\nPolice data (Open Data DC, since 2021-10-30): 97 crashes, 13 injury crashes; 3 pedestrians injured, 1 cyclist injured, 10 motorists injured, 0 killed. Top factor: speeding involved (1).\n\nCity status (DDOT MoveDC HIN; ProTrack): not designated, HIN empty; Vision Zero priority missing in dossier. Projects: 9 recent, incl. 2024 Citywide Federal Safety Improvements (100%, Speed Limit Reduction) plus pavement/sidewalk restorations. plan_gap false.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00037,
+    "attempts": 1,
+    "memo": "Ward Circle: Massachusetts Ave NW, Nebraska Ave NW and Ward Circle NW meet; all primary, 25 mph (Massachusetts also 30 mph), 12 signals, 8 crossings (8 marked), 0 stop signs, 1 school within 400m, 10 bus stops within 200m.\n\nPolice data (Open Data DC, since 2021-10-30, 100m): 97 crashes, 13 injury crashes; 3 pedestrians injured, 1 cyclist injured, 10 motorists injured, 0 killed. Top factor: speeding involved (1).\n\nCity status (DDOT MoveDC HIN; ProTrack): not designated, HIN empty; Vision Zero priority missing in dossier. Projects: 9 recent, incl. 2024 Citywide Federal Safety Improvements (100%, Speed Limit Reduction) plus pavement/sidewalk restorations. plan_gap false.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00018,
+    "attempts": 1,
+    "memo": "Junction of Massachusetts Ave NW, Nebraska Ave NW, and Ward Circle NW (primary roads, 12 signals, 8 marked crossings, 1 school within 400m, 10 bus stops within 200m, speed limits 25-30 mph).\n\nPolice-reported crashes within 100m since 2021-10-30: 97 crashes, 13 injury crashes, 0 killed. Injured: 3 pedestrians, 1 cyclist, 10 motorists. By year: 2021:1, 2022:19, 2023:13, 2024:34, 2025:16, 2026:14. Top factor: speeding involved (1). Source: Open Data DC.\n\nCity designation: Not High Injury Network, designated false. Projects: 9 recent projects (within period), including Citywide Federal Safety Improvements (Speed Limit Reduction, 2024, 100%) and pavement restoration/sidewalk work (2024-2026). Dossier source: DDOT MoveDC/ProTrack.\n\nPlan gap false (13 injury crashes but projects present; threshold 10 met but gap requires no project)."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00024,
+    "attempts": 1,
+    "memo": "Junction at Massachusetts Ave NW, Nebraska Ave NW and Ward Circle NW, DC. Layout: 12 signals, 8 crossings all marked, 0 stop signs; 1 school within 400m, 10 bus stops within 200m. Roads are primary: Massachusetts Ave NW 2/4 lanes 25/30 mph, Nebraska Ave NW 2/4 lanes 25 mph, Ward Circle NW 1-4 lanes 25 mph.\n\nPolice-reported crashes 2021-10-31 to present, 100m radius: 97 crashes, 15 injury crashes. Injured: pedestrian 3, cyclist 1, motorist 15. Crash groups: cyclist 1, pedestrian 4. Crash type, dark/wet share and top factors are missing / not recorded.\n\nDesignations: High Injury Network / Vision Zero priority not designated. Projects in dossier: recent_projects 9, including NHS Federal Aid Pavement Restoration NHPP Streets 2024-2028, Citywide Federal Safety Improvements Construction 2024, Local Sidewalk Restoration Citywide Maintenance 2026, Thermoplastic Pavement Marking 2018. Plan gap: false."
+   }
+  },
+  {
+   "id": "dc-demo-30",
+   "city": "dc",
+   "group": "demo",
+   "name": "14th St NW & U St NW",
+   "lat": 38.917,
+   "lon": -77.032,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": false,
+   "designated": true,
+   "injury_crashes": 43,
+   "checked": {
+    "errors": [],
+    "usd": 0.001,
+    "attempts": 2,
+    "memo": "14th Street Northwest (secondary, 4 lanes, 25 mph) x U Street Northwest (primary, 4 lanes, 25 mph) and Wallach Place Northwest (residential, 1 lanes, 25 mph); 3 signals, 9 crossings (8 marked), 0 stop signs, 4 schools, 6 bus stops. Police-reported (Open Data DC, since 2021-10-30): 237 crashes, 43 injury; 11 pedestrians injured (0 killed), 13 cyclists injured (0 killed), 22 motorists injured (0 killed); top factor speeding involved (9). HIN designated: U ST NW Tier 1, 14TH ST NW Tier 2. Vision Zero status: source missing. Projects at 14TH ST NW & U ST NW: 2018 crosswalk re-striping, 2019 speed-camera markings; 17 recent projects. No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00056,
+    "attempts": 1,
+    "memo": "14th St NW (secondary, 4 lanes, 25 mph) x U St NW (primary, 4 lanes, 25 mph) and Wallach Pl NW (residential, 1 lane, 25 mph); 3 signals, 9 crossings (8 marked), 0 stop signs, 4 schools in 400m, 6 bus stops in 200m. Police-reported (Open Data DC, since 2021-10-30, 100m): 237 crashes, 43 injury; 11 pedestrians injured (0 killed), 13 cyclists injured (0 killed), 22 motorists injured (0 killed); top factor speeding involved (9). HIN designated: U ST NW Tier 1, 14TH ST NW Tier 2. Vision Zero status: source missing. Projects at 14TH & U: 2018 crosswalk re-striping, 2019 speed-camera markings; 17 recent projects. No plan gap (plan_gap false).",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00022,
+    "attempts": 1,
+    "memo": "Intersection of 14th St NW (secondary, 4 lanes, 25 mph) and U St NW (primary, 4 lanes, 25 mph) with Wallach Pl NW (residential, 1 lane, 25 mph). Street has 3 signals, 9 crossings (8 marked), 0 stop signs, 4 schools within 400m, 6 bus stops within 200m.\n\nPolice-reported crashes (Open Data DC, 2021-10-30 to ~5 years, radius 100m): 237 total, 43 injury. By year: 2021:7, 2022:44, 2023:53, 2024:58, 2025:41, 2026:34. Injured: 11 pedestrians, 13 cyclists, 22 motorists; 0 killed. Top factor: speeding involved (9).\n\nCity designation: High Injury Network yes - U ST NW Tier 1 and 14TH ST NW Tier 2. Projects: 17 recent; at intersection: Thermoplastic Pavement Marking (2019 speed camera, 2018 crosswalk re-striping - High Crash Location) both 100% complete per DDOT ProTrack. Plan_gap false - threshold met and project present."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00025,
+    "attempts": 1,
+    "memo": "Junction of 14th St NW (secondary, 4 lanes, 25 mph), U St NW (primary, 4 lanes, 25 mph) and Wallach Place NW (residential, 1 lane, 25 mph). Signals 3, crossings 9 with 8 marked, stop signs 0; 4 schools within 400 m, 6 bus stops within 200 m.\n\nPolice-reported crashes in 100 m since 2021-10-31: 242 crashes, 47 injury crashes. By year: 2021 7, 2022 44, 2023 53, 2024 58, 2025 45, 2026 35. Injured: pedestrian 12, cyclist 13, motorist 30. Crash groups cyclist 19, pedestrian 19. Main factors not available; crash_type_recorded false, top_factors empty, dark_share and wet_share missing.\n\nDesignated High Injury Network: 14TH ST NW and U ST NW. Projects in dossier: 17 recent projects including Thermoplastic Pavement Marking 2018-2019, 14th Street Streetscape Construction 2018, pavement restorations 2018-2026, Citywide Federal Safety Improvements 2025/2027. Plan gap false."
+   }
+  },
+  {
+   "id": "nyc-demo-31",
+   "city": "nyc",
+   "group": "demo",
+   "name": "Atlantic Ave & Flatbush Ave",
+   "lat": 40.6845,
+   "lon": -73.9779,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": true
+   },
+   "plan_gap": true,
+   "designated": false,
+   "injury_crashes": 105,
+   "checked": {
+    "errors": [],
+    "usd": 0.001,
+    "attempts": 2,
+    "memo": "Junction of 4th Ave primary 2-3 lanes, Atlantic Ave primary 5 lanes, Flatbush Ave primary 1/3/6 lanes, Ashland Pl and Hanson Pl residential 1 lane; limit 25 mph, 6 signals, 18 crossings 18 marked, 1 stop sign, 9 schools, 8 bus stops. Over 5-year period within 100m per NYC Open Data Crashes: 317 crashes 105 injury; 25 pedestrians, 16 cyclists, 86 motorists injured; 1 motorist killed, 0 pedestrian and 0 cyclist killed. Top factors: inattention/distraction 73, following too closely 30, improper passing/lane 20. Not designated with no Vision Zero priority intersection or corridor per NYC DOT data. Projects: 4th Ave 2011, 4th Ave and Atlantic Ave 2016; 0 recent. Plan gap true. No sources missing.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier",
+     "number 2026 is not in the dossier"
+    ],
+    "usd": 0.00041,
+    "attempts": 1,
+    "memo": "Junction of 4th Ave (primary, 2-3 lanes), Atlantic Ave (primary, 5 lanes), Flatbush Ave (primary, 1/3/6 lanes), Ashland Pl and Hanson Pl (residential, 1 lane); 25 mph, 6 signals, 18 crossings (18 marked), 1 stop sign, 9 schools in 400m, 8 bus stops in 200m. 2021-10-30 to 2026: 317 crashes (105 injury) within 100m per NYC Open Data Crashes: 25 pedestrians, 16 cyclists, 86 motorists injured; 1 motorist killed, 0 ped/cyclist killed. Top factors: inattention/distraction 73, following too closely 30, improper passing/lane 20. Not designated (no Vision Zero priority intersection/corridor) per NYC DOT data. Projects: 4th Ave (2011), 4th Ave and Atlantic Ave (2016); 0 recent. Plan gap true. No sources missing.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.00015,
+    "attempts": 1,
+    "memo": "Junction of 4th Ave, Ashland Pl, Atlantic Ave, Flatbush Ave, Hanson Pl NYC. Layout: 6 signals, 18 crossings (18 marked), 1 stop sign, 4th Ave (primary, 2-3 lanes, 25 mph), Atlantic Ave (primary, 5 lanes, 25 mph), Flatbush Ave (primary, 1/3/6 lanes, 25 mph). 9 schools in 400m, 8 bus stops in 200m.\n\nCrashes (NYC Open Data h9gi-nx95, 100m, 2021-10-30 to 5yr): 317 total, 105 injury crashes. By year: 2021:11, 2022:70, 2023:68, 2024:67, 2025:56, 2026:45. Injured: 25 pedestrian, 16 cyclist, 86 motorist. Killed: 0 ped, 0 cyclist, 1 motorist. Top factors: Driver Inattention/Distraction 73, Following Too Closely 30, Passing/Lane Usage Improper 20.\n\nDesignation: Not designated High Injury Network/Vision Zero priority (designated false). Projects in dossier: 4th Ave and Atlantic Ave 2016, 4th Avenue 2011. Recent projects (in period) 0.\n\nPlan_gap true: >=10 injury crashes and no project in period, indicating gap."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00021,
+    "attempts": 1,
+    "memo": "Junction at 40.6845,-73.9779: 4th Avenue primary 2-3 lanes, Ashland Place residential 1 lane, Atlantic Avenue primary 5 lanes, Flatbush Avenue primary 1,3,6 lanes, Hanson Place residential 1 lane, all 25 mph. 6 signals, 18 crossings all marked, 1 stop sign, 9 schools within 400m, 8 bus stops within 200m.\n\nPolice-reported crashes since 2021-10-31: 317 crashes, 105 injury crashes. Injured: pedestrian 25, cyclist 16, motorist 86; motorist killed 1. Crash groups: pedestrian 24, cyclist 16, rear_end 30. Top factors: Driver Inattention/Distraction 73, Following Too Closely 30, Passing or Lane Usage Improper 20. Crash type recorded false; dark_share and wet_share missing.\n\nCity designation: none, designated false. Projects on record: 4th Ave and Atlantic Ave 2016, 4th Avenue 2011, Leading Pedestrian Interval signal 2004. Recent projects 0. Plan gap true."
+   }
+  },
+  {
+   "id": "la-demo-32",
+   "city": "la",
+   "group": "demo",
+   "name": "Lankershim Blvd & Universal Hollywood Dr",
+   "lat": 34.1385,
+   "lon": -118.3625,
+   "sources_ok": {
+    "street": true,
+    "crashes": false,
+    "plans": true
+   },
+   "plan_gap": null,
+   "designated": false,
+   "injury_crashes": null,
+   "checked": {
+    "errors": [],
+    "usd": 0.00062,
+    "attempts": 2,
+    "memo": "Memo: Lankershim Blvd / Campo de Cahuenga / Universal Hollywood Dr (34.1385, -118.3625).\n\nLayout: signalized intersection, 4 signals, 4 crossings (4 marked), 0 stop signs; 1 nearby school, 12 nearby bus stops. Lankershim Blvd primary, 5, 7, 8, 9 lanes, 35 mph; Campo de Cahuenga primary, 3 lanes; Universal Hollywood Dr unclassified, 3, 4 lanes. Maxspeed missing for other roads.\n\nCrash record: source missing (crashes null) \u2013 cannot report injuries or factors over period.\n\nDesignation/projects: LA GeoHub, LADOT HIN source: not designated, HIN list empty, 0 recent projects, projects list empty.\n\nPlan gap: source missing (null) \u2013 cannot determine gap status.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 400 is not in the dossier",
+     "number 200 is not in the dossier"
+    ],
+    "usd": 0.00034,
+    "attempts": 1,
+    "memo": "Memo: Lankershim Blvd / Campo de Cahuenga / Universal Hollywood Dr (34.1385, -118.3625).\n\nLayout (5-yr dossier): signalized intersection, 4 signals, 4 crossings (4 marked), 0 stop signs; 1 school within 400m, 12 bus stops within 200m. Lankershim Blvd primary, 5-9 lanes, 35 mph; Campo de Cahuenga primary, 3 lanes; Universal Hollywood Dr unclassified, 3-4 lanes. Maxspeed missing for two roads.\n\nCrash record: source missing (crashes null) \u2013 cannot report injuries or factors over period.\n\nDesignation/projects: LA GeoHub, LADOT HIN source: not designated, HIN list empty, 0 recent projects, projects list empty.\n\nPlan gap: source missing (null) \u2013 cannot determine gap status.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.0002,
+    "attempts": 2,
+    "memo": "Junction of Campo de Cahuenga (primary, 3 lanes), Lankershim Blvd (primary, 5-9 lanes, 35 mph), Universal Hollywood Dr (3-4 lanes). Layout: 4-way signalized (4 crossings, all marked), no stop signs. 12 bus stops within 200m, 1 school within 400m.\n\nCrash record: dossier reports crashes = null (no police-reported crash data available for the 5-year period). Unable to determine who was hurt or main factors.\n\nDesignation/Projects: LA GeoHub/LADOT High Injury Network data shows not designated; no High Injury Network streets and no planned projects; recent_projects = 0.\n\nPlan gap: plan_gap is null in dossier; cannot assess against threshold (plan_gap defined as at least threshold injury crashes and no project in period).\n\nSources missing: crash data absent; plan_gap not provided."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00012,
+    "attempts": 1,
+    "memo": "Junction at lat 34.1385, lon -118.3625, LA. Street layout: Campo de Cahuenga primary, 3 lanes; Lankershim Boulevard primary, lanes 5, 7, 8, 9, maxspeed 35 mph; Universal Hollywood Drive unclassified, lanes 3, 4. Signals 4, crossings 4, marked_crossings 4, stop_signs 0. Schools within 400m: 1. Bus stops within 200m: 12.\n\nPolice-reported crash record over 5 years: source missing. No open crash dataset is registered for this place; run data agent nml discover LAT LON. Who was hurt and main factors cannot be reported.\n\nLADOT High Injury Network: designated false, designations []. Recent projects: 0, projects []. Plan gap: source missing / plan_gap null."
+   }
+  },
+  {
+   "id": "chicago-demo-33",
+   "city": "chicago",
+   "group": "demo",
+   "name": "Western Ave & Fullerton Ave",
+   "lat": 41.9249,
+   "lon": -87.6874,
+   "sources_ok": {
+    "street": true,
+    "crashes": true,
+    "plans": false
+   },
+   "plan_gap": null,
+   "designated": null,
+   "injury_crashes": 38,
+   "checked": {
+    "errors": [],
+    "usd": 0.00052,
+    "attempts": 2,
+    "memo": "Memo: North Western Ave x West Fullerton Ave, Chicago, period since 2021-10-30.\n\nLayout: Both secondary roads, 30 mph. North Western Ave 5, 6 lanes; West Fullerton Ave 5 lanes. 1 signal, 0 stop signs, 16 crossings (4 marked), 8 bus stops, 0 schools nearby.\n\nCrash record (Chicago Data Portal): 358 crashes, 38 injury crashes. 50 motorists injured, 0 killed; injuries not split by mode. Top factors: REAR END 106, TURNING 83, SIDESWIPE SAME DIRECTION 81.\n\nDesignation/projects: plans source missing, so High Injury Network / Vision Zero status unknown. Recent projects: 0.\n\nPlan gap: source missing (null), cannot confirm despite 38 injury crashes and 0 projects.",
+    "errors_rescored": []
+   },
+   "unchecked": {
+    "errors": [
+     "number 200 is not in the dossier",
+     "number 400 is not in the dossier"
+    ],
+    "usd": 0.00029,
+    "attempts": 1,
+    "memo": "Memo: North Western Ave x West Fullerton Ave, Chicago, period since 2021-10-30.\n\nLayout: Both secondary roads, 30 mph. North Western Ave 5, 6 lanes; West Fullerton Ave 5 lanes. 1 signal, 0 stop signs, 16 crossings (4 marked), 8 bus stops within 200m, 0 schools within 400m.\n\nCrash record (Chicago Data Portal, 100m): 358 crashes, 38 injury crashes. 50 motorists injured, 0 killed; injuries not split by mode. Top factors: REAR END 106, TURNING 83, SIDESWIPE SAME DIRECTION 81.\n\nDesignation/projects: plans source missing, so High Injury Network / Vision Zero status unknown. Recent projects: 0.\n\nPlan gap: source missing (null), cannot confirm despite 38 injury crashes and 0 projects.",
+    "errors_rescored": []
+   },
+   "open_checked": {
+    "errors": [],
+    "usd": 0.0001,
+    "attempts": 1,
+    "memo": "Junction: North Western Ave (5-6 lanes, 30 mph, secondary) and West Fullerton Ave (5 lanes, 30 mph, secondary) in Chicago. Layout: 1 signal, 0 stop signs, 16 crossings (4 marked), 8 bus stops within 200m, 0 schools within 400m. Police-reported record 2021-10-30 to present within 100m: 358 crashes, 38 injury crashes; by year 2021:13, 2022:81, 2023:72, 2024:69, 2025:70, 2026:53; 50 motorists injured, 0 killed (injuries not split by mode). Top factors: REAR END 106, TURNING 83, SIDESWIPE SAME DIRECTION 81. Designation/project info: source missing (plans null). Recent projects 0. Plan gap: source missing."
+   },
+   "glimmer_checked": {
+    "errors": [],
+    "usd": 0.00015,
+    "attempts": 1,
+    "memo": "Memo: North Western Avenue x West Fullerton Avenue, Chicago.\n\nLayout: secondary roads, North Western Ave 5-6 lanes, West Fullerton Ave 5 lanes, both 30 mph. 1 signal, 16 crossings, 4 marked, 0 stop signs, 0 schools within 400m, 8 bus stops within 200m.\n\nCrash record 2021-10-31 to present, 100m radius: 358 crashes, 38 injury crashes. By year: 2021 13, 2022 81, 2023 72, 2024 69, 2025 70, 2026 53. Any injured 50. Groups: angle_turning 120, rear_end 114, cyclist 3, pedestrian 2. Top factors: UNABLE TO DETERMINE 144, FAILING TO YIELD RIGHT-OF-WAY 58, FOLLOWING TOO CLOSELY 50.\n\nDesignation / projects: source missing. Recent projects: 0. Plan gap: source missing."
+   }
+  }
+ ],
+ "summary": {
+  "junctions": 34,
+  "source_success": {
+   "street": 0.9117647058823529,
+   "crashes": 0.9705882352941176,
+   "plans": 0.9705882352941176
+  },
+  "plan_gaps": 17,
+  "designated": 17,
+  "checked": {
+   "memos_with_ungrounded_numbers": 0,
+   "usd_per_memo": 0.0007623529411764705,
+   "memos_with_ungrounded_numbers_rescored": 0
+  },
+  "unchecked": {
+   "memos_with_ungrounded_numbers": 33,
+   "usd_per_memo": 0.00040176470588235293,
+   "memos_with_ungrounded_numbers_rescored": 4
+  },
+  "open_checked": {
+   "memos_with_ungrounded_numbers": 0,
+   "usd_per_memo": 0.0001597058823529412
+  },
+  "glimmer_checked": {
+   "memos_with_ungrounded_numbers": 0,
+   "usd_per_memo": 0.00019911764705882355
+  }
+ }
+}

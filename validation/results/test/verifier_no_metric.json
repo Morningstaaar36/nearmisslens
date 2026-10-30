@@ -1,0 +1,33 @@
+{
+ "split": "test",
+ "arm": "no_metric",
+ "candidates": 176,
+ "judged_real": 27,
+ "artefact_share": 0.847,
+ "before": {
+  "ref_events": 435,
+  "pred_events": 176,
+  "tp": 97,
+  "precision": 0.5511363636363636,
+  "recall": 0.22298850574712645,
+  "f1": 0.31751227495908346
+ },
+ "after": {
+  "ref_events": 435,
+  "pred_events": 27,
+  "tp": 19,
+  "precision": 0.7037037037037037,
+  "recall": 0.04367816091954023,
+  "f1": 0.08225108225108224
+ },
+ "severity_at_matched_recall": {
+  "ref_events": 435,
+  "pred_events": 47,
+  "tp": 19,
+  "precision": 0.40425531914893614,
+  "recall": 0.04367816091954023,
+  "f1": 0.07883817427385892,
+  "kept": 47
+ },
+ "usd_per_event": 0.00038
+}

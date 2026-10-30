@@ -1,0 +1,473 @@
+{
+ "flights": [
+  {
+   "site": "FIDRT",
+   "flight": "20250120_video",
+   "conflicts": 653,
+   "minutes": 21.2
+  },
+  {
+   "site": "FIDRT",
+   "flight": "20250525_video",
+   "conflicts": 223,
+   "minutes": 6.8
+  },
+  {
+   "site": "FIDRT",
+   "flight": "20250526_video",
+   "conflicts": 1154,
+   "minutes": 28.8
+  },
+  {
+   "site": "FI",
+   "flight": "20250120_video",
+   "conflicts": 1818,
+   "minutes": 28.6
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-1",
+   "conflicts": 1443,
+   "minutes": 29.9
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-2",
+   "conflicts": 916,
+   "minutes": 16.7
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-3",
+   "conflicts": 1049,
+   "minutes": 15.8
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-1",
+   "conflicts": 1142,
+   "minutes": 20.2
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-2",
+   "conflicts": 1683,
+   "minutes": 29.5
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-1",
+   "conflicts": 487,
+   "minutes": 8.9
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-2",
+   "conflicts": 634,
+   "minutes": 20.5
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-1",
+   "conflicts": 89,
+   "minutes": 27.6
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-2",
+   "conflicts": 71,
+   "minutes": 26.4
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-3",
+   "conflicts": 49,
+   "minutes": 24.1
+  }
+ ],
+ "pairs": [
+  {
+   "site": "FIDRT",
+   "a": "20250120_video",
+   "b": "20250525_video",
+   "different_day": true,
+   "cells": 59,
+   "tau": 0.47616263063028913,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -8.442169088980921e-05
+  },
+  {
+   "site": "FIDRT",
+   "a": "20250120_video",
+   "b": "20250526_video",
+   "different_day": true,
+   "cells": 59,
+   "tau": 0.47045151492791404,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.003908275960263646
+  },
+  {
+   "site": "FIDRT",
+   "a": "20250525_video",
+   "b": "20250526_video",
+   "different_day": true,
+   "cells": 56,
+   "tau": 0.38704900188728714,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": -0.0008661889731891364
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250121_video-1",
+   "different_day": true,
+   "cells": 36,
+   "tau": 0.658188431164676,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -0.0002575519948035694
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250121_video-2",
+   "different_day": true,
+   "cells": 36,
+   "tau": 0.5639398125205909,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.0008610010658765095
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250121_video-3",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.5829841702925725,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -0.00040438208343993455
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250525_video-1",
+   "different_day": true,
+   "cells": 36,
+   "tau": 0.5388207447771963,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": -0.004841247416819884
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250525_video-2",
+   "different_day": true,
+   "cells": 36,
+   "tau": 0.553617716050375,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": -0.0023072738339440474
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.28318822210103584,
+   "p_perm": 0.008991008991008992,
+   "top3_overlap": 0,
+   "null_tau_mean": 0.0029822167092862176
+  },
+  {
+   "site": "FI",
+   "a": "20250120_video",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.4562073882642909,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": 0.0028972573687530722
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250121_video-2",
+   "different_day": false,
+   "cells": 34,
+   "tau": 0.5637825615202249,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -0.00019982166737425854
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250121_video-3",
+   "different_day": false,
+   "cells": 34,
+   "tau": 0.6089285714285714,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 3,
+   "null_tau_mean": -0.0037107142857142855
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250525_video-1",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.6490535404173462,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.003633326168050541
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250525_video-2",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.6999217207570636,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": -0.003595974637802596
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.4278724458667242,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.00012909944487357939
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-1",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.5472726826387021,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": 0.002036070408106488
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-2",
+   "b": "20250121_video-3",
+   "different_day": false,
+   "cells": 34,
+   "tau": 0.5673508055804795,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.002793935099179342
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-2",
+   "b": "20250525_video-1",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.47179806660262263,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.0015852415037848136
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-2",
+   "b": "20250525_video-2",
+   "different_day": true,
+   "cells": 35,
+   "tau": 0.5152093180949147,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -0.0003986537674439339
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-2",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.20453229734442938,
+   "p_perm": 0.04395604395604396,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.0018794859755974587
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-2",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.44066530079844995,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": 0.00603981257175998
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-3",
+   "b": "20250525_video-1",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.42253432272486185,
+   "p_perm": 0.001998001998001998,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.004141924433920963
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-3",
+   "b": "20250525_video-2",
+   "different_day": true,
+   "cells": 34,
+   "tau": 0.5277289302859254,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": -0.004488379274872496
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-3",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 32,
+   "tau": 0.42234389225804375,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.005809803786183821
+  },
+  {
+   "site": "FI",
+   "a": "20250121_video-3",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 33,
+   "tau": 0.4381023908457238,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": 0.004000065307721826
+  },
+  {
+   "site": "FI",
+   "a": "20250525_video-1",
+   "b": "20250525_video-2",
+   "different_day": false,
+   "cells": 31,
+   "tau": 0.7337817041119786,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 2,
+   "null_tau_mean": -0.00445463937186564
+  },
+  {
+   "site": "FI",
+   "a": "20250525_video-1",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 30,
+   "tau": 0.336456863451408,
+   "p_perm": 0.005994005994005994,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.0020631347946360643
+  },
+  {
+   "site": "FI",
+   "a": "20250525_video-1",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 30,
+   "tau": 0.4688271720439346,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 1,
+   "null_tau_mean": 0.0021986377723439694
+  },
+  {
+   "site": "FI",
+   "a": "20250525_video-2",
+   "b": "20250530_video-1",
+   "different_day": true,
+   "cells": 31,
+   "tau": 0.459078085048767,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.009679989336171146
+  },
+  {
+   "site": "FI",
+   "a": "20250525_video-2",
+   "b": "20250530_video-2",
+   "different_day": true,
+   "cells": 31,
+   "tau": 0.5640476895349428,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.0008525300956329674
+  },
+  {
+   "site": "FI",
+   "a": "20250530_video-1",
+   "b": "20250530_video-2",
+   "different_day": false,
+   "cells": 29,
+   "tau": 0.39207041691851746,
+   "p_perm": 0.000999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.003707298752381425
+  },
+  {
+   "site": "TI",
+   "a": "20250529_video-1",
+   "b": "20250529_video-2",
+   "different_day": false,
+   "cells": 31,
+   "tau": -0.20953512687653464,
+   "p_perm": 0.9460539460539461,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.0022957761727342065
+  },
+  {
+   "site": "TI",
+   "a": "20250529_video-1",
+   "b": "20250529_video-3",
+   "different_day": false,
+   "cells": 32,
+   "tau": -0.36493249912882486,
+   "p_perm": 0.999000999000999,
+   "top3_overlap": 0,
+   "null_tau_mean": -0.0002760386852384693
+  },
+  {
+   "site": "TI",
+   "a": "20250529_video-2",
+   "b": "20250529_video-3",
+   "different_day": false,
+   "cells": 27,
+   "tau": -0.10464017219531722,
+   "p_perm": 0.7512487512487512,
+   "top3_overlap": 2,
+   "null_tau_mean": 0.0014459369248807472
+  }
+ ],
+ "summary": {
+  "pairs": 34,
+  "different_day_pairs": 26,
+  "median_tau_different_day": 0.47112479076526836,
+  "median_tau_all": 0.47112479076526836,
+  "mean_top3_overlap_different_day": 1.0,
+  "pooled_p_different_day": 0.000999000999000999,
+  "claim": true
+ }
+}

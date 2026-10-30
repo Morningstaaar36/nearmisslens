@@ -1,0 +1,114 @@
+{
+ "2017-2019": {
+  "test_cells": 2810,
+  "test_blocks": 60,
+  "future_injury_crashes": 5042,
+  "models": {
+   "M0_crash_history": {
+    "top5_precision": 0.5714285714285714,
+    "top10_precision": 0.6476868327402135,
+    "spearman": 0.5775880078446951
+   },
+   "M1_crash_eb": {
+    "top5_precision": 0.5857142857142857,
+    "top10_precision": 0.6405693950177936,
+    "spearman": 0.5969405305568724
+   },
+   "M2_reports_only": {
+    "top5_precision": 0.22142857142857142,
+    "top10_precision": 0.35231316725978645,
+    "spearman": 0.32869057310522365
+   },
+   "M3_fusion_eb": {
+    "top5_precision": 0.5857142857142857,
+    "top10_precision": 0.6441281138790036,
+    "spearman": 0.5984938265543769
+   }
+  },
+  "top5_diff_fusion_minus_crash_ci95": [
+   -0.029856357311188502,
+   0.024806465111413285
+  ],
+  "claim_fusion_better": false,
+  "fitted": {
+   "M1_crash_eb": {
+    "beta": {
+     "intercept": -1.5665,
+     "past_injury": 0.3619,
+     "past_all": 0.7699
+    },
+    "phi": 2.2026
+   },
+   "M3_fusion_eb": {
+    "beta": {
+     "intercept": -1.5594,
+     "past_injury": 0.3622,
+     "past_all": 0.7501,
+     "reports": 0.1007,
+     "rep_pedestrian": -0.0064,
+     "rep_speed_signal": 0.0276,
+     "rep_cycling": -0.0691
+    },
+    "phi": 2.1998
+   }
+  },
+  "cells": 10438,
+  "train_cells": 7628
+ },
+ "2021-2024": {
+  "test_cells": 2846,
+  "test_blocks": 60,
+  "future_injury_crashes": 5066,
+  "models": {
+   "M0_crash_history": {
+    "top5_precision": 0.5140845070422535,
+    "top10_precision": 0.5964912280701754,
+    "spearman": 0.5308583467826716
+   },
+   "M1_crash_eb": {
+    "top5_precision": 0.5140845070422535,
+    "top10_precision": 0.6,
+    "spearman": 0.5355510363449384
+   },
+   "M2_reports_only": {
+    "top5_precision": 0.176056338028169,
+    "top10_precision": 0.28421052631578947,
+    "spearman": 0.2646559345169345
+   },
+   "M3_fusion_eb": {
+    "top5_precision": 0.5070422535211268,
+    "top10_precision": 0.6,
+    "spearman": 0.5352978752814918
+   }
+  },
+  "top5_diff_fusion_minus_crash_ci95": [
+   -0.027215543751747305,
+   0.024612352511224716
+  ],
+  "claim_fusion_better": false,
+  "fitted": {
+   "M1_crash_eb": {
+    "beta": {
+     "intercept": -1.2565,
+     "past_injury": 0.3779,
+     "past_all": 0.6474
+    },
+    "phi": 1.077
+   },
+   "M3_fusion_eb": {
+    "beta": {
+     "intercept": -1.2557,
+     "past_injury": 0.3938,
+     "past_all": 0.6315,
+     "reports": 0.1687,
+     "rep_pedestrian": -0.2517,
+     "rep_speed_signal": -0.1061,
+     "rep_cycling": 0.0473
+    },
+    "phi": 1.08
+   }
+  },
+  "cells": 10485,
+  "train_cells": 7639
+ }
+}

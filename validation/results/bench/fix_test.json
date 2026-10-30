@@ -1,0 +1,155 @@
+{
+ "per_flight": [
+  {
+   "site": "FIDRT",
+   "flight": "20250120_video",
+   "red_entrants": 93,
+   "conflicts": 653,
+   "removed_targeted": 134,
+   "control_median": 95.0,
+   "control_p95": 111.04999999999998,
+   "percentile": 100.0
+  },
+  {
+   "site": "FIDRT",
+   "flight": "20250525_video",
+   "red_entrants": 19,
+   "conflicts": 223,
+   "removed_targeted": 39,
+   "control_median": 19.5,
+   "control_p95": 29.0,
+   "percentile": 100.0
+  },
+  {
+   "site": "FIDRT",
+   "flight": "20250526_video",
+   "red_entrants": 102,
+   "conflicts": 1154,
+   "removed_targeted": 268,
+   "control_median": 138.5,
+   "control_p95": 168.0,
+   "percentile": 100.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250120_video",
+   "red_entrants": 115,
+   "conflicts": 1818,
+   "removed_targeted": 258,
+   "control_median": 137.0,
+   "control_p95": 163.04999999999998,
+   "percentile": 100.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-1",
+   "red_entrants": 104,
+   "conflicts": 1443,
+   "removed_targeted": 157,
+   "control_median": 120.0,
+   "control_p95": 146.19999999999993,
+   "percentile": 98.5
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-2",
+   "red_entrants": 54,
+   "conflicts": 916,
+   "removed_targeted": 120,
+   "control_median": 55.0,
+   "control_p95": 75.0,
+   "percentile": 100.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-3",
+   "red_entrants": 81,
+   "conflicts": 1049,
+   "removed_targeted": 152,
+   "control_median": 95.0,
+   "control_p95": 117.0,
+   "percentile": 100.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-1",
+   "red_entrants": 72,
+   "conflicts": 1142,
+   "removed_targeted": 105,
+   "control_median": 90.0,
+   "control_p95": 112.0,
+   "percentile": 82.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-2",
+   "red_entrants": 106,
+   "conflicts": 1683,
+   "removed_targeted": 184,
+   "control_median": 124.5,
+   "control_p95": 146.04999999999998,
+   "percentile": 100.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-1",
+   "red_entrants": 34,
+   "conflicts": 487,
+   "removed_targeted": 37,
+   "control_median": 34.5,
+   "control_p95": 49.0,
+   "percentile": 60.0
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-2",
+   "red_entrants": 54,
+   "conflicts": 634,
+   "removed_targeted": 63,
+   "control_median": 47.0,
+   "control_p95": 60.0,
+   "percentile": 96.5
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-1",
+   "red_entrants": 13,
+   "conflicts": 89,
+   "removed_targeted": 4,
+   "control_median": 4.0,
+   "control_p95": 9.0,
+   "percentile": 43.5
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-2",
+   "red_entrants": 11,
+   "conflicts": 71,
+   "removed_targeted": 2,
+   "control_median": 2.0,
+   "control_p95": 7.0,
+   "percentile": 26.0
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-3",
+   "red_entrants": 24,
+   "conflicts": 49,
+   "removed_targeted": 5,
+   "control_median": 5.0,
+   "control_p95": 11.0,
+   "percentile": 49.5
+  }
+ ],
+ "summary": {
+  "flights": 14,
+  "red_entrants": 882,
+  "conflicts": 11411,
+  "removed_targeted": 1528,
+  "removed_share": 0.13390588029094733,
+  "control_median": 973.5,
+  "control_p95": 1037.1,
+  "ratio_to_control_median": 1.5695942475603493,
+  "claim": true
+ }
+}

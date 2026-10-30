@@ -33,6 +33,19 @@ Same tracks after track stitching (PREREG change 9):
 | conflicts pet<=1.5 F1 | 0.253 | 0.252 |
 | conflicts pet<=3.0 F1 | 0.308 | 0.305 |
 
+Same cached tracks, stitched, with Kalman/RTS kinematics chosen on dev (PREREG change 10, decided after the test and held-out runs; its clean test is the fresh flights in BENCH.md):
+
+| measure | registered F1 | Kalman/RTS F1 | Kalman/RTS precision | Kalman/RTS recall | Kalman/RTS F2 |
+|---|---|---|---|---|---|
+| all | 0.120 | 0.139 | 0.632 | 0.078 | 0.095 |
+| ttc<=0.5 | 0.094 | 0.061 | 0.750 | 0.032 | 0.039 |
+| ttc<=1.0 | 0.068 | 0.102 | 0.714 | 0.055 | 0.067 |
+| rear_end | 0.190 | 0.212 | 0.706 | 0.125 | 0.150 |
+| crossing | 0.062 | 0.077 | 0.438 | 0.042 | 0.051 |
+| lane_change | 0.103 | 0.163 | 0.800 | 0.091 | 0.110 |
+| pet<=1.5 | 0.253 | 0.279 | 0.600 | 0.181 | 0.211 |
+| pet<=3.0 | 0.308 | 0.335 | 0.677 | 0.223 | 0.257 |
+
 Signal state on entry, SAM 3.1 tracks against the reference (share of entries):
 
 | class | source | entries | green | yellow | red |
@@ -87,6 +100,19 @@ Same tracks after track stitching (PREREG change 9):
 | conflicts all F1 | 0.142 | 0.143 |
 | conflicts pet<=1.5 F1 | 0.242 | 0.236 |
 | conflicts pet<=3.0 F1 | 0.307 | 0.300 |
+
+Same cached tracks, stitched, with Kalman/RTS kinematics chosen on dev (PREREG change 10, decided after the test and held-out runs; its clean test is the fresh flights in BENCH.md):
+
+| measure | registered F1 | Kalman/RTS F1 | Kalman/RTS precision | Kalman/RTS recall | Kalman/RTS F2 |
+|---|---|---|---|---|---|
+| all | 0.142 | 0.110 | 0.548 | 0.061 | 0.074 |
+| ttc<=0.5 | 0.068 | 0.101 | 0.400 | 0.058 | 0.070 |
+| ttc<=1.0 | 0.074 | 0.068 | 0.400 | 0.037 | 0.045 |
+| rear_end | 0.222 | 0.195 | 0.429 | 0.126 | 0.147 |
+| crossing | 0.095 | 0.063 | 0.750 | 0.033 | 0.041 |
+| lane_change | 0.100 | 0.167 | 0.500 | 0.100 | 0.119 |
+| pet<=1.5 | 0.242 | 0.294 | 0.411 | 0.228 | 0.251 |
+| pet<=3.0 | 0.307 | 0.347 | 0.485 | 0.270 | 0.296 |
 
 Signal state on entry, SAM 3.1 tracks against the reference (share of entries):
 

@@ -24,6 +24,7 @@ FIGSHARE = "https://ndownloader.figshare.com/files/"
 SITES = {
     "FIDRT": {"derived": ("64179082", "103191b9f67d4d4862b0791832ff3f95"), "videos": "57459310"},
     "FI": {"derived": ("64179085", "69183542c475d9e759306bf8a1b0737d"), "videos": "61923796"},
+    "TI": {"derived": ("64179079", "fc2870464b3509130ce606c4f43a492b"), "videos": "57423067"},
 }
 CLIPS = (fluid.DEV, fluid.TEST, fluid.HELDOUT)
 
@@ -195,7 +196,9 @@ def fetch_cmf(out: Path = CMF_PATH) -> Path:
         return download(CMF_URL, out, verify=issuer_bundle(CMF_URL))
 
 
-def fetch_all(data_dir: Path | None = None) -> list[Path]:
+def fetch_all(data_dir: Path | None = None, clips=CLIPS) -> list[Path]:
+    """Derived data for every site, the given clips' videos (default: the registered splits) and the CMF table.
+    clips=fluid.FLIGHTS fetches all 14 flights (about 19 GB) for NML-Bench."""
     base = Path(data_dir or SETTINGS.data_dir) / "fluid"
     done = []
     for site, src in SITES.items():
@@ -205,7 +208,7 @@ def fetch_all(data_dir: Path | None = None) -> list[Path]:
             with zipfile.ZipFile(z) as zf:
                 zf.extractall(base / site)
         done.append(base / site / "derived_data")
-    for site, stem in CLIPS:
+    for site, stem in clips:
         c = fluid.clip(site, stem, Path(data_dir or SETTINGS.data_dir))
         if not c.video.exists():
             url = FIGSHARE + SITES[site]["videos"]

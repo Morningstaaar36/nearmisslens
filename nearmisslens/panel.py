@@ -25,6 +25,15 @@ MAX_TURNS = 14
 MAX_OUTPUT_TOKENS = 16000
 MAX_PER_HOTSPOT = 2
 
+DECIMAL_COMMA = re.compile(r"(?<![\d,])(\d+),(\d{1,2})(?!\d)")
+
+
+def normalise_decimals(text: str) -> str:
+    """'185,7' (decimal comma, as in Spanish or French answers) becomes '185.7'; '1,234' is left as a thousands
+    separator."""
+    return DECIMAL_COMMA.sub(r"\1.\2", text)
+
+
 NUMBER = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 HOTSPOT_REF = re.compile(r"\bhotspot\s*#?\s*(\d+)", re.I)
 CMF_REF = re.compile(r"\bCMF\s*(?:Clearinghouse\s*)?(?:ID\s*)?#?\s*(\d{3,6})\b")
@@ -102,6 +111,12 @@ class Grounding:
         return any(abs(k - v) <= tol for k in self.known)
 
     def text(self, text: str) -> list[str]:
+        """Errors for the reading of the text with fewer of them: commas as written, or '185,7' as a decimal comma
+        (so a list like 'hotspots 1,2' is not misread as 1.2)."""
+        a, b = self._text(text), self._text(normalise_decimals(text))
+        return a if len(a) <= len(b) else b
+
+    def _text(self, text: str) -> list[str]:
         errors = [f"hotspot {n} does not exist (hotspots: {sorted(self.ranks)})"
                   for n in sorted({int(m) for m in HOTSPOT_REF.findall(text)} - self.ranks)]
         errors += [f"CMF {i} is not in this audit" for i in sorted(set(CMF_REF.findall(text)) - self.cited)]
@@ -201,7 +216,7 @@ def read_tools(facts: dict, cmf: pd.DataFrame, g: Grounding) -> list[Tool]:
 
 
 def _stage(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], finish: Tool, role: str,
-           tag: str) -> dict:
+           tag: str, checked: bool = True) -> dict:
     attempts: list[dict] = []
     inner = finish.fn
 
@@ -214,40 +229,51 @@ def _stage(client: MetaClient, model: str, instructions: str, task: str, tools: 
                                                                      checked)],
                     MAX_TURNS, BUDGET_USD[role], effort="medium", tag=f"{tag} {role}", max_output_tokens=MAX_OUTPUT_TOKENS)
     passed = [a for a in attempts if not a["errors"]]
+    if not checked:  # ablation: the first submission stands; its checker errors are only recorded
+        accepted = run.stopped == "finish_tool" and bool(attempts)
+        return {"role": role, "model": model, "accepted": accepted, "stopped": run.stopped, "turns": run.turns,
+                "usd": round(run.usd, 4), "rejected_attempts": [],
+                "ungrounded": attempts[-1]["errors"] if attempts else [],
+                "output": attempts[-1]["arguments"] if accepted else None, "decision_log": run.decision_log()}
     accepted = run.stopped == "finish_tool" and bool(passed)
     return {"role": role, "model": model, "accepted": accepted, "stopped": run.stopped, "turns": run.turns,
             "usd": round(run.usd, 4), "rejected_attempts": [a for a in attempts if a["errors"]],
             "output": passed[0]["arguments"] if accepted else None, "decision_log": run.decision_log()}
 
 
-def _finish(check: Callable[..., list[str]]) -> Callable[..., dict]:
+def _finish(check: Callable[..., list[str]], checked: bool = True) -> Callable[..., dict]:
     def fn(**kwargs):
         errors = check(**kwargs)
+        if not checked:
+            return {"ok": True, "errors": errors}
         return {"error": "rejected by the grounding checker", "errors": errors} if errors else {"ok": True}
     return fn
 
 
-def run_panel(client: MetaClient, facts: dict, memo_md: str, cmf: pd.DataFrame, tag: str) -> dict:
+def run_panel(client: MetaClient, facts: dict, memo_md: str, cmf: pd.DataFrame, tag: str, checked: bool = True) -> dict:
+    """Proposer, Skeptic and Judge. checked=False is the NML-Bench T5 ablation: every finish is accepted as submitted
+    and the checker's errors are only recorded (stage["ungrounded"])."""
     g = Grounding(facts, memo_md)
     tools = read_tools(facts, cmf, g)
     rec = {"rank": {"type": "integer"}, "crfid": {"type": "string"}, "reason": {"type": "string"}}
     proposer = _stage(client, PROPOSER_MODEL, PROPOSER_INSTRUCTIONS, "Propose countermeasures. Start with site_summary.",
                       tools, Tool("finish", "Submit the recommendations.", _obj({"recommendations": _array(rec)},
                                                                                 ["recommendations"]),
-                                  _finish(lambda recommendations: check_proposals(g, recommendations))),
-                      "proposer", tag)
+                                  _finish(lambda recommendations: check_proposals(g, recommendations), checked)),
+                      "proposer", tag, checked)
     stages = [proposer]
     if not proposer["accepted"]:
         return {"status": "proposer did not finish", "stages": stages}
-    proposals = [{**r, "psc": g.kept[r["rank"]][r["crfid"]]["psc"]} for r in proposer["output"]["recommendations"]]
+    proposals = [{**r, "psc": g.kept.get(r["rank"], {}).get(r["crfid"], {}).get("psc", "not kept by the audit")}
+                 for r in proposer["output"]["recommendations"]]
     obj = {"rank": {"type": "integer"}, "crfid": {"type": "string"}, "objection": {"type": "string"},
            "blocking": {"type": "boolean"}}
     skeptic = _stage(client, SKEPTIC_MODEL, SKEPTIC_INSTRUCTIONS,
                      f"Proposals:\n{json.dumps(proposals, indent=1)}\nObject where the evidence warrants it.",
                      tools, Tool("finish", "Submit the objections (an empty list if none).",
                                  _obj({"objections": _array(obj)}, ["objections"]),
-                                 _finish(lambda objections: check_objections(g, proposals, objections))),
-                     "skeptic", tag)
+                                 _finish(lambda objections: check_objections(g, proposals, objections), checked)),
+                     "skeptic", tag, checked)
     stages.append(skeptic)
     if not skeptic["accepted"]:
         return {"status": "skeptic did not finish", "stages": stages, "proposals": proposals}
@@ -259,15 +285,16 @@ def run_panel(client: MetaClient, facts: dict, memo_md: str, cmf: pd.DataFrame, 
                    "Decide every proposal and write the memo.",
                    tools, Tool("finish", "Submit the decisions and the memo.",
                                _obj({"decisions": _array(dec), "memo": {"type": "string"}}, ["decisions", "memo"]),
-                               _finish(lambda decisions, memo: check_decisions(g, proposals, decisions, memo))),
-                   "judge", tag)
+                               _finish(lambda decisions, memo: check_decisions(g, proposals, decisions, memo), checked)),
+                   "judge", tag, checked)
     stages.append(judge)
     if not judge["accepted"]:
         return {"status": "judge did not finish", "stages": stages, "proposals": proposals, "objections": objections}
     return {"status": "complete", "stages": stages, "proposals": proposals, "objections": objections,
             "decisions": judge["output"]["decisions"], "memo": judge["output"]["memo"],
             "usd": round(sum(s["usd"] for s in stages), 4),
-            "caught": sum(len(a["errors"]) for s in stages for a in s["rejected_attempts"])}
+            "caught": sum(len(a["errors"]) for s in stages for a in s["rejected_attempts"]),
+            "ungrounded": sum(len(s.get("ungrounded", [])) for s in stages)}
 
 
 def panel_markdown(result: dict, title: str) -> str:

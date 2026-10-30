@@ -110,14 +110,19 @@ def cmd_verifier(args) -> int:
     return 0
 
 
-def cmd_fetch(_args) -> int:
-    from .fetch import fetch_all
-    for p in fetch_all():
+def cmd_fetch(args) -> int:
+    from . import fluid
+    from .fetch import CLIPS, fetch_all
+    for p in fetch_all(clips=fluid.FLIGHTS if args.all else CLIPS):
         print(f"ok {p}")
     return 0
 
 
 def cmd_demo(args) -> int:
+    if args.copilot:
+        from .demo_copilot import render as render_copilot
+        render_copilot()
+        return 0
     from .demo import render
     render(args.audit)
     return 0
@@ -135,11 +140,156 @@ def cmd_experiment(_args) -> int:
     return 0
 
 
+def cmd_bench(args) -> int:
+    from . import bench, evaluate
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    if args.free:
+        print(json.dumps(bench.persistence()["summary"], indent=1, default=float))
+        print(json.dumps(bench.fix_test()["summary"], indent=1, default=float))
+    if args.kinematics:
+        print(json.dumps(evaluate.tune_kinematics()["chosen"], indent=1, default=float))
+        for split in ("test", "heldout"):
+            evaluate.rescore_split(split)
+        evaluate.write_results()
+    if args.fresh:
+        usd = bench.fresh_estimate()
+        client.check_budget(usd, "fresh flights")
+        print(f"fresh flights: SAM 3.1 on 11 one-minute windows, up to ${usd:.2f} (cached calls are free)")
+        print(json.dumps(bench.fresh_flights(client).get("pooled"), indent=1, default=float))
+    if args.agents:
+        print(json.dumps(bench.complaints_bench(client)["summary"], indent=1, default=float))
+        bench.panel_ablation(client)
+        print(json.dumps(bench.context_bench(client)["summary"], indent=1, default=float))
+    if args.conductor:
+        print(json.dumps(bench.conductor_bench(client)["policies"], indent=1, default=float))
+    text = bench.write_bench_md()
+    print(f"written validation/BENCH.md ({len(text.splitlines())} lines)")
+    return 0
+
+
+def cmd_ask(args) -> int:
+    from . import ask
+    from .countermeasures import load_cmf
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    name = f"{args.split}_{args.source}"
+    if args.serve:
+        from .serve import serve
+        return serve(name, args.port)
+    text = args.text
+    if args.audio:
+        from pathlib import Path
+        from .runner import as_wav
+        from .voice import transcribe
+        text = transcribe(client, as_wav(Path(args.audio), SETTINGS.data_dir / "work" / "voice"), f"ask {name}")["transcript"]
+        print(f"transcript: {text}")
+    facts, memo_md = ask.load(name, SETTINGS.runs_dir)
+    out = ask.answer(client, text, facts, memo_md, load_cmf(), SETTINGS.data_dir / "work" / "ask_frames", f"ask {name}",
+                     model=args.model, budget_usd=0.12 if "wonder" in args.model else 0.02)
+    print(json.dumps(out["result"], indent=1))
+    print(f"{out['turns']} turns, ${out['usd']}, stopped: {out['stopped']}")
+    return 0
+
+
+def cmd_context(args) -> int:
+    from . import context
+    from .meta_client import MetaClient
+    d = context.dossier(args.lat, args.lon)
+    print(json.dumps({k: v for k, v in d.items() if k != "street"} | {"street": {k: v for k, v in (d.get("street") or {}).items()
+                                                                              if k != "roads"}}, indent=1, default=str))
+    if not args.no_memo:
+        m = context.memo(MetaClient(SETTINGS), d, f"context {args.lat},{args.lon}")
+        print("\n" + m["memo"] + f"\n(${m['usd']}, checker errors: {m['errors'] or 'none'})")
+    return 0
+
+
+def cmd_office(args) -> int:
+    from . import office
+    from .countermeasures import load_cmf
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    client.check_budget(office.BUDGET_USD, "office")
+    name = f"{args.split}_{args.source}"
+
+    def ask_person(summary: str) -> dict:
+        if args.auto:
+            return {"approved": True, "by": "auto", "note": ""}
+        print(f"\nThe manager asks for sign-off:\n  {summary}")
+        ans = input("approve? [y/N/comment] ").strip()
+        return {"approved": ans.lower().startswith("y"), "by": "city engineer (CLI)", "note": ans}
+
+    out = office.run(client, name, args.complaint or [], load_cmf(), signoff=ask_person, tag=f"office {name}")
+    path = office.write(out, SETTINGS.runs_dir / "audit" / name)
+    for e in out["timeline"]:
+        print(f"[turn {e['turn']}] " + (f"thinks: {e['text'][:160]}" if e["kind"] == "thought" else
+                                         f"{e['tool']}({json.dumps(e['arguments'])[:100]}) {e['seconds']}s"))
+    wo = out["work_order"]
+    print("\nWORK ORDER:\n" + (wo["work_order"] if wo else f"none ({out['stopped']})"))
+    print(f"{out['turns']} turns, ${out['usd']}, refusals {out['refusals']}; written {path}")
+    return 0
+
+
+def _memo_client(open_weights: bool):
+    if open_weights:
+        from .openclient import OpenWeightsClient
+        return OpenWeightsClient()
+    from .meta_client import MetaClient
+    return MetaClient(SETTINGS)
+
+
+def cmd_brief(args) -> int:
+    from . import brief
+    from .meta_client import MetaClient
+    target = dict(address=args.place) if args.place else dict(lat=args.lat, lon=args.lon)
+    f = brief.build(**target, client=_memo_client(not args.meta), memo=not args.no_memo)
+    if args.illustrate and f.get("aerial_photo") and f["fixes"]["options"]:
+        from pathlib import Path
+        out = Path(f["aerial_photo"]).parent
+        f["illustration"] = brief.illustrate_fix(MetaClient(SETTINGS), Path(f["aerial_photo"]), f["fixes"]["options"],
+                                                 out, out.name)
+        (out / "brief.json").write_text(json.dumps(f, indent=1, default=str))
+    cr = f["dossier"].get("crashes") or {}
+    print(f"{f['junction']}\n  {cr.get('crashes')} crashes, {cr.get('injury_crashes')} injury crashes in "
+          f"{f['dossier']['years']} years ({cr.get('source', cr.get('error'))}); plan gap: {f['dossier'].get('plan_gap')}")
+    for o in f["fixes"]["options"][:6]:
+        print(f"  - {o['countermeasure']}: CMF {o['cmf_id']} ({o['cmf']}, {o['stars']}), "
+              f"{o['expected_crashes_avoided_per_year']} crashes avoided/yr"
+              + (f" [verify on site: {o['verify_on_site']}]" if o["verify_on_site"] else ""))
+    if f.get("brief", {}).get("brief"):
+        print("\n" + f["brief"]["brief"])
+    return 0
+
+
+def cmd_discover(args) -> int:
+    from . import datascout
+    r = datascout.discover(_memo_client(not args.meta), args.lat, args.lon, save=not args.dry_run)
+    for t in r["tried"]:
+        print(f"  rejected {t['candidate']}: {str(t['rejected'])[:160]}")
+    a = r["adapter"]
+    print(f"adapter for {r['place']['city']}: " + (f"{a['id']} ({a['source']}), validation {a['provenance']['validation']}"
+                                                 if a else "none found"))
+    return 0 if a else 1
+
+
+def cmd_citywide(_args) -> int:
+    from . import citywide
+    df = citywide.screen()
+    print(json.dumps(citywide.write(df), indent=1))
+    return 0
+
+
+def cmd_app(args) -> int:
+    from .app import serve
+    return serve(args.port, open_weights=not args.meta, illustrate=args.illustrate)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
     sub = parser.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
+    fe = sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
+    fe.add_argument("--all", action="store_true", help="all 14 FLUID flights for NML-Bench (about 19 GB more)")
     sub.add_parser("cost", help="Meta API spend so far")
     sub.add_parser("experiment", help="two-wheeler concepts and tile grids on the development clip (PREREG change 8)")
     sub.add_parser("results", help="regenerate validation/RESULTS.md from stored results (free)")
@@ -173,6 +323,47 @@ def main(argv: list[str] | None = None) -> int:
     vf.add_argument("split", choices=["dev", "test", "heldout"])
     de = sub.add_parser("demo", help="render the demo video from viewer recordings and run outputs")
     de.add_argument("--audit", help="viewer audit key, e.g. heldout_sam (default: the best available)")
+    de.add_argument("--copilot", action="store_true", help="the narrated Junction Safety Copilot demo (Kokoro voice)")
+    bn = sub.add_parser("bench", help="NML-Bench (validation/BENCH_PREREG.md); without flags only rewrites BENCH.md")
+    bn.add_argument("--free", action="store_true", help="T3 persistence and T7 fix test on all 14 flights ($0)")
+    bn.add_argument("--kinematics", action="store_true", help="tune Kalman/RTS on dev, re-score test and held-out ($0)")
+    bn.add_argument("--fresh", action="store_true", help="T1-T2 on the 11 fresh windows (paid SAM 3.1, cached)")
+    bn.add_argument("--agents", action="store_true", help="T4 complaints, T5 panel ablation, T8 city context (paid, small)")
+    bn.add_argument("--conductor", action="store_true", help="T6 budgeted perception on the held-out site (paid)")
+    ak = sub.add_parser("ask", help="intake agent: check a resident's complaint against an audit")
+    ak.add_argument("split", choices=["dev", "test", "heldout"])
+    ak.add_argument("text", nargs="?", default="")
+    ak.add_argument("--source", choices=["reference", "sam"], default="sam")
+    ak.add_argument("--audio", help="a recording in any format ffmpeg reads (Muse Voice Transcribe)")
+    ak.add_argument("--model", default="muse-wonder-1.0")
+    ak.add_argument("--serve", action="store_true", help="local web page with a microphone button")
+    ak.add_argument("--port", type=int, default=8765)
+    cx = sub.add_parser("context", help="what the official record says about a junction (OSM, crashes, city plans)")
+    cx.add_argument("lat", type=float)
+    cx.add_argument("lon", type=float)
+    cx.add_argument("--no-memo", action="store_true")
+    of = sub.add_parser("office", help="manager agent: end-to-end review with human sign-off and a work order")
+    of.add_argument("split", choices=["dev", "test", "heldout"])
+    of.add_argument("--source", choices=["reference", "sam"], default="sam")
+    of.add_argument("--complaint", action="append", help="a resident complaint to check (repeatable)")
+    of.add_argument("--auto", action="store_true", help="approve the sign-off automatically")
+    br = sub.add_parser("brief", help="Junction Safety Brief: official record, ranked cited fixes, checked memo")
+    br.add_argument("place", nargs="?", help='an intersection, e.g. "Delancey Street & Essex Street, Manhattan, NY"')
+    br.add_argument("--lat", type=float)
+    br.add_argument("--lon", type=float)
+    br.add_argument("--illustrate", action="store_true", help="draw the top fix on the aerial photo (Muse Image + SAM)")
+    br.add_argument("--no-memo", action="store_true")
+    br.add_argument("--meta", action="store_true", help="memo on the Meta API instead of Muse Spark Open (Baseten)")
+    dsc = sub.add_parser("discover", help="data agent: find and validate a city's open crash data for the registry")
+    dsc.add_argument("lat", type=float)
+    dsc.add_argument("lon", type=float)
+    dsc.add_argument("--dry-run", action="store_true")
+    dsc.add_argument("--meta", action="store_true")
+    sub.add_parser("citywide", help="plan-gap screen of every NYC Vision Zero priority intersection (open data)")
+    ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")
+    ap.add_argument("--port", type=int, default=8770)
+    ap.add_argument("--illustrate", action="store_true")
+    ap.add_argument("--meta", action="store_true")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
@@ -195,7 +386,9 @@ def run_command(args) -> int:
             "voice": cmd_voice, "baseline": cmd_baseline,
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
-            "experiment": cmd_experiment}[args.cmd](args)
+            "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide,
+            "app": cmd_app}[args.cmd](args)
 
 
 if __name__ == "__main__":

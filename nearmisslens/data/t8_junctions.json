@@ -1,0 +1,279 @@
+{
+ "registered": "2026-10-30",
+ "seed": 0,
+ "note": "NYC: 10 Vision Zero priority intersections (tmt9-43em) and 10 random 2025 crash locations with a cross street (h9gi-nx95); DC: 10 random 2025 crash locations (MapServer/24); 4 demo junctions. Fixed before any memo was written.",
+ "junctions": [
+  {
+   "id": "nyc-vz-0",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "75 STREET & ROOSEVELT AVENUE",
+   "lat": 40.7469419389041,
+   "lon": -73.8905012926299
+  },
+  {
+   "id": "nyc-vz-1",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "EAST KINGSBRIDGE ROAD & ELM PLACE",
+   "lat": 40.862021435022,
+   "lon": -73.8937147036442
+  },
+  {
+   "id": "nyc-vz-2",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "GRAND STREET & CHRYSTIE STREET",
+   "lat": 40.718144476603,
+   "lon": -73.9938278564378
+  },
+  {
+   "id": "nyc-vz-3",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "UNION STREET & NORTHERN BOULEVARD",
+   "lat": 40.763941059706,
+   "lon": -73.8281474373839
+  },
+  {
+   "id": "nyc-vz-4",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "PENNSYLVANIA AVENUE & BLAKE AVENUE",
+   "lat": 40.6678335023913,
+   "lon": -73.8948312611268
+  },
+  {
+   "id": "nyc-vz-5",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "UTICA AVENUE & CLARKSON AVENUE",
+   "lat": 40.6566103554164,
+   "lon": -73.9309035498809
+  },
+  {
+   "id": "nyc-vz-6",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "WHITE PLAINS ROAD & NEREID AVENUE",
+   "lat": 40.898449654556,
+   "lon": -73.8542988276157
+  },
+  {
+   "id": "nyc-vz-7",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "MYRTLE AVENUE & NORTH PORTLAND AVENUE",
+   "lat": 40.6933608181606,
+   "lon": -73.9758481580474
+  },
+  {
+   "id": "nyc-vz-8",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "EAST 61 STREET & YORK AVENUE",
+   "lat": 40.7599127857448,
+   "lon": -73.9588095546709
+  },
+  {
+   "id": "nyc-vz-9",
+   "city": "nyc",
+   "group": "vision_zero_priority",
+   "name": "SOUTH CONDUIT AVENUE & HOOK CREEK BOULEVARD",
+   "lat": 40.6653476116936,
+   "lon": -73.729849442902
+  },
+  {
+   "id": "nyc-crash-10",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "ST NICHOLAS AVE & GROVE ST",
+   "lat": 40.701923,
+   "lon": -73.91216
+  },
+  {
+   "id": "nyc-crash-11",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "FULTON ST & PENNSYLVANIA AVE",
+   "lat": 40.677208,
+   "lon": -73.89724
+  },
+  {
+   "id": "nyc-crash-12",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "39 AVE & 31 ST",
+   "lat": 40.752693,
+   "lon": -73.93291
+  },
+  {
+   "id": "nyc-crash-13",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "HEGEMAN AVE & LINDEN BLVD",
+   "lat": 40.657257,
+   "lon": -73.90003
+  },
+  {
+   "id": "nyc-crash-14",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "18 AVE & MCDONALD AVE",
+   "lat": 40.630745,
+   "lon": -73.977165
+  },
+  {
+   "id": "nyc-crash-15",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "FULTON ST & BEDFORD AVE",
+   "lat": 40.68064,
+   "lon": -73.95337
+  },
+  {
+   "id": "nyc-crash-16",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "AVENUE U & E 69 ST",
+   "lat": 40.618877,
+   "lon": -73.90893
+  },
+  {
+   "id": "nyc-crash-17",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "MAURICE AVE & BORDEN AVE",
+   "lat": 40.727207,
+   "lon": -73.90741
+  },
+  {
+   "id": "nyc-crash-18",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "81 ST & 20 AVE",
+   "lat": 40.607445,
+   "lon": -73.9953
+  },
+  {
+   "id": "nyc-crash-19",
+   "city": "nyc",
+   "group": "random_crash_location",
+   "name": "ST NICHOLAS AVE & GATES AVE",
+   "lat": 40.701046,
+   "lon": -73.910675
+  },
+  {
+   "id": "dc-crash-20",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "655 MICHIGAN AVENUE NE",
+   "lat": 38.932865,
+   "lon": -76.996898
+  },
+  {
+   "id": "dc-crash-21",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "2250 SOUTHERN AVENUE SE",
+   "lat": 38.845008,
+   "lon": -76.971114
+  },
+  {
+   "id": "dc-crash-22",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "3230 WHEELER ROAD SE",
+   "lat": 38.842589,
+   "lon": -76.993493
+  },
+  {
+   "id": "dc-crash-23",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "2718 GOOD HOPE ROAD SE",
+   "lat": 38.860346,
+   "lon": -76.968375
+  },
+  {
+   "id": "dc-crash-24",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "",
+   "lat": 38.919775,
+   "lon": -76.992873
+  },
+  {
+   "id": "dc-crash-25",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "403 COLUMBIA ROAD NW",
+   "lat": 38.929003,
+   "lon": -77.018599
+  },
+  {
+   "id": "dc-crash-26",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "1911 8TH STREET NW",
+   "lat": 38.915947,
+   "lon": -77.022943
+  },
+  {
+   "id": "dc-crash-27",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "3837 ALBEMARLE STREET NW",
+   "lat": 38.948146,
+   "lon": -77.076802
+  },
+  {
+   "id": "dc-crash-28",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "1620 KENILWORTH AVENUE NE",
+   "lat": 38.912075,
+   "lon": -76.934561
+  },
+  {
+   "id": "dc-crash-29",
+   "city": "dc",
+   "group": "random_crash_location",
+   "name": "",
+   "lat": 38.937936,
+   "lon": -77.085883
+  },
+  {
+   "id": "dc-demo-30",
+   "city": "dc",
+   "group": "demo",
+   "name": "14th St NW & U St NW",
+   "lat": 38.917,
+   "lon": -77.032
+  },
+  {
+   "id": "nyc-demo-31",
+   "city": "nyc",
+   "group": "demo",
+   "name": "Atlantic Ave & Flatbush Ave",
+   "lat": 40.6845,
+   "lon": -73.9779
+  },
+  {
+   "id": "la-demo-32",
+   "city": "la",
+   "group": "demo",
+   "name": "Lankershim Blvd & Universal Hollywood Dr",
+   "lat": 34.1385,
+   "lon": -118.3625
+  },
+  {
+   "id": "chicago-demo-33",
+   "city": "chicago",
+   "group": "demo",
+   "name": "Western Ave & Fullerton Ave",
+   "lat": 41.9249,
+   "lon": -87.6874
+  }
+ ]
+}

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
 from scipy.optimize import linear_sum_assignment
@@ -130,6 +132,107 @@ def _velocity(g: pd.DataFrame, fps: float) -> np.ndarray:
 def _segments(frames: np.ndarray, max_gap: int) -> list[np.ndarray]:
     breaks = np.nonzero(np.diff(frames) > max_gap)[0]
     return np.split(np.arange(len(frames)), breaks + 1)
+
+
+@dataclass(frozen=True)
+class Kinematics:
+    """Constant-velocity Kalman filter with innovation gating and an RTS smoother (PREREG change 10).
+
+    accel_std is the white-acceleration process noise (m/s^2) and pos_std the position noise (m), per class. A
+    measurement whose squared Mahalanobis innovation exceeds gate is rejected once the filter has warm_up updates;
+    reset_after consecutive rejections restart the track there. Gaps up to max_gap frames are bridged by prediction.
+    size_bias_m is added to (length, width) per class to correct the measured mask-size bias.
+    """
+    accel_std: tuple = (("vehicle", 3.0), ("two_wheeler", 3.0), ("pedestrian", 1.5))
+    pos_std: tuple = (("vehicle", 0.3), ("two_wheeler", 0.3), ("pedestrian", 0.3))
+    gate: float = 13.8
+    warm_up: int = 3
+    reset_after: int = 5
+    max_gap: int = 15
+    min_len: int = 5
+    size_bias_m: tuple = (("vehicle", (0.0, 0.0)), ("two_wheeler", (0.0, 0.0)), ("pedestrian", (0.0, 0.0)))
+
+    def get(self, name: str, cls: str):
+        return dict(getattr(self, name)).get(cls, dict(getattr(self, name))["vehicle"])
+
+
+def _kalman_segment(f: np.ndarray, z: np.ndarray, dt: float, q: float, r: float, k: Kinematics) -> list[tuple]:
+    """Filter and smooth one track. Returns (frames, positions, velocities, accepted measurements) per piece; a gap
+    longer than max_gap or reset_after consecutive rejected measurements starts a new piece."""
+    F = np.array([[1.0, dt], [0.0, 1.0]])
+    Q = q * q * np.array([[dt ** 4 / 4, dt ** 3 / 2], [dt ** 3 / 2, dt ** 2]])
+    pieces, n, i = [], len(f), 0
+    while i < n:
+        x = np.array([[z[i, 0], 0.0], [z[i, 1], 0.0]])
+        P = np.array([[r * r, 0.0], [0.0, 100.0]])
+        frames, xp, Pp, xf, Pf = [f[i]], [x], [P], [x], [P]
+        cur, updates, misses, last, j = f[i], 1, 0, f[i], i + 1
+        while j < n and f[j] - cur <= k.max_gap:
+            while cur < f[j]:
+                cur += 1
+                x, P = x @ F.T, F @ P @ F.T + Q
+                frames.append(cur); xp.append(x); Pp.append(P); xf.append(x); Pf.append(P)
+            innov = z[j] - x[:, 0]
+            S = P[0, 0] + r * r
+            if updates >= k.warm_up and float(innov @ innov) / S > k.gate:
+                misses += 1
+                if misses >= k.reset_after:
+                    break
+            else:
+                K = P[:, 0] / S
+                x = x + np.outer(innov, K)
+                P = P - np.outer(K, P[0, :])
+                xf[-1], Pf[-1] = x, P
+                updates, misses, last = updates + 1, 0, f[j]
+            j += 1
+        m = int(np.searchsorted(np.asarray(frames), last, side="right"))
+        xs = [None] * m
+        xs[-1] = xf[m - 1]
+        for t in range(m - 2, -1, -1):
+            C = Pf[t] @ F.T @ np.linalg.inv(Pp[t + 1])
+            xs[t] = xf[t] + (xs[t + 1] - xp[t + 1]) @ C.T
+        xs = np.array(xs)
+        pieces.append((np.asarray(frames[:m]), xs[:, :, 0], xs[:, :, 1], updates))
+        i = j - k.reset_after + 1 if misses >= k.reset_after else j
+    return pieces
+
+
+def kalman_states(points: pd.DataFrame, fps: float, k: Kinematics = Kinematics()) -> pd.DataFrame:
+    """Engine states from raw positions with a gated constant-velocity Kalman filter and RTS smoother per track.
+
+    Yaw follows the motion direction when moving, otherwise the body axis, as in smooth_states."""
+    cols = ["id", "frame", "t", "x", "y", "vx", "vy", "yaw", "length", "width", "cls"]
+    out, dt = [], 1.0 / fps
+    for tid, g in points.sort_values("frame").groupby("id"):
+        g = g.drop_duplicates("frame")
+        cls = g["cls"].iloc[0]
+        q, r = k.get("accel_std", cls), k.get("pos_std", cls)
+        dl, dw = k.get("size_bias_m", cls)
+        f = g["frame"].to_numpy(int)
+        z = g[["x", "y"]].to_numpy(float)
+        axis_src = np.unwrap(g["axis"].to_numpy(float)) if "axis" in g and g["axis"].notna().any() else None
+        for frames, pos, vel, n_kept in _kalman_segment(f, z, dt, q, r, k):
+            if n_kept < k.min_len:
+                continue
+            seg = pd.DataFrame({"id": tid, "frame": frames, "t": frames / fps, "x": pos[:, 0], "y": pos[:, 1],
+                                "vx": vel[:, 0], "vy": vel[:, 1], "length": g["length"].median() + dl,
+                                "width": g["width"].median() + dw, "cls": cls})
+            speed = np.hypot(seg["vx"], seg["vy"])
+            motion = np.arctan2(seg["vy"], seg["vx"])
+            if axis_src is not None:
+                ok = np.isfinite(axis_src)
+                axis = np.interp(frames, f[ok], axis_src[ok]) if ok.any() else motion
+            else:
+                axis = motion
+            body = np.where(np.cos(axis - motion) < 0, axis + np.pi, axis)
+            seg["yaw"] = np.where(speed > 0.5, motion, body)
+            out.append(seg[cols])
+    return pd.concat(out, ignore_index=True) if out else pd.DataFrame(columns=cols)
+
+
+def states(points: pd.DataFrame, fps: float, kinematics: Kinematics | None = None) -> pd.DataFrame:
+    """Engine states: Savitzky-Golay (registered v0) when kinematics is None, otherwise the Kalman/RTS smoother."""
+    return smooth_states(points, fps) if kinematics is None else kalman_states(points, fps, kinematics)
 
 
 def smooth_states(points: pd.DataFrame, fps: float, window: int = 11, min_len: int = 5,

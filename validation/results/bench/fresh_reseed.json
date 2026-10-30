@@ -1,0 +1,1721 @@
+{
+ "flights": [
+  {
+   "site": "FIDRT",
+   "flight": "20250120_video",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:12:04",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video base",
+      "class": "vehicle",
+      "ref_points": 16461,
+      "pred_points": 13295,
+      "recall": 0.7608893748860944,
+      "precision": 0.9420834900338473,
+      "position_rmse_m": 0.7240090322384175,
+      "idf1": 0.8087108482322893,
+      "id_switches_per_min": 18.0,
+      "speed_mae_mps": 0.1796533985392585,
+      "speed_bias_mps": 0.05510412764171396
+     },
+     {
+      "t": "2026-10-30 22:12:05",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video base",
+      "class": "two_wheeler",
+      "ref_points": 7723,
+      "pred_points": 4089,
+      "recall": 0.47662825326945485,
+      "precision": 0.9002201027146002,
+      "position_rmse_m": 0.674944281282408,
+      "idf1": 0.4534371825262445,
+      "id_switches_per_min": 21.0,
+      "speed_mae_mps": 0.2513831222384789,
+      "speed_bias_mps": -0.0671103350128789
+     },
+     {
+      "t": "2026-10-30 22:12:05",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video base",
+      "class": "pedestrian",
+      "ref_points": 878,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 17,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=1.5": {
+     "ref_events": 10,
+     "pred_events": 5,
+     "tp": 3,
+     "precision": 0.6,
+     "recall": 0.3,
+     "f1": 0.4,
+     "pet_bias_s": -0.06666666666666288,
+     "pet_mae_s": 0.06666666666666288
+    },
+    "pet<=3.0": {
+     "ref_events": 35,
+     "pred_events": 14,
+     "tp": 11,
+     "precision": 0.7857142857142857,
+     "recall": 0.3142857142857143,
+     "f1": 0.44897959183673464,
+     "pet_bias_s": 0.10000000000000207,
+     "pet_mae_s": 0.26363636363636156
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:23:19",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video reseed",
+      "class": "vehicle",
+      "ref_points": 16461,
+      "pred_points": 13295,
+      "recall": 0.7608893748860944,
+      "precision": 0.9420834900338473,
+      "position_rmse_m": 0.7240090322384175,
+      "idf1": 0.8087108482322893,
+      "id_switches_per_min": 18.0,
+      "speed_mae_mps": 0.1796533985392585,
+      "speed_bias_mps": 0.05510412764171396
+     },
+     {
+      "t": "2026-10-30 22:23:19",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video reseed",
+      "class": "two_wheeler",
+      "ref_points": 7723,
+      "pred_points": 8363,
+      "recall": 0.7120290042729509,
+      "precision": 0.6575391605883056,
+      "position_rmse_m": 0.6811724896639995,
+      "idf1": 0.4359069998756683,
+      "id_switches_per_min": 88.0,
+      "speed_mae_mps": 0.23669992376781215,
+      "speed_bias_mps": -0.06100969502889222
+     },
+     {
+      "t": "2026-10-30 22:23:19",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FIDRT 20250120_video reseed",
+      "class": "pedestrian",
+      "ref_points": 878,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 17,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=1.5": {
+     "ref_events": 10,
+     "pred_events": 6,
+     "tp": 3,
+     "precision": 0.5,
+     "recall": 0.3,
+     "f1": 0.37499999999999994,
+     "pet_bias_s": -0.06666666666666288,
+     "pet_mae_s": 0.06666666666666288
+    },
+    "pet<=3.0": {
+     "ref_events": 35,
+     "pred_events": 21,
+     "tp": 14,
+     "precision": 0.6666666666666666,
+     "recall": 0.4,
+     "f1": 0.5,
+     "pet_bias_s": 0.0785714285714302,
+     "pet_mae_s": 0.221428571428569
+    },
+    "stats": {
+     "images": 48,
+     "requests": 36,
+     "seeds": 83,
+     "kept_tracks": 49
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250120_video",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:23:33",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video base",
+      "class": "vehicle",
+      "ref_points": 14798,
+      "pred_points": 12878,
+      "recall": 0.8322746317069875,
+      "precision": 0.9563596831806181,
+      "position_rmse_m": 0.48412142706671474,
+      "idf1": 0.8473767885532592,
+      "id_switches_per_min": 14.0,
+      "speed_mae_mps": 0.1686386947542902,
+      "speed_bias_mps": 0.019785733013414238
+     },
+     {
+      "t": "2026-10-30 22:23:33",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video base",
+      "class": "two_wheeler",
+      "ref_points": 8182,
+      "pred_points": 3722,
+      "recall": 0.3945245661207529,
+      "precision": 0.8672756582482536,
+      "position_rmse_m": 0.3285817178005196,
+      "idf1": 0.4731182795698925,
+      "id_switches_per_min": 14.0,
+      "speed_mae_mps": 0.34641669737460024,
+      "speed_bias_mps": -0.15212220066104337
+     },
+     {
+      "t": "2026-10-30 22:23:33",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video base",
+      "class": "pedestrian",
+      "ref_points": 432,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 30,
+     "pred_events": 3,
+     "tp": 2,
+     "precision": 0.6666666666666666,
+     "recall": 0.06666666666666667,
+     "f1": 0.1212121212121212
+    },
+    "pet<=1.5": {
+     "ref_events": 32,
+     "pred_events": 16,
+     "tp": 9,
+     "precision": 0.5625,
+     "recall": 0.28125,
+     "f1": 0.375,
+     "pet_bias_s": 3.157967714489334e-15,
+     "pet_mae_s": 0.13333333333332892
+    },
+    "pet<=3.0": {
+     "ref_events": 71,
+     "pred_events": 37,
+     "tp": 20,
+     "precision": 0.5405405405405406,
+     "recall": 0.28169014084507044,
+     "f1": 0.37037037037037035,
+     "pet_bias_s": 0.05,
+     "pet_mae_s": 0.13000000000000114
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:33:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video reseed",
+      "class": "vehicle",
+      "ref_points": 14798,
+      "pred_points": 12878,
+      "recall": 0.8322746317069875,
+      "precision": 0.9563596831806181,
+      "position_rmse_m": 0.48412142706671474,
+      "idf1": 0.8473767885532592,
+      "id_switches_per_min": 14.0,
+      "speed_mae_mps": 0.1686386947542902,
+      "speed_bias_mps": 0.019785733013414238
+     },
+     {
+      "t": "2026-10-30 22:33:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video reseed",
+      "class": "two_wheeler",
+      "ref_points": 8182,
+      "pred_points": 8034,
+      "recall": 0.7118064043021266,
+      "precision": 0.7249190938511327,
+      "position_rmse_m": 0.3507906590265013,
+      "idf1": 0.5624074987666502,
+      "id_switches_per_min": 116.0,
+      "speed_mae_mps": 0.32801860711076997,
+      "speed_bias_mps": -0.13646962888600703
+     },
+     {
+      "t": "2026-10-30 22:33:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250120_video reseed",
+      "class": "pedestrian",
+      "ref_points": 432,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 30,
+     "pred_events": 8,
+     "tp": 7,
+     "precision": 0.875,
+     "recall": 0.23333333333333334,
+     "f1": 0.3684210526315789
+    },
+    "pet<=1.5": {
+     "ref_events": 32,
+     "pred_events": 29,
+     "tp": 14,
+     "precision": 0.4827586206896552,
+     "recall": 0.4375,
+     "f1": 0.4590163934426229,
+     "pet_bias_s": 0.014285714285717534,
+     "pet_mae_s": 0.11428571428571185
+    },
+    "pet<=3.0": {
+     "ref_events": 71,
+     "pred_events": 52,
+     "tp": 27,
+     "precision": 0.5192307692307693,
+     "recall": 0.38028169014084506,
+     "f1": 0.43902439024390244,
+     "pet_bias_s": 0.03703703703703809,
+     "pet_mae_s": 0.11851851851851915
+    },
+    "stats": {
+     "images": 48,
+     "requests": 37,
+     "seeds": 97,
+     "kept_tracks": 70
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-1",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:34:03",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 base",
+      "class": "vehicle",
+      "ref_points": 15304,
+      "pred_points": 14923,
+      "recall": 0.8488630423418714,
+      "precision": 0.8705354151310059,
+      "position_rmse_m": 0.5490259554015363,
+      "idf1": 0.8119892811062956,
+      "id_switches_per_min": 24.0,
+      "speed_mae_mps": 0.1374981120387819,
+      "speed_bias_mps": -0.012539976817509632
+     },
+     {
+      "t": "2026-10-30 22:34:04",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 base",
+      "class": "two_wheeler",
+      "ref_points": 8629,
+      "pred_points": 2451,
+      "recall": 0.24093174180090393,
+      "precision": 0.8482252141982864,
+      "position_rmse_m": 0.36075679117636805,
+      "idf1": 0.31425992779783396,
+      "id_switches_per_min": 10.0,
+      "speed_mae_mps": 0.25320387762928487,
+      "speed_bias_mps": -0.10980722072395233
+     },
+     {
+      "t": "2026-10-30 22:34:04",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 base",
+      "class": "pedestrian",
+      "ref_points": 1113,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 40,
+     "pred_events": 7,
+     "tp": 3,
+     "precision": 0.42857142857142855,
+     "recall": 0.075,
+     "f1": 0.1276595744680851
+    },
+    "pet<=1.5": {
+     "ref_events": 45,
+     "pred_events": 7,
+     "tp": 3,
+     "precision": 0.42857142857142855,
+     "recall": 0.06666666666666667,
+     "f1": 0.11538461538461539,
+     "pet_bias_s": 0.03333333333333144,
+     "pet_mae_s": 0.10000000000001326
+    },
+    "pet<=3.0": {
+     "ref_events": 87,
+     "pred_events": 19,
+     "tp": 8,
+     "precision": 0.42105263157894735,
+     "recall": 0.09195402298850575,
+     "f1": 0.1509433962264151,
+     "pet_bias_s": 0.03749999999999076,
+     "pet_mae_s": 0.16250000000000497
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:44:00",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 reseed",
+      "class": "vehicle",
+      "ref_points": 15304,
+      "pred_points": 14923,
+      "recall": 0.8488630423418714,
+      "precision": 0.8705354151310059,
+      "position_rmse_m": 0.5490259554015363,
+      "idf1": 0.8119892811062956,
+      "id_switches_per_min": 24.0,
+      "speed_mae_mps": 0.1374981120387819,
+      "speed_bias_mps": -0.012539976817509632
+     },
+     {
+      "t": "2026-10-30 22:44:01",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 reseed",
+      "class": "two_wheeler",
+      "ref_points": 8629,
+      "pred_points": 9526,
+      "recall": 0.6712249391586511,
+      "precision": 0.6080201553642662,
+      "position_rmse_m": 0.44792547259505844,
+      "idf1": 0.4659873313136877,
+      "id_switches_per_min": 168.0,
+      "speed_mae_mps": 0.2368902806085916,
+      "speed_bias_mps": -0.07005291821649236
+     },
+     {
+      "t": "2026-10-30 22:44:01",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-1 reseed",
+      "class": "pedestrian",
+      "ref_points": 1113,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 40,
+     "pred_events": 10,
+     "tp": 5,
+     "precision": 0.5,
+     "recall": 0.125,
+     "f1": 0.2
+    },
+    "pet<=1.5": {
+     "ref_events": 45,
+     "pred_events": 16,
+     "tp": 9,
+     "precision": 0.5625,
+     "recall": 0.2,
+     "f1": 0.2950819672131148,
+     "pet_bias_s": 0.0777777777777781,
+     "pet_mae_s": 0.12222222222222949
+    },
+    "pet<=3.0": {
+     "ref_events": 87,
+     "pred_events": 40,
+     "tp": 20,
+     "precision": 0.5,
+     "recall": 0.22988505747126436,
+     "f1": 0.31496062992125984,
+     "pet_bias_s": 0.10499999999999758,
+     "pet_mae_s": 0.17500000000000354
+    },
+    "stats": {
+     "images": 48,
+     "requests": 31,
+     "seeds": 118,
+     "kept_tracks": 95
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-2",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:44:13",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 base",
+      "class": "vehicle",
+      "ref_points": 13316,
+      "pred_points": 13614,
+      "recall": 0.907329528386903,
+      "precision": 0.8874687821360364,
+      "position_rmse_m": 0.43626901044911215,
+      "idf1": 0.8669142220571853,
+      "id_switches_per_min": 13.0,
+      "speed_mae_mps": 0.15690861956018406,
+      "speed_bias_mps": -0.01596443455071617
+     },
+     {
+      "t": "2026-10-30 22:44:14",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 base",
+      "class": "two_wheeler",
+      "ref_points": 10706,
+      "pred_points": 4814,
+      "recall": 0.4152811507565851,
+      "precision": 0.9235562941420856,
+      "position_rmse_m": 0.32877375990974383,
+      "idf1": 0.4262886597938144,
+      "id_switches_per_min": 23.0,
+      "speed_mae_mps": 0.25061139155373185,
+      "speed_bias_mps": -0.0800156601712902
+     },
+     {
+      "t": "2026-10-30 22:44:14",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 base",
+      "class": "pedestrian",
+      "ref_points": 2211,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 41,
+     "pred_events": 6,
+     "tp": 4,
+     "precision": 0.6666666666666666,
+     "recall": 0.0975609756097561,
+     "f1": 0.1702127659574468
+    },
+    "pet<=1.5": {
+     "ref_events": 29,
+     "pred_events": 11,
+     "tp": 9,
+     "precision": 0.8181818181818182,
+     "recall": 0.3103448275862069,
+     "f1": 0.45000000000000007,
+     "pet_bias_s": 0.09999999999999748,
+     "pet_mae_s": 0.23333333333332953
+    },
+    "pet<=3.0": {
+     "ref_events": 65,
+     "pred_events": 28,
+     "tp": 18,
+     "precision": 0.6428571428571429,
+     "recall": 0.27692307692307694,
+     "f1": 0.38709677419354843,
+     "pet_bias_s": 0.02222222222221938,
+     "pet_mae_s": 0.21111111111111017
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:54:49",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 reseed",
+      "class": "vehicle",
+      "ref_points": 13316,
+      "pred_points": 13614,
+      "recall": 0.907329528386903,
+      "precision": 0.8874687821360364,
+      "position_rmse_m": 0.43626901044911215,
+      "idf1": 0.8669142220571853,
+      "id_switches_per_min": 13.0,
+      "speed_mae_mps": 0.15690861956018406,
+      "speed_bias_mps": -0.01596443455071617
+     },
+     {
+      "t": "2026-10-30 22:54:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 reseed",
+      "class": "two_wheeler",
+      "ref_points": 10706,
+      "pred_points": 11641,
+      "recall": 0.7225854660937792,
+      "precision": 0.6645477192681041,
+      "position_rmse_m": 0.35394236381470034,
+      "idf1": 0.450888262406587,
+      "id_switches_per_min": 198.0,
+      "speed_mae_mps": 0.26868348408794424,
+      "speed_bias_mps": -0.08020971003752612
+     },
+     {
+      "t": "2026-10-30 22:54:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-2 reseed",
+      "class": "pedestrian",
+      "ref_points": 2211,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 41,
+     "pred_events": 9,
+     "tp": 6,
+     "precision": 0.6666666666666666,
+     "recall": 0.14634146341463414,
+     "f1": 0.24
+    },
+    "pet<=1.5": {
+     "ref_events": 29,
+     "pred_events": 22,
+     "tp": 11,
+     "precision": 0.5,
+     "recall": 0.3793103448275862,
+     "f1": 0.4313725490196078,
+     "pet_bias_s": 0.06363636363636518,
+     "pet_mae_s": 0.20909090909090755
+    },
+    "pet<=3.0": {
+     "ref_events": 65,
+     "pred_events": 51,
+     "tp": 24,
+     "precision": 0.47058823529411764,
+     "recall": 0.36923076923076925,
+     "f1": 0.4137931034482759,
+     "pet_bias_s": 0.016666666666666902,
+     "pet_mae_s": 0.19166666666666643
+    },
+    "stats": {
+     "images": 48,
+     "requests": 35,
+     "seeds": 129,
+     "kept_tracks": 86
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250121_video-3",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 22:55:02",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 base",
+      "class": "vehicle",
+      "ref_points": 10702,
+      "pred_points": 10621,
+      "recall": 0.907120164455242,
+      "precision": 0.9140382261557292,
+      "position_rmse_m": 0.6051137058203425,
+      "idf1": 0.8818646531913896,
+      "id_switches_per_min": 14.0,
+      "speed_mae_mps": 0.20524819948508893,
+      "speed_bias_mps": 0.0066377629392067525
+     },
+     {
+      "t": "2026-10-30 22:55:02",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 base",
+      "class": "two_wheeler",
+      "ref_points": 8982,
+      "pred_points": 1388,
+      "recall": 0.12758851035404142,
+      "precision": 0.8256484149855908,
+      "position_rmse_m": 0.3764764562023,
+      "idf1": 0.21658630665380907,
+      "id_switches_per_min": 2.0,
+      "speed_mae_mps": 0.26778663312619433,
+      "speed_bias_mps": -0.08283757641723509
+     },
+     {
+      "t": "2026-10-30 22:55:02",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 base",
+      "class": "pedestrian",
+      "ref_points": 2292,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 40,
+     "pred_events": 2,
+     "tp": 1,
+     "precision": 0.5,
+     "recall": 0.025,
+     "f1": 0.047619047619047616
+    },
+    "pet<=1.5": {
+     "ref_events": 39,
+     "pred_events": 8,
+     "tp": 6,
+     "precision": 0.75,
+     "recall": 0.15384615384615385,
+     "f1": 0.25531914893617025,
+     "pet_bias_s": 0.11666666666665293,
+     "pet_mae_s": 0.18333333333333476
+    },
+    "pet<=3.0": {
+     "ref_events": 77,
+     "pred_events": 19,
+     "tp": 15,
+     "precision": 0.7894736842105263,
+     "recall": 0.19480519480519481,
+     "f1": 0.3125,
+     "pet_bias_s": 0.09333333333332708,
+     "pet_mae_s": 0.14666666666666497
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:05:02",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 reseed",
+      "class": "vehicle",
+      "ref_points": 10702,
+      "pred_points": 10621,
+      "recall": 0.907120164455242,
+      "precision": 0.9140382261557292,
+      "position_rmse_m": 0.6051137058203425,
+      "idf1": 0.8818646531913896,
+      "id_switches_per_min": 14.0,
+      "speed_mae_mps": 0.20524819948508893,
+      "speed_bias_mps": 0.0066377629392067525
+     },
+     {
+      "t": "2026-10-30 23:05:02",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 reseed",
+      "class": "two_wheeler",
+      "ref_points": 8982,
+      "pred_points": 10705,
+      "recall": 0.5870630149187264,
+      "precision": 0.4925735637552546,
+      "position_rmse_m": 0.43410631080431955,
+      "idf1": 0.3988418753492152,
+      "id_switches_per_min": 142.0,
+      "speed_mae_mps": 0.25361782043244274,
+      "speed_bias_mps": -0.0938235885844581
+     },
+     {
+      "t": "2026-10-30 23:05:03",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250121_video-3 reseed",
+      "class": "pedestrian",
+      "ref_points": 2292,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 40,
+     "pred_events": 12,
+     "tp": 3,
+     "precision": 0.25,
+     "recall": 0.075,
+     "f1": 0.11538461538461538
+    },
+    "pet<=1.5": {
+     "ref_events": 39,
+     "pred_events": 13,
+     "tp": 6,
+     "precision": 0.46153846153846156,
+     "recall": 0.15384615384615385,
+     "f1": 0.23076923076923075,
+     "pet_bias_s": 0.11666666666665293,
+     "pet_mae_s": 0.18333333333333476
+    },
+    "pet<=3.0": {
+     "ref_events": 77,
+     "pred_events": 30,
+     "tp": 18,
+     "precision": 0.6,
+     "recall": 0.23376623376623376,
+     "f1": 0.3364485981308411,
+     "pet_bias_s": 0.07222222222221733,
+     "pet_mae_s": 0.1388888888888865
+    },
+    "stats": {
+     "images": 48,
+     "requests": 31,
+     "seeds": 136,
+     "kept_tracks": 123
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-1",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:05:13",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 base",
+      "class": "vehicle",
+      "ref_points": 6307,
+      "pred_points": 6452,
+      "recall": 0.9732043760900587,
+      "precision": 0.9513329200247985,
+      "position_rmse_m": 0.43177895027379226,
+      "idf1": 0.9077513911748569,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.14629786332191283,
+      "speed_bias_mps": -0.023037942942083077
+     },
+     {
+      "t": "2026-10-30 23:05:13",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 base",
+      "class": "two_wheeler",
+      "ref_points": 9799,
+      "pred_points": 5600,
+      "recall": 0.5442392080824574,
+      "precision": 0.9523214285714285,
+      "position_rmse_m": 0.30154839430712516,
+      "idf1": 0.5739333722969024,
+      "id_switches_per_min": 19.0,
+      "speed_mae_mps": 0.16899263042145202,
+      "speed_bias_mps": -0.022963653334271274
+     },
+     {
+      "t": "2026-10-30 23:05:13",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 base",
+      "class": "pedestrian",
+      "ref_points": 367,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 14,
+     "pred_events": 2,
+     "tp": 2,
+     "precision": 1.0,
+     "recall": 0.14285714285714285,
+     "f1": 0.25
+    },
+    "pet<=1.5": {
+     "ref_events": 20,
+     "pred_events": 10,
+     "tp": 5,
+     "precision": 0.5,
+     "recall": 0.25,
+     "f1": 0.3333333333333333,
+     "pet_bias_s": 0.1400000000000034,
+     "pet_mae_s": 0.21999999999998748
+    },
+    "pet<=3.0": {
+     "ref_events": 40,
+     "pred_events": 17,
+     "tp": 10,
+     "precision": 0.5882352941176471,
+     "recall": 0.25,
+     "f1": 0.3508771929824561,
+     "pet_bias_s": 0.1300000000000054,
+     "pet_mae_s": 0.2899999999999963
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:15:26",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 reseed",
+      "class": "vehicle",
+      "ref_points": 6307,
+      "pred_points": 6452,
+      "recall": 0.9732043760900587,
+      "precision": 0.9513329200247985,
+      "position_rmse_m": 0.43177895027379226,
+      "idf1": 0.9077513911748569,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.14629786332191283,
+      "speed_bias_mps": -0.023037942942083077
+     },
+     {
+      "t": "2026-10-30 23:15:26",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 reseed",
+      "class": "two_wheeler",
+      "ref_points": 9799,
+      "pred_points": 10051,
+      "recall": 0.7459944892335952,
+      "precision": 0.7272908168341459,
+      "position_rmse_m": 0.31253761264159835,
+      "idf1": 0.5616120906801008,
+      "id_switches_per_min": 121.0,
+      "speed_mae_mps": 0.18651054598571498,
+      "speed_bias_mps": -0.03550511765616004
+     },
+     {
+      "t": "2026-10-30 23:15:26",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-1 reseed",
+      "class": "pedestrian",
+      "ref_points": 367,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 14,
+     "pred_events": 4,
+     "tp": 2,
+     "precision": 0.5,
+     "recall": 0.14285714285714285,
+     "f1": 0.22222222222222224
+    },
+    "pet<=1.5": {
+     "ref_events": 20,
+     "pred_events": 18,
+     "tp": 5,
+     "precision": 0.2777777777777778,
+     "recall": 0.25,
+     "f1": 0.2631578947368421,
+     "pet_bias_s": 0.06000000000000796,
+     "pet_mae_s": 0.13999999999999205
+    },
+    "pet<=3.0": {
+     "ref_events": 40,
+     "pred_events": 35,
+     "tp": 14,
+     "precision": 0.4,
+     "recall": 0.35,
+     "f1": 0.3733333333333333,
+     "pet_bias_s": 0.09285714285714672,
+     "pet_mae_s": 0.2071428571428545
+    },
+    "stats": {
+     "images": 48,
+     "requests": 34,
+     "seeds": 105,
+     "kept_tracks": 61
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250525_video-2",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:15:38",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 base",
+      "class": "vehicle",
+      "ref_points": 9033,
+      "pred_points": 8904,
+      "recall": 0.9381157976309089,
+      "precision": 0.951707097933513,
+      "position_rmse_m": 0.28739278831332554,
+      "idf1": 0.8858783520098121,
+      "id_switches_per_min": 18.0,
+      "speed_mae_mps": 0.1904498164785802,
+      "speed_bias_mps": -0.007665688183911456
+     },
+     {
+      "t": "2026-10-30 23:15:39",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 base",
+      "class": "two_wheeler",
+      "ref_points": 13992,
+      "pred_points": 10975,
+      "recall": 0.7320611778158947,
+      "precision": 0.9333029612756264,
+      "position_rmse_m": 0.2654242444101806,
+      "idf1": 0.742660311611327,
+      "id_switches_per_min": 35.0,
+      "speed_mae_mps": 0.20867154588965064,
+      "speed_bias_mps": -0.04962176667625761
+     },
+     {
+      "t": "2026-10-30 23:15:39",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 base",
+      "class": "pedestrian",
+      "ref_points": 543,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 37,
+     "pred_events": 7,
+     "tp": 4,
+     "precision": 0.5714285714285714,
+     "recall": 0.10810810810810811,
+     "f1": 0.18181818181818182
+    },
+    "pet<=1.5": {
+     "ref_events": 41,
+     "pred_events": 19,
+     "tp": 11,
+     "precision": 0.5789473684210527,
+     "recall": 0.2682926829268293,
+     "f1": 0.36666666666666664,
+     "pet_bias_s": -0.036363636363639464,
+     "pet_mae_s": 0.2545454545454556
+    },
+    "pet<=3.0": {
+     "ref_events": 82,
+     "pred_events": 44,
+     "tp": 22,
+     "precision": 0.5,
+     "recall": 0.2682926829268293,
+     "f1": 0.34920634920634924,
+     "pet_bias_s": -1.2918958832001822e-15,
+     "pet_mae_s": 0.21818181818182
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:27:25",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 reseed",
+      "class": "vehicle",
+      "ref_points": 9033,
+      "pred_points": 8904,
+      "recall": 0.9381157976309089,
+      "precision": 0.951707097933513,
+      "position_rmse_m": 0.28739278831332554,
+      "idf1": 0.8858783520098121,
+      "id_switches_per_min": 18.0,
+      "speed_mae_mps": 0.1904498164785802,
+      "speed_bias_mps": -0.007665688183911456
+     },
+     {
+      "t": "2026-10-30 23:27:26",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 reseed",
+      "class": "two_wheeler",
+      "ref_points": 13992,
+      "pred_points": 16576,
+      "recall": 0.8925100057175529,
+      "precision": 0.7533783783783784,
+      "position_rmse_m": 0.2562120289193043,
+      "idf1": 0.684833813137922,
+      "id_switches_per_min": 160.0,
+      "speed_mae_mps": 0.20128927713825787,
+      "speed_bias_mps": -0.048752574188750154
+     },
+     {
+      "t": "2026-10-30 23:27:26",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250525_video-2 reseed",
+      "class": "pedestrian",
+      "ref_points": 543,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 37,
+     "pred_events": 9,
+     "tp": 5,
+     "precision": 0.5555555555555556,
+     "recall": 0.13513513513513514,
+     "f1": 0.2173913043478261
+    },
+    "pet<=1.5": {
+     "ref_events": 41,
+     "pred_events": 27,
+     "tp": 11,
+     "precision": 0.4074074074074074,
+     "recall": 0.2682926829268293,
+     "f1": 0.3235294117647059,
+     "pet_bias_s": -0.036363636363639464,
+     "pet_mae_s": 0.2545454545454556
+    },
+    "pet<=3.0": {
+     "ref_events": 82,
+     "pred_events": 56,
+     "tp": 22,
+     "precision": 0.39285714285714285,
+     "recall": 0.2682926829268293,
+     "f1": 0.31884057971014496,
+     "pet_bias_s": -1.2918958832001822e-15,
+     "pet_mae_s": 0.21818181818182
+    },
+    "stats": {
+     "images": 48,
+     "requests": 39,
+     "seeds": 127,
+     "kept_tracks": 74
+    }
+   }
+  },
+  {
+   "site": "FI",
+   "flight": "20250530_video-2",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:27:37",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 base",
+      "class": "vehicle",
+      "ref_points": 8503,
+      "pred_points": 7008,
+      "recall": 0.8128895683876279,
+      "precision": 0.9863013698630136,
+      "position_rmse_m": 0.3466426474404905,
+      "idf1": 0.8673844368512669,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.17011868119609694,
+      "speed_bias_mps": -0.014563419917646559
+     },
+     {
+      "t": "2026-10-30 23:27:38",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 base",
+      "class": "two_wheeler",
+      "ref_points": 7869,
+      "pred_points": 2009,
+      "recall": 0.24552039649256577,
+      "precision": 0.9616724738675958,
+      "position_rmse_m": 0.30365540163959476,
+      "idf1": 0.3265843288115003,
+      "id_switches_per_min": 8.0,
+      "speed_mae_mps": 0.19729939920705028,
+      "speed_bias_mps": -0.029142353942134373
+     },
+     {
+      "t": "2026-10-30 23:27:38",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 base",
+      "class": "pedestrian",
+      "ref_points": 442,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 19,
+     "pred_events": 3,
+     "tp": 1,
+     "precision": 0.3333333333333333,
+     "recall": 0.05263157894736842,
+     "f1": 0.09090909090909091
+    },
+    "pet<=1.5": {
+     "ref_events": 22,
+     "pred_events": 8,
+     "tp": 5,
+     "precision": 0.625,
+     "recall": 0.22727272727272727,
+     "f1": 0.3333333333333333,
+     "pet_bias_s": 0.04000000000000341,
+     "pet_mae_s": 0.1599999999999966
+    },
+    "pet<=3.0": {
+     "ref_events": 53,
+     "pred_events": 21,
+     "tp": 12,
+     "precision": 0.5714285714285714,
+     "recall": 0.22641509433962265,
+     "f1": 0.3243243243243244,
+     "pet_bias_s": 0.1666666666666643,
+     "pet_mae_s": 0.23333333333332718
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:40:41",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 reseed",
+      "class": "vehicle",
+      "ref_points": 8503,
+      "pred_points": 7008,
+      "recall": 0.8128895683876279,
+      "precision": 0.9863013698630136,
+      "position_rmse_m": 0.3466426474404905,
+      "idf1": 0.8673844368512669,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.17011868119609694,
+      "speed_bias_mps": -0.014563419917646559
+     },
+     {
+      "t": "2026-10-30 23:40:41",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 reseed",
+      "class": "two_wheeler",
+      "ref_points": 7869,
+      "pred_points": 7419,
+      "recall": 0.7070784089464989,
+      "precision": 0.7499663027362178,
+      "position_rmse_m": 0.33386963563309374,
+      "idf1": 0.5395081109366824,
+      "id_switches_per_min": 110.0,
+      "speed_mae_mps": 0.20179012563723808,
+      "speed_bias_mps": -0.039556102390635
+     },
+     {
+      "t": "2026-10-30 23:40:41",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed FI 20250530_video-2 reseed",
+      "class": "pedestrian",
+      "ref_points": 442,
+      "pred_points": 0,
+      "recall": 0.0,
+      "precision": NaN
+     }
+    ],
+    "ttc": {
+     "ref_events": 19,
+     "pred_events": 8,
+     "tp": 2,
+     "precision": 0.25,
+     "recall": 0.10526315789473684,
+     "f1": 0.14814814814814814
+    },
+    "pet<=1.5": {
+     "ref_events": 22,
+     "pred_events": 18,
+     "tp": 11,
+     "precision": 0.6111111111111112,
+     "recall": 0.5,
+     "f1": 0.55,
+     "pet_bias_s": 0.009090909090911158,
+     "pet_mae_s": 0.13636363636363635
+    },
+    "pet<=3.0": {
+     "ref_events": 53,
+     "pred_events": 42,
+     "tp": 26,
+     "precision": 0.6190476190476191,
+     "recall": 0.49056603773584906,
+     "f1": 0.5473684210526316,
+     "pet_bias_s": 0.09615384615384506,
+     "pet_mae_s": 0.1576923076923053
+    },
+    "stats": {
+     "images": 48,
+     "requests": 32,
+     "seeds": 102,
+     "kept_tracks": 76
+    }
+   }
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-1",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:40:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-1 base",
+      "class": "vehicle",
+      "ref_points": 5000,
+      "pred_points": 3458,
+      "recall": 0.5536,
+      "precision": 0.8004626951995373,
+      "position_rmse_m": 0.3338047894068121,
+      "idf1": 0.6299361551194136,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.2925556481077728,
+      "speed_bias_mps": 0.022826678470186955
+     },
+     {
+      "t": "2026-10-30 23:40:50",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-1 base",
+      "class": "two_wheeler",
+      "ref_points": 523,
+      "pred_points": 45,
+      "recall": 0.08604206500956023,
+      "precision": 1.0,
+      "position_rmse_m": 0.21915989850981174,
+      "idf1": 0.15845070422535212,
+      "id_switches_per_min": 0.0,
+      "speed_mae_mps": 0.22432048346091812,
+      "speed_bias_mps": -0.029963980317286518
+     }
+    ],
+    "ttc": {
+     "ref_events": 3,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=1.5": {
+     "ref_events": 1,
+     "pred_events": 1,
+     "tp": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=3.0": {
+     "ref_events": 3,
+     "pred_events": 1,
+     "tp": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:43:32",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-1 reseed",
+      "class": "vehicle",
+      "ref_points": 5000,
+      "pred_points": 3458,
+      "recall": 0.5536,
+      "precision": 0.8004626951995373,
+      "position_rmse_m": 0.3338047894068121,
+      "idf1": 0.6299361551194136,
+      "id_switches_per_min": 5.0,
+      "speed_mae_mps": 0.2925556481077728,
+      "speed_bias_mps": 0.022826678470186955
+     },
+     {
+      "t": "2026-10-30 23:43:32",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-1 reseed",
+      "class": "two_wheeler",
+      "ref_points": 523,
+      "pred_points": 188,
+      "recall": 0.17782026768642448,
+      "precision": 0.4946808510638298,
+      "position_rmse_m": 0.3157789247139625,
+      "idf1": 0.2616033755274262,
+      "id_switches_per_min": 0.0,
+      "speed_mae_mps": 1.194032791448895,
+      "speed_bias_mps": -0.38395461032112316
+     }
+    ],
+    "ttc": {
+     "ref_events": 3,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=1.5": {
+     "ref_events": 1,
+     "pred_events": 1,
+     "tp": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=3.0": {
+     "ref_events": 3,
+     "pred_events": 1,
+     "tp": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "stats": {
+     "images": 48,
+     "requests": 2,
+     "seeds": 2,
+     "kept_tracks": 2
+    }
+   }
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-2",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:43:38",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-2 base",
+      "class": "vehicle",
+      "ref_points": 3653,
+      "pred_points": 2511,
+      "recall": 0.6241445387352861,
+      "precision": 0.9080047789725209,
+      "position_rmse_m": 0.9170468412916101,
+      "idf1": 0.736859182349124,
+      "id_switches_per_min": 2.0,
+      "speed_mae_mps": 0.2758851725464202,
+      "speed_bias_mps": -0.049780966862655214
+     },
+     {
+      "t": "2026-10-30 23:43:38",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-2 base",
+      "class": "two_wheeler",
+      "ref_points": 125,
+      "pred_points": 94,
+      "recall": 0.0,
+      "precision": 0.0
+     }
+    ],
+    "ttc": {
+     "ref_events": 0,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": NaN,
+     "f1": NaN
+    },
+    "pet<=1.5": {
+     "ref_events": 1,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=3.0": {
+     "ref_events": 2,
+     "pred_events": 3,
+     "tp": 2,
+     "precision": 0.6666666666666666,
+     "recall": 1.0,
+     "f1": 0.8,
+     "pet_bias_s": 0.6000000000000085,
+     "pet_mae_s": 0.7000000000000313
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:46:32",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-2 reseed",
+      "class": "vehicle",
+      "ref_points": 3653,
+      "pred_points": 2511,
+      "recall": 0.6241445387352861,
+      "precision": 0.9080047789725209,
+      "position_rmse_m": 0.9170468412916101,
+      "idf1": 0.736859182349124,
+      "id_switches_per_min": 2.0,
+      "speed_mae_mps": 0.2758851725464202,
+      "speed_bias_mps": -0.049780966862655214
+     },
+     {
+      "t": "2026-10-30 23:46:32",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-2 reseed",
+      "class": "two_wheeler",
+      "ref_points": 125,
+      "pred_points": 299,
+      "recall": 0.0,
+      "precision": 0.0
+     }
+    ],
+    "ttc": {
+     "ref_events": 0,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": NaN,
+     "f1": NaN
+    },
+    "pet<=1.5": {
+     "ref_events": 1,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "pet<=3.0": {
+     "ref_events": 2,
+     "pred_events": 3,
+     "tp": 2,
+     "precision": 0.6666666666666666,
+     "recall": 1.0,
+     "f1": 0.8,
+     "pet_bias_s": 0.6000000000000085,
+     "pet_mae_s": 0.7000000000000313
+    },
+    "stats": {
+     "images": 48,
+     "requests": 4,
+     "seeds": 4,
+     "kept_tracks": 2
+    }
+   }
+  },
+  {
+   "site": "TI",
+   "flight": "20250529_video-3",
+   "base": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:46:37",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-3 base",
+      "class": "vehicle",
+      "ref_points": 3846,
+      "pred_points": 2162,
+      "recall": 0.5075403016120645,
+      "precision": 0.902867715078631,
+      "position_rmse_m": 0.9408047539304075,
+      "idf1": 0.6344873501997337,
+      "id_switches_per_min": 1.0,
+      "speed_mae_mps": 0.3599322629640634,
+      "speed_bias_mps": -0.031123502385687892
+     }
+    ],
+    "ttc": {
+     "ref_events": 0,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": NaN,
+     "f1": NaN
+    },
+    "pet<=1.5": {
+     "ref_events": 2,
+     "pred_events": 1,
+     "tp": 1,
+     "precision": 1.0,
+     "recall": 0.5,
+     "f1": 0.6666666666666666,
+     "pet_bias_s": 0.20000000000001705,
+     "pet_mae_s": 0.20000000000001705
+    },
+    "pet<=3.0": {
+     "ref_events": 3,
+     "pred_events": 2,
+     "tp": 2,
+     "precision": 1.0,
+     "recall": 0.6666666666666666,
+     "f1": 0.8,
+     "pet_bias_s": 0.2500000000000284,
+     "pet_mae_s": 0.2500000000000284
+    },
+    "stats": {}
+   },
+   "reseed": {
+    "tracking": [
+     {
+      "t": "2026-10-30 23:48:49",
+      "commit": "ec35123",
+      "stage": "tracking",
+      "clip": "reseed TI 20250529_video-3 reseed",
+      "class": "vehicle",
+      "ref_points": 3846,
+      "pred_points": 2162,
+      "recall": 0.5075403016120645,
+      "precision": 0.902867715078631,
+      "position_rmse_m": 0.9408047539304075,
+      "idf1": 0.6344873501997337,
+      "id_switches_per_min": 1.0,
+      "speed_mae_mps": 0.3599322629640634,
+      "speed_bias_mps": -0.031123502385687892
+     }
+    ],
+    "ttc": {
+     "ref_events": 0,
+     "pred_events": 0,
+     "tp": 0,
+     "precision": NaN,
+     "recall": NaN,
+     "f1": NaN
+    },
+    "pet<=1.5": {
+     "ref_events": 2,
+     "pred_events": 1,
+     "tp": 1,
+     "precision": 1.0,
+     "recall": 0.5,
+     "f1": 0.6666666666666666,
+     "pet_bias_s": 0.20000000000001705,
+     "pet_mae_s": 0.20000000000001705
+    },
+    "pet<=3.0": {
+     "ref_events": 3,
+     "pred_events": 2,
+     "tp": 2,
+     "precision": 1.0,
+     "recall": 0.6666666666666666,
+     "f1": 0.8,
+     "pet_bias_s": 0.2500000000000284,
+     "pet_mae_s": 0.2500000000000284
+    },
+    "stats": {
+     "images": 48
+    }
+   }
+  }
+ ],
+ "pooled": {
+  "base": {
+   "ttc": {
+    "tp": 17,
+    "ref_events": 241,
+    "pred_events": 30,
+    "precision": 0.5666666666666667,
+    "recall": 0.07053941908713693,
+    "f1": 0.12546125461254612,
+    "f2": 0.08551307847082495
+   },
+   "pet<=1.5": {
+    "tp": 52,
+    "ref_events": 242,
+    "pred_events": 86,
+    "precision": 0.6046511627906976,
+    "recall": 0.21487603305785125,
+    "f1": 0.3170731707317073,
+    "f2": 0.24667931688804554
+   },
+   "pet<=3.0": {
+    "tp": 120,
+    "ref_events": 518,
+    "pred_events": 205,
+    "precision": 0.5853658536585366,
+    "recall": 0.23166023166023167,
+    "f1": 0.3319502074688797,
+    "f2": 0.2635046113306983
+   }
+  },
+  "reseed": {
+   "ttc": {
+    "tp": 30,
+    "ref_events": 241,
+    "pred_events": 60,
+    "precision": 0.5,
+    "recall": 0.12448132780082988,
+    "f1": 0.19933554817275748,
+    "f2": 0.146484375
+   },
+   "pet<=1.5": {
+    "tp": 71,
+    "ref_events": 242,
+    "pred_events": 151,
+    "precision": 0.47019867549668876,
+    "recall": 0.29338842975206614,
+    "f1": 0.361323155216285,
+    "f2": 0.31724754244861486
+   },
+   "pet<=3.0": {
+    "tp": 169,
+    "ref_events": 518,
+    "pred_events": 333,
+    "precision": 0.5075075075075075,
+    "recall": 0.32625482625482627,
+    "f1": 0.3971797884841363,
+    "f2": 0.35135135135135137
+   }
+  }
+ },
+ "pet_f1_diff_ci95": [
+  -0.023896751870834693,
+  0.11709378940207896
+ ],
+ "ttc_f1_diff_ci95": [
+  0.03342134498100047,
+  0.12808273168292958
+ ],
+ "claim_reseed_better": false
+}
