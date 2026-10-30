@@ -160,3 +160,33 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
 - **Scoring:** as in PREREG change 6 (same class pair, within 1 s, one-to-one) against the reference conflict table of the same frames, before and after the verifier.
 - **Rule:** the verifier is reported as an improvement only if pooled F1 rises and a 95% bootstrap interval over windows (2,000 resamples, seed 0) for the difference is above 0.
 - **Cost:** Baseten credit only.
+
+## T11 Did the city's own treatments work? (registered 2026-10-31, before any crash data was downloaded for it)
+- **Question:** at NYC intersections where the city installed a Leading Pedestrian Interval (LPI), did pedestrian injury crashes fall more than the comparison sites' change over the same months predicts? How does the measured effect compare with the CMF Clearinghouse values the brief ranks with (FHWA-HRT-18-044, vehicle/pedestrian CMF 0.81–0.91)?
+- **Data (NYC Open Data):**
+  - LPI signals with install dates (`xc4v-ntf4`);
+  - turn traffic calming with completion dates (`sm2x-35i7`);
+  - police-reported crashes (`h9gi-nx95`, from 2012-07-01).
+  Only the treatment install dates were looked at before registering (counts per year), not any crash data.
+- **Sites:** LPI points within 30 m of each other are one site, dated by the earliest install.
+- **Treated sites:** LPI sites installed from 2015-08-01 to 2021-12-31.
+  - Before window: the 36 months ending 1 month before the install month.
+  - After window: the 36 months starting 1 month after it.
+  - Excluded: sites with another LPI or turn-calming site within 100 m installed inside their before or after window. The number excluded is reported.
+- **Crashes counted:** crashes within 50 m of the site.
+  - Primary outcome: pedestrian injury or fatal crashes (at least one pedestrian injured or killed).
+  - Secondary outcomes: all injury crashes; injury crashes with no pedestrian or cyclist hurt.
+- **Comparison group (primary): not-yet-treated LPI sites.** These are sites the city also chose for an LPI, but installed after the treated site's after window ended, with no other LPI within 100 m by then. For each install-month cohort:
+  - r = comparison crashes in the cohort's after window ÷ crashes in its before window;
+  - the expected after count without treatment is π = before × r;
+  - the effect is θ = Σ after ÷ Σ π (Hauer's comparison-group method).
+  - θ < 1 means fewer crashes than expected.
+- **Uncertainty:** a 95% bootstrap interval resampling treated and comparison sites (2,000 resamples, seed 0).
+- **Rule:** the city's LPIs are reported as having reduced pedestrian injury crashes only if the interval for θ is entirely below 1. The estimate is compared with the CMF the brief uses either way.
+- **Placebo check (bias test):** the same analysis with a fake install date 18 months before the real one, using 18-month windows that both end before the real install. A placebo θ whose interval excludes 1 is reported as evidence of trend or selection bias in the main estimate.
+- **Sensitivity:** comparison group (b), the citywide trend. This is all NYC crashes more than 100 m from any LPI or turn-calming site, over the same months.
+- **Turn traffic calming (secondary):** 2016–2021 completions, same windows and outcome, comparison group (b) only. Not-yet-treated sites do not exist after 2021.
+- **Known limits, stated in advance:**
+  - Sites were chosen by the city, so regression to the mean can make the effect look larger. The placebo check tests for this but does not remove it; no Empirical Bayes model is fitted.
+  - Other work at the site recorded outside these datasets is not seen.
+  - Police-reported crashes miss some injuries.

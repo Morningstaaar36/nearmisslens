@@ -10,7 +10,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from . import brief
+from . import brief, letter
 from .config import SETTINGS
 from .evaluate import RESULTS_DIR
 
@@ -34,7 +34,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);height:ca
 .kpi{display:flex;gap:18px;flex-wrap:wrap}.kpi div{min-width:110px}.kpi b{font-size:22px;display:block}
 .gap{color:var(--bad);font-weight:700}.nogap{color:var(--ok);font-weight:700}
 table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.verify{color:var(--mut);font-style:italic}.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.imgs img{width:100%;border-radius:8px}
+.verify{color:var(--mut);font-style:italic}.local{color:var(--ok);font-size:12px;margin-top:4px}.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.imgs img{width:100%;border-radius:8px}
 .memo{line-height:1.55}.legend{font-size:12px;color:var(--mut)}
 </style></head><body>
 <header><h1>Junction Safety Copilot</h1><span class="sub">Official record → cited fixes → checked brief. NYC, DC, Chicago, LA.</span>
@@ -46,29 +46,39 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,att
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 fetch('/citywide').then(r=>r.json()).then(d=>{
  if(!d.rows)return;const s=d.summary;
- document.getElementById('top').innerHTML=`<p><b>${s.plan_gap} of ${s.intersections}</b> NYC priority intersections had ≥10 injury crashes in 5 years and no recorded safety treatment nearby in that period (${s.injury_crashes_total} injury crashes, ${s.killed_total} deaths in total).</p>`;
+ const usd=s.harm_usd_per_year?` Their injury crashes cost about <b>$${(s.harm_usd_per_year/1e6).toFixed(0)} million a year</b> in the U.S. DOT's official values.`:'';
+ document.getElementById('top').innerHTML=`<p><b>${s.plan_gap} of ${s.intersections}</b> NYC priority intersections had ≥10 injury crashes in 5 years and no recorded safety treatment nearby in that period (${(s.injury_crashes_distinct??s.injury_crashes_total).toLocaleString()} injury crashes, ${s.killed_distinct??s.killed_total} deaths at all ${s.intersections}).${usd}</p>`;
  for(const r of d.rows){const c=L.circleMarker([r.lat,r.lon],{radius:4+Math.sqrt(r.injury_crashes||0)/2,color:r.plan_gap?'#ef5350':'#3ecf8e',weight:1,fillOpacity:.6}).addTo(map);
   c.bindTooltip(`${esc(r.name)}: ${r.injury_crashes} injury crashes`);c.on('click',()=>run({lat:r.lat,lon:r.lon,name:r.name}));}});
 document.getElementById('go').onclick=()=>run({address:document.getElementById('q').value});
 const qs=new URLSearchParams(location.search);
-if(qs.get('q')){document.getElementById('q').value=qs.get('q');run({address:qs.get('q')});}
+if(qs.get('q')){document.getElementById('q').value=qs.get('q');run(qs.get('lat')?{address:qs.get('q'),lat:+qs.get('lat'),lon:+qs.get('lon')}:{address:qs.get('q')});}
 async function run(q){
  const out=document.getElementById('out');out.innerHTML='<div class="card">Assembling the official record, ranking fixes, writing the brief…</div>';
  const t0=Date.now();const r=await fetch('/brief',{method:'POST',body:JSON.stringify(q)});const f=await r.json();
  if(f.error){out.innerHTML=`<div class="card">Could not build the brief: ${esc(f.error)}</div>`;return;}
  const d=f.dossier,cr=d.crashes||{},pl=d.plans||{},fx=f.fixes||{};map.setView([d.lat,d.lon],17);
- const rows=(fx.options||[]).slice(0,8).map(o=>`<tr><td><b>${esc(o.countermeasure)}</b>${o.verify_on_site?`<div class="verify">verify on site: ${esc(o.verify_on_site)}</div>`:''}</td><td>CMF ${esc(o.cmf_id)}<br>${o.cmf} · ${esc(o.stars)}</td><td>${esc(o.targets)}<br>${o.target_crashes_per_year}/yr</td><td><b>${o.expected_crashes_avoided_per_year}</b>/yr</td></tr>`).join('');
+ const usd=v=>v==null?'n/a':'$'+Math.round(v).toLocaleString();
+ const rows=(fx.options||[]).slice(0,8).map(o=>`<tr><td><b>${esc(o.countermeasure)}</b>${o.verify_on_site?`<div class="verify">verify on site: ${esc(o.verify_on_site)}</div>`:''}${o.local_evidence?`<div class="local">Tested on this city's own installs: ${esc(o.local_evidence.text)}</div>`:''}</td><td>CMF ${esc(o.cmf_id)}<br>${o.cmf} · ${esc(o.stars)}</td><td>${esc(o.targets)}<br>${o.target_crashes_per_year}/yr</td><td><b>${o.expected_crashes_avoided_per_year}</b>/yr</td><td><b>${usd(o.harm_avoided_usd_per_year)}</b>/yr<div class="legend">pays for itself under ${usd(o.break_even_cost_usd)}</div></td></tr>`).join('');
+ const hm=fx.harm?`<div><b>$${(fx.harm.usd_per_year/1e6).toFixed(1)}M</b>a year in harm (USDOT)</div>`:'';
  const imgs=[f.aerial_photo?`<figure><img src="/media?p=${encodeURIComponent(f.aerial_photo)}"><figcaption class="legend">City aerial photo</figcaption></figure>`:'',
   f.street_photo?`<figure><img src="/media?p=${encodeURIComponent(f.street_photo.image)}"><figcaption class="legend">Street level, ${esc(f.street_photo.captured)} (<a href="${f.street_photo.url}" target="_blank">Mapillary</a>, CC BY-SA)</figcaption></figure>`:''].join('');
  const ill=f.illustration?`<div class="card"><b>Proposed fix, drawn by Muse Image on the city photo</b> (${esc(f.illustration.countermeasure)}; SAM 3.1 check ${f.illustration.check_passed?'passed':'failed'})<img style="width:100%;border-radius:8px;margin-top:8px" src="/media?p=${encodeURIComponent(f.illustration.image)}"></div>`:'';
  const memo=f.brief&&f.brief.brief?`<div class="card memo"><b>Safety Brief</b> <span class="legend">every number checked against the record</span>${DOMPurify.sanitize(marked.parse(f.brief.brief))}</div>`:'';
  out.innerHTML=`<div class="card"><h2 style="margin:0 0 4px">${esc(f.junction)}</h2><div class="kpi">
  <div><b>${cr.crashes??'n/a'}</b>crashes, 5 yr</div><div><b>${cr.injury_crashes??'n/a'}</b>injury crashes</div>
- <div><b>${(cr.pedestrian_injured||0)+(cr.pedestrian_killed||0)}</b>pedestrians hurt</div><div><b>${(cr.cyclist_injured||0)+(cr.cyclist_killed||0)}</b>cyclists hurt</div></div>
+ <div><b>${(cr.pedestrian_injured||0)+(cr.pedestrian_killed||0)}</b>pedestrians hurt</div><div><b>${(cr.cyclist_injured||0)+(cr.cyclist_killed||0)}</b>cyclists hurt</div>${hm}</div>
  <p>${pl.designated?'On the city\'s priority network.':'Not on the city\'s priority lists.'} ${d.plan_gap?'<span class="gap">Plan gap: no recorded safety treatment in the period.</span>':(d.plan_gap===false?'<span class="nogap">Recorded treatment in the period.</span>':'')}</p>
  <p class="legend">${esc(cr.source||'')} · ${esc(pl.source||'')} · ${((Date.now()-t0)/1000).toFixed(0)} s</p></div>
  <div class="imgs">${imgs}</div>${ill}
- <div class="card"><b>Ranked fixes</b> <span class="legend">${esc(fx.method||'')}</span><table><tr><th>FHWA Proven Safety Countermeasure</th><th>CMF Clearinghouse</th><th>Targets</th><th>Expected crashes avoided</th></tr>${rows}</table></div>${memo}`;}
+ <div class="card"><b>Ranked fixes</b> <span class="legend">${esc(fx.method||'')}</span><table><tr><th>FHWA Proven Safety Countermeasure</th><th>CMF Clearinghouse</th><th>Targets</th><th>Expected crashes avoided</th><th>Harm avoided (USDOT $)</th></tr>${rows}</table>${(fx.in_place||[]).map(x=>`<p class="legend">Already in place (city records): ${esc(x.countermeasure)}${x.year?' since '+x.year:''}; not proposed again.</p>`).join('')}</div>${memo}
+ <div class="card"><b>Ask for the fix</b> <span class="legend">a letter to the people who can request it, checked against the record; you review and send it</span><div style="margin-top:8px"><button id="ltr">Draft a letter</button></div><div id="ltrout"></div></div>`;
+ document.getElementById('ltr').onclick=async()=>{const o=document.getElementById('ltrout');o.innerHTML='<p class="legend">Finding the council district and community board, drafting…</p>';
+  const lr=await (await fetch('/letter',{method:'POST',body:JSON.stringify(q)})).json();
+  if(lr.error||!lr.letter){o.innerHTML=`<p>Could not draft the letter: ${esc(lr.error||(lr.checker_errors||[]).join('; '))}</p>`;return;}
+  o.innerHTML=`<textarea id="ltrtxt" style="width:100%;min-height:340px;margin-top:8px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:13px/1.5 system-ui">${esc(lr.letter)}</textarea>
+  <p class="legend">${lr.rejected_drafts?lr.rejected_drafts+' draft(s) rejected by the checker and fixed · ':''}$${lr.usd} · <a href="#" id="cp">copy</a></p>`;
+  document.getElementById('cp').onclick=e=>{e.preventDefault();navigator.clipboard.writeText(document.getElementById('ltrtxt').value);};};}
 </script></body></html>"""
 
 
@@ -106,12 +116,23 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
         def do_POST(self):
             raw = self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}"
             q = json.loads(raw)
+            if urlparse(self.path).path == "/letter":  # a draft letter from the brief already built for q
+                try:
+                    k = json.dumps(q, sort_keys=True)
+                    f = json.loads(done[k]) if k in done else brief.build(q.get("address") or q.get("name"), q.get("lat"),
+                                                                           q.get("lon"), client=memo_client, memo=False)
+                    d = f["dossier"]
+                    res = letter.draft(memo_client, f, letter.offices(d["lat"], d["lon"], d.get("city")),
+                                       tag=f"letter {f['junction'][:40]}")
+                    return self._send(200, json.dumps(res, default=str).encode(), "application/json")
+                except Exception as e:  # shown to the user, not hidden
+                    return self._send(200, json.dumps({"error": f"{type(e).__name__}: {e}"}).encode(), "application/json")
             key = json.dumps(q, sort_keys=True)
             if key in done:
                 return self._send(200, done[key], "application/json")
             try:
                 t = time.time()
-                f = brief.build(q.get("address"), q.get("lat"), q.get("lon"), client=memo_client, memo=True)
+                f = brief.build(q.get("address") or q.get("name"), q.get("lat"), q.get("lon"), client=memo_client, memo=True)
                 if illustrate and not f.get("illustration") and f.get("aerial_photo") and f["fixes"]["options"]:
                     out = Path(f["aerial_photo"]).parent
                     f["illustration"] = brief.illustrate_fix(image_client, Path(f["aerial_photo"]), f["fixes"]["options"],

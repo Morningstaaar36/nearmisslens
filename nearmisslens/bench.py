@@ -558,6 +558,12 @@ def write_bench_md() -> str:
                   f"{s_['intersections']} intersections, {s_['injury_crashes_total']} injury crashes and {s_['killed_total']} "
                   f"deaths within 100 m in 5 years. Plan gap (≥ 10 injury crashes, no recorded treatment in the period): "
                   f"{s_['plan_gap']} ({_f(100 * s_['plan_gap_share'], 1)}%). No recorded treatment ever: {s_['never_a_project']}.", ""]
+            if "injury_crashes_distinct" in s_:
+                L += [f"The totals above add each intersection's count, so a crash within 100 m of two priority "
+                      f"intersections is counted twice. Counted once each (records since {s_['since']}): "
+                      f"{s_['injury_crashes_distinct']:,} injury crashes and {s_['killed_distinct']} deaths. At the U.S. "
+                      f"DOT's injury-crash value (BCA Guidance 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths "
+                      f"not valued separately) they cost about ${s_['harm_usd_per_year'] / 1e6:,.0f} million a year.", ""]
     fu = _load("fusion_dc.json")
     if fu:
         L += ["## T10 Near-miss and crash fusion, Washington DC (unseen 30% of 1 km blocks, future years)", "",
@@ -569,6 +575,61 @@ def write_bench_md() -> str:
             f"{t} [{_f(r['top5_diff_fusion_minus_crash_ci95'][0])}, {_f(r['top5_diff_fusion_minus_crash_ci95'][1])}]"
             for t, r in fu.items()) + ". Registered rule not met: residents' near-miss reports did not improve crash "
             "prediction over crash history, also at sites with little crash history (exploratory).", ""]
+    tr = _load("treatments_nyc.json")
+    if tr:
+        d = tr["data"]
+        L += ["## T11 Did the city's own treatments work? NYC comparison-group before/after study", "",
+              f"{d['lpi_sites']:,} Leading Pedestrian Interval sites ({d['lpi_points']:,} signals) and {d['turn_sites']} "
+              f"turn traffic calming sites, {d['crashes']:,} police-reported crashes ({d['crash_months'][0]} to "
+              f"{d['crash_months'][1]}), crashes within {d['radius_m']:.0f} m, {d['window_months']} months before and "
+              "after the install month. theta = crashes after ÷ crashes expected from the comparison group's change; "
+              "below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.", "",
+              "| study | comparison group | sites | outcome | after | expected | theta | 95% interval |",
+              "|---|---|---|---|---|---|---|---|"]
+        rows = (("lpi_not_yet_treated", "LPI", "not yet treated (primary)"),
+                ("lpi_placebo_not_yet_treated", "LPI placebo, install date 19 months early", "not yet treated"),
+                ("lpi_placebo_same_sites_not_yet_treated", "LPI placebo on the primary sites (added after the results)",
+                 "not yet treated"),
+                ("lpi_citywide", "LPI (sensitivity)", "citywide trend"),
+                ("lpi_placebo_citywide", "LPI placebo", "citywide trend"),
+                ("turn_calming_citywide", "turn traffic calming", "citywide trend"),
+                ("turn_calming_placebo_citywide", "turn traffic calming placebo", "citywide trend"))
+        names = {"pedestrian": "pedestrian injury crashes", "injury": "all injury crashes",
+                 "motorist_only": "injury crashes, no pedestrian or cyclist hurt"}
+        for key, study, cg in rows:
+            for o, name in names.items():
+                r = tr[key].get(o)
+                if r and r.get("theta") is not None:
+                    L.append(f"| {study} | {cg} | {r['sites']:,} | {name} | {r['after']:,} | {r['expected_after']:,.0f} | "
+                             f"{_f(r['theta'])} | [{_f(r['ci95'][0])}, {_f(r['ci95'][1])}] |")
+        m = tr["lpi_not_yet_treated"]
+        cmf = ", ".join(f"CMF {c['cmf_id']} = {c['cmf']}" for c in tr.get("brief_cmf", []))
+        L += ["", f"Registered rule (interval for pedestrian injury crashes entirely below 1): "
+                  f"{'met' if tr['rule_met'] else 'not met'}. LPIs installed {m['install_months'][0]} to "
+                  f"{m['install_months'][1]}: pedestrian injury crashes {_f(m['pedestrian']['change_pct'], 1)}% against "
+                  f"sites the city treated later. The brief ranks LPIs with the CMF Clearinghouse value ({cmf}), a "
+                  f"{_f(100 * (1 - tr['brief_cmf'][0]['cmf']), 0)}% cut; NYC's own installs measured "
+                  f"{_f(-m['pedestrian']['change_pct'], 0)}%. Placebo flag: "
+                  f"{'raised' if tr['placebo_flag'] else 'not raised'} (the placebo interval includes 1). "
+                  f"{m['excluded_neighbour_treatment']:,} of {m['treated_in_range']:,} LPI sites installed in the period "
+                  "were excluded because another LPI or turn calming went in within 100 m during their windows (LPIs "
+                  "were rolled out along corridors).", "",
+              "Turn traffic calming: its placebo shows as large a fall before the work as after it, so the "
+              "citywide-trend design cannot separate its effect from a decline already under way (or from regression "
+              "to the mean). The citywide-trend placebo for LPIs also shows falls in all injury crashes, so that "
+              "comparison group is biased here; the not-yet-treated group, the registered primary, is not.", "",
+              "Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model "
+              "was fitted; other work at a site recorded outside these datasets is not seen.", ""]
+        pj = tr.get("lpi_gap_projection")
+        if pj:
+            L += [f"Projection (descriptive, added after the test): {pj['without_lpi']} of the {pj['intersections']} NYC "
+                  f"priority intersections have no LPI within 60 m ({pj['without_lpi_plan_gap']} of them are T9 plan "
+                  f"gaps). They had {pj['pedestrian_injury_crashes']:,} pedestrian injury crashes within 100 m from "
+                  f"{pj['months'][0]} to {pj['months'][1]} ({pj['per_year']} a year, each counted once). At the effect "
+                  f"measured above, LPIs there would avoid about {pj['avoided_per_year']:.0f} a year (interval "
+                  f"{pj['avoided_per_year_interval'][0]:.0f}–{pj['avoided_per_year_interval'][1]:.0f}), about "
+                  f"${pj['harm_avoided_usd_per_year'] / 1e6:.1f} million a year at the U.S. DOT injury-crash value. "
+                  "Each site needs a signal and an engineer's check.", ""]
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:

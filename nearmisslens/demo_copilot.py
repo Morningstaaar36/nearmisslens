@@ -1,4 +1,4 @@
-"""The 3-minute demo video, made from the real product: screen recordings of the Junction Safety Copilot, the intake
+"""The demo video (under 3 minutes), made from the real product: screen recordings of the Junction Safety Copilot, the intake
 page and the near-miss viewer, plus title cards, narrated by a local open-source voice (Kokoro, Apache-2.0).
 Every number spoken comes from the result files in validation/; nothing is staged.
 
@@ -26,10 +26,28 @@ PAD_S = 0.7
 class Scene:
     name: str
     narration: str
-    kind: str  # "card", "app", "intake", "viewer", "image"
+    kind: str  # "card", "app", "letter", "intake", "viewer", "image"
     title: str = ""
     target: str = ""
     caption: str = ""
+    q: dict | None = None  # the app request (address and coordinates) for "app" and "letter" scenes
+
+
+HERO = "bruckner_boulevard___hunts_point_avenue"
+
+
+def hero() -> dict:
+    """The opening junction's numbers, from its stored brief: the record, the yearly harm and the top fix."""
+    from . import brief
+    from .countermeasures import load_cmf
+    f = json.loads((SETTINGS.runs_dir / "briefs" / HERO / "brief.json").read_text())
+    d = f["dossier"]
+    fx = brief.fix_options(d, load_cmf())
+    top = next(o for o in fx["options"] if not o.get("verify_on_site"))
+    return {"name": f["junction"].split(",")[0], "spoken": f["junction"].split(",")[0].replace("&", "and"), "q": {"address": f["junction"], "lat": d["lat"], "lon": d["lon"]},
+            "injury": d["crashes"]["injury_crashes"], "peds": d["crashes"].get("pedestrian_injured", 0),
+            "harm_m": fx["harm"]["usd_per_year"] / 1e6, "top": top,
+            "last_project": max((p["year"] for p in d["plans"]["projects"] if isinstance(p.get("year"), int)), default=None)}
 
 
 def _bench(name: str) -> dict:
@@ -39,32 +57,52 @@ def _bench(name: str) -> dict:
 
 def script() -> list[Scene]:
     cw = _bench("citywide_nyc.json").get("summary", {})
+    cw = {**cw, "injury_crashes_total": cw.get("injury_crashes_distinct", cw.get("injury_crashes_total")),
+          "killed_total": cw.get("killed_distinct", cw.get("killed_total"))}
     c4 = _bench("complaints.json").get("summary", {})
     fr = _bench("fresh.json").get("pooled", {})
     rs = _bench("fresh_reseed.json").get("pooled", {})
     spark = c4.get("spark_checked", {})
     pet0 = fr.get("v0", {}).get("pet<=1.5", {}).get("f1")
     pet1 = rs.get("reseed", {}).get("pet<=1.5", {}).get("f1")
+    h = hero()
+    tr = _bench("treatments_nyc.json")
+    lpi = tr.get("lpi_not_yet_treated", {}).get("pedestrian", {})
+    plc = tr.get("lpi_placebo_same_sites_not_yet_treated", {}).get("pedestrian", {})
+    drop, lo, hi = (round(100 * (1 - v)) for v in (lpi.get("theta", 1), lpi.get("ci95", [1, 1])[1], lpi.get("ci95", [1, 1])[0]))
+    cmf = (tr.get("brief_cmf") or [{}])[0].get("cmf", 1)
+    top = h["top"]
     return [
-        Scene("hook", f"Cities fix dangerous intersections after people get hurt. New York's {cw.get('intersections')} "
-                      f"Vision Zero priority intersections had {cw.get('injury_crashes_total'):,} injury crashes and "
-                      f"{cw.get('killed_total')} deaths in five years. For {cw.get('plan_gap')} of them, the city's own "
-                      "open records show no safety treatment nearby in that time.", "card",
-              "Crash reports come after the crash",
-              f"{cw.get('injury_crashes_total'):,} injury crashes, {cw.get('killed_total')} deaths at NYC's "
-              f"{cw.get('intersections')} priority intersections in 5 years. {cw.get('plan_gap')} with no recorded fix."),
-        Scene("map", "NearMissLens is a junction safety copilot built on Meta's models. Every dot is one of those "
-                     "intersections. Red means many injury crashes, and nothing done.", "app", target="",
-              caption="Junction Safety Copilot: every NYC priority intersection, from open city data"),
-        Scene("brief", "Ask about any intersection. Agents pull the police crash record, the city's designations and its "
-                       "past projects, then rank federal Proven Safety Countermeasures by the crashes each would "
-                       "prevent, every one cited to the CMF Clearinghouse. A checker rejects any number that is not in "
-                       "the record.", "app", target="Delancey Street & Essex Street, Manhattan, NY",
-              caption="Official record, ranked and cited fixes, a checked brief"),
-        Scene("fix", "Muse Image draws the top fix on the city's own aerial photo. SAM 3.1 keeps every real car and "
-                     "person untouched, and checks that the fix was actually drawn.", "image",
-              target=str(SETTINGS.runs_dir / "briefs" / "lenox_avenue___west_125_street" / "fix.jpg"),
+        Scene("hook", f"{h['spoken']}, in the Bronx. {h['injury']} injury crashes in five years, the most of New York's "
+                      f"{cw.get('intersections')} priority intersections. {h['peds']} pedestrians hurt. In the federal "
+                      f"government's own values, that harm costs {h['harm_m']:.1f} million dollars a year. The city's "
+                      f"records show no safety work here since {h['last_project']}.", "card",
+              "One intersection, five years",
+              f"{h['name']}, Bronx: {h['injury']} injury crashes, {h['peds']} pedestrians hurt, "
+              f"${h['harm_m']:.1f}M a year in harm (USDOT values). Last recorded safety work: {h['last_project']}."),
+        Scene("map", f"NearMissLens is a junction safety copilot built on Meta's models. Every dot is a priority "
+                     f"intersection. Red means many injury crashes, and nothing done: {cw.get('plan_gap')} of them.",
+              "app", target="", caption="Junction Safety Copilot: every NYC priority intersection, from open city data"),
+        Scene("brief", "Agents pull the police crash record, the city's designations and its past projects, then rank "
+                       "federal Proven Safety Countermeasures by the crashes each would prevent and what that is worth. "
+                       "A checker rejects any number that is not in the record.", "app", target=h["q"]["address"],
+              q=h["q"], caption="Official record, ranked and cited fixes with their dollar value, a checked brief"),
+        Scene("fix", f"Muse Image draws the top fix, pedestrian refuge islands, on the state's aerial photo. SAM 3.1 "
+                     f"keeps every real car untouched and checks that the islands were drawn. They would prevent about "
+                     f"{top['expected_crashes_avoided_per_year']} pedestrian injury crashes a year.", "image",
+              target=str(SETTINGS.runs_dir / "briefs" / HERO / "fix.jpg"),
               caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
+        Scene("measured", f"Do these fixes work? We checked the city's own record. At {lpi.get('sites', 0):,} "
+                          f"intersections where New York added a leading pedestrian interval, pedestrian injury crashes "
+                          f"fell {drop} percent, compared with intersections that got one later. A fake earlier date "
+                          f"shows no drop. The national figure the copilot ranks with says {round(100 * (1 - cmf))}.",
+              "card", "The city's own fixes, measured",
+              f"Leading pedestrian intervals at {lpi.get('sites', 0):,} NYC intersections: pedestrian injury crashes "
+              f"-{drop}% (95% interval {lo}-{hi}%). Placebo: no change. National CMF: -{round(100 * (1 - cmf))}%."),
+        Scene("letter", "Then it drafts a letter to the people who can ask for the fix: the council member and the "
+                        "community board, found from the city's district maps. Every number is checked, the sources "
+                        "are attached, and the resident sends it.", "letter", target=h["q"]["address"], q=h["q"],
+              caption="A checked letter to Council District and Community Board, drafted from the record"),
         Scene("seattle", "It is not wired to one city. For Seattle, a data agent searched public catalogs, mapped the "
                          "city's crash data, and fixed its own mapping after a validator rejected it twice.", "app",
               target="3rd Avenue & Pike Street, Seattle, WA",
@@ -104,6 +142,19 @@ def narrate(text: str, out: Path) -> float:
     return demo._duration(out)
 
 
+def _record_letter(url: str, name: str, seconds: float, work: Path) -> Path:
+    def steps(page, base):
+        page.goto(url)
+        page.wait_for_selector("#ltr", timeout=180000)
+        page.click("#ltr")
+        page.wait_for_selector("#ltrtxt", timeout=180000)
+        page.evaluate("document.getElementById('ltrout').scrollIntoView()")
+        for _ in range(int(seconds)):
+            page.evaluate("document.getElementById('ltrtxt').scrollBy(0, 40)")
+            page.wait_for_timeout(1000)
+    return demo.record(url, name, steps, work / "rec")
+
+
 def _record_app(url: str, name: str, seconds: float, work: Path, scroll: bool) -> Path:
     def steps(page, base):
         page.goto(url)
@@ -137,13 +188,18 @@ def render(out: Path | None = None) -> Path:
                 seg = demo.card(s.title, s.caption or s.target, work / f"card_{s.name}", work, secs)
             elif s.kind == "image":
                 seg = demo.Segment(Path(s.target), secs, s.caption, caption_top=True)
-            elif s.kind == "app":
+            elif s.kind in ("app", "letter"):
                 from urllib.parse import quote
-                if s.target:  # build the brief once before recording, so the scene shows it, not the loading line
+                q = s.q or {"address": s.target}
+                if s.target:  # build the brief (and letter) once before recording, so the scene shows them
                     import httpx
-                    httpx.post("http://127.0.0.1:8790/brief", json={"address": s.target}, timeout=600)
-                url = "http://127.0.0.1:8790/" + (f"?q={quote(s.target)}" if s.target else "")
-                webm = _record_app(url, s.name, secs + 3, work, scroll=bool(s.target))
+                    httpx.post("http://127.0.0.1:8790/brief", json=q, timeout=600)
+                    if s.kind == "letter":
+                        httpx.post("http://127.0.0.1:8790/letter", json=q, timeout=600)
+                url = "http://127.0.0.1:8790/" + (f"?q={quote(s.target)}" if s.target else "") + \
+                    (f"&lat={q['lat']}&lon={q['lon']}" if s.target and "lat" in q else "")
+                webm = (_record_letter(url, s.name, secs + 3, work) if s.kind == "letter"
+                        else _record_app(url, s.name, secs + 3, work, scroll=bool(s.target)))
                 seg = demo.Segment(webm, secs, s.caption, skip=demo.LOAD_S)
             elif s.kind == "intake":
                 import httpx

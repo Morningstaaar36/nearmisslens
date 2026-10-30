@@ -20,7 +20,7 @@ import cv2
 import httpx
 import numpy as np
 
-from . import context, countermeasures, panel, sam_api
+from . import context, countermeasures, harm, panel, sam_api
 from .agent import Tool, run_agent
 from .config import SETTINGS
 
@@ -72,6 +72,19 @@ def geocode(address: str) -> tuple[float, float, str]:
         raise ValueError(f"no intersection of {a} and {b} found near {name}")
     lat2, lon2 = min(nodes, key=lambda n: (n[0] - lat) ** 2 + (n[1] - lon) ** 2)
     return lat2, lon2, f"{a} & {b}, {rest.strip()}"
+
+
+IN_PLACE = {"nyc-lpi": "Leading Pedestrian Interval"}  # recorded treatments that are themselves a ranked fix
+
+
+def in_place(d: dict) -> dict[str, dict]:
+    """Proven Safety Countermeasures the city's records show already installed at the junction, with the year."""
+    out = {}
+    for p in (d.get("plans") or {}).get("projects", []):
+        name = IN_PLACE.get(p.get("dataset"))
+        if name and (name not in out or (p.get("year") or 0) < (out[name].get("year") or 0)):
+            out[name] = {"countermeasure": name, "year": p.get("year"), "dataset": p.get("dataset")}
+    return out
 
 
 def _conditions(d: dict, min_share: float = 0.05) -> frozenset[str]:
@@ -142,16 +155,26 @@ def fix_options(d: dict, cmf) -> dict:
                  "stars": c.stars, "cmf_crash_type": c.crash_type, "cmf_severity": c.severity, "targets": label,
                  "target_crashes_5y": n, "target_crashes_per_year": round(per_year, 1),
                  "condition_share": share if share is not None and cond else None,
-                 "expected_crashes_avoided_per_year": round(avoided, 1),
+                 "expected_crashes_avoided_per_year": round(avoided, 1), **harm.option(avoided, label, cr),
                  "verify_on_site": need.get(c.psc) if need.get(c.psc) and need.get(c.psc) not in conds else None}
             if c.psc not in best or o["expected_crashes_avoided_per_year"] > best[c.psc]["expected_crashes_avoided_per_year"]:
                 best[c.psc] = o
     # options whose precondition the record shows (or that have none) first, then those needing a site check
-    opts = sorted(best.values(), key=lambda o: (o["verify_on_site"] is not None, -o["expected_crashes_avoided_per_year"]))
-    return {"options": opts, "rejected": rejected, "control": control,
+    # a fix the city has already installed here is not proposed again; it is listed as in place
+    have = in_place(d)
+    opts = sorted((o for o in best.values() if o["countermeasure"] not in have),
+                  key=lambda o: (o["verify_on_site"] is not None, -o["expected_crashes_avoided_per_year"]))
+    from . import treatments
+    for o in opts:  # what the city's own past installs of this fix measured (NML-Bench T11), where it was tested
+        ev = treatments.local_evidence(d.get("city"), o["countermeasure"])
+        if ev:
+            o["local_evidence"] = ev
+    return {"options": opts, "in_place": list(have.values()), "rejected": rejected, "control": control,
+            "harm": harm.junction(cr, YEARS),
             "conditions_from_record": sorted(conds),
             "method": "expected crashes avoided per year = target crashes per year x (1 - CMF), Highway Safety Manual "
-                      "simple method (not Empirical Bayes)"}
+                      "simple method (not Empirical Bayes); dollars use the U.S. DOT's injury-crash value (BCA "
+                      "Guidance 2026 Update, Table A-1, 2024 $), break-even cost over 10 years at 7%"}
 
 
 def _mercator(lat: float, lon: float) -> tuple[float, float]:
@@ -232,14 +255,26 @@ INSTRUCTIONS = (
 
 def fixes_table(opts: dict, n: int = 8) -> str:
     """The ranked fixes, built by code from the option list so the ranking and numbers are exact."""
-    rows = ["| # | FHWA Proven Safety Countermeasure | CMF Clearinghouse | Targets | Expected crashes avoided per year | Site check |",
-            "|---|---|---|---|---|---|"]
+    rows = ["| # | FHWA Proven Safety Countermeasure | CMF Clearinghouse | Targets | Expected crashes avoided per year | "
+            "Harm avoided per year | Pays for itself if it costs under | Site check |",
+            "|---|---|---|---|---|---|---|---|"]
+    notes = []
     for k, o in enumerate(opts.get("options", [])[:n], 1):
         share = f", {o['condition_share']:.0%} of them in the condition" if o.get("condition_share") else ""
         rows.append(f"| {k} | {o['countermeasure']} | CMF {o['cmf_id']}: {o['cmf']} ({o['stars']}) | {o['targets']}, "
                     f"{o['target_crashes_per_year']}/yr{share} | {o['expected_crashes_avoided_per_year']} | "
+                    f"${o['harm_avoided_usd_per_year']:,.0f} | ${o['break_even_cost_usd']:,.0f} | "
                     f"{('verify: ' + o['verify_on_site']) if o.get('verify_on_site') else 'supported by the record'} |")
-    return "\n".join(rows) + f"\n\n_Method: {opts.get('method', '')}. Do not add fixes together._"
+        if o.get("local_evidence"):
+            notes.append(f"_{o['countermeasure']}, tested on this city's own installs: {o['local_evidence']['text']}_")
+    h = opts.get("harm")
+    head = (f"Injury crashes here cost about ${h['usd_per_year']:,.0f} a year in the U.S. DOT's official values "
+            f"({h['injury_crashes_per_year']} a year at ${h['value_per_injury_crash_usd']:,.0f} each, 2024 dollars"
+            f"{'; deaths are not valued separately' if h['deaths_in_record'] else ''}).\n\n") if h else ""
+    have = "".join(f"\n\nAlready in place (city records): {x['countermeasure']}"
+                   f"{' since ' + str(x['year']) if x.get('year') else ''}; not proposed again." for x in opts.get("in_place", []))
+    return head + "\n".join(rows) + "".join(f"\n\n{x}" for x in notes) + have + \
+        f"\n\n_Method: {opts.get('method', '')}. Do not add fixes together._"
 
 
 def write_brief(client, facts: dict, tag: str, model: str = "muse-spark-1.3-contributor") -> dict:

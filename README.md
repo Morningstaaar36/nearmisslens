@@ -1,10 +1,19 @@
 # NearMissLens: a junction safety copilot
 
+![Bruckner Boulevard & Hunts Point Avenue, the Bronx: the state's aerial photo (left) and the copilot's top fix, pedestrian refuge islands, drawn on it (right)](docs/img/hero_bruckner_hunts_point.jpg)
+<sub>Bruckner Boulevard & Hunts Point Avenue, the Bronx. Left: New York State's aerial photo. Right: the copilot's top fix, pedestrian refuge islands, drawn by Muse Image. SAM 3.1 checked that islands were added and that no real car was moved. An AI illustration, not an engineering design.</sub>
+
+**In the last five years, Bruckner Boulevard & Hunts Point Avenue in the Bronx had 129 injury crashes, more than any other of New York's 304 Vision Zero priority intersections. 29 pedestrians were injured. In the U.S. DOT's official values that harm costs about $8.8 million a year. The city's open records show no safety work there since a 2015 street project, and no Leading Pedestrian Interval.**
+
+NearMissLens put that together in about a minute from open records. It then ranked the federal Proven Safety Countermeasures the record supports. First are pedestrian refuge islands: about 1.6 fewer pedestrian injury crashes a year (CMF Clearinghouse 8799), worth $561,000 a year. They pay for themselves if they cost less than $3.9 million over 10 years. Every number in the brief is checked against the record.
+
 **Cities act on crash reports, after people are hurt. NearMissLens tells a city engineer which intersections need fixing, what to fix, how much it should help, and what the city has already done. It works from open records, and from near-misses measured in video where video exists. Every claim is checked against the data.**
 
 The problem in numbers:
-- New York's 304 Vision Zero priority intersections had **11,981 injury crashes and 60 deaths in five years**.
+- New York's 304 Vision Zero priority intersections had **11,474 injury crashes and 56 deaths in five years**. At the U.S. DOT's official value of an injury crash, that harm costs about **$786 million a year**.
 - **225 of them (74%)** had at least 10 injury crashes in that time and no recorded safety treatment within reach. That means no Street Improvement Project, Leading Pedestrian Interval, turn calming or signal retiming in the city's open datasets ([`T9`](validation/BENCH.md)).
+- **The city's own fixes work, and we measured it.** At 1,651 intersections where NYC installed a Leading Pedestrian Interval (walk signal before the green), pedestrian injury crashes fell **17%** (95% interval 11–22%) compared with intersections the city treated later. A fake install date before the real one shows no drop, so this is not a trend that was already under way ([`T11`](validation/BENCH.md)). The copilot ranks that fix with the national CMF, a 19% cut, so its ranking holds up on the city's own record.
+- **119 of the 304 have no LPI at all.** At the effect NYC measured, LPIs there would prevent about 43 pedestrian injury crashes a year (29–56), worth about $14.6 million a year. This is a projection, not a test, and each site needs a signal and an engineer's check.
 - The copilot screens a junction in about a minute, at under a cent of model cost.
 
 Built during the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026). Every line of code in this repository was written during the hackathon.
@@ -16,6 +25,8 @@ Built during the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026). Ev
 2. **Ranked, cited fixes.** Every FHWA Proven Safety Countermeasure whose CMF Clearinghouse record targets a crash group in the record, ranked by **expected crashes avoided per year**, using the Highway Safety Manual's simple method (crashes per year × (1 − CMF)).
    - Fixes whose precondition the record does not show are flagged "verify on site".
    - Fixes that only work at night or on wet roads count only that share of crashes.
+   - Every fix has a dollar value: injury crashes avoided per year × the U.S. DOT's $342,400 per injury crash ([BCA Guidance 2026 Update](nearmisslens/data/usdot_bca.json), Table A-1), and the cost under which it pays for itself over 10 years at USDOT's 7% discount rate.
+   - Where the city has installed the same fix before, the brief shows what it measured there (T11).
 3. **The street.** The city's own aerial photo, or USGS national imagery anywhere in the US, plus a Mapillary street-level photo. Muse Image draws the top fix on the aerial, and SAM 3.1 checks that the drawing added it.
 4. **A checked brief.** Code builds the ranking; a Muse Spark agent writes the narrative. A checker rejects any number that is not in the record, and the agent must fix it.
 5. **Near-misses from video**, where video exists. SAM 3.1 tracks every road user in drone video, and the conflict engine measures TTC and PET (FHWA SSAM definitions) and ranks near-miss hotspots. That gives evidence before crashes happen. On unseen footage it now matches about 1.5 times as many of the reference conflicts as at the start (below).
@@ -42,7 +53,8 @@ Positive, mixed and negative results are reported as they came out. Full tables 
 
 | Question | Result |
 |---|---|
-| Does the city's record say a junction needs work? (T9, all 304 NYC priority intersections) | 225 (74%) have ≥ 10 injury crashes in 5 years and no recorded treatment; 88 have none on record at all. The first run, with street projects only, found 267; we widened the definition before claiming, and both are reported. |
+| Does the city's record say a junction needs work? (T9, all 304 NYC priority intersections) | 225 (74%) have ≥ 10 injury crashes in 5 years and no recorded treatment; 88 have none on record at all. The first run, with street projects only, found 267; we widened the definition before claiming, and both are reported. Our first total added each intersection's count (11,981); counted once each it is 11,474. |
+| Did the city's own fixes work? (T11, NYC Leading Pedestrian Intervals installed 2015–2021, 36 months before and after, compared with sites treated later) | **Yes.** At 1,651 intersections pedestrian injury crashes fell 17% (θ 0.833, 95% interval 0.781–0.887). Placebo with a fake earlier date: θ 1.02 (0.95–1.10), no bias found. The national CMF the brief uses says 19%. Turn traffic calming could not be credited: its placebo fell as much before the work as after. |
 | Does the data agent generalise? | Seattle (no prior support): correct dataset found, mapping fixed by its own validator, adapter validated on real records. The same validator also found two errors in our hand-written DC adapter. |
 | Does near-miss detection from video work on unseen footage? (11 one-minute windows: 2 new days and a never-seen junction, 241 reference conflicts) | Better kinematics plus re-seeding raised TTC F1 from 0.110 to 0.199 (95% interval for the re-seeding gain +0.03 to +0.13) and PET ≤ 1.5 s F1 from 0.23 to 0.36. Recall rose from 0.19 to 0.29. The pre-registered PET rule for re-seeding was narrowly not met (interval −0.02 to +0.12). |
 | Do hotspots persist across days? (all 14 FLUID flights) | Yes: Kendall tau 0.47 over 26 different-day pairs, permutation p = 0.001. |

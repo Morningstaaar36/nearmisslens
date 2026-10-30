@@ -254,10 +254,19 @@ def cmd_brief(args) -> int:
           f"{f['dossier']['years']} years ({cr.get('source', cr.get('error'))}); plan gap: {f['dossier'].get('plan_gap')}")
     for o in f["fixes"]["options"][:6]:
         print(f"  - {o['countermeasure']}: CMF {o['cmf_id']} ({o['cmf']}, {o['stars']}), "
-              f"{o['expected_crashes_avoided_per_year']} crashes avoided/yr"
+              f"{o['expected_crashes_avoided_per_year']} crashes avoided/yr, ${o['harm_avoided_usd_per_year']:,.0f}/yr of harm"
               + (f" [verify on site: {o['verify_on_site']}]" if o["verify_on_site"] else ""))
     if f.get("brief", {}).get("brief"):
         print("\n" + f["brief"]["brief"])
+    if args.letter:
+        from pathlib import Path
+        from . import letter
+        d = f["dossier"]
+        res = letter.draft(_memo_client(not args.meta), f, letter.offices(d["lat"], d["lon"], d.get("city")),
+                           tag=f"letter {f['junction'][:40]}")
+        print("\n" + (res["letter"] or f"no letter: {res['checker_errors']}"))
+        if res["letter"] and f.get("aerial_photo"):
+            (Path(f["aerial_photo"]).parent / "letter.md").write_text(res["letter"])
     return 0
 
 
@@ -270,6 +279,15 @@ def cmd_discover(args) -> int:
     print(f"adapter for {r['place']['city']}: " + (f"{a['id']} ({a['source']}), validation {a['provenance']['validation']}"
                                                  if a else "none found"))
     return 0 if a else 1
+
+
+def cmd_treatments(_args) -> int:
+    from . import bench, treatments
+    out = treatments.run()
+    print(json.dumps({k: out[k]["pedestrian"] for k in ("lpi_not_yet_treated", "lpi_placebo_same_sites_not_yet_treated")},
+                     indent=1, default=float))
+    bench.write_bench_md()
+    return 0
 
 
 def cmd_citywide(_args) -> int:
@@ -354,12 +372,14 @@ def main(argv: list[str] | None = None) -> int:
     br.add_argument("--illustrate", action="store_true", help="draw the top fix on the aerial photo (Muse Image + SAM)")
     br.add_argument("--no-memo", action="store_true")
     br.add_argument("--meta", action="store_true", help="memo on the Meta API instead of Muse Spark Open (Baseten)")
+    br.add_argument("--letter", action="store_true", help="also draft a checked letter to the council member and community board")
     dsc = sub.add_parser("discover", help="data agent: find and validate a city's open crash data for the registry")
     dsc.add_argument("lat", type=float)
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
     sub.add_parser("citywide", help="plan-gap screen of every NYC Vision Zero priority intersection (open data)")
+    sub.add_parser("treatments", help="T11: did NYC's own Leading Pedestrian Intervals work? (needs the crash download)")
     ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")
     ap.add_argument("--port", type=int, default=8770)
     ap.add_argument("--illustrate", action="store_true")
@@ -387,7 +407,7 @@ def run_command(args) -> int:
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
-            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "app": cmd_app}[args.cmd](args)
 
 

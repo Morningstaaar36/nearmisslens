@@ -7,7 +7,12 @@
   "injury_crashes_total": 11981,
   "killed_total": 60,
   "median_injury_crashes": 35.0,
-  "never_a_project": 252
+  "never_a_project": 252,
+  "since": "2021-10-30",
+  "injury_crashes_distinct": 11474,
+  "killed_distinct": 56,
+  "harm_usd_per_year": 786000000.0,
+  "harm_source": "U.S. DOT, Benefit-Cost Analysis Guidance for Discretionary Grant Programs, 2026 Update (December 2025), Appendix A, Table A-1 (values in 2024 dollars) and section 4.3 (discount rate)"
  },
  "rows": [
   {
@@ -23,7 +28,8 @@
    "last_project_year": 2015.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Bruckner Boulevard & East 138 Street",
@@ -38,7 +44,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Springfield Boulevard & Horace Harding Expressway",
@@ -53,7 +60,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Delancey Street & Essex Street",
@@ -68,7 +76,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lenox Avenue & West 125 Street",
@@ -83,7 +92,8 @@
    "last_project_year": 2010.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "2 Avenue & East 58 Street",
@@ -98,7 +108,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "2 Avenue & East 57 Street",
@@ -113,7 +124,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "2 Avenue & East 125 Street",
@@ -128,7 +140,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 149 Street & Melrose Avenue",
@@ -143,7 +156,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Utica Avenue",
@@ -158,7 +172,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Utica Avenue & Empire Boulevard",
@@ -173,7 +188,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Bedford Avenue",
@@ -188,7 +204,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Milford Street",
@@ -203,7 +220,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Concourse & East 149 Street",
@@ -218,7 +236,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Frederick Douglass Boulevard & West 145 Street",
@@ -233,7 +252,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Logan Street",
@@ -248,7 +268,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Parkside Avenue & East Drive",
@@ -263,7 +284,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "7 Avenue & West 42 Street",
@@ -278,7 +300,8 @@
    "last_project_year": 2026.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 125 Street & Amsterdam Avenue",
@@ -293,7 +316,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "St Nicholas Avenue & West 125 Street",
@@ -308,7 +332,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Hamilton Avenue & Court Street",
@@ -323,7 +348,8 @@
    "last_project_year": 2025.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East New York Avenue & Remsen Avenue",
@@ -338,7 +364,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Astoria Boulevard North & Hoyt Avenue North",
@@ -353,7 +380,8 @@
    "last_project_year": 2015.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Utica Avenue & Church Avenue",
@@ -368,7 +396,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Nostrand Avenue",
@@ -383,7 +412,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "South Conduit Avenue & Farmers Boulevard",
@@ -398,7 +428,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Eastern Parkway",
@@ -413,7 +444,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "75 Street & Roosevelt Avenue",
@@ -428,7 +460,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Amsterdam Avenue & West 181 Street",
@@ -443,7 +476,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatbush Avenue & Avenue H",
@@ -458,7 +492,8 @@
    "last_project_year": 2009.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Edgecombe Avenue & West 145 Street",
@@ -473,7 +508,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 125 Street & Frederick Douglass Boulevard",
@@ -488,7 +524,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "1 Avenue & East 116 Street",
@@ -503,7 +540,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & West 230 Street",
@@ -518,7 +556,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & West 230 Street",
@@ -533,7 +572,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lexington Avenue & East 116 Street",
@@ -548,7 +588,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 125 Street & Lexington Avenue",
@@ -563,7 +604,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Boulevard & South Conduit Avenue",
@@ -578,7 +620,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Canal Street & Centre Street",
@@ -593,7 +636,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lenox Avenue & West 116 Street",
@@ -608,7 +652,8 @@
    "last_project_year": 2022.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Utica Avenue & St Johns Place",
@@ -623,7 +668,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Kingsbridge Road & Elm Place",
@@ -638,7 +684,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 2,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastern Parkway & Rochester Avenue",
@@ -653,7 +700,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 207 Street & 10 Avenue",
@@ -668,7 +716,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 2,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Rockaway Avenue",
@@ -683,7 +732,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatbush Avenue & Avenue U",
@@ -698,7 +748,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & 60 Street",
@@ -713,7 +764,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Jerome Avenue & East Burnside Avenue",
@@ -728,7 +780,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "South Conduit Avenue & Hook Creek Boulevard",
@@ -743,7 +796,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "White Plains Road & Westchester Avenue",
@@ -758,7 +812,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Houston Street & Essex Street",
@@ -773,7 +828,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Fordham Road & Marion Avenue",
@@ -788,7 +844,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Morris Avenue & East 149 Street",
@@ -803,7 +860,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue Of The Americas & West 34 Street",
@@ -818,7 +876,8 @@
    "last_project_year": 2009.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Fulton Street & Nostrand Avenue",
@@ -833,7 +892,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Street & Chrystie Street",
@@ -848,7 +908,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "65 Street & Gowanus Expressway Eb En 65 St",
@@ -863,7 +924,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Whitestone Expressway & Linden Place",
@@ -878,7 +940,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & Morris Avenue",
@@ -893,7 +956,8 @@
    "last_project_year": 2017.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Reservoir Avenue & West Kingsbridge Road",
@@ -908,7 +972,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & East 23 Street",
@@ -923,7 +988,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Macombs Road & Featherbed Lane",
@@ -938,7 +1004,8 @@
    "last_project_year": 2022.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "8 Avenue & West 34 Street",
@@ -953,7 +1020,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Francis Lewis Boulevard & 243 Street",
@@ -968,7 +1036,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Canal Street & Manhattan Br Approach",
@@ -983,7 +1052,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Church Avenue & Nostrand Avenue",
@@ -998,7 +1068,8 @@
    "last_project_year": 2025.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ocean Avenue & Church Avenue",
@@ -1013,7 +1084,8 @@
    "last_project_year": 2017.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Parkway & Seaview Avenue",
@@ -1028,7 +1100,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 62 Street & 1 Avenue",
@@ -1043,7 +1116,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Hylan Boulevard & Midland Avenue",
@@ -1058,7 +1132,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "St Nicholas Avenue & West 145 Street",
@@ -1073,7 +1148,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lenox Avenue & West 135 Street",
@@ -1088,7 +1164,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "University Avenue & West Kingsbridge Road",
@@ -1103,7 +1180,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Sedgwick Avenue & West Fordham Road",
@@ -1118,7 +1196,8 @@
    "last_project_year": 2009.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Madison Avenue & East 125 Street",
@@ -1133,7 +1212,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 145 Street & Amsterdam Avenue",
@@ -1148,7 +1228,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "8 Avenue & West 49 Street",
@@ -1163,7 +1244,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatbush Avenue & Glenwood Road",
@@ -1178,7 +1260,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Houston Street & Allen Street",
@@ -1193,7 +1276,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Woodhaven Boulevard & Jamaica Avenue",
@@ -1208,7 +1292,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "University Avenue & West Fordham Road",
@@ -1223,7 +1308,8 @@
    "last_project_year": 2025.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Fordham Road & East 188 Street",
@@ -1238,7 +1324,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue Of The Americas & West 23 Street",
@@ -1253,7 +1340,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Delancey Street & Bowery",
@@ -1268,7 +1356,8 @@
    "last_project_year": 2014.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Gun Hill Road & Webster Avenue",
@@ -1283,7 +1372,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Pennsylvania Avenue & Fulton Street",
@@ -1298,7 +1388,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Loring Avenue & Fountain Avenue",
@@ -1313,7 +1404,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "86 Street & Bay Parkway",
@@ -1328,7 +1420,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "30 Avenue & 38 Street",
@@ -1343,7 +1436,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatlands Avenue & Rockaway Parkway",
@@ -1358,7 +1452,8 @@
    "last_project_year": 2018.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Adam Clayton Powell Jr Boulevard & West 135 Street",
@@ -1373,7 +1468,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 135 Street & Willis Avenue Bridge",
@@ -1388,7 +1484,8 @@
    "last_project_year": 2019.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastern Parkway & St Marks Avenue",
@@ -1403,7 +1500,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Morris Avenue & East 161 Street",
@@ -1418,7 +1516,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Linden Boulevard & Utica Avenue",
@@ -1433,7 +1532,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & Gates Avenue",
@@ -1448,7 +1548,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Main Street & Kissena Boulevard",
@@ -1463,7 +1564,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "2 Avenue & East 14 Street",
@@ -1478,7 +1580,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Winthrop Street & East 98 Street",
@@ -1493,7 +1596,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Crescent Street",
@@ -1508,7 +1612,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ocean Parkway & Church Avenue",
@@ -1523,7 +1628,8 @@
    "last_project_year": 2025.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "173 Street & Jamaica Avenue",
@@ -1538,7 +1644,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Houston Street & Bowery",
@@ -1553,7 +1660,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Woodhaven Boulevard & Myrtle Avenue",
@@ -1568,7 +1676,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Kings Highway & Avenue P",
@@ -1583,7 +1692,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "65 Street & New Utrecht Avenue",
@@ -1598,7 +1708,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Union Street & Northern Boulevard",
@@ -1613,7 +1724,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Thomas S Boyland Street",
@@ -1628,7 +1740,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Sutphin Boulevard & Archer Avenue",
@@ -1643,7 +1756,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lexington Avenue & East 59 Street",
@@ -1658,7 +1772,8 @@
    "last_project_year": 2019.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Beach Channel Drive & Mott Avenue",
@@ -1673,7 +1788,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "2 Avenue & Queens Midtown Tunnel Approach",
@@ -1688,7 +1804,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Cross Bay Boulevard & Woodhaven Boulevard",
@@ -1703,7 +1820,8 @@
    "last_project_year": 2010.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Kings Highway & East 12 Street",
@@ -1718,7 +1836,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & East 110 Street",
@@ -1733,7 +1852,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Franklin D Roosevelt Drive & East 34 Street",
@@ -1748,7 +1868,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Parkway & Rutland Road",
@@ -1763,7 +1884,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Sutphin Boulevard & Liberty Avenue",
@@ -1778,7 +1900,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Avenue & West Fordham Road",
@@ -1793,7 +1916,8 @@
    "last_project_year": 2025.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 23 Street & Park Avenue South",
@@ -1808,7 +1932,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Nagle Avenue & Ft George Hill",
@@ -1823,7 +1948,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "9 Avenue & West 47 Street",
@@ -1838,7 +1964,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 14 Street & 1 Avenue",
@@ -1853,7 +1980,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Merrick Boulevard & Archer Avenue",
@@ -1868,7 +1996,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastern Parkway & New York Avenue",
@@ -1883,7 +2012,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 14 Street & Union Square East",
@@ -1898,7 +2028,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Utica Avenue & Clarkson Avenue",
@@ -1913,7 +2044,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue Of The Americas & West 14 Street",
@@ -1928,7 +2060,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Myrtle Avenue & Gold Street",
@@ -1943,7 +2076,8 @@
    "last_project_year": 2014.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Malcolm X Boulevard & Fulton Street",
@@ -1958,7 +2092,8 @@
    "last_project_year": 2022.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & 3 Avenue",
@@ -1973,7 +2108,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "8 Avenue & West 40 Street",
@@ -1988,7 +2124,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "37 Avenue & 81 Street",
@@ -2003,7 +2140,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 204 Street & 10 Avenue",
@@ -2018,7 +2156,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Schenectady Avenue & Empire Boulevard",
@@ -2033,7 +2172,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Parsons Boulevard & Northern Boulevard",
@@ -2048,7 +2188,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 61 Street & York Avenue",
@@ -2063,7 +2204,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Knickerbocker Avenue & Troutman Street",
@@ -2078,7 +2220,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Quentin Road & East 16 Street",
@@ -2093,7 +2236,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "60 Street & 8 Avenue",
@@ -2108,7 +2252,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Franklin Avenue & Fulton Street",
@@ -2123,7 +2268,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastern Parkway & Washington Avenue",
@@ -2138,7 +2284,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatlands Avenue & Remsen Avenue",
@@ -2153,7 +2300,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Springfield Boulevard & Hillside Avenue",
@@ -2168,7 +2316,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatbush Avenue & Farragut Road",
@@ -2183,7 +2332,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "9 Avenue & West 51 Street",
@@ -2198,7 +2348,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatbush Avenue & Avenue I",
@@ -2213,7 +2364,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Park Avenue & East Tremont Avenue",
@@ -2228,7 +2380,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Narrows Road North & Fingerboard Road",
@@ -2243,7 +2396,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Undercliff Avenue & Major Deegan Expwy Et 7 N Sb",
@@ -2258,7 +2412,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West Street & West Houston Street",
@@ -2273,7 +2428,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Allerton Avenue & Olinville Avenue",
@@ -2288,7 +2444,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "1 Avenue & East 30 Street",
@@ -2303,7 +2460,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "11 Avenue & West 34 Street",
@@ -2318,7 +2476,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & 33 Street",
@@ -2333,7 +2492,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Clifton Place & Nostrand Avenue",
@@ -2348,7 +2508,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Dekalb Avenue & Ashland Place",
@@ -2363,7 +2524,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ralph Avenue & Herkimer Street",
@@ -2378,7 +2540,8 @@
    "last_project_year": 2022.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Court Street",
@@ -2393,7 +2556,8 @@
    "last_project_year": 2016.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & East 32 Street",
@@ -2408,7 +2572,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Westchester Avenue & Westchester Avenue Bridge",
@@ -2423,7 +2588,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ocean Parkway & Avenue U",
@@ -2438,7 +2604,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "170 Street & Jamaica Avenue",
@@ -2453,7 +2620,8 @@
    "last_project_year": 2026.0,
    "recent_projects": 3,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Springfield Boulevard & Merrick Boulevard",
@@ -2468,7 +2636,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Fordham Road & Valentine Avenue",
@@ -2483,7 +2652,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Concourse & East 167 Street",
@@ -2498,7 +2668,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Queens Plaza & 27 Street",
@@ -2513,7 +2684,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 167 Street & Webster Avenue",
@@ -2528,7 +2700,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & Malcolm X Boulevard",
@@ -2543,7 +2716,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Gun Hill Road & Hering Avenue",
@@ -2558,7 +2732,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Hoyt Street",
@@ -2573,7 +2748,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "White Plains Road & Nereid Avenue",
@@ -2588,7 +2764,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Springfield Boulevard & Jamaica Avenue",
@@ -2603,7 +2780,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Guy R Brewer Boulevard & Foch Boulevard",
@@ -2618,7 +2796,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "9 Street & 5 Avenue",
@@ -2633,7 +2812,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Pennsylvania Avenue & Blake Avenue",
@@ -2648,7 +2828,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Pennsylvania Avenue & Belmont Avenue",
@@ -2663,7 +2844,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Concourse & East 158 Street",
@@ -2678,7 +2860,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Park Avenue & East 149 Street",
@@ -2693,7 +2876,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Walton Avenue & East 170 Street",
@@ -2708,7 +2892,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 161 Street & Sheridan Avenue",
@@ -2723,7 +2908,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Dyckman Street & Sherman Avenue",
@@ -2738,7 +2924,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flushing Avenue & Thornton Street",
@@ -2753,7 +2940,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Queens Boulevard & Broadway",
@@ -2768,7 +2956,8 @@
    "last_project_year": 2010.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Queens Boulevard & 63 Drive",
@@ -2783,7 +2972,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "90 Street & Northern Boulevard",
@@ -2798,7 +2988,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Gates Avenue & Nostrand Avenue",
@@ -2813,7 +3004,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Beverley Road & Nostrand Avenue",
@@ -2828,7 +3020,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Springfield Boulevard & Hempstead Avenue",
@@ -2843,7 +3036,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ocean Parkway & Brighton Beach Avenue",
@@ -2858,7 +3052,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Mott Avenue & Beach 20 Street",
@@ -2873,7 +3068,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Parkway & Willmohr Street",
@@ -2888,7 +3084,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & 80 Street",
@@ -2903,7 +3100,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "86 Street & Stillwell Avenue",
@@ -2918,7 +3116,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Jerome Avenue & Ogden Avenue",
@@ -2933,7 +3132,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Houston Street & Columbia Street",
@@ -2948,7 +3148,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Hylan Boulevard & Quintard Street",
@@ -2963,7 +3164,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West 129 Street & 5 Avenue",
@@ -2978,7 +3180,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "23 Street & Jackson Avenue",
@@ -2993,7 +3196,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Riverdale Avenue & Rockaway Avenue",
@@ -3008,7 +3212,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "37 Avenue & 84 Street",
@@ -3023,7 +3228,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "St Johns Place & Kingston Avenue",
@@ -3038,7 +3244,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Bergen Street & New York Avenue",
@@ -3053,7 +3260,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 98 Street & Legion Street",
@@ -3068,7 +3276,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 4 Street & Church Avenue",
@@ -3083,7 +3292,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Shore Parkway & Bay Parkway",
@@ -3098,7 +3308,8 @@
    "last_project_year": 2009.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Myrtle Avenue & Ashland Place",
@@ -3113,7 +3324,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & Lafayette Avenue",
@@ -3128,7 +3340,8 @@
    "last_project_year": 2021.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Main Street & Northern Boulevard",
@@ -3143,7 +3356,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Morris Avenue & East 165 Street",
@@ -3158,7 +3372,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "West Houston Street & Varick Street",
@@ -3173,7 +3388,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & Forest Avenue",
@@ -3188,7 +3404,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "37 Avenue & 21 Street",
@@ -3203,7 +3420,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Boulevard & Sutphin Boulevard",
@@ -3218,7 +3436,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "21 Street & Ed Koch Br Upper Roadway En Ramp",
@@ -3233,7 +3452,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eliot Avenue & Fresh Pond Road",
@@ -3248,7 +3468,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flatlands Avenue & East 105 Street",
@@ -3263,7 +3484,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East Broadway & Pike Street",
@@ -3278,7 +3500,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "47 Avenue & 47 Street",
@@ -3293,7 +3516,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & Chambers Street",
@@ -3308,7 +3532,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Astoria Boulevard & Newtown Avenue",
@@ -3323,7 +3548,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Main Street & Vleigh Place",
@@ -3338,7 +3564,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Glenwood Road & Remsen Avenue",
@@ -3353,7 +3580,8 @@
    "last_project_year": 2019.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Prospect Place & Buffalo Avenue",
@@ -3368,7 +3596,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Bowery & Bayard Street",
@@ -3383,7 +3612,8 @@
    "last_project_year": 2010.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Union Turnpike & Parsons Boulevard",
@@ -3398,7 +3628,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Graham Avenue & Metropolitan Avenue",
@@ -3413,7 +3644,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Myrtle Avenue & 117 Street",
@@ -3428,7 +3660,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Broadway & 51 Street",
@@ -3443,7 +3676,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Flushing Avenue & Knickerbocker Avenue",
@@ -3458,7 +3692,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "223 Street & Northern Boulevard",
@@ -3473,7 +3708,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Glenwood Road & Ralph Avenue",
@@ -3488,7 +3724,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "160 Street & Liberty Avenue",
@@ -3503,7 +3740,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Coney Island Avenue & Avenue H",
@@ -3518,7 +3756,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastern Parkway & Ralph Avenue",
@@ -3533,7 +3772,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Malcolm X Boulevard & Halsey Street",
@@ -3548,7 +3788,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Valentine Avenue & East 188 Street",
@@ -3563,7 +3804,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Parsons Boulevard & Sanford Avenue",
@@ -3578,7 +3820,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "New York Avenue & Clarkson Avenue",
@@ -3593,7 +3836,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "162 Street & Sanford Avenue",
@@ -3608,7 +3852,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Concourse & East 192 Street",
@@ -3623,7 +3868,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Canal Street & Forsyth Street",
@@ -3638,7 +3884,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "3 Avenue & East 72 Street",
@@ -3653,7 +3900,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Coney Island Avenue & Ocean View Avenue",
@@ -3668,7 +3916,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "56 Street & 5 Avenue",
@@ -3683,7 +3932,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue J & Ocean Avenue",
@@ -3698,7 +3948,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ralph Avenue & East 88 Street",
@@ -3713,7 +3964,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Atlantic Avenue & Clinton Street",
@@ -3728,7 +3980,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "89 Avenue & 163 Street",
@@ -3743,7 +3996,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Grand Concourse & East Kingsbridge Road",
@@ -3758,7 +4012,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "85 Street & 4 Avenue",
@@ -3773,7 +4028,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "168 Street & 93 Avenue",
@@ -3788,7 +4044,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "164 Street & Jamaica Avenue",
@@ -3803,7 +4060,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Baisley Boulevard & Bedell Street",
@@ -3818,7 +4076,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "East 92 Street & Rutland Road",
@@ -3833,7 +4092,8 @@
    "last_project_year": 2026.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ocean Parkway & Avenue X",
@@ -3848,7 +4108,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Little Neck Parkway & Nassau Boulevard",
@@ -3863,7 +4124,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue Y & Nostrand Avenue",
@@ -3878,7 +4140,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "89 Avenue & 168 Street",
@@ -3893,7 +4156,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Park Avenue & East 86 Street",
@@ -3908,7 +4172,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "121 Street & Hawtree Creek Road",
@@ -3923,7 +4188,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Myrtle Avenue & Gates Avenue",
@@ -3938,7 +4204,8 @@
    "last_project_year": 2014.0,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Merrick Boulevard & 228 Street",
@@ -3953,7 +4220,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lefferts Boulevard & Metropolitan Avenue",
@@ -3968,7 +4236,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "55 Street & 7 Avenue",
@@ -3983,7 +4252,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 2,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Queens Boulevard & Ascan Avenue",
@@ -3998,7 +4268,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Rockaway Avenue & Belmont Avenue",
@@ -4013,7 +4284,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Buffalo Avenue & Fulton Street",
@@ -4028,7 +4300,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "47 Avenue & Van Dam Street",
@@ -4043,7 +4316,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Avenue M & Ocean Avenue",
@@ -4058,7 +4332,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Utopia Parkway & 46 Avenue",
@@ -4073,7 +4348,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Eastchester Road & Waters Place",
@@ -4088,7 +4364,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "197 Street & Hillside Avenue",
@@ -4103,7 +4380,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Seagirt Boulevard & Beach 31 Street",
@@ -4118,7 +4396,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Coney Island Avenue & Avenue C",
@@ -4133,7 +4412,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "College Point Boulevard & Maple Avenue",
@@ -4148,7 +4428,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "31 Avenue & 21 Street",
@@ -4163,7 +4444,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "92 Street & 59 Avenue",
@@ -4178,7 +4460,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ft Hamilton Parkway & 58 Street",
@@ -4193,7 +4476,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Mermaid Avenue & West 33 Street",
@@ -4208,7 +4492,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Emmons Avenue & Ocean Avenue",
@@ -4223,7 +4508,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Hylan Boulevard & Guyon Avenue",
@@ -4238,7 +4524,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Victory Boulevard & Morani Street",
@@ -4253,7 +4540,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "97 Street & 57 Avenue",
@@ -4268,7 +4556,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Cross Island Parkway & 150 Street",
@@ -4283,7 +4572,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Merrick Boulevard & Foch Boulevard",
@@ -4298,7 +4588,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Union Turnpike & Springfield Boulevard",
@@ -4313,7 +4604,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Pelham Parkway North & Wallace Avenue",
@@ -4328,7 +4620,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Myrtle Avenue & North Portland Avenue",
@@ -4343,7 +4636,8 @@
    "last_project_year": 2023.0,
    "recent_projects": 1,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "69 Street & Metropolitan Avenue",
@@ -4358,7 +4652,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Travis Avenue & Draper Place",
@@ -4373,7 +4668,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Lily Pond Avenue & Mc Clean Avenue",
@@ -4388,7 +4684,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Richmond Avenue & Staten Island Expwy Et 7 Wb",
@@ -4403,7 +4700,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": true,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Forest Avenue & Summerfield Place",
@@ -4418,7 +4716,8 @@
    "last_project_year": 2024.0,
    "recent_projects": 2,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Milford Drive & Endor Avenue",
@@ -4433,7 +4732,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Bell Boulevard & 48 Avenue",
@@ -4448,7 +4748,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Guy R Brewer Boulevard & Tuskegee Airmen Way",
@@ -4463,7 +4764,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Woolley Avenue & Watchogue Road",
@@ -4478,7 +4780,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Ascan Avenue & Manse Street",
@@ -4493,7 +4796,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Union Turnpike & 175 Street",
@@ -4508,7 +4812,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Homelawn Street & Highland Avenue",
@@ -4523,7 +4828,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Richmond Road & Lighthouse Avenue",
@@ -4538,7 +4844,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Hylan Boulevard & Bedell Avenue",
@@ -4553,7 +4860,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   },
   {
    "name": "Victory Boulevard & Baron Boulevard",
@@ -4568,7 +4876,8 @@
    "last_project_year": null,
    "recent_projects": 0,
    "plan_gap": false,
-   "error": null
+   "error": null,
+   "since": "2021-10-30"
   }
  ],
  "memos": []
