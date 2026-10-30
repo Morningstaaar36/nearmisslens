@@ -81,6 +81,8 @@ Keys go in `.env`:
 
 Every paid call is cached and logged; `NML_BUDGET_USD` caps Meta spend; `--replay` never calls an API.
 
+To rerun everything without keys or spend, download `nearmisslens_replay_cache.tar.gz` from the GitHub release and unpack it in the repo root (`tar -xzf nearmisslens_replay_cache.tar.gz`). It holds every cached model and API response, the briefs, the audits and the cost ledgers.
+
 ## Limits
 - **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, not Empirical Bayes, and fixes must not be added together. Where a city does not record crash type, the angle and turning estimate is an upper bound. A qualified engineer must review every recommendation.
 - **"No recorded treatment" means none in the city's open datasets** within 60–150 m. Work recorded elsewhere is not seen.
