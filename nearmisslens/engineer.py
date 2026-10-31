@@ -280,11 +280,53 @@ def plan(query: str, client=None, letter_client=None) -> dict:
     """The deterministic engineer: every tool once, in order, and claims written by code."""
     t0, desk = time.perf_counter(), Desk()
     name, lat, lon, extra = _target(query, desk)
+    return investigate(desk, query, name, lat, lon, t0, extra, letter_client)
+
+
+def investigate(desk: Desk, query: str, name: str, lat: float, lon: float, t0: float | None = None,
+                extra: dict | None = None, letter_client=None) -> dict:
+    """The five corner tools in order on a known point, and the claims written by code."""
+    t0 = t0 if t0 is not None else time.perf_counter()
     rec = {"root_cause": root_cause(desk, lat, lon), "test_programs": test_programs(desk, lat, lon),
            "choose_fixes": choose_fixes(desk, lat, lon)}
     rec["who_must_act"] = who_must_act(desk, lat, lon, name)
     rec["draft_request"] = draft_request(desk, lat, lon, name, rec["who_must_act"][0], letter_client)
     return _report(query, name, lat, lon, desk, claims_for(name.split(",")[0], rec), t0, "deterministic", extra)
+
+
+def slug(name: str) -> str:
+    return re.sub(r"_+", "_", "".join(ch if ch.isalnum() else "_" for ch in name.split(",")[0].lower())).strip("_")[:60]
+
+
+def precompute(city: str, top: int | None = None, letters: int = 0, letter_client=None, out_dir=None) -> list[dict]:
+    """The deterministic report for every screened corner of a city (worst first), for the static site; the first
+    `letters` corners also get a drafted, checked letter. Returns the index rows."""
+    from .config import SETTINGS
+    out_dir = out_dir or SETTINGS.runs_dir / "engineer" / city
+    out_dir.mkdir(parents=True, exist_ok=True)
+    desk = Desk()
+    data, rid = screen_city(desk, city, top or 10_000)
+    index = []
+    for k, j in enumerate(data["top"]):
+        s = slug(j["name"])
+        path = out_dir / f"{s}.json"
+        if path.exists() and (k >= letters or json.loads(path.read_text())["findings"]["draft_request"].get("letter")):
+            rep = json.loads(path.read_text())
+        else:
+            try:
+                rep = investigate(Desk(), j["name"], f"{j['name']}, {data['name']}", j["lat"], j["lon"],
+                                  letter_client=letter_client if k < letters else None)
+            except Exception as e:  # one corner's failure is recorded, not fatal
+                print(f"  {j['name']}: {type(e).__name__}: {e}")
+                continue
+            path.write_text(json.dumps(rep, indent=0, default=str))
+        index.append({"slug": s, "name": j["name"], "lat": j["lat"], "lon": j["lon"], "rank": k + 1,
+                      "injury_crashes": j.get("injury_crashes"), "plan_gap": j.get("plan_gap"),
+                      "claim_errors": len(rep["claim_errors"]),
+                      "letter": bool(rep["findings"]["draft_request"].get("letter"))})
+        if (k + 1) % 25 == 0:
+            print(f"  {k + 1} corners")
+    return index
 
 
 # ------------------------------------------------------------------------------------------------- agent mode
