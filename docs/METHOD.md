@@ -17,7 +17,7 @@ A falsification gate is a deterministic test, inside the tool an agent uses to f
 
 ## The causal gate
 
-The causal gate is the new part. Its input is a dated treatment program from the open-data registry (where and when the city installed something) and the city's police-reported crashes.
+The statistics are standard road-safety evaluation (a comparison-group before/after with a placebo date); what is new here is that the design sits inside the tool an agent must pass before a claim is shown. Its input is a dated treatment program from the open-data registry (where and when the city installed something) and the city's police-reported crashes.
 
 1. **Design.** For each treated site, crashes within a radius are counted in the window before and the window after the install month (the install month itself is skipped). The expected count after, had nothing been installed, is the count before times the change at comparison sites over the same months (Hauer's comparison-group method). The comparison sites are sites the city treated later (not yet treated), or, when there are too few of them, the rest of the city away from any treatment. The effect is θ = crashes after ÷ crashes expected; below 1 means fewer crashes than expected. A 95% interval comes from resampling treated and comparison sites (2,000 resamples).
 2. **Rule.** The program passes only if the interval for θ is entirely below 1.
@@ -28,9 +28,9 @@ Studies are JSON files (`validation/studies/`), so a city, a program, a radius o
 
 ## What the gates found
 
-**New York's leading pedestrian intervals work.** At 1,651 intersections where the city installed an LPI between 2015 and 2021, pedestrian injury crashes fell 17% (θ 0.833, 95% interval 0.781–0.887) compared with intersections that got one later. The placebo on the same sites shows no change (θ 1.02, 0.95–1.10). The national CMF the brief ranks LPIs with (CMF Clearinghouse 9903) is a 19% cut, so the city's own record supports the ranking.
+**New York's leading pedestrian intervals work.** At 1,651 intersections where the city installed an LPI between 2015 and 2021, pedestrian injury crashes fell 17% (θ 0.833, 95% interval 0.781–0.887) compared with intersections that got one later. The placebo on the same sites shows no change (θ 1.02, 0.95–1.10). The national CMF FHWA cites for LPIs (CMF Clearinghouse 9918) is a 13% cut, so the city's own record supports the ranking.
 
-**New York's turn calming fails the gate.** A simple before/after credits it with a 26% cut. The comparison-group estimate is 16%, but the placebo shows a 22% fall in the 18 months before the work started (interval 0.70–0.86), so the decline was already under way. The gate does not credit it.
+**New York's turn calming shows an earlier trend.** A simple before/after credits it with a 26% cut. The comparison-group estimate is 16%, but in the 18 months before the work started crashes were already 22% below what the comparison predicted (interval 0.70–0.86), so the decline was already under way. The gate does not credit it.
 
 **The LPI result replicates in Seattle.** The same design, unchanged, on Seattle's 371 usable LPI intersections: pedestrian injury crashes fell 33% (θ 0.675, 0.476–0.875) compared with intersections treated later; both placebos include 1. Seattle's crash records count pedestrians involved rather than pedestrians injured, so the outcome there is injury crashes with a pedestrian involved.
 
@@ -70,7 +70,7 @@ The gate fixed every disagreement on a real program. On fake programs it did wor
 | NYC DOT, Safety Treatment Evaluation 2005–2018 (2022) | Naive before/after, 1,446 LPIs | Pedestrian injuries −18.1% |
 | FHWA-HRT-18-044 (2018) | Empirical Bayes, 105 sites in Chicago, New York and Charlotte | Vehicle–pedestrian crashes CMF 0.87 (−13%); New York's 42 sites alone 0.91, not significant |
 | Columbia, Nature Cities (2025) | Spatial panel, 2,869 NYC LPI intersections, reported as an association | Pedestrian injuries −33% |
-| This work, Seattle (T13) | Same design as T11, 371 intersections | Pedestrian-involved injury crashes −33% (−52% to −12%) |
+| This work, Seattle (T13) | Same design as T11, 371 intersections | Pedestrian-involved injury crashes −33% (−52% to −13%) |
 | Seattle DOT (2023) | City summary, method not stated | Pedestrian killed or seriously injured −34% |
 
 Our New York estimate sits between the federal CMF and the city's own naive figure. The same NYC DOT report credits turn calming with −17.5% pedestrian injuries using a naive design; our gate does not credit it, because the decline began before the work.
