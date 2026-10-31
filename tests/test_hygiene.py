@@ -78,3 +78,23 @@ def test_docs_never_say_judge():
     found = subprocess.run(["git", "grep", "-n", "-i", word[:4], "--", *[p for p in paths if (ROOT / p).exists()]],
                            cwd=ROOT, capture_output=True, text=True).stdout
     assert found == "", found[:500]
+
+
+def test_pinned_asof_makes_crash_queries_independent_of_today(monkeypatch):
+    import datetime as dt
+    from nearmisslens import config, context, opendata
+    seen = []
+    monkeypatch.setattr(context, "fetch", lambda url, params=None, **k: (seen.append(params) or [], 0))
+    a = {"id": "x", "endpoint": "https://e", "geo_field": "loc", "date_field": "d"}
+    monkeypatch.setenv("NML_ASOF", "2026-10-31")
+    for _ in range(2):  # the query depends only on the pinned date, never on today
+        opendata.rows_near(a, 40.0, -73.0, 100, config.since(5))
+    assert seen[0] == seen[1] and "'2026-11-01'" in seen[0]["$where"] and "'2021-10-31'" in seen[0]["$where"]
+    assert config.since(5) == dt.date(2021, 10, 31)
+
+
+def test_readme_corner_geocodes_offline(monkeypatch):
+    from nearmisslens import brief, config
+    monkeypatch.setattr(config.SETTINGS, "replay", True)
+    lat, lon, name = brief.geocode("Bruckner Boulevard & Hunts Point Avenue, Bronx, NY")
+    assert abs(lat - 40.8202) < 0.002 and abs(lon + 73.8906) < 0.002
