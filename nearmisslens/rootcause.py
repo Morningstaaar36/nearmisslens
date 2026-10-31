@@ -88,6 +88,20 @@ def tags(r: dict, a: dict) -> tuple[set[str], set[str]]:
     return out, missing
 
 
+def phrase(pattern: str) -> str:
+    """A pattern as the end of "N% of crashes here ...": 'had a truck or bus involved', 'happened at night'."""
+    kind, _, value = pattern.partition(": ")
+    if value and kind == "factor":
+        return f"had \u201c{value}\u201d recorded as a contributing factor"
+    if value and kind == "vehicle":
+        return f"involved a {value}"
+    if value and kind == "crash type":
+        return f"were recorded as \u201c{value}\u201d crashes"
+    if pattern.startswith(("at ", "in ", "on ")):
+        return f"happened {pattern}"
+    return f"had {pattern}"
+
+
 def profile(rows: list[dict], a: dict) -> tuple[Counter, set[str], int]:
     counts, missing, unspecified = Counter(), set(), 0
     for r in rows:
@@ -138,7 +152,7 @@ def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100) -> di
         share = k / n if n else 0.0
         p0 = (base["counts"].get(name, 0) / base["crashes"]) if base and base["crashes"] else None
         p = binomtest(k, n, p0, alternative="greater").pvalue if p0 and 0 < p0 < 1 and n >= MIN_CRASHES else None
-        tested.append({"pattern": name, "crashes": k, "share": round(share, 3),
+        tested.append({"pattern": name, "phrase": phrase(name), "crashes": k, "share": round(share, 3),
                        "city_share": round(p0, 3) if p0 is not None else None, "p": p})
     # Holm: the i-th smallest p-value must be below 0.05 / (m - i); stop at the first that is not
     ps = sorted((t for t in tested if t["p"] is not None), key=lambda t: t["p"])

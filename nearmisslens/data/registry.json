@@ -555,7 +555,8 @@
    "source": "NYC Open Data, City Council Districts (872g-cjhh)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "salutation": "Council Member"
   },
   {
    "id": "nyc-community-board",
@@ -588,7 +589,8 @@
    "source": "NYC Open Data, Community Districts (5crt-au7u)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "salutation": "members of {office}"
   },
   {
    "id": "dc-lpi",

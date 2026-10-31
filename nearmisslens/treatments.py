@@ -18,6 +18,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import re
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -469,7 +470,100 @@ def projection(spec: dict, out: dict, cr: pd.DataFrame, points: dict, org) -> di
 
 
 def results() -> list[dict]:
-    return [json.loads(p.read_text()) for p in sorted((RESULTS_DIR / "bench").glob("study_*.json"))]
+    files = tuple((str(p), p.stat().st_mtime_ns) for p in sorted((RESULTS_DIR / "bench").glob("study_*.json")))
+    return _read_results(files)
+
+
+@lru_cache(maxsize=4)
+def _read_results(files: tuple) -> list[dict]:
+    return [json.loads(Path(p).read_text()) for p, _ in files]
+
+
+OUTCOME_WORDS = {"pedestrian": "pedestrian injury crashes", "injury": "injury crashes",
+                 "motorist_only": "injury crashes with no pedestrian or cyclist hurt"}
+# what the city's own record says about a program it ran; never "failed" or "doesn't work": an effect not shown in
+# the record is not shown to be absent
+NOT_SUPPORTED = ("earlier trend", "not shown", "worse")
+
+
+def pct(x: float) -> int:
+    """Percent rounded half away from zero (Python's round() sends -32.5 to -32)."""
+    return int(np.sign(x) * np.floor(abs(x) + 0.5))
+
+
+def _status(g: dict, main: dict) -> str:
+    ci = main.get("ci95")
+    if g.get("passed"):
+        return "worked"
+    if g.get("rule_met") and not g.get("placebo_ok"):
+        return "earlier trend"
+    if ci and ci[0] > 1:
+        return "worse"
+    return "not shown"
+
+
+def programs(city: str | None = None) -> list[dict]:
+    """Every program a registered study tested, with what the city's own record says about it: worked (the causal
+    gate passed), earlier trend (a drop, but a placebo date before the install shows one too), worse (crashes rose),
+    or not shown (the interval includes no change)."""
+    out = []
+    for res in results():
+        if city and res.get("city") != city:
+            continue
+        specs = {p["key"]: p for p in (res.get("spec") or {}).get("programs", [])}
+        for key, g in (res.get("gates") or {}).items():
+            main = (res.get("runs", {}).get(g["primary"]) or {}).get(g["outcome"]) or {}
+            if not main.get("ci95"):
+                continue
+            spec = specs.get(key, {})
+            naive = ((res.get("naive") or {}).get(key) or {}).get(g["outcome"]) or {}
+            status = _status(g, main)
+            label, words = g.get("treatment") or key, OUTCOME_WORDS.get(g["outcome"], g["outcome"])
+            lo, hi = (pct(100 * (v - 1)) for v in main["ci95"])
+            ch = pct(100 * (main["theta"] - 1))
+            text = {"worked": f"{words} changed {ch:+d}% (95% interval {lo:+d}% to {hi:+d}%) at {main['sites']:,} "
+                              "sites against sites treated later or the citywide trend, and a placebo date shows nothing",
+                    "earlier trend": f"a simple before/after says {pct(naive.get('change_pct', ch)):+d}%, but a "
+                                     "placebo date before the work shows a drop too, so the decline cannot be credited "
+                                     "to the program",
+                    "worse": f"{words} rose {ch:+d}% (95% interval {lo:+d}% to {hi:+d}%) at {main['sites']:,} sites",
+                    "not shown": f"at {main['sites']:,} sites the change in {words} ({ch:+d}%, 95% interval {lo:+d}% "
+                                 f"to {hi:+d}%) could be zero"}[status]
+            out.append({"city": res.get("city"), "study": res["id"], "program": key, "label": label,
+                        "adapter": spec.get("adapter"), "countermeasure": g.get("countermeasure"),
+                        "outcome": g["outcome"], "status": status, "theta": main["theta"], "ci95": main["ci95"],
+                        "sites": main["sites"], "naive_change_pct": naive.get("change_pct"),
+                        "fake_rank": (g.get("fake_rank") or {}).get("rank"), "text": text,
+                        "source": f"NML-Bench {res['id']} (validation/BENCH.md)"})
+    return out
+
+
+def program_status(city: str | None, countermeasure: str | None = None, adapter: str | None = None) -> dict:
+    """The city's verdict on one countermeasure (or one program dataset): a study that passed wins, otherwise the
+    largest study; 'untested' when no registered study covers it."""
+    found = [p for p in programs(city) if (countermeasure and p["countermeasure"] == countermeasure)
+             or (adapter and p["adapter"] == adapter)]
+    if not found:
+        return {"status": "untested", "countermeasure": countermeasure, "adapter": adapter, "city": city}
+    return max(found, key=lambda p: (p["status"] == "worked", p["sites"]))
+
+
+def repeat_risk(city: str | None, projects: list[dict]) -> list[dict]:
+    """Programs this corner already got whose citywide effect the city's own record does not support: doing the same
+    again here is not backed by evidence. One flag per program, with the year it arrived."""
+    flags = {}
+    for pr in projects:
+        st = program_status(city, adapter=pr.get("dataset"))
+        if st["status"] not in NOT_SUPPORTED:
+            continue
+        key = st["adapter"]
+        if key not in flags or (pr.get("year") or 9999) < (flags[key].get("year") or 9999):
+            flags[key] = {"program": st["label"], "year": pr.get("year"), "status": st["status"], "dataset": key,
+                          "study": st["study"], "source": st["source"],
+                          "text": f"This corner got {st['label']}{' in ' + str(pr['year']) if pr.get('year') else ''}. "
+                                  f"Across the city: {st['text']}. Repeating it here is not supported by the city's "
+                                  "own record."}
+    return list(flags.values())
 
 
 def local_evidence(city: str | None, countermeasure: str) -> dict | None:
@@ -483,17 +577,16 @@ def local_evidence(city: str | None, countermeasure: str) -> dict | None:
                 continue
             main = res["runs"][g["primary"]][g["outcome"]]
             placebo = res["runs"][g["placebos"][-1]][g["outcome"]] if g["placebos"] else None
-            lo, hi = (round(100 * (1 - v)) for v in reversed(main["ci95"]))
-            outcome = "pedestrian injury crashes" if g["outcome"] == "pedestrian" else \
-                ("injury crashes" if g["outcome"] == "injury" else "injury crashes with no pedestrian or cyclist hurt")
+            lo, hi = (pct(100 * (1 - v)) for v in reversed(main["ci95"]))
+            outcome = OUTCOME_WORDS.get(g["outcome"], g["outcome"])
             return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"],
                     "placebo_theta": placebo and placebo["theta"], "placebo_ci95": placebo and placebo["ci95"],
                     "study": res["id"], "source": f"NML-Bench {res['id']} (validation/BENCH.md)",
                     "fake_rank": (g.get("fake_rank") or {}).get("rank"),
-                    "text": f"{outcome} fell {round(-main['change_pct'])}% (95% interval {lo}-{hi}%) at "
+                    "text": f"{outcome} fell {pct(-main['change_pct'])}% (95% interval {lo}-{hi}%) at "
                             f"{main['sites']:,} intersections after the city installed it, against sites that got "
                             "it later; a placebo date before the install shows no drop."
-                            + (f" A stricter check is less sure: {round(100 * (1 - g['fake_rank']['rank']))}% of 200 "
+                            + (f" A stricter check is less sure: {pct(100 * (1 - g['fake_rank']['rank']))}% of 200 "
                                "fake programs show a smaller drop." if (g.get("fake_rank") or {}).get("rank") is not None else "")}
     return None
 

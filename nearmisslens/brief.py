@@ -201,11 +201,21 @@ def fix_options(d: dict, cmf) -> dict:
         ev = treatments.local_evidence(d.get("city"), name)  # this city's own past installs, where tested
         if ev:
             o["local_evidence"] = ev
+        st = treatments.program_status(d.get("city"), name)
+        if st["status"] in treatments.NOT_SUPPORTED:  # the city tried it and its own record does not show an effect
+            # it changes the ranking only when the city's interval rules out the national CMF's effect (or crashes
+            # rose); a wide interval from a few sites is shown but carries no weight
+            o["local_program"] = {**{k: st[k] for k in ("status", "label", "text", "source", "study", "ci95")},
+                                  "contradicts_cmf": st["status"] == "worse" or st["ci95"][0] > sel["cmf"]}
         estimated.append(o)
-    # low-cost fixes before reconstructions (which need a design study), then those the record supports, then size
-    opts = sorted(estimated, key=lambda o: (o["scale"] == "reconstruction", o["verify_on_site"] is not None,
-                                            -o["expected_crashes_avoided_per_year"]))
+    # low-cost fixes before reconstructions (which need a design study), then fixes the city's own record does not
+    # contradict, then those the crash record supports, then size
+    opts = sorted(estimated, key=lambda o: (o["scale"] == "reconstruction",
+                                            (o.get("local_program") or {}).get("contradicts_cmf", False),
+                                            o["verify_on_site"] is not None, -o["expected_crashes_avoided_per_year"]))
+    projects = (d.get("plans") or {}).get("projects", [])
     return {"options": opts, "not_estimated": not_estimated, "in_place": list(have.values()), "control": control,
+            "repeat_risk": treatments.repeat_risk(d.get("city"), projects),
             "harm": harm.junction(cr, YEARS), "conditions_from_record": sorted(conds),
             "method": "expected crashes avoided per year = target crashes per year x (1 - CMF), Highway Safety Manual "
                       "simple method (not Empirical Bayes), with the CMF FHWA's fact sheet cites or else the median of "
@@ -307,6 +317,11 @@ def fixes_table(opts: dict, n: int = 8) -> str:
                     f"{('verify: ' + o['verify_on_site']) if o.get('verify_on_site') else 'supported by the record'} |")
         if o.get("local_evidence"):
             notes.append(f"_{o['countermeasure']}, tested on this city's own installs: {o['local_evidence']['text']}_")
+        if o.get("local_program"):
+            notes.append(f"_{o['countermeasure']}, tried by this city ({o['local_program']['label']}): "
+                         f"{o['local_program']['text']}; "
+                         + ("this rules out the national estimate, so it is ranked lower._"
+                            if o["local_program"]["contradicts_cmf"] else "too uncertain to change the ranking._"))
     h = opts.get("harm")
     head = (f"Injury crashes here cost about ${h['usd_per_year']:,.0f} a year in the U.S. DOT's official values "
             f"({h['injury_crashes_per_year']} a year at ${h['value_per_injury_crash_usd']:,.0f} each, 2024 dollars"
@@ -316,7 +331,8 @@ def fixes_table(opts: dict, n: int = 8) -> str:
     skipped = opts.get("not_estimated") or []
     none = ("\n\nNot estimated here: " + "; ".join(f"{x['countermeasure']} ({x['reason']})" for x in skipped) + ".") \
         if skipped else ""
-    return head + "\n".join(rows) + "".join(f"\n\n{x}" for x in notes) + have + none + \
+    repeat = "".join(f"\n\n**Tried here before:** {x['text']}" for x in opts.get("repeat_risk") or [])
+    return head + "\n".join(rows) + "".join(f"\n\n{x}" for x in notes) + have + repeat + none + \
         f"\n\n_Method: {opts.get('method', '')}. Do not add fixes together._"
 
 

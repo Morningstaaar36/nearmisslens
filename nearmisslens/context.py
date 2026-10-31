@@ -218,11 +218,14 @@ class FactCheck:
         for m in panel.NUMBER.finditer(text):
             t = m.group(0)
             v, tol = panel._value(t), 0.5 * 10 ** -panel._decimals(t) + 1e-9
-            if not any(abs(k - v) <= tol for k in self.known):
+            tail = text[m.end():m.end() + 45]
+            percent = tail.lstrip().startswith("%")
+            # "32%" may also be a share the record holds as 0.318
+            if not any(abs(k - v) <= tol or (percent and 0 <= k <= 1 and abs(100 * k - v) <= tol)
+                       for k in self.known):
                 bad.append(f"number {t} is not in the dossier")
                 continue
-            tail = text[m.end():m.end() + 45]
-            if tail.lstrip().startswith("%") or (len(t) == 4 and t[:2] in ("19", "20")):
+            if percent or (len(t) == 4 and t[:2] in ("19", "20")):
                 continue  # percentages and years carry no label
             head = text[max(0, m.start() - 30):m.start()]
             for name, before, after, _ in LABELS:

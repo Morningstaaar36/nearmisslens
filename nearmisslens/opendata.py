@@ -219,6 +219,8 @@ def office_from(a: dict, value: str) -> dict | None:
         out["area"] = area
     if a.get("contact"):
         out["contact"] = a["contact"].format(**fields)
+    if a.get("salutation"):  # how a letter greets this office ("Council Member", "members of {office}")
+        out["salutation"] = a["salutation"].format(office=out["office"], **fields)
     return out
 
 

@@ -260,6 +260,26 @@ def _memo_client(open_weights: bool):
     return MetaClient(SETTINGS)
 
 
+def cmd_engineer(args) -> int:
+    from . import engineer
+    letter_client = _memo_client(not args.meta) if args.letter else None
+    rep = engineer.run(args.query, _memo_client(True), letter_client=letter_client) if args.agent else \
+        engineer.plan(args.query, letter_client=letter_client)
+    slug = "".join(ch if ch.isalnum() else "_" for ch in rep["junction"]["name"].split(",")[0].lower())[:60]
+    out = SETTINGS.runs_dir / "engineer" / f"{slug}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(portable(json.dumps(rep, indent=1, default=str)))
+    print(engineer.text(rep))
+    lt = (rep["findings"].get("draft_request") or {}).get("letter")
+    if lt:
+        print("\n" + lt)
+    if args.agent:
+        print(f"\nagent: {rep.get('turns')} turns, ${rep.get('usd')}, stopped: {rep.get('stopped')}; "
+              f"summary: {rep.get('summary')}")
+    print(f"\nwritten {portable(str(out))}")
+    return 0 if not rep["claim_errors"] else 1
+
+
 def cmd_brief(args) -> int:
     from . import brief
     from .meta_client import MetaClient
@@ -356,7 +376,7 @@ def cmd_app(args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an AI road-safety audit agent")
+    parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an agentic safety engineer for city streets")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
     sub = parser.add_subparsers(dest="cmd", required=True)
     fe = sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
@@ -448,6 +468,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--port", type=int, default=8770)
     ap.add_argument("--illustrate", action="store_true")
     ap.add_argument("--meta", action="store_true")
+    en = sub.add_parser("engineer", help="the safety engineer: worst corner, what its crashes have in common, what the "
+                                         "city tried, the fix, who must act, the request; every claim with a receipt")
+    en.add_argument("query", help='a city id (e.g. nyc: take its worst corner) or an intersection address')
+    en.add_argument("--agent", action="store_true", help="let Muse Spark Open choose the steps and write the claims")
+    en.add_argument("--letter", action="store_true", help="draft the checked request letter (Muse Spark Open)")
+    en.add_argument("--meta", action="store_true", help="draft the letter on the Meta API instead")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
@@ -473,7 +499,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":
