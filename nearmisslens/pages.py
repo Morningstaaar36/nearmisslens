@@ -38,7 +38,10 @@ def compact(rep: dict) -> dict:
     fx["options"] = (fx.get("options") or [])[:8]
     f["choose_fixes"] = fx
     rc = dict(f.get("root_cause") or {})
-    rc["patterns"] = (rc.get("patterns") or [])[:12]
+    # reports saved before rootcause returned plain bools hold "True"/"False" strings
+    rc["patterns"] = [{**t, "over_represented": t.get("over_represented") in (True, "True")}
+                      for t in (rc.get("patterns") or [])[:12]]
+    rc["over_represented"] = [t for t in rc["patterns"] if t["over_represented"]]
     f["root_cause"] = rc
     f.pop("screen_city", None)
     return {**{k: v for k, v in rep.items() if k != "findings"}, "findings": f}
@@ -49,15 +52,19 @@ def _brief_dir(name: str) -> Path:
     return SETTINGS.runs_dir / "briefs" / "".join(ch if ch.isalnum() else "_" for ch in name.split(",")[0].lower())[:60]
 
 
-def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int = 25) -> dict:
+def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int = 25, letters: int = 0,
+          letter_client=None, workers: int = 3, saved_only: bool = False) -> dict:
     src = SETTINGS.runs_dir / "engineer" / city
-    index = engineer.precompute(city, out_dir=src)  # reuses saved reports; builds any that are missing
+    # reuses saved reports and builds any that are missing (saved_only: a preview from what is already built)
+    index = engineer.precompute(city, letters=letters, letter_client=letter_client, out_dir=src, workers=workers,
+                                saved_only=saved_only)
     data = docs / "data"
     if (data / "j").exists():
         shutil.rmtree(data / "j")
     (data / "j").mkdir(parents=True)
     for k, row in enumerate(index):
-        rep = compact(json.loads((src / f"{row['slug']}.json").read_text()))
+        rep = compact(engineer.recheck(json.loads((src / f"{row['slug']}.json").read_text())))
+        row["claim_errors"] = len(rep["claim_errors"])
         photo = _brief_dir(row["name"]) / "aerial.jpg"
         if k < media_top and photo.exists():
             dst = data / "media" / row["slug"] / "aerial.jpg"
@@ -81,7 +88,8 @@ def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int =
         raise RuntimeError("the static site failed its checks: " + "; ".join(problems[:5]))
     size = sum(p.stat().st_size for p in data.rglob("*") if p.is_file())
     return {"corners": len(index), "letters": sum(r["letter"] for r in index), "mb": round(size / 1e6, 1),
-            "claim_errors": sum(r["claim_errors"] for r in index), "path": str(docs.relative_to(ROOT))}
+            "claim_errors": sum(r["claim_errors"] for r in index),
+            "path": str(docs.relative_to(ROOT)) if docs.is_relative_to(ROOT) else str(docs)}
 
 
 def check(docs: Path = DOCS) -> list[str]:
@@ -93,6 +101,8 @@ def check(docs: Path = DOCS) -> list[str]:
         text = p.read_text()
         if "/home/" in text or "/Users/" in text:
             out.append(f"{p.relative_to(docs)} contains a machine path")
+        if '"True"' in text or '"False"' in text:
+            out.append(f"{p.relative_to(docs)} holds a true/false value saved as text")
         if SECRETISH.search(text):
             out.append(f"{p.relative_to(docs)} contains something that looks like a key")
     return out

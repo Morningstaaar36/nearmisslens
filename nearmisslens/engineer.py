@@ -33,6 +33,7 @@ class Desk:
     receipts: list[dict] = field(default_factory=list)
     data: dict[str, dict] = field(default_factory=dict)
     dossiers: dict[tuple, dict] = field(default_factory=dict)
+    places: set[str] = field(default_factory=set)  # corner names: "East 138 Street" holds no count to check
 
     def record(self, tool: str, data: dict, sources: list[str], checks: list[str], t0: float, summary: str) -> str:
         rid = f"R{len(self.receipts) + 1}"
@@ -160,14 +161,37 @@ def draft_request(desk: Desk, lat: float, lon: float, name: str, who: dict, clie
 OVERCLAIM = re.compile(r"\b(caused|causes|cause of|failed|fails|failure|proves?|proved|doesn't work|does not work)\b", re.I)
 
 
+QUOTED = re.compile(r"\u201c[^\u201d]*\u201d|\"[^\"]*\"")  # the record's own words, e.g. "failure to yield"
+
+
 def wording(text: str) -> list[str]:
     return [f"'{m.group(0)}' overstates the record: say 'have in common' for patterns and 'not shown' for programs"
-            for m in OVERCLAIM.finditer(text or "")]
+            for m in OVERCLAIM.finditer(QUOTED.sub("", text or ""))]
+
+
+def strip_places(text: str, desk: Desk) -> str:
+    """The text with the corner's name (and each of its streets) taken out, longest first."""
+    names = {n for p in desk.places for n in [p, *re.split(r"\s*&\s*", p)] if n}
+    for n in sorted(names, key=len, reverse=True):
+        text = re.sub(re.escape(n), "the place", text, flags=re.I)
+    return text
 
 
 def check_summary(summary: str, desk: Desk) -> list[str]:
     """The free-text summary: its numbers must be in some receipt, under the right labels, and its wording plain."""
-    return [f"summary: {e}" for e in context.FactCheck(desk.data).text(summary or "") + wording(summary)]
+    s = strip_places(summary or "", desk)
+    return [f"summary: {e}" for e in context.FactCheck(desk.data).text(s) + wording(s)]
+
+
+def recheck(report: dict) -> dict:
+    """A saved report's claims checked again with the current checker (receipts rebuilt from its findings)."""
+    desk = Desk(receipts=report["receipts"],
+                data={r["id"]: report["findings"][r["tool"]] for r in report["receipts"] if r["tool"] in report["findings"]})
+    desk.places.add(report["junction"]["name"].split(",")[0])
+    errors = check_claims(report["claims"], desk, REQUIRED)
+    if report.get("summary"):
+        errors += check_summary(report["summary"], desk)
+    return {**report, "claim_errors": errors}
 
 
 def check_claims(claims: list[dict], desk: Desk, required: tuple[str, ...] = ()) -> list[str]:
@@ -175,7 +199,8 @@ def check_claims(claims: list[dict], desk: Desk, required: tuple[str, ...] = ())
     has at least one claim citing it; no claim overstates what the record can show."""
     errors, cited = [], set()
     for k, c in enumerate(claims, 1):
-        errors += [f"claim {k}: {e}" for e in wording(c.get("text", ""))]
+        c = {**c, "text": strip_places(c.get("text", ""), desk)}
+        errors += [f"claim {k}: {e}" for e in wording(c["text"])]
         rid = c.get("receipt")
         if rid not in desk.data:
             errors.append(f"claim {k} cites no receipt (got {rid!r})")
@@ -287,6 +312,7 @@ def investigate(desk: Desk, query: str, name: str, lat: float, lon: float, t0: f
                 extra: dict | None = None, letter_client=None) -> dict:
     """The five corner tools in order on a known point, and the claims written by code."""
     t0 = t0 if t0 is not None else time.perf_counter()
+    desk.places.add(name.split(",")[0])
     rec = {"root_cause": root_cause(desk, lat, lon), "test_programs": test_programs(desk, lat, lon),
            "choose_fixes": choose_fixes(desk, lat, lon)}
     rec["who_must_act"] = who_must_act(desk, lat, lon, name)
@@ -299,7 +325,7 @@ def slug(name: str) -> str:
 
 
 def precompute(city: str, top: int | None = None, letters: int = 0, letter_client=None, out_dir=None,
-               workers: int = 1) -> list[dict]:
+               workers: int = 1, saved_only: bool = False) -> list[dict]:
     """The deterministic report for every screened corner of a city (worst first), for the static site; the first
     `letters` corners also get a drafted, checked letter. Saved reports are reused. workers > 1 builds corners in
     parallel (keep it small: OpenStreetMap's Overpass allows a few requests at a time). Returns the index rows."""
@@ -315,6 +341,8 @@ def precompute(city: str, top: int | None = None, letters: int = 0, letter_clien
             rep = json.loads(path.read_text())
             if k >= letters or rep["findings"]["draft_request"].get("letter"):
                 return rep
+        if saved_only:
+            return None
         try:
             rep = investigate(Desk(), j["name"], f"{j['name']}, {data['name']}", j["lat"], j["lon"],
                               letter_client=letter_client if k < letters else None)
@@ -349,6 +377,12 @@ INSTRUCTIONS = (
     "'caused'; say 'not shown', never 'failed'. If finish is refused, fix the claims it names.")
 
 
+def _screen_and_name(desk: Desk, city: str, top: int) -> tuple[dict, str]:
+    data, rid = screen_city(desk, city, top)
+    desk.places.update(j["name"] for j in data["top"])
+    return data, rid
+
+
 def _compact(data: dict, limit: int = 6000) -> str:
     text = json.dumps(data, default=str)
     return text if len(text) <= limit else text[:limit] + " ...(truncated)"
@@ -378,6 +412,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
     def locate(address: str):
         lat, lon, name = brief.geocode(address)
         names[(round(lat, 6), round(lon, 6))] = name
+        desk.places.update({name.split(",")[0], address.split(",")[0]})
         return {"lat": lat, "lon": lon, "name": name}
 
     def finish(summary: str, claims: list[dict]):
@@ -391,7 +426,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
     tools = [
         Tool("screen_city", "Rank a city's priority junctions by injury crashes.",
              _obj({"city": {"type": "string", "enum": citywide.cities()}, "top": {"type": "integer"}}, ["city", "top"]),
-             wrap(lambda city, top: screen_city(desk, city, min(int(top), 25)))),
+             wrap(lambda city, top: _screen_and_name(desk, city, min(int(top), 25)))),
         Tool("locate", "Coordinates for a street corner address.", _obj({"address": txt}, ["address"]), locate),
         Tool("root_cause", "What the corner's crashes have in common.", _obj({"lat": num, "lon": num}, ["lat", "lon"]),
              wrap(lambda lat, lon: root_cause(desk, lat, lon))),
@@ -401,7 +436,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
              wrap(lambda lat, lon: choose_fixes(desk, lat, lon))),
         Tool("who_must_act", "Road owners and offices that can request the work.",
              _obj({"lat": num, "lon": num, "name": txt}, ["lat", "lon", "name"]),
-             wrap(lambda lat, lon, name: who_must_act(desk, lat, lon, name))),
+             wrap(lambda lat, lon, name: (desk.places.add(name.split(",")[0]), who_must_act(desk, lat, lon, name))[1])),
         Tool("draft_request", "The request letter to the road owners.",
              _obj({"lat": num, "lon": num, "name": txt}, ["lat", "lon", "name"]),
              wrap(lambda lat, lon, name: draft_request(desk, lat, lon, name, jurisdiction.who_must_act(

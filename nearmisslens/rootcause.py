@@ -158,11 +158,11 @@ def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100) -> di
     ps = sorted((t for t in tested if t["p"] is not None), key=lambda t: t["p"])
     m, holding = len(ps), True
     for i, t in enumerate(ps):
-        holding = holding and t["p"] < 0.05 / (m - i)
-        t["over_represented"] = holding
+        holding = holding and bool(t["p"] < 0.05 / (m - i))
+        t["over_represented"] = holding  # a plain bool: numpy's would be saved as the string "False"
     for t in tested:
         t.setdefault("over_represented", False)
-        t["p"] = round(t["p"], 5) if t["p"] is not None else None
+        t["p"] = round(float(t["p"]), 5) if t["p"] is not None else None
     over = [t for t in tested if t["over_represented"]]
     return {"crashes": n, "since": since(years).isoformat(), "radius_m": radius_m, "source": a["source"],
             "baseline": {"crashes": base["crashes"], "junctions": "the city's screened priority junctions"} if base else None,

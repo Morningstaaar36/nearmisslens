@@ -61,6 +61,7 @@ def test_overclaiming_words_are_refused(monkeypatch):
     assert E.check_claims([{"text": "Speed humps failed here.", "receipt": rid}], desk)
     assert E.check_claims([{"text": "Trucks caused these crashes.", "receipt": rid}], desk)
     assert E.check_claims([{"text": "Speed humps: not shown.", "receipt": rid}], desk) == []
+    assert E.wording("had \u201cfailure to yield\u201d recorded as a contributing factor") == []
     assert E.check_summary("No program failed.", desk) and E.check_summary("Speed humps were not shown.", desk) == []
 
 
@@ -69,3 +70,13 @@ def test_text_report_and_agent_entry_point_exist(monkeypatch):
     r = E.plan("Main St & Oak Ave")
     out = E.text(r)
     assert "Receipts:" in out and "R1" in out and callable(E.run) and "finish" in E.INSTRUCTIONS
+
+
+def test_street_numbers_in_the_corner_name_are_not_counts(monkeypatch):
+    _fake(monkeypatch)
+    monkeypatch.setattr(E.brief, "geocode", lambda q: (1.0, 2.0, "Avenue C & East 138 Street, Testville"))
+    r = E.plan("Avenue C & East 138 Street")
+    assert r["claim_errors"] == [] and "East 138 Street" in r["claims"][0]["text"]
+    assert E.recheck(r)["claim_errors"] == []
+    bad = {**r, "claims": [{**r["claims"][0], "text": "East 138 Street had 999 injury crashes."}]}
+    assert E.recheck(bad)["claim_errors"]

@@ -280,6 +280,17 @@ def cmd_engineer(args) -> int:
     return 0 if not rep["claim_errors"] else 1
 
 
+def cmd_pages(args) -> int:
+    from pathlib import Path
+    from . import pages
+    lc = _memo_client(not args.meta) if args.letters else None
+    out = pages.build(args.city, args.live or "", Path(args.out) if args.out else pages.DOCS, letters=args.letters,
+                      letter_client=lc, workers=args.workers, saved_only=args.saved_only)
+    print(f"{out['corners']} corners, {out['letters']} letters, {out['mb']} MB in {out['path']}; claims refused: "
+          f"{out['claim_errors']}. Preview: python -m http.server -d {out['path']}")
+    return 0
+
+
 def cmd_brief(args) -> int:
     from . import brief
     from .meta_client import MetaClient
@@ -474,6 +485,14 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--agent", action="store_true", help="let Muse Spark Open choose the steps and write the claims")
     en.add_argument("--letter", action="store_true", help="draft the checked request letter (Muse Spark Open)")
     en.add_argument("--meta", action="store_true", help="draft the letter on the Meta API instead")
+    pg2 = sub.add_parser("pages", help="the static copilot for GitHub Pages: one engineer report per screened corner (docs/)")
+    pg2.add_argument("--city", default="nyc")
+    pg2.add_argument("--live", help="https URL of the live endpoint for addresses outside the precomputed corners")
+    pg2.add_argument("--letters", type=int, default=0, help="draft checked letters for the worst N corners (Muse Spark Open)")
+    pg2.add_argument("--meta", action="store_true", help="draft letters on the Meta API instead")
+    pg2.add_argument("--workers", type=int, default=3)
+    pg2.add_argument("--saved-only", action="store_true", help="only corners already built (a quick preview)")
+    pg2.add_argument("--out", help="write somewhere other than docs/")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")
     args = parser.parse_args(argv)
@@ -499,7 +518,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -153,7 +153,7 @@ def test_letter_checker_rejects_an_invented_number_and_adds_sources(tmp_path, mo
 
 def test_every_cli_command_parses_and_has_a_handler():
     from nearmisslens import cli
-    for cmd in ("voice-studio", "programs", "gate", "treatments", "brief", "citywide", "voice", "engineer"):
+    for cmd in ("voice-studio", "programs", "gate", "treatments", "brief", "citywide", "voice", "engineer", "pages"):
         with pytest.raises(SystemExit) as e:
             cli.main([cmd, "--help"])
         assert e.value.code == 0
