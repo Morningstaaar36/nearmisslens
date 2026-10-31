@@ -52,3 +52,13 @@ def test_finish_gate_refuses_wrong_labels_and_missing_receipts(monkeypatch):
     assert E.check_claims([{"text": "45% involved a truck.", "receipt": rid2}], desk)  # the record says 30%
     assert E.check_claims([{"text": "30% involved a truck.", "receipt": rid2}], desk) == []
     assert E.check_claims(ok, desk, ("who_must_act",)) == ["no claim cites who_must_act"]
+
+
+def test_overclaiming_words_are_refused(monkeypatch):
+    _fake(monkeypatch)
+    desk = E.Desk()
+    _, rid = E.test_programs(desk, 1.0, 2.0)
+    assert E.check_claims([{"text": "Speed humps failed here.", "receipt": rid}], desk)
+    assert E.check_claims([{"text": "Trucks caused these crashes.", "receipt": rid}], desk)
+    assert E.check_claims([{"text": "Speed humps: not shown.", "receipt": rid}], desk) == []
+    assert E.check_summary("No program failed.", desk) and E.check_summary("Speed humps were not shown.", desk) == []

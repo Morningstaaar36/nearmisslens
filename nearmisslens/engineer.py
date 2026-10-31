@@ -156,11 +156,26 @@ def draft_request(desk: Desk, lat: float, lon: float, name: str, who: dict, clie
 
 # ------------------------------------------------------------------------------------------------- the finish gate
 
+# words the record cannot support: police factors are not proven causes, and an effect not shown is not shown absent
+OVERCLAIM = re.compile(r"\b(caused|causes|cause of|failed|fails|failure|proves?|proved|doesn't work|does not work)\b", re.I)
+
+
+def wording(text: str) -> list[str]:
+    return [f"'{m.group(0)}' overstates the record: say 'have in common' for patterns and 'not shown' for programs"
+            for m in OVERCLAIM.finditer(text or "")]
+
+
+def check_summary(summary: str, desk: Desk) -> list[str]:
+    """The free-text summary: its numbers must be in some receipt, under the right labels, and its wording plain."""
+    return [f"summary: {e}" for e in context.FactCheck(desk.data).text(summary or "") + wording(summary)]
+
+
 def check_claims(claims: list[dict], desk: Desk, required: tuple[str, ...] = ()) -> list[str]:
     """Every claim cites a receipt and its numbers are that receipt's values for their labels; every required tool
-    has at least one claim citing it."""
+    has at least one claim citing it; no claim overstates what the record can show."""
     errors, cited = [], set()
     for k, c in enumerate(claims, 1):
+        errors += [f"claim {k}: {e}" for e in wording(c.get("text", ""))]
         rid = c.get("receipt")
         if rid not in desk.data:
             errors.append(f"claim {k} cites no receipt (got {rid!r})")
@@ -241,6 +256,8 @@ REQUIRED = ("root_cause", "test_programs", "choose_fixes", "who_must_act")
 def _report(query: str, name: str, lat: float, lon: float, desk: Desk, claims: list[dict], t0: float, mode: str,
             extra: dict | None = None) -> dict:
     errors = check_claims(claims, desk, REQUIRED)
+    if (extra or {}).get("summary"):
+        errors += check_summary(extra["summary"], desk)
     return {"query": query, "junction": {"name": name, "lat": lat, "lon": lon}, "asof": asof().isoformat(),
             "mode": mode, "claims": claims, "claim_errors": errors, "receipts": desk.receipts,
             "findings": {r["tool"]: desk.data[r["id"]] for r in desk.receipts},
@@ -314,7 +331,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
         return {"lat": lat, "lon": lon, "name": name}
 
     def finish(summary: str, claims: list[dict]):
-        errors = check_claims(claims, desk, REQUIRED)
+        errors = check_claims(claims, desk, REQUIRED) + check_summary(summary, desk)
         if errors:
             return {"error": "refused by the claim checker", "errors": errors[:12]}
         final.update(summary=summary, claims=claims)
