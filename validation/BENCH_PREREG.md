@@ -190,3 +190,30 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
   - Sites were chosen by the city, so regression to the mean can make the effect look larger. The placebo check tests for this but does not remove it; no Empirical Bayes model is fitted.
   - Other work at the site recorded outside these datasets is not seen.
   - Police-reported crashes miss some injuries.
+
+## T12 Falsification gates: do they stop an AI analyst from claiming effects that do not exist? (registered 2026-10-31, before any fake program was generated or any agent was run)
+- **Question:** when an AI analyst evaluates a street-safety program from open data, how often does it claim a reduction that is not there? Does the causal gate (T11's design and placebo, run once on data the analyst never saw) stop those claims while still confirming a real effect?
+- **Fake programs (true effect: none):**
+  - 200 programs, seeds 0–199, in New York City;
+  - each has 300 sites drawn from injury-crash hotspots: 60 m grid cells with at least 20 injury crashes from 2012-07 to the latest month. The cells are more than 150 m from any recorded LPI, turn calming or Street Improvement Project location;
+  - each site gets a random install month between 2015-08 and 2021-12;
+  - nothing was installed on those dates, so any "effect" is false.
+- **Real programs:** NYC Leading Pedestrian Intervals and turn traffic calming (T11 data). Other cities' programs are added if they are registered by run time; they are listed in the results.
+- **Deterministic arms (all 200 fake programs, and the real ones):** pedestrian injury crashes within 50 m, 36 months before and after the install month.
+  - (a) Naive before/after: θ = after ÷ before, with a bootstrap interval over sites. A reduction is claimed if the interval is entirely below 1.
+  - (b) Comparison group (not yet treated), without the placebo.
+  - (c) The full causal gate: (b) plus the placebo checks, as in T11.
+- **Agentic arms:** the first 20 fake programs and the real programs, with every program blinded as "P01"… and described only as "a street-safety treatment".
+  - (d) Ungated analyst: Muse Spark Open on Baseten writes and runs its own analysis code in an isolated Modal sandbox (no network) on the program's sites and crash counts, then submits a claim (effect, interval, reduced / no evidence / increased).
+  - (e) Gated analyst: the same agent explores on a random half of the sites (seeded hash). It must commit one design (radius, window, comparison group, outcome). The gate runs that design once on the other half, with the placebo. A claim that disagrees with the gate is refused by the submit tool.
+  - (f) Optional: the same two arms with Muse Glimmer (open weights on a Modal GPU), reported only if run.
+- **Metrics:**
+  - false-claim rate on fake programs (share claiming a reduction), with a 95% Wilson interval;
+  - for the real programs, whether a reduction is claimed and its size;
+  - the mean claimed effect on fake programs.
+- **Rule:** the gate is reported as stopping false claims only if both:
+  - its false-claim rate on fake programs is lower than the naive arm's, with an upper 95% bound of at most 10% (arm c);
+  - in arm (e), it still confirms NYC's LPIs on the held-out half.
+
+  Every arm is reported either way.
+- **Cost:** about $3–5 of Baseten credit and $1 of Modal; the deterministic arms are free.

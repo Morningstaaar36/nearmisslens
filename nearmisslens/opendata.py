@@ -22,6 +22,29 @@ def load_registry() -> list[dict]:
     return json.loads(REGISTRY.read_text())["adapters"] if REGISTRY.exists() else []
 
 
+def load_cities() -> list[dict]:
+    """The places the registry knows: id, name, bounding box and the transportation agency's name."""
+    return json.loads(REGISTRY.read_text()).get("cities", []) if REGISTRY.exists() else []
+
+
+def save_city(city: dict) -> None:
+    reg = json.loads(REGISTRY.read_text()) if REGISTRY.exists() else {"adapters": []}
+    reg["cities"] = [c for c in reg.get("cities", []) if c["id"] != city["id"]] + [city]
+    REGISTRY.write_text(json.dumps(reg, indent=1))
+
+
+def city(city_id: str | None) -> dict | None:
+    return next((c for c in load_cities() if c["id"] == city_id), None)
+
+
+def adapter(adapter_id: str) -> dict | None:
+    return next((a for a in load_registry() if a["id"] == adapter_id), None)
+
+
+def adapters_of(city_id: str, kind: str) -> list[dict]:
+    return [a for a in load_registry() if a.get("city") == city_id and a["kind"] == kind]
+
+
 def save_adapter(adapter: dict) -> None:
     reg = json.loads(REGISTRY.read_text()) if REGISTRY.exists() else {"adapters": []}
     reg["adapters"] = [a for a in reg["adapters"] if a["id"] != adapter["id"]] + [adapter]
@@ -91,6 +114,113 @@ def rows_near(a: dict, lat: float, lon: float, radius_m: float, since: dt.date |
     if since and a.get("date_field"):
         rows = [r for r in rows if (_date(r.get(a["date_field"])) or dt.date.min) >= since]
     return rows
+
+
+def rows_all(a: dict, fields: list[str] | None = None, page: int = 50_000) -> list[dict]:
+    """Every record of a dataset with its location as _lat/_lon (the point, or a line's middle vertex), from either
+    platform; responses are cached like every other request."""
+    rows = []
+    if a["platform"] == "socrata":
+        params = {"$limit": page}
+        if fields:
+            params["$select"] = ",".join(dict.fromkeys(fields + [a["geo_field"]] if a.get("geo_field") else fields))
+        offset = 0
+        while True:
+            js, _ = context.fetch(a["endpoint"], {**params, "$offset": offset, "$order": ":id"})
+            js = js if isinstance(js, list) else []
+            rows += js
+            if len(js) < page:
+                break
+            offset += page
+    else:
+        offset = 0
+        while True:
+            js, _ = context.fetch(f"{a['endpoint']}/query", {
+                "where": a.get("where", "1=1"), "outFields": ",".join(fields) if fields else "*",
+                "returnGeometry": "true", "outSR": 4326, "f": "json", "resultOffset": offset,
+                "resultRecordCount": 2000})
+            feats = js.get("features", [])
+            rows += [{**f.get("attributes", {}), "_geometry": f.get("geometry")} for f in feats]
+            if not feats or not js.get("exceededTransferLimit"):
+                break
+            offset += len(feats)
+    for r in rows:
+        r["_lat"], r["_lon"] = point_of(r, a) or (None, None)
+    return rows
+
+
+def point_of(r: dict, a: dict) -> tuple[float, float] | None:
+    """A record's location: explicit latitude/longitude fields, a GeoJSON or Socrata location value, or an ArcGIS
+    geometry (a line or polygon gives its middle vertex)."""
+    try:
+        if a.get("lat_field") and r.get(a["lat_field"]) not in (None, ""):
+            return float(r[a["lat_field"]]), float(r[a["lon_field"]])
+        g = r.get(a.get("geo_field", "")) if a.get("geo_field") else None
+        if isinstance(g, dict):
+            if "latitude" in g:
+                return float(g["latitude"]), float(g["longitude"])
+            c = g.get("coordinates")
+            while isinstance(c, list) and c and isinstance(c[0], list):
+                c = c[len(c) // 2]
+            if isinstance(c, list) and len(c) >= 2:
+                return float(c[1]), float(c[0])
+        g = r.get("_geometry")
+        if isinstance(g, dict):
+            if "x" in g:
+                return float(g["y"]), float(g["x"])
+            for k in ("paths", "rings"):
+                if g.get(k):
+                    v = g[k][0][len(g[k][0]) // 2]
+                    return float(v[1]), float(v[0])
+    except (TypeError, ValueError, KeyError, IndexError):
+        return None
+    return None
+
+
+def value_at(a: dict, lat: float, lon: float) -> str | None:
+    """The value of the adapter's field for the polygon that contains the point (a district number, say)."""
+    if a["platform"] == "socrata":
+        js, _ = context.fetch(a["endpoint"], {"$select": a["field"],
+                                             "$where": f"intersects({a['geo_field']},'POINT ({lon} {lat})')"})
+        rows = js if isinstance(js, list) else []
+    else:
+        js, _ = context.fetch(f"{a['endpoint']}/query", {
+            "geometry": f"{lon},{lat}", "geometryType": "esriGeometryPoint", "inSR": 4326,
+            "spatialRel": "esriSpatialRelIntersects", "outFields": a["field"], "returnGeometry": "false", "f": "json"})
+        rows = [f["attributes"] for f in js.get("features", [])]
+    return str(rows[0][a["field"]]) if rows and rows[0].get(a["field"]) not in (None, "") else None
+
+
+def office_from(a: dict, value: str) -> dict | None:
+    """An office adapter's value as an addressee. A 'split' value encodes a prefix and a number (NYC's boro_cd 202 is
+    the Bronx, board 2); numbers above max_number have no office (parks and other joint areas)."""
+    fields, area = {"value": value}, None
+    if a.get("split"):
+        v = int(float(value))
+        prefix, number = a["split"]["names"].get(str(v // a["split"]["by"])), v % a["split"]["by"]
+        if prefix is None or number > a["split"].get("max_number", 10 ** 9):
+            return None
+        fields.update(prefix=prefix, number=number)
+        area = prefix
+    elif str(value).replace(".", "", 1).isdigit():
+        fields["value"] = int(float(value))
+    out = {"office": a["template"].format(**fields), "role": a.get("role"), "source": a["source"]}
+    if area:
+        out["area"] = area
+    if a.get("contact"):
+        out["contact"] = a["contact"].format(**fields)
+    return out
+
+
+def offices_at(lat: float, lon: float) -> list[dict]:
+    """Who can request work at this point, from the office adapters (district boundaries) that cover it."""
+    out = []
+    for a in adapters_for(lat, lon, "office"):
+        v = value_at(a, lat, lon)
+        o = office_from(a, v) if v is not None else None
+        if o:
+            out.append(o)
+    return out
 
 
 def _sum(r: dict, fields: list[str]) -> float:

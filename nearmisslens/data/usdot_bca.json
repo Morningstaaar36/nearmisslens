@@ -3,10 +3,22 @@
  "url": "https://www.transportation.gov/sites/dot.gov/files/2025-12/Benefit%20Cost%20Analysis%20Guidance%202026%20Update%20(Final).pdf",
  "read_via": "Wayback Machine capture 20260219114709 (transportation.gov refuses automated downloads)",
  "dollar_year": 2024,
- "per_person": {"O_no_injury": 5500, "C_possible_injury": 122400, "B_non_incapacitating": 256300,
-                "A_incapacitating": 1302300, "K_killed": 13700000, "U_injured_severity_unknown": 238500},
- "per_crash": {"pdo_crash": 9700, "injury_crash": 342400, "fatal_crash": 15366900},
+ "per_person": {
+  "O_no_injury": 5500,
+  "C_possible_injury": 122400,
+  "B_non_incapacitating": 256300,
+  "A_incapacitating": 1302300,
+  "K_killed": 13700000,
+  "U_injured_severity_unknown": 238500
+ },
+ "per_crash": {
+  "pdo_crash": 9700,
+  "injury_crash": 342400,
+  "fatal_crash": 15366900
+ },
  "per_crash_note": "USDOT: about 1.44 injuries per injury crash and 1.09 deaths per fatal crash (NHTSA National Crash Statistics, five-year average); PDO assumes 1.77 vehicles per crash",
  "real_discount_rate": 0.07,
- "discount_note": "OMB Circular A-94, as required by the 2026 Update for discretionary grant BCAs"
+ "discount_note": "OMB Circular A-94, as required by the 2026 Update for discretionary grant BCAs",
+ "analysis_life_years": 10,
+ "analysis_life_note": "our assumption for break-even costs (USDOT ties the analysis period to each asset's service life); not a USDOT value"
 }

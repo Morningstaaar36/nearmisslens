@@ -1,4 +1,5 @@
-"""NML-Bench T9: a citywide plan-gap screen of every New York City Vision Zero priority intersection from open data:
+"""NML-Bench T9: a citywide plan-gap screen of every priority intersection a city lists in its open data (New York's
+Vision Zero priority intersections in the registry):
 police-reported crashes nearby over five years and the city's Street Improvement Projects. The ranked list is for a
 person to review: "no project" means none in the city's open project datasets within 150 m."""
 from __future__ import annotations
@@ -12,17 +13,32 @@ import pandas as pd
 from . import context, harm
 from .evaluate import RESULTS_DIR
 
-PRIORITY = "https://data.cityofnewyork.us/resource/tmt9-43em.json"
 TOP_MEMOS = 20
 
 
-def junctions() -> list[dict]:
-    js, _ = context.fetch(PRIORITY, {"$limit": 5000})
-    return [{"name": f"{r.get('street_1', '').title()} & {r.get('street_2', '').title()}", "lat": float(r["lat"]),
-             "lon": float(r["long"])} for r in js if r.get("lat") and r.get("long")]
+def junction_adapters(city: str) -> list[dict]:
+    """Designation datasets that list a city's priority intersections as points (registry "junctions")."""
+    from . import opendata
+    return [a for a in opendata.adapters_of(city, "designation") if a.get("junctions")]
 
 
-def screen(workers: int = 4) -> pd.DataFrame:
+def cities() -> list[str]:
+    from . import opendata
+    return [c["id"] for c in opendata.load_cities() if junction_adapters(c["id"])]
+
+
+def junctions(city: str) -> list[dict]:
+    out = []
+    for a in junction_adapters(city):
+        j = a["junctions"]
+        js, _ = context.fetch(a["endpoint"], {"$limit": 5000})
+        out += [{"name": " & ".join(str(r.get(f, "")).title() for f in j["name_fields"]),
+                 "lat": float(r[j["lat_field"]]), "lon": float(r[j["lon_field"]])}
+                for r in js if r.get(j["lat_field"]) and r.get(j["lon_field"])]
+    return out
+
+
+def screen(city: str, workers: int = 4) -> pd.DataFrame:
     def one(j):
         d = context.dossier(j["lat"], j["lon"], street=False)
         cr, pl = d.get("crashes") or {}, d.get("plans") or {}
@@ -34,7 +50,7 @@ def screen(workers: int = 4) -> pd.DataFrame:
                 "recent_projects": d.get("recent_projects"), "plan_gap": d.get("plan_gap"),
                 "error": "; ".join(v["error"] for v in (cr, pl) if isinstance(v, dict) and "error" in v) or None}
     with ThreadPoolExecutor(workers) as ex:
-        rows = list(ex.map(one, junctions()))
+        rows = list(ex.map(one, junctions(city)))
     return pd.DataFrame(rows).sort_values("injury_crashes", ascending=False, na_position="last").reset_index(drop=True)
 
 
@@ -73,12 +89,22 @@ def summary(df: pd.DataFrame) -> dict:
             "never_a_project": int((ok["projects_ever"] == 0).sum())}
 
 
-def write(df: pd.DataFrame, memos: list[dict] | None = None) -> dict:
+def write(df: pd.DataFrame, memos: list[dict] | None = None, city: str = "nyc") -> dict:
     rows = json.loads(df.to_json(orient="records"))  # NaN becomes null, which browsers can parse
     since = df["since"].dropna()
     out = {"summary": {**summary(df), **(costed(distinct(df, since.iloc[0])) if len(since) else {})}, "rows": rows,
            "memos": memos or []}
     dest = RESULTS_DIR / "bench"
     dest.mkdir(parents=True, exist_ok=True)
-    (dest / "citywide_nyc.json").write_text(json.dumps(out, indent=1, default=str))
+    (dest / f"citywide_{city}.json").write_text(json.dumps(out, indent=1, default=str))
     return out["summary"]
+
+
+def screened() -> list[tuple[str, dict]]:
+    """The cities with a saved screen (results/bench/citywide_<city>.json), as (city, result)."""
+    out = []
+    for city in cities():
+        p = RESULTS_DIR / "bench" / f"citywide_{city}.json"
+        if p.exists():
+            out.append((city, json.loads(p.read_text())))
+    return out

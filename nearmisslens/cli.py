@@ -262,7 +262,7 @@ def cmd_brief(args) -> int:
         from pathlib import Path
         from . import letter
         d = f["dossier"]
-        res = letter.draft(_memo_client(not args.meta), f, letter.offices(d["lat"], d["lon"], d.get("city")),
+        res = letter.draft(_memo_client(not args.meta), f, letter.offices(d["lat"], d["lon"]),
                            tag=f"letter {f['junction'][:40]}")
         print("\n" + (res["letter"] or f"no letter: {res['checker_errors']}"))
         if res["letter"] and f.get("aerial_photo"):
@@ -281,19 +281,23 @@ def cmd_discover(args) -> int:
     return 0 if a else 1
 
 
-def cmd_treatments(_args) -> int:
+def cmd_treatments(args) -> int:
     from . import bench, treatments
-    out = treatments.run()
-    print(json.dumps({k: out[k]["pedestrian"] for k in ("lpi_not_yet_treated", "lpi_placebo_same_sites_not_yet_treated")},
-                     indent=1, default=float))
+    names = args.study or sorted(p.stem for p in treatments.STUDIES.glob("*.json"))
+    for name in names:
+        out = treatments.run_suite(treatments.load_spec(name))
+        print(name, json.dumps({k: {"passed": g["passed"], "reason": g["reason"],
+                                    "effect": out["runs"][g["primary"]][g["outcome"]]} for k, g in out["gates"].items()},
+                               indent=1, default=float))
     bench.write_bench_md()
     return 0
 
 
-def cmd_citywide(_args) -> int:
+def cmd_citywide(args) -> int:
     from . import citywide
-    df = citywide.screen()
-    print(json.dumps(citywide.write(df), indent=1))
+    city = args.city or citywide.cities()[0]
+    df = citywide.screen(city)
+    print(json.dumps(citywide.write(df, city=city), indent=1))
     return 0
 
 
@@ -378,8 +382,10 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
-    sub.add_parser("citywide", help="plan-gap screen of every NYC Vision Zero priority intersection (open data)")
-    sub.add_parser("treatments", help="T11: did NYC's own Leading Pedestrian Intervals work? (needs the crash download)")
+    cw = sub.add_parser("citywide", help="plan-gap screen of every priority intersection a city lists (open data)")
+    cw.add_argument("--city", help="registry city id (default: the first city with a priority-intersection list)")
+    tm = sub.add_parser("treatments", help="city treatment studies with the causal gate (validation/studies/*.json)")
+    tm.add_argument("study", nargs="*", help="study ids (default: all registered studies)")
     ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")
     ap.add_argument("--port", type=int, default=8770)
     ap.add_argument("--illustrate", action="store_true")

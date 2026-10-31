@@ -1,75 +1,168 @@
-"""Did the city's own treatments work? (NML-Bench T11, registered in validation/BENCH_PREREG.md.)
+"""Did the city's own treatments work? The study engine behind NML-Bench T11 and the causal gate.
 
-A comparison-group before/after study (Hauer, Observational Before-After Studies in Road Safety, 1997) of New York's
-Leading Pedestrian Intervals (LPIs), from open data: the LPI install dates, the turn traffic calming completion dates
-and the police-reported crashes since July 2012. For each treated site the crashes within 50 m in the 36 months
-after the install month are compared with what the 36 months before predict, scaled by the change at comparison
-sites over the same months:
+A comparison-group before/after study (Hauer, Observational Before-After Studies in Road Safety, 1997) of any dated
+treatment program in the open-data registry (a project adapter with a date field) against the city's police-reported
+crashes (its crash adapter). For each treated site the crashes within the radius in the window after the install
+month are compared with what the window before predicts, scaled by the change at comparison sites over the same
+months:
     pi = before x r,  r = comparison after / comparison before,  theta = sum(after) / sum(pi)
-theta < 1 means fewer crashes than expected. The primary comparison group is the not-yet-treated LPI sites (the city
-also chose them, but installed later); the sensitivity check is the citywide trend away from any treatment. A placebo
-with a fake install date before the real one tests for trend or selection bias. The measured effect is set against
-the CMF Clearinghouse values the brief ranks fixes with."""
+theta < 1 means fewer crashes than expected. Comparison groups: the program's not-yet-treated sites (the city also
+chose them, but installed them later) or the citywide trend away from any treatment. A placebo with a fake install
+date before the real one tests for trend or selection bias.
+
+A study is a JSON spec in validation/studies/: the city, the programs, the design and the rule are fixed in a file
+before it runs, and nothing about a city is written in code. A program passes the gate only if its registered rule is
+met and every placebo for its primary comparison shows no change."""
 from __future__ import annotations
 
 import datetime as dt
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
-from . import context
-from .config import SETTINGS
+from . import context, opendata
+from .config import ROOT, SETTINGS
 from .evaluate import RESULTS_DIR
 
-LPI = "https://data.cityofnewyork.us/resource/xc4v-ntf4.json"
-TURN = "https://data.cityofnewyork.us/resource/sm2x-35i7.json"
-CRASHES = "https://data.cityofnewyork.us/resource/h9gi-nx95.csv"
-CRASH_FIELDS = ("collision_id", "crash_date", "latitude", "longitude", "number_of_pedestrians_injured",
-                "number_of_pedestrians_killed", "number_of_cyclist_injured", "number_of_cyclist_killed",
-                "number_of_motorist_injured", "number_of_motorist_killed")
-LAT0, LON0 = 40.70, -73.95
-MERGE_M, RADIUS_M, NEIGHBOUR_M = 30.0, 50.0, 100.0
-WINDOW = 36
-LPI_TREATED = ("2015-08-01", "2021-12-31")
-TURN_TREATED = ("2016-01-01", "2021-12-31")
-PLACEBO_WINDOW, PLACEBO_SHIFT = 18, 19  # the fake install month is 19 months early, so both windows end before it
+STUDIES = ROOT / "validation" / "studies"
 OUTCOMES = ("pedestrian", "injury", "motorist_only")
 SEED, N_BOOT = 0, 2000
+PAGE = 500_000
 
 
 def _month(d) -> int | None:
-    """Months since year 0 (year * 12 + month - 1), from a date or an ISO date string."""
+    """Months since year 0 (year * 12 + month - 1), from a date, an ISO date string or epoch milliseconds."""
     if d is None or (isinstance(d, float) and np.isnan(d)):
         return None
-    s = str(d)[:7]
-    try:
-        y, m = int(s[:4]), int(s[5:7])
-    except ValueError:
-        return None
-    return y * 12 + m - 1 if y >= 1900 else None
+    day = opendata._date(d)
+    return day.year * 12 + day.month - 1 if day and day.year >= 1900 else None
 
 
 def _label(m: int) -> str:
     return f"{m // 12}-{m % 12 + 1:02d}"
 
 
-def _xy(lat, lon) -> np.ndarray:
+def origin(city: str) -> tuple[float, float]:
+    """The centre of the city's bounding box: the origin of its local metric projection."""
+    s, w, n, e = opendata.city(city)["bbox"]
+    return (s + n) / 2, (w + e) / 2
+
+
+def xy(lat, lon, org: tuple[float, float]) -> np.ndarray:
     lat, lon = np.asarray(lat, float), np.asarray(lon, float)
-    return np.column_stack([(lon - LON0) * 111_320 * np.cos(np.radians(LAT0)), (lat - LAT0) * 110_574])
+    return np.column_stack([(lon - org[1]) * 111_320 * np.cos(np.radians(org[0])), (lat - org[0]) * 110_574])
 
 
-def _points(url: str, date_field: str) -> pd.DataFrame:
-    js, _ = context.fetch(url, {"$limit": 50000})
-    rows = [{"lat": float(r["lat"]), "lon": float(r["long"]), "month": _month(r.get(date_field))}
-            for r in js if r.get("lat") and r.get("long")]
-    return pd.DataFrame(rows).dropna(subset=["month"]).astype({"month": int})
+# ---------------------------------------------------------------- data: crashes and treatment programs, any city
+
+def crash_adapter(city: str) -> dict:
+    found = opendata.adapters_of(city, "crash")
+    if not found:
+        raise ValueError(f"no crash dataset is registered for {city}; run the data agent (nml discover LAT LON)")
+    return found[0]
 
 
-def sites(points: pd.DataFrame, merge_m: float = MERGE_M) -> pd.DataFrame:
+def _crash_fields(a: dict) -> list[str]:
+    modes = [f for m in (a.get("injured", {}), a.get("killed", {})) for fs in m.values() for f in fs]
+    return [f for f in dict.fromkeys([a.get("id_field"), a["date_field"], a.get("lat_field"), a.get("lon_field"),
+                                      *modes, *a.get("serious_injured", []), *a.get("crash_type_fields", [])]) if f]
+
+
+def download(a: dict, d: Path) -> None:
+    """The whole crash table, in pages of CSV in the data directory (free, no key)."""
+    import httpx
+    if SETTINGS.replay:
+        raise FileNotFoundError(f"no crash pages in {d} (replay mode does not download)")
+    d.mkdir(parents=True, exist_ok=True)
+    fields = _crash_fields(a)
+    if a["platform"] == "socrata":
+        url = a["endpoint"].replace(".json", ".csv")
+        where = f"{a['lat_field']} IS NOT NULL" if a.get("lat_field") else f"{a['geo_field']} IS NOT NULL"
+        for k in range(100):
+            params = {"$select": ",".join(fields + ([a["geo_field"]] if not a.get("lat_field") else [])),
+                      "$where": where, "$order": a.get("id_field") or ":id", "$limit": PAGE, "$offset": k * PAGE}
+            with httpx.Client(headers=context.UA, timeout=900) as c:
+                r = c.get(url, params=params)
+            r.raise_for_status()
+            if r.text.count("\n") <= 1:
+                break
+            (d / f"page_{k}.csv").write_text(r.text)
+        return
+    import httpx as _h
+    offset, k, buf = 0, 0, []
+    with _h.Client(headers=context.UA, timeout=300) as c:
+        while True:
+            r = c.get(f"{a['endpoint']}/query", params={
+                "where": a.get("where", "1=1"), "outFields": ",".join(fields), "returnGeometry": "true",
+                "outSR": 4326, "f": "json", "resultOffset": offset, "resultRecordCount": 2000,
+                "orderByFields": a.get("id_field") or ""})
+            r.raise_for_status()
+            js = r.json()
+            feats = js.get("features", [])
+            for f in feats:
+                g = f.get("geometry") or {}
+                buf.append({**f.get("attributes", {}), "_lat": g.get("y"), "_lon": g.get("x")})
+            last = not feats or not js.get("exceededTransferLimit")
+            if buf and (len(buf) >= PAGE or last):
+                pd.DataFrame(buf).to_csv(d / f"page_{k}.csv", index=False)
+                buf, k = [], k + 1
+            if last:
+                break
+            offset += len(feats)
+
+
+def crashes(city: str, org: tuple[float, float] | None = None) -> pd.DataFrame:
+    """Every geolocated crash of the city, as month, outcome flags and local x/y in metres."""
+    a = crash_adapter(city)
+    d = SETTINGS.data_dir / "crashes" / a["id"]
+    if not sorted(d.glob("page_*.csv")):
+        download(a, d)
+    df = pd.concat([pd.read_csv(p, low_memory=False) for p in sorted(d.glob("page_*.csv"))], ignore_index=True)
+    if a.get("id_field") in df:
+        df = df.drop_duplicates(a["id_field"])
+    lat = df[a["lat_field"]] if a.get("lat_field") in df else df.get("_lat")
+    lon = df[a["lon_field"]] if a.get("lon_field") in df else df.get("_lon")
+    df = df.assign(_lat=pd.to_numeric(lat, errors="coerce"), _lon=pd.to_numeric(lon, errors="coerce"))
+    s, w, n, e = opendata.city(city)["bbox"]
+    df = df[df["_lat"].between(s, n) & df["_lon"].between(w, e)].copy()
+
+    def total(fields: list[str]) -> pd.Series:
+        cols = [c for c in fields if c in df]
+        return df[cols].apply(pd.to_numeric, errors="coerce").fillna(0).sum(axis=1) if cols else pd.Series(0, df.index)
+    inj, kil = a.get("injured", {}), a.get("killed", {})
+    ped = total(inj.get("pedestrian", []) + kil.get("pedestrian", []))
+    cyc = total(inj.get("cyclist", []) + kil.get("cyclist", []))
+    hurt = total([f for m in (inj, kil) for fs in m.values() for f in fs])
+    injury = (hurt > 0) | (total(a.get("serious_injured", [])) > 0)
+    if "pedestrian" not in inj:  # injuries not split by mode: the crash type says who was involved
+        kind = df[[c for c in a.get("crash_type_fields", []) if c in df]].astype(str).agg(" ".join, axis=1).str.lower()
+        ped = (kind.str.contains("pedestrian") & injury).astype(int)
+        cyc = ((kind.str.contains("cycl") | kind.str.contains("bicycl")) & injury).astype(int)
+    when = df[a["date_field"]]
+    when = pd.to_datetime(when, unit="ms", errors="coerce") if pd.api.types.is_numeric_dtype(when) \
+        else pd.to_datetime(when.astype(str).str[:10], errors="coerce")
+    out = pd.DataFrame({"month": when.dt.year * 12 + when.dt.month - 1, "pedestrian": ped > 0, "injury": injury,
+                        "motorist_only": injury & (ped == 0) & (cyc == 0)}).dropna(subset=["month"])
+    out["month"] = out["month"].astype(int)
+    p = xy(df.loc[out.index, "_lat"], df.loc[out.index, "_lon"], org or origin(city))
+    out["x"], out["y"] = p[:, 0], p[:, 1]
+    return out.reset_index(drop=True)
+
+
+def program_points(a: dict) -> pd.DataFrame:
+    """The dated sites of a treatment program (a project adapter with a date field)."""
+    rows = opendata.rows_all(a)
+    pts = [{"lat": r["_lat"], "lon": r["_lon"], "month": _month(r.get(a["date_field"]))} for r in rows
+           if r.get("_lat") is not None]
+    return pd.DataFrame(pts, columns=["lat", "lon", "month"]).dropna(subset=["month"]).astype({"month": int})
+
+
+def sites(points: pd.DataFrame, merge_m: float, org: tuple[float, float]) -> pd.DataFrame:
     """Points within merge_m of each other (chained) are one site, dated by the earliest install and placed there."""
-    xy = _xy(points["lat"], points["lon"])
+    p = xy(points["lat"], points["lon"], org)
     parent = np.arange(len(points))
 
     def root(i):
@@ -77,58 +170,21 @@ def sites(points: pd.DataFrame, merge_m: float = MERGE_M) -> pd.DataFrame:
             parent[i] = parent[parent[i]]
             i = parent[i]
         return i
-    for i, j in cKDTree(xy).query_pairs(merge_m):
+    for i, j in cKDTree(p).query_pairs(merge_m):
         parent[root(i)] = root(j)
     groups = np.array([root(i) for i in range(len(points))])
-    g = points.assign(group=groups, x=xy[:, 0], y=xy[:, 1]).sort_values("month", kind="stable").groupby("group")
+    g = points.assign(group=groups, x=p[:, 0], y=p[:, 1]).sort_values("month", kind="stable").groupby("group")
     first = g.first()
     first["points"] = g.size()
     return first.reset_index(drop=True)[["lat", "lon", "x", "y", "month", "points"]]
 
 
-def download(d, page: int = 500_000) -> None:
-    """The crash table in pages of CSV (about 215 MB in all; free, no key)."""
-    import httpx
-    if SETTINGS.replay:
-        raise FileNotFoundError(f"no crash pages in {d} (replay mode does not download)")
-    d.mkdir(parents=True, exist_ok=True)
-    for k in range(20):
-        params = {"$select": ",".join(CRASH_FIELDS), "$where": "latitude IS NOT NULL AND latitude > 40",
-                  "$order": "collision_id", "$limit": page, "$offset": k * page}
-        with httpx.Client(headers=context.UA, timeout=600) as c:
-            r = c.get(CRASHES, params=params)
-        r.raise_for_status()
-        if r.text.count("\n") <= 1:
-            break
-        (d / f"page_{k}.csv").write_text(r.text)
+# ---------------------------------------------------------------- the comparison-group estimator
 
-
-def crashes() -> pd.DataFrame:
-    """Every geolocated crash since July 2012 (NYC Open Data h9gi-nx95), downloaded once to the data directory."""
-    d = SETTINGS.data_dir / "nyc_crashes"
-    if not sorted(d.glob("page_*.csv")):
-        download(d)
-    pages = sorted(d.glob("page_*.csv"))
-    df = pd.concat([pd.read_csv(p, usecols=list(CRASH_FIELDS)) for p in pages], ignore_index=True)
-    df = df.drop_duplicates("collision_id")
-    s, w, n, e = context.CITIES["nyc"]
-    df = df[df["latitude"].between(s, n) & df["longitude"].between(w, e)].copy()
-    num = [c for c in CRASH_FIELDS if c.startswith("number_")]
-    df[num] = df[num].fillna(0)
-    ped = df["number_of_pedestrians_injured"] + df["number_of_pedestrians_killed"]
-    cyc = df["number_of_cyclist_injured"] + df["number_of_cyclist_killed"]
-    allv = ped + cyc + df["number_of_motorist_injured"] + df["number_of_motorist_killed"]
-    out = pd.DataFrame({"month": df["crash_date"].str[:4].astype(int) * 12 + df["crash_date"].str[5:7].astype(int) - 1,
-                        "pedestrian": ped > 0, "injury": allv > 0, "motorist_only": (allv > 0) & (ped == 0) & (cyc == 0)})
-    xy = _xy(df["latitude"], df["longitude"])
-    out["x"], out["y"] = xy[:, 0], xy[:, 1]
-    return out.reset_index(drop=True)
-
-
-def monthly_counts(site_df: pd.DataFrame, cr: pd.DataFrame, m0: int, m1: int) -> dict[str, np.ndarray]:
-    """Crashes within RADIUS_M of each site per month (m0..m1) for each outcome: arrays of sites x months."""
+def monthly_counts(site_df: pd.DataFrame, cr: pd.DataFrame, m0: int, m1: int, radius_m: float) -> dict[str, np.ndarray]:
+    """Crashes within radius_m of each site per month (m0..m1) for each outcome: arrays of sites x months."""
     tree = cKDTree(cr[["x", "y"]].to_numpy())
-    near = tree.query_ball_point(site_df[["x", "y"]].to_numpy(), RADIUS_M)
+    near = tree.query_ball_point(site_df[["x", "y"]].to_numpy(), radius_m)
     si = np.repeat(np.arange(len(site_df)), [len(n) for n in near])
     ci = np.concatenate([np.asarray(n, int) for n in near]) if len(si) else np.zeros(0, int)
     months = cr["month"].to_numpy()[ci] - m0
@@ -149,22 +205,21 @@ def _window_sum(mat: np.ndarray, start: np.ndarray, length: int) -> np.ndarray:
     return c[rows, start + length] - c[rows, start]
 
 
-def _neighbour_dates(xy: np.ndarray, other_xy: np.ndarray, other_month: np.ndarray, same: bool) -> list[np.ndarray]:
-    """For each point, the install months of the other sites within NEIGHBOUR_M (itself excluded when same)."""
-    near = cKDTree(other_xy).query_ball_point(xy, NEIGHBOUR_M)
-    return [other_month[[j for j in n if not (same and j == i)]] for i, n in enumerate(near)]
-
-
 def estimate(after: np.ndarray, before: np.ndarray, cohort: np.ndarray, cg_after: np.ndarray, cg_before: np.ndarray,
              cg_eligible: np.ndarray, n_boot: int = N_BOOT, seed: int = SEED) -> dict:
     """theta = sum(after) / sum(before x r_cohort). cg_after/cg_before/cg_eligible are cohorts x comparison sites;
     the bootstrap resamples treated sites and (when there is more than one comparison unit) comparison sites."""
     ca, cb = cg_after * cg_eligible, cg_before * cg_eligible
+    # a cohort with no comparison crashes before has no counterfactual: its treated sites are left out, not set to 0
+    usable = cb.sum(1) > 0
+    dropped = int((~usable[cohort]).sum())
+    keep = usable[cohort]
+    after, before, cohort = after[keep], before[keep], cohort[keep]
     r = ca.sum(1) / np.maximum(cb.sum(1), 1e-9)
     pi = before * r[cohort]
     if pi.sum() <= 0:
         return {"theta": None, "ci95": None, "sites": int(len(after)), "after": int(after.sum()),
-                "before": int(before.sum()), "expected_after": 0.0}
+                "before": int(before.sum()), "expected_after": 0.0, "dropped_no_comparison": dropped}
     theta = after.sum() / pi.sum()
     rng = np.random.default_rng(seed)
     nt, nc = len(after), ca.shape[1]
@@ -173,7 +228,8 @@ def estimate(after: np.ndarray, before: np.ndarray, cohort: np.ndarray, cg_after
         w = rng.multinomial(nt, np.full(nt, 1 / nt))
         if nc > 1:
             v = rng.multinomial(nc, np.full(nc, 1 / nc))
-            rb = (ca @ v) / np.maximum(cb @ v, 1e-9)
+            cbv = cb @ v
+            rb = np.where(cbv > 0, (ca @ v) / np.maximum(cbv, 1e-9), r)  # a resample that drops a cohort's comparisons
         else:
             rb = r
         boots[b] = (w * after).sum() / max((w * before * rb[cohort]).sum(), 1e-9)
@@ -181,174 +237,213 @@ def estimate(after: np.ndarray, before: np.ndarray, cohort: np.ndarray, cg_after
     return {"theta": round(float(theta), 3), "ci95": [round(float(lo), 3), round(float(hi), 3)],
             "change_pct": round(100 * (float(theta) - 1), 1), "sites": int(nt), "after": int(after.sum()),
             "before": int(before.sum()), "expected_after": round(float(pi.sum()), 1),
-            "cg_ratio_median": round(float(np.median(r[np.unique(cohort)])), 3)}
+            "cg_ratio_median": round(float(np.median(r[np.unique(cohort)])), 3), "dropped_no_comparison": dropped}
 
 
-def _not_yet_treated(cohorts: np.ndarray, length: int, lpi: pd.DataFrame, lpi_nb: list[np.ndarray]) -> np.ndarray:
-    """cohorts x LPI sites: eligible as comparison for a cohort (install month c) when installed after the cohort's
-    after window ends (c + length) and no other LPI within NEIGHBOUR_M was installed by then."""
+def _not_yet_treated(cohorts: np.ndarray, length: int, prog: pd.DataFrame, prog_nb: list[np.ndarray]) -> np.ndarray:
+    """cohorts x program sites: eligible as comparison for a cohort (install month c) when installed after the
+    cohort's after window ends (c + length) and no other site of the program within the neighbour distance was
+    installed by then."""
     end = cohorts[:, None] + length
-    later = lpi["month"].to_numpy()[None, :] > end
-    first_nb = np.array([n.min() if len(n) else 10 ** 6 for n in lpi_nb])
+    later = prog["month"].to_numpy()[None, :] > end
+    first_nb = np.array([n.min() if len(n) else 10 ** 6 for n in prog_nb])
     clean = first_nb[None, :] > end
     return later & clean
 
 
-def analyse(points_lpi: pd.DataFrame, points_turn: pd.DataFrame, cr: pd.DataFrame) -> dict:
-    lpi, turn = sites(points_lpi), sites(points_turn)
+def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame], org: tuple[float, float]) -> dict:
+    """Run a study spec on given crashes and program points (adapter id -> points), with no I/O."""
+    merge_m, radius_m, nb_m, window = spec["merge_m"], spec["radius_m"], spec["neighbour_m"], spec["window_months"]
+    outcomes = tuple(spec.get("outcomes") or OUTCOMES)
     m0, m1 = int(cr["month"].min()), int(cr["month"].max())
-    lpi_counts, turn_counts = monthly_counts(lpi, cr, m0, m1), monthly_counts(turn, cr, m0, m1)
-    all_xy = np.vstack([lpi[["x", "y"]].to_numpy(), turn[["x", "y"]].to_numpy()])
-    all_month = np.concatenate([lpi["month"].to_numpy(), turn["month"].to_numpy()])
-    nl = len(lpi)
-    # neighbours of each LPI site among all treatment sites (LPI and turn calming), itself excluded
-    near = cKDTree(all_xy).query_ball_point(lpi[["x", "y"]].to_numpy(), NEIGHBOUR_M)
-    lpi_nb_all = [all_month[[j for j in n if j != i]] for i, n in enumerate(near)]
-    near_lpi = cKDTree(lpi[["x", "y"]].to_numpy()).query_ball_point(lpi[["x", "y"]].to_numpy(), NEIGHBOUR_M)
-    lpi_nb = [lpi["month"].to_numpy()[[j for j in n if j != i]] for i, n in enumerate(near_lpi)]
+    exclude_ids = spec.get("exclude_near") or list(points)
+    site_of = {k: sites(v, merge_m, org) for k, v in points.items()}
+    ex = [site_of[k] for k in exclude_ids]
+    all_xy = np.vstack([s[["x", "y"]].to_numpy() for s in ex])
+    all_month = np.concatenate([s["month"].to_numpy() for s in ex])
+    city = {}
+    if any("citywide" in p["comparisons"] for p in spec["programs"]):
+        # citywide trend (comparison group b): crashes more than nb_m from any treatment site, any date
+        dist, _ = cKDTree(all_xy).query(cr[["x", "y"]].to_numpy(), distance_upper_bound=nb_m)
+        away = cr[np.isinf(dist)]
+        city = {o: np.bincount(away.loc[away[o], "month"].to_numpy() - m0, minlength=m1 - m0 + 1)[None, :]
+                for o in outcomes}
+    out = {"id": spec["id"], "city": spec["city"], "registered": spec.get("registered"), "spec": spec,
+           "data": {"crashes": int(len(cr)), "crash_months": [_label(m0), _label(m1)], "programs": {}},
+           "runs": {}, "gates": {}}
 
-    # citywide trend (comparison group b): crashes more than NEIGHBOUR_M from any LPI or turn-calming site, any date
-    dist, _ = cKDTree(all_xy).query(cr[["x", "y"]].to_numpy(), distance_upper_bound=NEIGHBOUR_M)
-    away = cr[np.isinf(dist)]
-    city = {o: np.bincount(away.loc[away[o], "month"].to_numpy() - m0, minlength=m1 - m0 + 1)[None, :] for o in OUTCOMES}
+    for prog_spec in spec["programs"]:
+        key, aid = prog_spec["key"], prog_spec["adapter"]
+        prog = site_of[aid]
+        counts = monthly_counts(prog, cr, m0, m1, radius_m)
+        # neighbours of each site among all treatment sites (itself excluded) and among the program's own sites
+        offset = sum(len(site_of[k]) for k in exclude_ids[:exclude_ids.index(aid)]) if aid in exclude_ids else None
+        near = cKDTree(all_xy).query_ball_point(prog[["x", "y"]].to_numpy(), nb_m)
+        nb_all = [all_month[[j for j in n if offset is None or j != offset + i]] for i, n in enumerate(near)]
+        near_own = cKDTree(prog[["x", "y"]].to_numpy()).query_ball_point(prog[["x", "y"]].to_numpy(), nb_m)
+        nb_own = [prog["month"].to_numpy()[[j for j in n if j != i]] for i, n in enumerate(near_own)]
+        out["data"]["programs"][key] = {"adapter": aid, "points": int(len(points[aid])), "sites": int(len(prog))}
 
-    def study(counts, site_df, nb, treated_range, comparison, shift=0, length=WINDOW, only=None):
-        lo, hi = (_month(d) for d in treated_range)
-        real = site_df["month"].to_numpy()
-        fake = real - shift
-        # windows [m - length, m - 1] and [m + 1, m + length] around the (possibly fake) install month m
-        excl = np.array([((n >= r - shift - length) & (n <= r + (length if not shift else -1))).any() for n, r in zip(nb, real)])
-        treated = (real >= lo) & (real <= hi) & (fake - length >= m0) & (fake + length <= m1)
-        keep = treated & ~excl & (only if only is not None else True)
-        idx = np.flatnonzero(keep)
-        cohorts = np.unique(fake[idx])
-        cohort_of = np.searchsorted(cohorts, fake[idx])
-        res = {"treated_in_range": int(treated.sum()), "excluded_neighbour_treatment": int((treated & excl).sum()),
-               "_keep": keep}
-        if not len(idx):
-            return {**res, **{o: None for o in OUTCOMES}, "install_months": None}
-        for o in OUTCOMES:
-            mat = counts[o]
-            before = _window_sum(mat[idx], fake[idx] - length - m0, length)
-            after = _window_sum(mat[idx], fake[idx] + 1 - m0, length)
-            if comparison == "not_yet_treated":
-                elig = _not_yet_treated(cohorts, length, lpi, lpi_nb)
-                cm = lpi_counts[o]
-                cb = np.stack([_window_sum(cm, np.full(nl, c - length - m0), length) for c in cohorts])
-                ca = np.stack([_window_sum(cm, np.full(nl, c + 1 - m0), length) for c in cohorts])
-                est = estimate(after, before, cohort_of, ca, cb, elig)
-                est["cg_sites_min"] = int(elig.sum(1).min())
-                est["cg_sites_median"] = int(np.median(elig.sum(1)))
-            else:
-                cm = city[o]
-                cb = np.array([[_window_sum(cm, np.array([c - length - m0]), length)[0]] for c in cohorts])
-                ca = np.array([[_window_sum(cm, np.array([c + 1 - m0]), length)[0]] for c in cohorts])
-                est = estimate(after, before, cohort_of, ca, cb, np.ones_like(ca, bool))
-            res[o] = est
-        res["install_months"] = [_label(int(cohorts.min()) + shift), _label(int(cohorts.max()) + shift)] if len(cohorts) else None
-        return res
+        def study(comparison, shift=0, length=window, only=None):
+            lo, hi = (_month(d) for d in prog_spec["treated"])
+            real = prog["month"].to_numpy()
+            fake = real - shift
+            # windows [m - length, m - 1] and [m + 1, m + length] around the (possibly fake) install month m
+            excl = np.array([((n >= r - shift - length) & (n <= r + (length if not shift else -1))).any()
+                             for n, r in zip(nb_all, real)])
+            treated = (real >= lo) & (real <= hi) & (fake - length >= m0) & (fake + length <= m1)
+            keep = treated & ~excl & (only if only is not None else True)
+            idx = np.flatnonzero(keep)
+            res = {"treated_in_range": int(treated.sum()), "excluded_neighbour_treatment": int((treated & excl).sum()),
+                   "_keep": keep}
+            if not len(idx):
+                return {**res, **{o: None for o in outcomes}, "install_months": None}
+            cohorts = np.unique(fake[idx])
+            cohort_of = np.searchsorted(cohorts, fake[idx])
+            for o in outcomes:
+                mat = counts[o]
+                before = _window_sum(mat[idx], fake[idx] - length - m0, length)
+                after = _window_sum(mat[idx], fake[idx] + 1 - m0, length)
+                if comparison == "not_yet_treated":
+                    elig = _not_yet_treated(cohorts, length, prog, nb_own)
+                    cb = np.stack([_window_sum(mat, np.full(len(prog), c - length - m0), length) for c in cohorts])
+                    ca = np.stack([_window_sum(mat, np.full(len(prog), c + 1 - m0), length) for c in cohorts])
+                    est = estimate(after, before, cohort_of, ca, cb, elig)
+                    est["cg_sites_min"] = int(elig.sum(1).min())
+                    est["cg_sites_median"] = int(np.median(elig.sum(1)))
+                else:
+                    cm = city[o]
+                    cb = np.array([[_window_sum(cm, np.array([c - length - m0]), length)[0]] for c in cohorts])
+                    ca = np.array([[_window_sum(cm, np.array([c + 1 - m0]), length)[0]] for c in cohorts])
+                    est = estimate(after, before, cohort_of, ca, cb, np.ones_like(ca, bool))
+                res[o] = est
+            res["install_months"] = [_label(int(cohorts.min()) + shift), _label(int(cohorts.max()) + shift)]
+            return res
 
-    main = study(lpi_counts, lpi, lpi_nb_all, LPI_TREATED, "not_yet_treated")
-    out = {
-        "registered": "validation/BENCH_PREREG.md, T11 (2026-10-31)",
-        "data": {"lpi_points": len(points_lpi), "lpi_sites": nl, "turn_points": len(points_turn),
-                 "turn_sites": len(turn), "crashes": len(cr), "crash_months": [_label(m0), _label(m1)],
-                 "radius_m": RADIUS_M, "merge_m": MERGE_M, "neighbour_m": NEIGHBOUR_M, "window_months": WINDOW},
-        "lpi_not_yet_treated": main,
-        "lpi_citywide": study(lpi_counts, lpi, lpi_nb_all, LPI_TREATED, "citywide"),
-        "lpi_placebo_not_yet_treated": study(lpi_counts, lpi, lpi_nb_all, LPI_TREATED, "not_yet_treated",
-                                             shift=PLACEBO_SHIFT, length=PLACEBO_WINDOW),
-        "lpi_placebo_citywide": study(lpi_counts, lpi, lpi_nb_all, LPI_TREATED, "citywide",
-                                      shift=PLACEBO_SHIFT, length=PLACEBO_WINDOW),
-    }
-    # added after the registered results were seen: the placebo on exactly the main analysis's sites
-    out["lpi_placebo_same_sites_not_yet_treated"] = study(lpi_counts, lpi, lpi_nb_all, LPI_TREATED, "not_yet_treated",
-                                                          shift=PLACEBO_SHIFT, length=PLACEBO_WINDOW,
-                                                          only=main["_keep"])
-    near_t = cKDTree(all_xy).query_ball_point(turn[["x", "y"]].to_numpy(), NEIGHBOUR_M)
-    turn_nb = [all_month[[j for j in n if j != nl + i]] for i, n in enumerate(near_t)]
-    out["turn_calming_citywide"] = study(turn_counts, turn, turn_nb, TURN_TREATED, "citywide")
-    out["turn_calming_placebo_citywide"] = study(turn_counts, turn, turn_nb, TURN_TREATED, "citywide",
-                                                 shift=PLACEBO_SHIFT, length=PLACEBO_WINDOW)
-    for v in out.values():
-        if isinstance(v, dict):
-            v.pop("_keep", None)
+        pl = spec["placebo"]
+        for comparison in prog_spec["comparisons"]:
+            main = study(comparison)
+            out["runs"][f"{key}_{comparison}"] = main
+            out["runs"][f"{key}_placebo_{comparison}"] = study(comparison, pl["shift_months"], pl["window_months"])
+            if comparison in prog_spec.get("placebo_same_sites", []):
+                out["runs"][f"{key}_placebo_same_sites_{comparison}"] = study(
+                    comparison, pl["shift_months"], pl["window_months"], only=main["_keep"])
+        out["gates"][key] = gate(out["runs"], prog_spec)
+    for v in out["runs"].values():
+        v.pop("_keep", None)
     return out
 
 
-def brief_cmf() -> list[dict]:
-    """The CMF Clearinghouse records the brief would rank a Leading Pedestrian Interval with, for pedestrian crashes."""
+def gate(runs: dict, prog_spec: dict) -> dict:
+    """The causal gate for one program: the registered rule on the primary comparison (the interval for the outcome
+    entirely below 1) and every placebo of that comparison showing no change (its interval includes 1)."""
+    key, comp, o = prog_spec["key"], prog_spec["primary"], prog_spec["outcome"]
+    main = (runs.get(f"{key}_{comp}") or {}).get(o) or {}
+    placebos = [k for k in (f"{key}_placebo_{comp}", f"{key}_placebo_same_sites_{comp}") if k in runs]
+    ci = main.get("ci95")
+    rule = bool(ci and ci[1] < 1)
+    bad = [k for k in placebos
+           if (runs[k].get(o) or {}).get("ci95") and not (runs[k][o]["ci95"][0] <= 1 <= runs[k][o]["ci95"][1])]
+    reason = None if rule and not bad else ("the effect's interval includes no change" if not rule
+                                            else "a placebo date before the install shows a change too")
+    return {"countermeasure": prog_spec.get("countermeasure"), "treatment": prog_spec.get("label", key),
+            "outcome": o, "primary": f"{key}_{comp}", "placebos": placebos, "rule_met": rule,
+            "placebo_ok": not bad, "passed": rule and not bad, "reason": reason}
+
+
+# ---------------------------------------------------------------- registered suites and what they feed
+
+def load_spec(name: str) -> dict:
+    return json.loads((STUDIES / f"{name}.json").read_text())
+
+
+def run_suite(spec: dict) -> dict:
+    """Load the city's crashes and programs from the registry, run the spec, add the brief's CMF for each program's
+    countermeasure, and save the result."""
+    city = spec["city"]
+    org = origin(city)
+    cr = crashes(city, org)
+    ids = list(dict.fromkeys([p["adapter"] for p in spec["programs"]] + (spec.get("exclude_near") or [])))
+    points = {aid: program_points(opendata.adapter(aid)) for aid in ids}
+    out = evaluate_suite(spec, cr, points, org)
+    for p in spec["programs"]:
+        if p.get("countermeasure"):
+            out["gates"][p["key"]]["brief_cmf"] = brief_cmf(p["countermeasure"], p["outcome"])
+    if spec.get("projection"):
+        out["projection"] = projection(spec, out, cr, points, org)
+    out["run_date"] = dt.date.today().isoformat()
+    dest = RESULTS_DIR / "bench"
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / f"study_{spec['id']}.json").write_text(json.dumps(out, indent=1, default=float))
+    return out
+
+
+def brief_cmf(countermeasure: str, outcome: str) -> list[dict]:
+    """The CMF Clearinghouse records the brief ranks this countermeasure with for the outcome's crash group."""
     from . import countermeasures
-    cands, _ = countermeasures.candidates(countermeasures.load_cmf(), ("vehicle", "pedestrian"), "crossing",
-                                          control="Signalized",
+    item = next((i for i in countermeasures.psc_items() if i["name"] == countermeasure), {})
+    pair = ("vehicle", "pedestrian") if outcome == "pedestrian" else ("vehicle", "vehicle")
+    control = item.get("site_control") if item.get("site_control") not in (None, "any") else None
+    cands, _ = countermeasures.candidates(countermeasures.load_cmf(), pair, "crossing", control=control,
                                           conditions=frozenset(i["condition"] for i in countermeasures.psc_items()
                                                                if i.get("condition")))
     return [{"cmf_id": c.crfid, "cmf": round(c.cmf, 3), "stars": c.stars, "crash_type": c.crash_type,
-             "severity": c.severity} for c in cands if c.psc == "Leading Pedestrian Interval"]
+             "severity": c.severity} for c in cands if c.psc == countermeasure]
 
 
-def projection(effect: dict, cr: pd.DataFrame, lpi_points: pd.DataFrame, months: int = 60) -> dict:
-    """Descriptive, added after T11: the NYC Vision Zero priority intersections with no LPI within 60 m, and the
-    pedestrian injury crashes (within 100 m, each counted once, over the last `months` months of records) that the
-    effect measured at the city's own installs suggests an LPI would avoid. An LPI needs a signal and a site check."""
+def projection(spec: dict, out: dict, cr: pd.DataFrame, points: dict, org) -> dict:
+    """Descriptive, added after T11: the city's listed priority intersections with no site of the program nearby, and
+    the outcome crashes (each counted once, over the last `months` months of records) that the program's measured
+    effect suggests it would avoid there. A site still needs an engineer's check."""
     from . import harm
-    rows = pd.DataFrame(json.loads((RESULTS_DIR / "bench" / "citywide_nyc.json").read_text())["rows"])
-    ixy = _xy(rows["lat"], rows["lon"])
-    dist, _ = cKDTree(_xy(lpi_points["lat"], lpi_points["lon"])).query(ixy, distance_upper_bound=60)
+    pj = spec["projection"]
+    prog_spec = next(p for p in spec["programs"] if p["key"] == pj["program"])
+    effect = out["runs"][f"{pj['program']}_{prog_spec['primary']}"][prog_spec["outcome"]]
+    rows = pd.DataFrame(json.loads((RESULTS_DIR / "bench" / pj["junctions_from"]).read_text())["rows"])
+    ixy = xy(rows["lat"], rows["lon"], org)
+    pts = points[prog_spec["adapter"]]
+    dist, _ = cKDTree(xy(pts["lat"], pts["lon"], org)).query(ixy, distance_upper_bound=pj["near_m"])
     none = np.flatnonzero(~np.isfinite(dist))
     m1 = int(cr["month"].max())
-    m0 = m1 - months + 1
-    near = cKDTree(cr[["x", "y"]].to_numpy()).query_ball_point(ixy[none], 100)
+    m0 = m1 - pj["months"] + 1
+    near = cKDTree(cr[["x", "y"]].to_numpy()).query_ball_point(ixy[none], pj["radius_m"])
     idx = np.unique(np.concatenate([np.asarray(n, int) for n in near])) if len(none) else np.zeros(0, int)
-    sel = idx[cr["pedestrian"].to_numpy()[idx] & (cr["month"].to_numpy()[idx] >= m0)]
-    per_year = len(sel) / (months / 12)
+    o = prog_spec["outcome"]
+    sel = idx[cr[o].to_numpy()[idx] & (cr["month"].to_numpy()[idx] >= m0)]
+    per_year = len(sel) / (pj["months"] / 12)
     theta, (lo, hi) = effect["theta"], effect["ci95"]
     avoided = [per_year * (1 - t) for t in (theta, hi, lo)]
-    return {"intersections": int(len(rows)), "without_lpi": int(len(none)),
-            "without_lpi_plan_gap": int(rows.loc[none, "plan_gap"].fillna(False).sum()),
-            "months": [_label(m0), _label(m1)], "pedestrian_injury_crashes": int(len(sel)),
+    return {"intersections": int(len(rows)), "without_program": int(len(none)),
+            "without_program_plan_gap": int(rows.loc[none, "plan_gap"].fillna(False).sum()),
+            "months": [_label(m0), _label(m1)], "outcome_crashes": int(len(sel)),
             "per_year": round(per_year, 1), "avoided_per_year": round(avoided[0], 1),
             "avoided_per_year_interval": [round(avoided[1], 1), round(avoided[2], 1)],
             "harm_avoided_usd_per_year": round(avoided[0] * harm.INJURY_CRASH_USD, -5),
             "names": rows.loc[none, "name"].tolist()}
 
 
-def run() -> dict:
-    lpi = _points(LPI, "install_da")
-    turn = _points(TURN, "completion")
-    cr = crashes()
-    out = analyse(lpi, turn, cr)
-    out["lpi_gap_projection"] = projection(out["lpi_not_yet_treated"]["pedestrian"], cr, lpi)
-    out["brief_cmf"] = brief_cmf()
-    nyt = out["lpi_not_yet_treated"]["pedestrian"]
-    out["rule_met"] = bool(nyt["ci95"][1] < 1)
-    plc = out["lpi_placebo_not_yet_treated"]["pedestrian"]
-    out["placebo_flag"] = bool(plc["ci95"][1] < 1 or plc["ci95"][0] > 1)
-    out["run_date"] = dt.date.today().isoformat()
-    dest = RESULTS_DIR / "bench"
-    dest.mkdir(parents=True, exist_ok=True)
-    (dest / "treatments_nyc.json").write_text(json.dumps(out, indent=1, default=float))
-    return out
-
-
-LOCAL = {"nyc": {"Leading Pedestrian Interval": ("lpi_not_yet_treated", "lpi_placebo_same_sites_not_yet_treated")}}
+def results() -> list[dict]:
+    return [json.loads(p.read_text()) for p in sorted((RESULTS_DIR / "bench").glob("study_*.json"))]
 
 
 def local_evidence(city: str | None, countermeasure: str) -> dict | None:
-    """What NML-Bench T11 measured for this countermeasure at the city's own past installs, if it was tested and the
-    registered rule was met (the placebo check included); None otherwise."""
-    keys = LOCAL.get(city or "", {}).get(countermeasure)
-    p = RESULTS_DIR / "bench" / "treatments_nyc.json"
-    if not keys or not p.exists():
-        return None
-    res = json.loads(p.read_text())
-    main, placebo = res[keys[0]]["pedestrian"], res[keys[1]]["pedestrian"]
-    if not res.get("rule_met"):
-        return None
-    lo, hi = (round(100 * (1 - v)) for v in reversed(main["ci95"]))
-    return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"], "placebo_theta": placebo["theta"],
-            "placebo_ci95": placebo["ci95"], "source": "NML-Bench T11 (validation/BENCH.md)",
-            "text": f"pedestrian injury crashes fell {round(-main['change_pct'])}% (95% interval {lo}-{hi}%) at "
-                    f"{main['sites']:,} intersections after the city installed it, against sites that got it later; "
-                    + ("a placebo date before the install shows no drop." if placebo["ci95"][0] <= 1 <= placebo["ci95"][1]
-                       else "but a placebo date before the install also shows a change, so part of it may be bias.")}
+    """What a registered study measured for this countermeasure at the city's own past installs, if it passed the
+    causal gate (rule met and no placebo change); None otherwise."""
+    for res in results():
+        if res.get("city") != city:
+            continue
+        for g in res.get("gates", {}).values():
+            if g.get("countermeasure") != countermeasure or not g.get("passed"):
+                continue
+            main = res["runs"][g["primary"]][g["outcome"]]
+            placebo = res["runs"][g["placebos"][-1]][g["outcome"]] if g["placebos"] else None
+            lo, hi = (round(100 * (1 - v)) for v in reversed(main["ci95"]))
+            outcome = "pedestrian injury crashes" if g["outcome"] == "pedestrian" else \
+                ("injury crashes" if g["outcome"] == "injury" else "injury crashes with no pedestrian or cyclist hurt")
+            return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"],
+                    "placebo_theta": placebo and placebo["theta"], "placebo_ci95": placebo and placebo["ci95"],
+                    "study": res["id"], "source": f"NML-Bench {res['id']} (validation/BENCH.md)",
+                    "text": f"{outcome} fell {round(-main['change_pct'])}% (95% interval {lo}-{hi}%) at "
+                            f"{main['sites']:,} intersections after the city installed it, against sites that got "
+                            "it later; a placebo date before the install shows no drop."}
+    return None

@@ -24,9 +24,6 @@ from .meta_client import MetaClient
 
 UA = {"User-Agent": "NearMissLens/0.2 (road-safety research; https://github.com/Morningstaaar36/nearmisslens)"}
 OVERPASS = "https://overpass-api.de/api/interpreter"
-CITIES = {  # (south, west, north, east)
-    "nyc": (40.49, -74.27, 40.92, -73.68), "dc": (38.79, -77.12, 38.996, -76.90),
-    "chicago": (41.64, -87.94, 42.03, -87.52), "la": (33.70, -118.67, 34.34, -118.15)}
 CRASH_RADIUS_M, PLAN_RADIUS_M, OSM_RADIUS_M = 100, 150, 80
 TREATMENT_RADIUS_M = 60
 YEARS = 5
@@ -34,7 +31,10 @@ GAP_MIN_INJURY_CRASHES = 10
 
 
 def city_of(lat: float, lon: float) -> str | None:
-    return next((c for c, (s, w, n, e) in CITIES.items() if s <= lat <= n and w <= lon <= e), None)
+    """The registry city whose bounding box holds the point (registry.json "cities")."""
+    from . import opendata
+    return next((c["id"] for c in opendata.load_cities()
+                 if c["bbox"][0] <= lat <= c["bbox"][2] and c["bbox"][1] <= lon <= c["bbox"][3]), None)
 
 
 def _cache_dir() -> Path:

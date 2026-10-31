@@ -33,30 +33,44 @@ class Scene:
     q: dict | None = None  # the app request (address and coordinates) for "app" and "letter" scenes
 
 
-HERO = "bruckner_boulevard___hunts_point_avenue"
-
-
-def hero() -> dict:
-    """The opening junction's numbers, from its stored brief: the record, the yearly harm and the top fix."""
-    from . import brief
-    from .countermeasures import load_cmf
-    f = json.loads((SETTINGS.runs_dir / "briefs" / HERO / "brief.json").read_text())
-    d = f["dossier"]
-    fx = brief.fix_options(d, load_cmf())
-    top = next(o for o in fx["options"] if not o.get("verify_on_site"))
-    return {"name": f["junction"].split(",")[0], "spoken": f["junction"].split(",")[0].replace("&", "and"), "q": {"address": f["junction"], "lat": d["lat"], "lon": d["lon"]},
-            "injury": d["crashes"]["injury_crashes"], "peds": d["crashes"].get("pedestrian_injured", 0),
-            "harm_m": fx["harm"]["usd_per_year"] / 1e6, "top": top,
-            "last_project": max((p["year"] for p in d["plans"]["projects"] if isinstance(p.get("year"), int)), default=None)}
-
-
 def _bench(name: str) -> dict:
     p = RESULTS_DIR / "bench" / name
     return json.loads(p.read_text()) if p.exists() else {}
 
 
+def hero() -> dict:
+    """The opening junction, chosen from the results, not by hand: the plan-gap intersection with the most injury
+    crashes in a city screen whose brief has a fix drawing that passed the SAM 3.1 check."""
+    from . import brief, citywide, letter, opendata
+    from .countermeasures import load_cmf
+    for city in citywide.cities():
+        everyone = sorted(_bench(f"citywide_{city}.json").get("rows", []), key=lambda r: -(r.get("injury_crashes") or 0))
+        for rank, r in enumerate(everyone, 1):
+            if not r.get("plan_gap"):
+                continue
+            slug = "".join(ch if ch.isalnum() else "_" for ch in r["name"].lower())[:60]
+            path = SETTINGS.runs_dir / "briefs" / slug / "brief.json"
+            f = json.loads(path.read_text()) if path.exists() else {}
+            if not (f.get("illustration") or {}).get("check_passed"):
+                continue
+            d = f["dossier"]
+            fx = brief.fix_options(d, load_cmf())
+            top = next(o for o in fx["options"] if not o.get("verify_on_site"))
+            area = next((o["area"] for o in letter.offices(d["lat"], d["lon"]) if o.get("area")), None)
+            return {"name": r["name"], "spoken": r["name"].replace("&", "and") + (f", {area}" if area else ""),
+                    "rank": rank, "of": len(everyone), "city": city, "city_name": opendata.city(city)["name"],
+                    "area": area, "slug": slug, "fix_image": (f.get("illustration") or {}).get("image"),
+                    "q": {"address": f["junction"], "lat": d["lat"], "lon": d["lon"]},
+                    "injury": d["crashes"]["injury_crashes"], "peds": d["crashes"].get("pedestrian_injured", 0),
+                    "harm_m": fx["harm"]["usd_per_year"] / 1e6, "top": top,
+                    "last_project": max((p["year"] for p in d["plans"]["projects"] if isinstance(p.get("year"), int)),
+                                        default=None)}
+    raise FileNotFoundError("no screened junction has a brief with a checked fix drawing (nml citywide, nml brief)")
+
+
 def script() -> list[Scene]:
-    cw = _bench("citywide_nyc.json").get("summary", {})
+    h = hero()
+    cw = _bench(f"citywide_{h['city']}.json").get("summary", {})
     cw = {**cw, "injury_crashes_total": cw.get("injury_crashes_distinct", cw.get("injury_crashes_total")),
           "killed_total": cw.get("killed_distinct", cw.get("killed_total"))}
     c4 = _bench("complaints.json").get("summary", {})
@@ -65,20 +79,20 @@ def script() -> list[Scene]:
     spark = c4.get("spark_checked", {})
     pet0 = fr.get("v0", {}).get("pet<=1.5", {}).get("f1")
     pet1 = rs.get("reseed", {}).get("pet<=1.5", {}).get("f1")
-    h = hero()
-    tr = _bench("treatments_nyc.json")
-    lpi = tr.get("lpi_not_yet_treated", {}).get("pedestrian", {})
-    plc = tr.get("lpi_placebo_same_sites_not_yet_treated", {}).get("pedestrian", {})
+    tr = _bench("study_T11.json")
+    g = tr.get("gates", {}).get("lpi", {})
+    lpi = tr.get("runs", {}).get(g.get("primary", ""), {}).get("pedestrian", {})
     drop, lo, hi = (round(100 * (1 - v)) for v in (lpi.get("theta", 1), lpi.get("ci95", [1, 1])[1], lpi.get("ci95", [1, 1])[0]))
-    cmf = (tr.get("brief_cmf") or [{}])[0].get("cmf", 1)
+    cmf = (g.get("brief_cmf") or [{}])[0].get("cmf", 1)
     top = h["top"]
     return [
-        Scene("hook", f"{h['spoken']}, in the Bronx. {h['injury']} injury crashes in five years, the most of New York's "
-                      f"{cw.get('intersections')} priority intersections. {h['peds']} pedestrians hurt. In the federal "
+        Scene("hook", f"{h['spoken']}. {h['injury']} injury crashes in five years, "
+                      f"{'the most' if h['rank'] == 1 else 'among the most'} of {h['city_name']}'s "
+                      f"{h['of']} priority intersections. {h['peds']} pedestrians hurt. In the federal "
                       f"government's own values, that harm costs {h['harm_m']:.1f} million dollars a year. The city's "
                       f"records show no safety work here since {h['last_project']}.", "card",
               "One intersection, five years",
-              f"{h['name']}, Bronx: {h['injury']} injury crashes, {h['peds']} pedestrians hurt, "
+              f"{h['name']}{', ' + h['area'] if h['area'] else ''}: {h['injury']} injury crashes, {h['peds']} pedestrians hurt, "
               f"${h['harm_m']:.1f}M a year in harm (USDOT values). Last recorded safety work: {h['last_project']}."),
         Scene("map", f"NearMissLens is a junction safety copilot built on Meta's models. Every dot is a priority "
                      f"intersection. Red means many injury crashes, and nothing done: {cw.get('plan_gap')} of them.",
@@ -90,7 +104,7 @@ def script() -> list[Scene]:
         Scene("fix", f"Muse Image draws the top fix, pedestrian refuge islands, on the state's aerial photo. SAM 3.1 "
                      f"keeps every real car untouched and checks that the islands were drawn. They would prevent about "
                      f"{top['expected_crashes_avoided_per_year']} pedestrian injury crashes a year.", "image",
-              target=str(SETTINGS.runs_dir / "briefs" / HERO / "fix.jpg"),
+              target=h["fix_image"],
               caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
         Scene("measured", f"Do these fixes work? We checked the city's own record. At {lpi.get('sites', 0):,} "
                           f"intersections where New York added a leading pedestrian interval, pedestrian injury crashes "

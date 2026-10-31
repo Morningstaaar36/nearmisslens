@@ -1,0 +1,16 @@
+{
+ "id": "T12",
+ "title": "Falsification gates: fake programs, real programs, naive vs gated analysts",
+ "registered": "validation/BENCH_PREREG.md, T12 (2026-10-31, before any fake program was generated or any agent was run)",
+ "city": "nyc",
+ "base_study": "T11",
+ "outcome": "pedestrian",
+ "radius_m": 50,
+ "window_months": 36,
+ "fake": {"programs": 200, "sites": 300, "cell_m": 60, "min_injury_crashes": 20, "clear_of_m": 150,
+          "clear_of": ["nyc-lpi", "nyc-turn-calming", "nyc-sip-intersections", "nyc-sip-corridors"],
+          "install_range": ["2015-08-01", "2021-12-31"]},
+ "real": ["lpi", "turn_calming"],
+ "agentic": {"fake_programs": 20, "split_seed": 0, "max_turns": 14, "budget_usd": 0.25,
+             "models": ["muse-spark-open"]}
+}

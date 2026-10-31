@@ -1,0 +1,23 @@
+{
+ "id": "T11",
+ "city": "nyc",
+ "title": "Did New York's own Leading Pedestrian Intervals and turn calming work?",
+ "registered": "validation/BENCH_PREREG.md, T11 (2026-10-31, before any crash data was downloaded for it)",
+ "merge_m": 30,
+ "radius_m": 50,
+ "neighbour_m": 100,
+ "window_months": 36,
+ "placebo": {"shift_months": 19, "window_months": 18},
+ "exclude_near": ["nyc-lpi", "nyc-turn-calming"],
+ "programs": [
+  {"key": "lpi", "adapter": "nyc-lpi", "label": "Leading Pedestrian Interval signals",
+   "countermeasure": "Leading Pedestrian Interval", "treated": ["2015-08-01", "2021-12-31"],
+   "comparisons": ["not_yet_treated", "citywide"], "primary": "not_yet_treated", "outcome": "pedestrian",
+   "placebo_same_sites": ["not_yet_treated"]},
+  {"key": "turn_calming", "adapter": "nyc-turn-calming", "label": "turn traffic calming", "countermeasure": null,
+   "treated": ["2016-01-01", "2021-12-31"], "comparisons": ["citywide"], "primary": "citywide",
+   "outcome": "pedestrian"}
+ ],
+ "projection": {"program": "lpi", "junctions_from": "citywide_nyc.json", "near_m": 60, "radius_m": 100, "months": 60},
+ "notes": ["The same-site placebo (placebo_same_sites) and the projection were added after the registered results were seen."]
+}

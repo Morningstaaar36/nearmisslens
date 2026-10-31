@@ -5,15 +5,25 @@ import pytest
 from nearmisslens import harm, treatments as T
 
 
+ORG = (40.70, -73.95)
+SPEC = {"id": "TEST", "city": "test", "merge_m": 30, "radius_m": 50, "neighbour_m": 100, "window_months": 36,
+        "placebo": {"shift_months": 19, "window_months": 18}, "exclude_near": ["lpi", "turn"],
+        "programs": [
+            {"key": "lpi", "adapter": "lpi", "countermeasure": "Leading Pedestrian Interval",
+             "treated": ["2015-08-01", "2021-12-31"], "comparisons": ["not_yet_treated", "citywide"],
+             "primary": "not_yet_treated", "outcome": "pedestrian", "placebo_same_sites": ["not_yet_treated"]},
+            {"key": "turn", "adapter": "turn", "treated": ["2016-01-01", "2021-12-31"], "comparisons": ["citywide"],
+             "primary": "citywide", "outcome": "pedestrian"}]}
+
+
 def _latlon(x, y):
-    """Inverse of treatments._xy, to place synthetic sites and crashes in metres."""
-    return (T.LAT0 + np.asarray(y) / 110_574,
-            T.LON0 + np.asarray(x) / (111_320 * np.cos(np.radians(T.LAT0))))
+    """Inverse of treatments.xy, to place synthetic sites and crashes in metres."""
+    return (ORG[0] + np.asarray(y) / 110_574, ORG[1] + np.asarray(x) / (111_320 * np.cos(np.radians(ORG[0]))))
 
 
 def test_sites_merge_close_points_and_keep_earliest():
     lat, lon = _latlon([0, 20, 500], [0, 0, 0])
-    s = T.sites(pd.DataFrame({"lat": lat, "lon": lon, "month": [100, 90, 95]}))
+    s = T.sites(pd.DataFrame({"lat": lat, "lon": lon, "month": [100, 90, 95]}), 30, ORG)
     assert len(s) == 2
     merged = s[s["points"] == 2].iloc[0]
     assert merged["month"] == 90 and abs(merged["x"] - 20) < 1
@@ -40,35 +50,47 @@ def _city(effect=0.5):
             crashes += [(x + 10, y, month)] * n
     crashes += [(50_000.0, 50_000.0, month) for month in range(m0, m1 + 1) for _ in range(5)]
     c = np.array(crashes)
-    xy = T._xy(*_latlon(c[:, 0], c[:, 1]))
+    p = T.xy(*_latlon(c[:, 0], c[:, 1]), ORG)
     cr = pd.DataFrame({"month": c[:, 2].astype(int), "pedestrian": True, "injury": True, "motorist_only": False,
-                       "x": xy[:, 0], "y": xy[:, 1]})
-    to_df = lambda rows: pd.DataFrame({"lat": _latlon([r[0] for r in rows], [r[1] for r in rows])[0],
-                                       "lon": _latlon([r[0] for r in rows], [r[1] for r in rows])[1],
-                                       "month": [r[2] for r in rows]})
-    return to_df(pts), to_df(turn), cr
+                       "x": p[:, 0], "y": p[:, 1]})
+
+    def to_df(rows):
+        lat, lon = _latlon([r[0] for r in rows], [r[1] for r in rows])
+        return pd.DataFrame({"lat": lat, "lon": lon, "month": [r[2] for r in rows]})
+    return {"lpi": to_df(pts), "turn": to_df(turn)}, cr
 
 
 def test_comparison_group_study_recovers_a_known_effect_and_a_null_placebo():
-    lpi, turn, cr = _city(effect=0.5)
-    out = T.analyse(lpi, turn, cr)
-    main = out["lpi_not_yet_treated"]["pedestrian"]
+    points, cr = _city(effect=0.5)
+    out = T.evaluate_suite(SPEC, cr, points, ORG)
+    main = out["runs"]["lpi_not_yet_treated"]["pedestrian"]
     assert main["sites"] == 20 and main["theta"] == pytest.approx(0.5, abs=1e-6)
-    assert out["lpi_not_yet_treated"]["excluded_neighbour_treatment"] == 0
-    assert out["lpi_placebo_not_yet_treated"]["pedestrian"]["theta"] == pytest.approx(1.0, abs=1e-6)
-    assert out["lpi_placebo_same_sites_not_yet_treated"]["pedestrian"]["sites"] == 20
-    assert out["lpi_citywide"]["pedestrian"]["theta"] == pytest.approx(0.5, abs=1e-6)
-    assert out["turn_calming_citywide"]["pedestrian"]["theta"] == pytest.approx(1.0, abs=1e-6)
-    assert "_keep" not in out["lpi_not_yet_treated"]
+    assert out["runs"]["lpi_not_yet_treated"]["excluded_neighbour_treatment"] == 0
+    assert out["runs"]["lpi_placebo_not_yet_treated"]["pedestrian"]["theta"] == pytest.approx(1.0, abs=1e-6)
+    assert out["runs"]["lpi_placebo_same_sites_not_yet_treated"]["pedestrian"]["sites"] == 20
+    assert out["runs"]["lpi_citywide"]["pedestrian"]["theta"] == pytest.approx(0.5, abs=1e-6)
+    assert out["runs"]["turn_citywide"]["pedestrian"]["theta"] == pytest.approx(1.0, abs=1e-6)
+    assert "_keep" not in out["runs"]["lpi_not_yet_treated"]
+    assert out["gates"]["lpi"]["passed"] and not out["gates"]["turn"]["passed"]
+
+
+def test_gate_fails_a_program_whose_placebo_also_drops():
+    points, cr = _city(effect=1.0)
+    # a decline that starts two years before the install: the placebo sees it too
+    sel = cr["x"].lt(25_000) & cr["y"].abs().lt(1) & cr["month"].ge(2016 * 12)
+    cr = pd.concat([cr[~sel], cr[sel].iloc[::2]], ignore_index=True)
+    g = T.evaluate_suite(SPEC, cr, points, ORG)["gates"]["lpi"]
+    assert not g["passed"]
 
 
 def test_a_neighbouring_install_inside_the_window_excludes_the_site():
-    lpi, turn, cr = _city()
+    points, cr = _city()
     lat, lon = _latlon([60.0], [0.0])  # 60 m from the first treated site, installed one year after it
-    lpi = pd.concat([lpi, pd.DataFrame({"lat": lat, "lon": lon, "month": [2019 * 12]})], ignore_index=True)
-    out = T.analyse(lpi, turn, cr)
-    assert out["lpi_not_yet_treated"]["excluded_neighbour_treatment"] >= 1
-    assert out["lpi_not_yet_treated"]["pedestrian"]["sites"] < 21
+    points["lpi"] = pd.concat([points["lpi"], pd.DataFrame({"lat": lat, "lon": lon, "month": [2019 * 12]})],
+                              ignore_index=True)
+    out = T.evaluate_suite(SPEC, cr, points, ORG)
+    assert out["runs"]["lpi_not_yet_treated"]["excluded_neighbour_treatment"] >= 1
+    assert out["runs"]["lpi_not_yet_treated"]["pedestrian"]["sites"] < 21
 
 
 def test_harm_values_follow_usdot_and_scale_non_injury_groups():

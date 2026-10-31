@@ -37,11 +37,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;borde
 .verify{color:var(--mut);font-style:italic}.local{color:var(--ok);font-size:12px;margin-top:4px}.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.imgs img{width:100%;border-radius:8px}
 .memo{line-height:1.55}.legend{font-size:12px;color:var(--mut)}
 </style></head><body>
-<header><h1>Junction Safety Copilot</h1><span class="sub">Official record → cited fixes → checked brief. NYC, DC, Chicago, LA.</span>
-<input id="q" placeholder="e.g. Delancey Street & Essex Street, Manhattan, NY"><button id="go">Brief</button></header>
+<header><h1>Junction Safety Copilot</h1><span class="sub">Official record → cited fixes → checked brief. __CITIES__.</span>
+<input id="q" placeholder="an intersection, e.g. __EXAMPLE__"><button id="go">Brief</button></header>
 <main><div id="map"></div><div id="side"><div class="card"><b>How to use</b><p class="sub">Click a dot (NYC Vision Zero priority intersections; red = injury crashes and no recorded safety treatment in 5 years) or search an intersection. The brief takes 20–90 s the first time.</p><div id="top"></div></div><div id="out"></div></div></main>
 <script>
-const map=L.map('map').setView([40.73,-73.94],11);
+const map=L.map('map').setView(__VIEW__,11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 fetch('/citywide').then(r=>r.json()).then(d=>{
@@ -91,6 +91,14 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
         memo_client = MetaClient(SETTINGS)
     image_client = MetaClient(SETTINGS) if illustrate else None
     roots = [SETTINGS.runs_dir.resolve(), SETTINGS.data_dir.resolve()]
+    from . import citywide, opendata
+    screens = citywide.screened()
+    rows = screens[0][1].get("rows", []) if screens else []
+    example = max(rows, key=lambda r: r.get("injury_crashes") or 0)["name"] if rows else "Main Street & 1st Avenue"
+    s_, w_, n_, e_ = opendata.city(screens[0][0])["bbox"] if screens else opendata.load_cities()[0]["bbox"]
+    page = (PAGE.replace("__CITIES__", ", ".join(c["name"] for c in opendata.load_cities()))
+            .replace("__EXAMPLE__", example).replace("__VIEW__", f"[{(s_ + n_) / 2:.4f},{(w_ + e_) / 2:.4f}]"))
+    screen_json = json.dumps({**screens[0][1], "city": screens[0][0]}).encode() if screens else b"{}"
     done: dict[str, bytes] = {}  # briefs already built in this session, by request
 
     class H(BaseHTTPRequestHandler):
@@ -104,14 +112,13 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
         def do_GET(self):
             u = urlparse(self.path)
             if u.path == "/citywide":
-                p = RESULTS_DIR / "bench" / "citywide_nyc.json"
-                return self._send(200, p.read_bytes() if p.exists() else b"{}", "application/json")
+                return self._send(200, screen_json, "application/json")
             if u.path == "/media":
                 p = Path(unquote(parse_qs(u.query).get("p", [""])[0])).resolve()
                 if p.exists() and any(str(p).startswith(str(r)) for r in roots):
                     return self._send(200, p.read_bytes(), mimetypes.guess_type(p.name)[0] or "image/jpeg")
                 return self._send(404, b"not found", "text/plain")
-            self._send(200, PAGE.encode(), "text/html; charset=utf-8")
+            self._send(200, page.encode(), "text/html; charset=utf-8")
 
         def do_POST(self):
             raw = self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}"
@@ -122,7 +129,7 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                     f = json.loads(done[k]) if k in done else brief.build(q.get("address") or q.get("name"), q.get("lat"),
                                                                            q.get("lon"), client=memo_client, memo=False)
                     d = f["dossier"]
-                    res = letter.draft(memo_client, f, letter.offices(d["lat"], d["lon"], d.get("city")),
+                    res = letter.draft(memo_client, f, letter.offices(d["lat"], d["lon"]),
                                        tag=f"letter {f['junction'][:40]}")
                     return self._send(200, json.dumps(res, default=str).encode(), "application/json")
                 except Exception as e:  # shown to the user, not hidden

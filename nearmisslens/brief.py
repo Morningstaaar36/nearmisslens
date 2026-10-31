@@ -27,15 +27,6 @@ from .config import SETTINGS
 YEARS = context.YEARS
 OVERPASS_SERVERS = (context.OVERPASS, "https://overpass.private.coffee/api/interpreter",
                     "https://maps.mail.ru/osm/tools/overpass/api/interpreter")
-FACTOR_CONDITIONS = {  # contributing factors (lower case) that show a countermeasure's precondition
-    "traffic control disregarded": "an entry on yellow or red",
-    "disregarding traffic signals": "an entry on yellow or red",
-    "turning improperly": "a turning movement",
-    "improper turning/no signal": "a turning movement",
-    "failure to yield right-of-way": "a turning movement",
-    "failing to yield right-of-way": "a turning movement",
-    "pedrownotgrnt": "a turning movement",
-}
 
 
 def geocode(address: str) -> tuple[float, float, str]:
@@ -74,14 +65,13 @@ def geocode(address: str) -> tuple[float, float, str]:
     return lat2, lon2, f"{a} & {b}, {rest.strip()}"
 
 
-IN_PLACE = {"nyc-lpi": "Leading Pedestrian Interval"}  # recorded treatments that are themselves a ranked fix
-
-
 def in_place(d: dict) -> dict[str, dict]:
-    """Proven Safety Countermeasures the city's records show already installed at the junction, with the year."""
+    """Proven Safety Countermeasures the city's records show already installed at the junction, with the year: a
+    project adapter whose records are themselves a countermeasure says so in the registry ("countermeasure")."""
+    from . import opendata
     out = {}
     for p in (d.get("plans") or {}).get("projects", []):
-        name = IN_PLACE.get(p.get("dataset"))
+        name = (opendata.adapter(p.get("dataset") or "") or {}).get("countermeasure")
         if name and (name not in out or (p.get("year") or 0) < (out[name].get("year") or 0)):
             out[name] = {"countermeasure": name, "year": p.get("year"), "dataset": p.get("dataset")}
     return out
@@ -90,11 +80,14 @@ def in_place(d: dict) -> dict[str, dict]:
 def _conditions(d: dict, min_share: float = 0.05) -> frozenset[str]:
     """Countermeasure preconditions the crash record supports: a contributing factor behind at least min_share of
     the crashes."""
+    from . import opendata
     cr = d.get("crashes") or {}
     total = max(cr.get("crashes", 0), 1)
+    # each crash dataset words its contributing factors differently; its adapter maps them to conditions
+    mapping = (opendata.adapter(cr.get("adapter") or "") or {}).get("factor_conditions", {})
     conds = set()
     for f, n in (cr.get("factor_counts") or {}).items():
-        c = FACTOR_CONDITIONS.get(str(f).lower())
+        c = mapping.get(str(f).lower())
         if c and n / total >= min_share:
             conds.add(c)
     if "a turning movement" in conds:

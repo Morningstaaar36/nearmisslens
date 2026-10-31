@@ -43,6 +43,15 @@
    ],
    "provenance": {
     "found_by": "seed (written by hand)"
+   },
+   "city": "nyc",
+   "lat_field": "latitude",
+   "lon_field": "longitude",
+   "id_field": "collision_id",
+   "factor_conditions": {
+    "traffic control disregarded": "an entry on yellow or red",
+    "turning improperly": "a turning movement",
+    "failure to yield right-of-way": "a turning movement"
    }
   },
   {
@@ -101,7 +110,8 @@
    ],
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "dc"
   },
   {
    "id": "chicago-crashes",
@@ -142,6 +152,15 @@
    ],
    "provenance": {
     "found_by": "seed (written by hand)"
+   },
+   "city": "chicago",
+   "lat_field": "latitude",
+   "lon_field": "longitude",
+   "id_field": "crash_record_id",
+   "factor_conditions": {
+    "disregarding traffic signals": "an entry on yellow or red",
+    "improper turning/no signal": "a turning movement",
+    "failing to yield right-of-way": "a turning movement"
    }
   },
   {
@@ -163,7 +182,8 @@
    "source": "NYC DOT Street Improvement Projects (intersections)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc"
   },
   {
    "id": "nyc-sip-corridors",
@@ -184,7 +204,8 @@
    "source": "NYC DOT Street Improvement Projects (corridors)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc"
   },
   {
    "id": "nyc-lpi",
@@ -205,7 +226,9 @@
    "source": "NYC Vision Zero View, Leading Pedestrian Interval Signals",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc",
+   "countermeasure": "Leading Pedestrian Interval"
   },
   {
    "id": "nyc-turn-calming",
@@ -226,7 +249,8 @@
    "source": "NYC Vision Zero View, Turn Traffic Calming",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc"
   },
   {
    "id": "nyc-retiming",
@@ -247,7 +271,8 @@
    "source": "NYC Vision Zero View, Signal Timing/25 MPH Retiming",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc"
   },
   {
    "id": "nyc-vz-intersections",
@@ -268,6 +293,15 @@
    "source": "NYC Vision Zero priority intersections",
    "provenance": {
     "found_by": "seed (written by hand)"
+   },
+   "city": "nyc",
+   "junctions": {
+    "name_fields": [
+     "street_1",
+     "street_2"
+    ],
+    "lat_field": "lat",
+    "lon_field": "long"
    }
   },
   {
@@ -288,7 +322,8 @@
    "source": "NYC Vision Zero priority corridors",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "nyc"
   },
   {
    "id": "dc-hin",
@@ -308,7 +343,8 @@
    "source": "DDOT moveDC High Injury Network",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "dc"
   },
   {
    "id": "dc-protrack-points",
@@ -328,7 +364,8 @@
    "source": "DDOT ProTrack projects (points)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "dc"
   },
   {
    "id": "dc-protrack-lines",
@@ -348,7 +385,8 @@
    "source": "DDOT ProTrack projects (lines)",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "dc"
   },
   {
    "id": "la-hin",
@@ -367,7 +405,8 @@
    "source": "LADOT High Injury Network",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "la"
   },
   {
    "id": "nys-ortho",
@@ -401,7 +440,8 @@
    "source": "DC Office of the CTO orthophoto 2023",
    "provenance": {
     "found_by": "seed (written by hand)"
-   }
+   },
+   "city": "dc"
   },
   {
    "id": "auto-seattle-5b98ff2b96b34af5b1e774cd9ec1f202",
@@ -465,8 +505,126 @@
      "records_near": 37856,
      "latest": "2026-10-18"
     },
-    "attempts": 3
+    "attempts": 3,
+    "factor_conditions": "seed (written by hand)"
+   },
+   "city": "seattle",
+   "factor_conditions": {
+    "pedrownotgrnt": "a turning movement"
    }
+  },
+  {
+   "id": "nyc-council",
+   "kind": "office",
+   "city": "nyc",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/872g-cjhh.json",
+   "geo_field": "the_geom",
+   "field": "coundist",
+   "role": "council",
+   "template": "Council Member, District {value}, New York City Council",
+   "contact": "https://council.nyc.gov/district-{value}/",
+   "source": "NYC Open Data, City Council Districts (872g-cjhh)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "nyc-community-board",
+   "kind": "office",
+   "city": "nyc",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/5crt-au7u.json",
+   "geo_field": "the_geom",
+   "field": "boro_cd",
+   "role": "board",
+   "split": {
+    "by": 100,
+    "max_number": 18,
+    "names": {
+     "1": "Manhattan",
+     "2": "Bronx",
+     "3": "Brooklyn",
+     "4": "Queens",
+     "5": "Staten Island"
+    }
+   },
+   "template": "{prefix} Community Board {number}",
+   "source": "NYC Open Data, Community Districts (5crt-au7u)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
+  }
+ ],
+ "cities": [
+  {
+   "id": "nyc",
+   "name": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "agency": "the NYC Department of Transportation (NYC DOT)"
+  },
+  {
+   "id": "dc",
+   "name": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "agency": "the District Department of Transportation (DDOT)"
+  },
+  {
+   "id": "chicago",
+   "name": "Chicago",
+   "bbox": [
+    41.64,
+    -87.94,
+    42.03,
+    -87.52
+   ],
+   "agency": "the Chicago Department of Transportation (CDOT)"
+  },
+  {
+   "id": "la",
+   "name": "Los Angeles",
+   "bbox": [
+    33.7,
+    -118.67,
+    34.34,
+    -118.15
+   ],
+   "agency": "the Los Angeles Department of Transportation (LADOT)"
+  },
+  {
+   "id": "seattle",
+   "name": "Seattle",
+   "bbox": [
+    47.38512220625224,
+    -122.66621381718583,
+    47.83427779374775,
+    -121.99998618281417
+   ],
+   "agency": "the Seattle Department of Transportation (SDOT)"
   }
  ]
 }

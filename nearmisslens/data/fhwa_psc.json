@@ -15,7 +15,8 @@
    "render": {
     "prompt": "Repaint every pedestrian crossing at this junction as a high-visibility continental (ladder) crosswalk in bright white paint, with a solid white advance stop line before each crossing.",
     "check": "crosswalk"
-   }
+   },
+   "plain": "high-visibility crosswalks"
   },
   {
    "name": "Leading Pedestrian Interval",
@@ -25,7 +26,8 @@
    ],
    "site_control": "Signalized",
    "requires_user": "pedestrian",
-   "condition": "a turning movement"
+   "condition": "a turning movement",
+   "plain": "a leading pedestrian interval (a walk signal a few seconds before the green)"
   },
   {
    "name": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
@@ -39,7 +41,8 @@
    "render": {
     "prompt": "Add a raised concrete pedestrian refuge island with kerbs and bollards in the middle of the pedestrian crossing nearest the centre of the image, splitting the crossing into two halves.",
     "check": "traffic island"
-   }
+   },
+   "plain": "pedestrian refuge islands"
   },
   {
    "name": "Pedestrian Hybrid Beacons",
@@ -48,7 +51,8 @@
     "pedestrian hybrid beacon"
    ],
    "site_control": "Uncontrolled",
-   "requires_user": "pedestrian"
+   "requires_user": "pedestrian",
+   "plain": "a pedestrian hybrid beacon"
   },
   {
    "name": "Rectangular Rapid Flashing Beacons",
@@ -57,7 +61,8 @@
     "rectangular rapid flashing beacon"
    ],
    "site_control": "Uncontrolled",
-   "requires_user": "pedestrian"
+   "requires_user": "pedestrian",
+   "plain": "flashing beacons at the crosswalk"
   },
   {
    "name": "Walkways",
@@ -72,7 +77,8 @@
    "render": {
     "prompt": "Add a continuous raised concrete sidewalk with a kerb along the road edge nearest the centre of the image.",
     "check": "sidewalk"
-   }
+   },
+   "plain": "a continuous sidewalk"
   },
   {
    "name": "Backplates with Retroreflective Borders",
@@ -81,7 +87,8 @@
     "backplate"
    ],
    "site_control": "Signalized",
-   "condition": "an entry on yellow or red"
+   "condition": "an entry on yellow or red",
+   "plain": "reflective backplates on the traffic signals"
   },
   {
    "name": "Corridor Access Management",
@@ -91,7 +98,8 @@
     "driveway"
    ],
    "site_control": "any",
-   "condition": "driveway or access-point conflicts"
+   "condition": "driveway or access-point conflicts",
+   "plain": "fewer driveways and access points"
   },
   {
    "name": "Dedicated Left- and Right-Turn Lanes at Intersections",
@@ -105,7 +113,8 @@
    "render": {
     "prompt": "Paint a dedicated turn lane through the area at the centre of the image: a bold solid white lane line separating it from the through lanes, and two large white turn-arrow pavement markings inside it, clearly visible from above.",
     "check": "arrow road marking"
-   }
+   },
+   "plain": "dedicated turn lanes"
   },
   {
    "name": "Reduced Left-Turn Conflict Intersections",
@@ -117,7 +126,8 @@
     "j-turn"
    ],
    "site_control": "any",
-   "condition": "a left-turn movement"
+   "condition": "a left-turn movement",
+   "plain": "a redesign that removes risky left turns"
   },
   {
    "name": "Roundabouts",
@@ -129,7 +139,8 @@
    "render": {
     "prompt": "Convert this junction into a single-lane modern roundabout with a raised circular central island and splitter islands on each approach.",
     "check": "roundabout"
-   }
+   },
+   "plain": "a roundabout"
   },
   {
    "name": "Systemic Application of Multiple Low-Cost Countermeasures at Stop-Controlled Intersections",
@@ -138,7 +149,8 @@
     "systemic",
     "low-cost countermeasures"
    ],
-   "site_control": "Stop-controlled"
+   "site_control": "Stop-controlled",
+   "plain": "low-cost upgrades to the stop-controlled approaches"
   },
   {
    "name": "Yellow Change Intervals",
@@ -148,7 +160,8 @@
     "change interval"
    ],
    "site_control": "Signalized",
-   "condition": "an entry on yellow or red"
+   "condition": "an entry on yellow or red",
+   "plain": "longer yellow signal times"
   },
   {
    "name": "Lighting",
@@ -158,13 +171,15 @@
     "illumination"
    ],
    "site_control": "any",
-   "condition": "nighttime"
+   "condition": "nighttime",
+   "plain": "better street lighting"
   },
   {
    "name": "Local Road Safety Plans",
    "group": "Crosscutting",
    "cmf_keywords": [],
-   "site_control": "any"
+   "site_control": "any",
+   "plain": "a local road safety plan"
   },
   {
    "name": "Pavement Friction Management",
@@ -174,7 +189,8 @@
     "high friction surface"
    ],
    "site_control": "any",
-   "condition": "wet or low-friction pavement"
+   "condition": "wet or low-friction pavement",
+   "plain": "high-friction pavement"
   },
   {
    "name": "Road Safety Audit",
@@ -182,8 +198,9 @@
    "cmf_keywords": [
     "road safety audit"
    ],
-   "site_control": "any"
+   "site_control": "any",
+   "plain": "a road safety audit"
   }
  ],
- "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: what the observed conflicts must show for the countermeasure to address them (movements and signal entry are derived from the tracks; nighttime, pavement and driveway conditions are not observable from the conflicts alone)"
+ "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: what the observed conflicts must show for the countermeasure to address them (movements and signal entry are derived from the tracks; nighttime, pavement and driveway conditions are not observable from the conflicts alone); plain: how a resident would name the countermeasure in a letter"
 }

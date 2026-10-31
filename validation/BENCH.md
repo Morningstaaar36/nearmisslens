@@ -141,41 +141,44 @@ The totals above add each intersection's count, so a crash within 100 m of two p
 
 Fusion minus crash-history EB, top-5% precision: 2017-2019 [-0.030, 0.025]; 2021-2024 [-0.027, 0.025]. Registered rule not met: residents' near-miss reports did not improve crash prediction over crash history, also at sites with little crash history (exploratory).
 
-## T11 Did the city's own treatments work? NYC comparison-group before/after study
+## T11 Did New York's own Leading Pedestrian Intervals and turn calming work? (comparison-group before/after)
 
-6,746 Leading Pedestrian Interval sites (6,787 signals) and 587 turn traffic calming sites, 2,052,347 police-reported crashes (2012-07 to 2026-10), crashes within 50 m, 36 months before and after the install month. theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+Registered: validation/BENCH_PREREG.md, T11 (2026-10-31, before any crash data was downloaded for it). 2,052,347 police-reported crashes (2012-07 to 2026-10), crashes within 50 m, 36 months before and after the install month. Programs: lpi (nyc-lpi: 6,787 records, 6,746 sites); turn_calming (nyc-turn-calming: 592 records, 587 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
 
-| study | comparison group | sites | outcome | after | expected | theta | 95% interval |
-|---|---|---|---|---|---|---|---|
-| LPI | not yet treated (primary) | 1,651 | pedestrian injury crashes | 2,781 | 3,337 | 0.833 | [0.781, 0.887] |
-| LPI | not yet treated (primary) | 1,651 | all injury crashes | 9,819 | 10,854 | 0.905 | [0.865, 0.948] |
-| LPI | not yet treated (primary) | 1,651 | injury crashes, no pedestrian or cyclist hurt | 5,632 | 6,089 | 0.925 | [0.870, 0.983] |
-| LPI placebo, install date 19 months early | not yet treated | 4,191 | pedestrian injury crashes | 4,281 | 4,183 | 1.023 | [0.977, 1.071] |
-| LPI placebo, install date 19 months early | not yet treated | 4,191 | all injury crashes | 12,504 | 12,396 | 1.009 | [0.980, 1.036] |
-| LPI placebo, install date 19 months early | not yet treated | 4,191 | injury crashes, no pedestrian or cyclist hurt | 6,337 | 6,445 | 0.983 | [0.944, 1.023] |
-| LPI placebo on the primary sites (added after the results) | not yet treated | 1,641 | pedestrian injury crashes | 1,713 | 1,676 | 1.022 | [0.954, 1.097] |
-| LPI placebo on the primary sites (added after the results) | not yet treated | 1,641 | all injury crashes | 5,257 | 5,327 | 0.987 | [0.943, 1.030] |
-| LPI placebo on the primary sites (added after the results) | not yet treated | 1,641 | injury crashes, no pedestrian or cyclist hurt | 2,899 | 3,017 | 0.961 | [0.903, 1.019] |
-| LPI (sensitivity) | citywide trend | 1,651 | pedestrian injury crashes | 2,781 | 3,634 | 0.765 | [0.723, 0.812] |
-| LPI (sensitivity) | citywide trend | 1,651 | all injury crashes | 9,819 | 11,694 | 0.840 | [0.806, 0.877] |
-| LPI (sensitivity) | citywide trend | 1,651 | injury crashes, no pedestrian or cyclist hurt | 5,632 | 6,462 | 0.872 | [0.824, 0.922] |
-| LPI placebo | citywide trend | 4,191 | pedestrian injury crashes | 4,281 | 4,457 | 0.961 | [0.919, 1.004] |
-| LPI placebo | citywide trend | 4,191 | all injury crashes | 12,504 | 13,445 | 0.930 | [0.905, 0.957] |
-| LPI placebo | citywide trend | 4,191 | injury crashes, no pedestrian or cyclist hurt | 6,337 | 6,963 | 0.910 | [0.875, 0.946] |
-| turn traffic calming | citywide trend | 227 | pedestrian injury crashes | 825 | 983 | 0.839 | [0.748, 0.937] |
-| turn traffic calming | citywide trend | 227 | all injury crashes | 2,341 | 2,659 | 0.880 | [0.814, 0.950] |
-| turn traffic calming | citywide trend | 227 | injury crashes, no pedestrian or cyclist hurt | 1,115 | 1,247 | 0.894 | [0.815, 0.978] |
-| turn traffic calming placebo | citywide trend | 371 | pedestrian injury crashes | 769 | 992 | 0.775 | [0.700, 0.864] |
-| turn traffic calming placebo | citywide trend | 371 | all injury crashes | 2,057 | 2,516 | 0.817 | [0.763, 0.873] |
-| turn traffic calming placebo | citywide trend | 371 | injury crashes, no pedestrian or cyclist hurt | 959 | 1,047 | 0.916 | [0.829, 1.010] |
+| run | sites | outcome | after | expected | theta | 95% interval |
+|---|---|---|---|---|---|---|
+| lpi not yet treated | 1,651 | pedestrian injury crashes | 2,781 | 3,337 | 0.833 | [0.781, 0.887] |
+| lpi not yet treated | 1,651 | all injury crashes | 9,819 | 10,854 | 0.905 | [0.865, 0.948] |
+| lpi not yet treated | 1,651 | injury crashes, no pedestrian or cyclist hurt | 5,632 | 6,089 | 0.925 | [0.870, 0.983] |
+| lpi placebo not yet treated | 4,191 | pedestrian injury crashes | 4,281 | 4,183 | 1.023 | [0.977, 1.071] |
+| lpi placebo not yet treated | 4,191 | all injury crashes | 12,504 | 12,396 | 1.009 | [0.980, 1.036] |
+| lpi placebo not yet treated | 4,191 | injury crashes, no pedestrian or cyclist hurt | 6,337 | 6,445 | 0.983 | [0.944, 1.023] |
+| lpi placebo same sites not yet treated | 1,641 | pedestrian injury crashes | 1,713 | 1,676 | 1.022 | [0.954, 1.097] |
+| lpi placebo same sites not yet treated | 1,641 | all injury crashes | 5,257 | 5,327 | 0.987 | [0.943, 1.030] |
+| lpi placebo same sites not yet treated | 1,641 | injury crashes, no pedestrian or cyclist hurt | 2,899 | 3,017 | 0.961 | [0.903, 1.019] |
+| lpi citywide | 1,651 | pedestrian injury crashes | 2,781 | 3,634 | 0.765 | [0.723, 0.812] |
+| lpi citywide | 1,651 | all injury crashes | 9,819 | 11,696 | 0.839 | [0.806, 0.877] |
+| lpi citywide | 1,651 | injury crashes, no pedestrian or cyclist hurt | 5,632 | 6,463 | 0.871 | [0.824, 0.922] |
+| lpi placebo citywide | 4,191 | pedestrian injury crashes | 4,281 | 4,458 | 0.960 | [0.919, 1.004] |
+| lpi placebo citywide | 4,191 | all injury crashes | 12,504 | 13,447 | 0.930 | [0.905, 0.957] |
+| lpi placebo citywide | 4,191 | injury crashes, no pedestrian or cyclist hurt | 6,337 | 6,964 | 0.910 | [0.875, 0.946] |
+| turn calming citywide | 227 | pedestrian injury crashes | 825 | 983 | 0.839 | [0.748, 0.937] |
+| turn calming citywide | 227 | all injury crashes | 2,341 | 2,660 | 0.880 | [0.814, 0.950] |
+| turn calming citywide | 227 | injury crashes, no pedestrian or cyclist hurt | 1,115 | 1,247 | 0.894 | [0.814, 0.978] |
+| turn calming placebo citywide | 371 | pedestrian injury crashes | 769 | 992 | 0.775 | [0.700, 0.864] |
+| turn calming placebo citywide | 371 | all injury crashes | 2,057 | 2,517 | 0.817 | [0.763, 0.873] |
+| turn calming placebo citywide | 371 | injury crashes, no pedestrian or cyclist hurt | 959 | 1,047 | 0.916 | [0.829, 1.010] |
 
-Registered rule (interval for pedestrian injury crashes entirely below 1): met. LPIs installed 2015-08 to 2021-12: pedestrian injury crashes -16.7% against sites the city treated later. The brief ranks LPIs with the CMF Clearinghouse value (CMF 9903 = 0.81), a 19% cut; NYC's own installs measured 17%. Placebo flag: not raised (the placebo interval includes 1). 3,128 of 4,779 LPI sites installed in the period were excluded because another LPI or turn calming went in within 100 m during their windows (LPIs were rolled out along corridors).
+Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-Turn traffic calming: its placebo shows as large a fall before the work as after it, so the citywide-trend design cannot separate its effect from a decline already under way (or from regression to the mean). The citywide-trend placebo for LPIs also shows falls in all injury crashes, so that comparison group is biased here; the not-yet-treated group, the registered primary, is not.
+- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- **turn traffic calming**: failed (a placebo date before the install shows a change too). Pedestrian injury crashes -16.1% (theta 0.839, [0.748, 0.937]) on the calming citywide comparison, 359 of 586 sites excluded for another treatment within 100 m in their windows.
+
+Note: The same-site placebo (placebo_same_sites) and the projection were added after the registered results were seen.
 
 Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
 
-Projection (descriptive, added after the test): 119 of the 304 NYC priority intersections have no LPI within 60 m (102 of them are T9 plan gaps). They had 1,278 pedestrian injury crashes within 100 m from 2021-11 to 2026-10 (255.6 a year, each counted once). At the effect measured above, LPIs there would avoid about 43 a year (interval 29–56), about $14.6 million a year at the U.S. DOT injury-crash value. Each site needs a signal and an engineer's check.
+Projection (descriptive, added after the test): 119 of the 304 listed priority intersections have no Leading Pedestrian Interval signals within 60 m (102 of them are T9 plan gaps). They had 1,278 pedestrian injury crashes within 100 m from 2021-11 to 2026-10 (255.6 a year, each counted once). At the effect measured above, the program would avoid about 43 a year there (interval 29–56), about $14.6 million a year at the U.S. DOT injury-crash value. Each site needs an engineer's check.
 
 ## Data agent: adapters found and validated without hand-written code
 

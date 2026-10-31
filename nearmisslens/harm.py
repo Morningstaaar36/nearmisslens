@@ -14,7 +14,7 @@ from pathlib import Path
 BCA = json.loads((Path(__file__).resolve().parent / "data" / "usdot_bca.json").read_text())
 INJURY_CRASH_USD = BCA["per_crash"]["injury_crash"]
 RATE = BCA["real_discount_rate"]
-LIFE_YEARS = 10
+LIFE_YEARS = BCA["analysis_life_years"]
 
 
 def present_value_factor(years: int = LIFE_YEARS, rate: float = RATE) -> float:

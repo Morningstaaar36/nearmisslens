@@ -10,45 +10,18 @@ from __future__ import annotations
 import datetime as dt
 import json
 
-from . import context, panel
+from . import context, countermeasures, opendata, panel
 from .agent import Tool, run_agent
 
-BOROUGHS = {1: "Manhattan", 2: "Bronx", 3: "Brooklyn", 4: "Queens", 5: "Staten Island"}
-PLAIN = {  # how a resident would name each FHWA Proven Safety Countermeasure
-    "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas": "pedestrian refuge islands",
-    "Leading Pedestrian Interval": "a leading pedestrian interval (a walk signal a few seconds before the green)",
-    "Crosswalk Visibility Enhancements": "high-visibility crosswalks",
-    "Dedicated Left- and Right-Turn Lanes at Intersections": "dedicated turn lanes",
-    "Reduced Left-Turn Conflict Intersections": "a redesign that removes risky left turns",
-    "Backplates with Retroreflective Borders": "reflective backplates on the traffic signals",
-    "Yellow Change Intervals": "longer yellow signal times",
-    "Pedestrian Hybrid Beacons": "a pedestrian hybrid beacon",
-    "Rectangular Rapid Flashing Beacons": "flashing beacons at the crosswalk",
-    "Walkways": "a continuous sidewalk", "Lighting": "better street lighting", "Roundabouts": "a roundabout"}
-AGENCY = {"nyc": "the NYC Department of Transportation (NYC DOT)"}
+
+def offices(lat: float, lon: float) -> list[dict]:
+    """Who can request the work at this point: the registry's office adapters (district boundaries) that cover it;
+    without any, the letter is addressed to the city council member in general."""
+    return opendata.offices_at(lat, lon) or [{"office": "your city council member", "role": "council", "source": None}]
 
 
-def _socrata_at(endpoint: str, field: str, lat: float, lon: float) -> str | None:
-    js, _ = context.fetch(endpoint, {"$select": field, "$where": f"intersects(the_geom,'POINT ({lon} {lat})')"})
-    return str(js[0][field]) if isinstance(js, list) and js and js[0].get(field) else None
-
-
-def offices(lat: float, lon: float, city: str | None) -> list[dict]:
-    """Who can request the work at this point. New York: the City Council district and the Community Board, from
-    NYC Open Data's district boundaries (872g-cjhh, 5crt-au7u)."""
-    if city != "nyc":
-        return [{"office": "your city council member", "source": None}]
-    out = []
-    cd = _socrata_at("https://data.cityofnewyork.us/resource/872g-cjhh.json", "coundist", lat, lon)
-    if cd:
-        out.append({"office": f"Council Member, District {int(cd)}, New York City Council", "district": int(cd),
-                    "contact": f"https://council.nyc.gov/district-{int(cd)}/",
-                    "source": "NYC Open Data, City Council Districts (872g-cjhh)"})
-    bc = _socrata_at("https://data.cityofnewyork.us/resource/5crt-au7u.json", "boro_cd", lat, lon)
-    if bc and int(bc) % 100 <= 18:  # higher numbers are joint interest areas such as large parks, without a board
-        out.append({"office": f"{BOROUGHS[int(bc) // 100]} Community Board {int(bc) % 100}",
-                    "board": int(bc) % 100, "source": "NYC Open Data, Community Districts (5crt-au7u)"})
-    return out
+def _plain(name: str) -> str:
+    return next((i.get("plain", name) for i in countermeasures.psc_items() if i["name"] == name), name)
 
 
 def facts(brief: dict, offices_: list[dict]) -> dict:
@@ -60,8 +33,8 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
     measured = next((o for o in fx.get("options", []) if o.get("local_evidence")), None)
     h = fx.get("harm") or {}
     projects = sorted((p for p in pl.get("projects", []) if isinstance(p.get("year"), int)), key=lambda p: p["year"])
-    council = any("Council Member" in o["office"] for o in offices_)
-    boards = [o["office"] for o in offices_ if "Community Board" in o["office"]]
+    council = any(o.get("role") == "council" for o in offices_)
+    boards = [o["office"] for o in offices_ if o.get("role") == "board"]
     salutation = ("Dear Council Member" + (f" and members of {boards[0]}" if boards else "") + ",") if council \
         else "Dear " + (offices_[0]["office"] if offices_ else "Council Member") + ","
     since = dt.date.fromisoformat(cr["since"]) if cr.get("since") else None
@@ -69,7 +42,7 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
     return {
         "junction": brief["junction"].split(",")[0], "addressed_to": offices_, "salutation": salutation,
         "period": f"the {d.get('years')} years from {since.day} {since:%B %Y}" if since else None,
-        "agency": AGENCY.get(d.get("city"), "the city's transportation department"),
+        "agency": (opendata.city(d.get("city")) or {}).get("agency") or "the city's transportation department",
         "years": d.get("years"), "records_since": cr.get("since"), "crashes": cr.get("crashes"),
         "injury_crashes": cr.get("injury_crashes"),
         "pedestrians_injured": cr.get("pedestrian_injured", 0), "cyclists_injured": cr.get("cyclist_injured", 0),
@@ -78,13 +51,13 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
         "latest_recorded_safety_project": {k: projects[-1][k] for k in ("name", "year")} if projects else None,
         "no_recorded_treatment_in_period": bool(d.get("plan_gap")),
         "harm_million_usd_per_year": round(h["usd_per_year"] / 1e6, 1) if h else None,
-        "fixes": [{"name": PLAIN.get(o["countermeasure"], o["countermeasure"]), "federal_name": o["countermeasure"],
+        "fixes": [{"name": _plain(o["countermeasure"]), "federal_name": o["countermeasure"],
                    "cmf_id": o["cmf_id"],
                    "crashes_avoided_per_year": o["expected_crashes_avoided_per_year"],
                    "targets": o["targets"], "harm_avoided_usd_per_year": o["harm_avoided_usd_per_year"],
                    "pays_for_itself_under_million_usd": round(o["break_even_cost_usd"] / 1e6, 1)} for o in supported],
         "measured_in_this_city": {
-            "fix": PLAIN.get(measured["countermeasure"], measured["countermeasure"]),
+            "fix": _plain(measured["countermeasure"]),
             "result": (f"where the city installed it at {ev['sites']:,} intersections, pedestrian injury crashes fell "
                        f"{round(100 * (1 - ev['theta']))}% (95% interval {round(100 * (1 - ev['ci95'][1]))}% to "
                        f"{round(100 * (1 - ev['ci95'][0]))}%) compared with intersections that got it later"),
