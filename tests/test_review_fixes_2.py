@@ -51,6 +51,12 @@ def test_budget_is_not_checked_in_replay(tmp_path):
     replay.check_budget(1.0, "run")
 
 
+def _has_fluid() -> bool:
+    from nearmisslens import fluid
+    return fluid.clip(*fluid.DEV).video.exists()
+
+
+@pytest.mark.skipif(not _has_fluid(), reason="needs the FLUID dev video (nml fetch)")
 def test_sam_states_never_track(monkeypatch):
     def no_tracking(*a, **k):
         assert k.get("cached_only") is True

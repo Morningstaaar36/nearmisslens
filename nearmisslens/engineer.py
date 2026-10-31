@@ -194,6 +194,10 @@ def refresh(report: dict) -> dict:
     who["owners"] = jurisdiction.merge_parties(who["owners"])  # reports saved before owners were merged per agency
     who["summary"] = "; ".join(f"{r['party']} ({', '.join(r['roads'])})" for r in who["owners"]) or "no road owner found"
     findings["who_must_act"] = who
+    tp = dict(findings["test_programs"])  # the program verdicts and their wording, from the current study results
+    tp["programs"] = treatments.programs(tp.get("city"))
+    tp["repeat_risk"] = treatments.repeat_risk(tp.get("city"), tp.get("projects_here") or [])
+    findings["test_programs"] = tp
     report = {**report, "findings": findings}
     rec = {t: (report["findings"][t], by_tool[t]) for t in REQUIRED + ("draft_request",)}
     return recheck({**report, "claims": claims_for(report["junction"]["name"].split(",")[0], rec)})

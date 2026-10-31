@@ -81,7 +81,7 @@ uv run nml --replay engineer nyc                           # screen the city, op
 uv run nml app                                             # the copilot on http://127.0.0.1:8770
 uv run nml pages                                           # rebuild the static site in docs/
 uv run nml treatments T11                                  # rerun New York's study and its gate
-uv run nml --replay selftest                               # offline self-test, no keys
+uv run nml --replay selftest                               # offline self-test; the drone-video rows need nml fetch
 ```
 
 `--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so the commands above give the same answers without keys or network once the replay cache (`nearmisslens_replay_cache.tar.gz` on the GitHub release) is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open), `MODEL_API_KEY` (Meta Model API), and optionally `MAPILLARY_CLIENT_TOKEN`. Every paid call is cached and logged, and `NML_BUDGET_USD` caps Meta spend.
