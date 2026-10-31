@@ -109,6 +109,7 @@ def who_must_act(lat: float, lon: float, streets: list[str], street_layout: dict
     own = owners(lat, lon, streets)
     rows = own["owners"] if own["adapter"] else osm_designations(street_layout, city)
     requesters = [{"party": o["office"], "role": o.get("role") or "office", "contact": o.get("contact"),
+                   "salutation": o.get("salutation"),
                    "basis": {"dataset": o.get("source"), "field": "district", "value": o["office"]},
                    "confidence": "recorded"} for o in opendata.offices_at(lat, lon) if o.get("source")]
     return {"owners": rows, "requesters": requesters,

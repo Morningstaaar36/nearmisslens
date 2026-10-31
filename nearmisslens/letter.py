@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 
 from . import context, countermeasures, opendata, panel, treatments
 from .config import asof
@@ -28,8 +29,17 @@ def _plain(name: str) -> str:
     return next((i.get("plain", name) for i in countermeasures.psc_items() if i["name"] == name), name)
 
 
+def short_agency(party: str) -> str:
+    """'the New York State Department of Transportation (NYSDOT), Region 11' -> 'NYSDOT Region 11'."""
+    m = re.match(r"(?:the\s+)?.*?\(([^)]+)\),?\s*(.*)$", party)
+    return (m.group(1) + (" " + m.group(2) if m.group(2) else "")).strip() if m else re.sub(r"^the\s+", "", party)
+
+
 def _salutation(parties: list[dict]) -> str:
-    """'Dear A and B,' from each addressee's registry salutation (or its name)."""
+    """'Dear A and B,' from each addressee's registry salutation; agencies are greeted as colleagues at their short name."""
+    if parties and all(p.get("party") and not p.get("salutation") for p in parties):
+        names = [short_agency(p["party"]) for p in parties]
+        return "Dear colleagues at " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
     names = [p.get("salutation") or p.get("party") or p.get("office") for p in parties] or ["Council Member"]
     return "Dear " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
 
@@ -39,7 +49,8 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
     jurisdiction.who_must_act's result: the agency letter goes to its owners and copies its requesters."""
     if offices_ is None:
         offices_ = [{"office": r["party"], "role": r["role"], "source": r["basis"].get("dataset"),
-                     **({"contact": r["contact"]} if r.get("contact") else {})}
+                     **({"contact": r["contact"]} if r.get("contact") else {}),
+                     **({"salutation": r["salutation"]} if r.get("salutation") else {})}
                     for r in (who or {}).get("requesters", [])] or offices(brief["dossier"]["lat"], brief["dossier"]["lon"])
     owners = [{"party": r["party"], "roads": r["roads"], "confidence": r["confidence"]} for r in (who or {}).get("owners", [])]
     if audience == "agency" and not owners:
@@ -94,7 +105,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
 AGENCY_INSTRUCTIONS = (
     "Write a short, polite, factual letter in plain English (at most 220 words) to the road owners in addressed_to, "
     "asking each for a safety study at the junction and for the fixes listed, on the roads it is responsible for "
-    "(road_owners). Start with the salutation given and mention that copy_to is copied. Say what the official record "
+    "(road_owners). Start with the salutation given; the To and Cc lines are added for you, so do not repeat them. Say what the official record "
     "shows over the period (crashes, who was hurt, the yearly cost of the harm in the U.S. DOT's official values, "
     "whether any recent safety work is recorded) and what each fix is expected to prevent, using its plain name and "
     "saying what must be checked on site first. If measured_in_this_city is given, quote its result. If "
