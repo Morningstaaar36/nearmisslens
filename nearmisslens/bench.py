@@ -605,6 +605,11 @@ def write_bench_md() -> str:
                      f"comparison, {tr['runs'][g['primary']]['excluded_neighbour_treatment']:,} of "
                      f"{tr['runs'][g['primary']]['treated_in_range']:,} sites excluded for another treatment within "
                      f"{sp['neighbour_m']} m in their windows." + (f" {cmf}." if cmf else ""))
+        for key, nv in tr.get("naive", {}).items():
+            v = nv.get(tr["gates"][key]["outcome"]) or {}
+            if v.get("ci95"):
+                L.append(f"- Naive before/after for {tr['gates'][key]['treatment']} (no comparison group, {v['sites']:,} sites): "
+                         f"{_f(v['change_pct'], 1)}% (theta {_f(v['theta'])}, [{_f(v['ci95'][0])}, {_f(v['ci95'][1])}]).")
         L += ["", *[f"Note: {n}" for n in sp.get("notes", [])], "",
               "Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model "
               "was fitted; other work at a site recorded outside these datasets is not seen.", ""]

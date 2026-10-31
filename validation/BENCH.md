@@ -173,6 +173,8 @@ Causal gate (registered rule on the primary comparison, and every placebo of it 
 
 - **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
 - **turn traffic calming**: failed (a placebo date before the install shows a change too). Pedestrian injury crashes -16.1% (theta 0.839, [0.748, 0.937]) on the citywide comparison, 359 of 586 sites excluded for another treatment within 100 m in their windows.
+- Naive before/after for Leading Pedestrian Interval signals (no comparison group, 4,779 sites): -23.8% (theta 0.762, [0.739, 0.786]).
+- Naive before/after for turn traffic calming (no comparison group, 586 sites): -26.2% (theta 0.738, [0.690, 0.791]).
 
 Note: The same-site placebo (placebo_same_sites) and the projection were added after the registered results were seen.
 
@@ -180,9 +182,43 @@ Limits: sites were chosen by the city, so regression to the mean can remain; no 
 
 Projection (descriptive, added after the test): 119 of the 304 listed priority intersections have no Leading Pedestrian Interval signals within 60 m (102 of them are T9 plan gaps). They had 1,278 pedestrian injury crashes within 100 m from 2021-11 to 2026-10 (255.6 a year, each counted once). At the effect measured above, the program would avoid about 43 a year there (interval 29–56), about $14.6 million a year at the U.S. DOT injury-crash value. Each site needs an engineer's check.
 
+## T13_dc Replication: Leading Pedestrian Intervals in Washington DC (comparison-group before/after)
+
+Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it). 354,724 police-reported crashes (2008-06 to 2026-10), crashes within 50 m, 36 months before and after the install month. Programs: lpi (dc-lpi: 1,156 records, 1,144 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+
+| run | sites | outcome | after | expected | theta | 95% interval |
+|---|---|---|---|---|---|---|
+| lpi not yet treated | 267 | pedestrian injury crashes | 197 | 243 | 0.812 | [0.651, 1.008] |
+| lpi not yet treated | 267 | all injury crashes | 1,258 | 1,299 | 0.968 | [0.862, 1.084] |
+| lpi not yet treated | 267 | injury crashes, no pedestrian or cyclist hurt | 998 | 983 | 1.016 | [0.894, 1.154] |
+| lpi placebo not yet treated | 1,049 | pedestrian injury crashes | 397 | 415 | 0.956 | [0.810, 1.109] |
+| lpi placebo not yet treated | 1,049 | all injury crashes | 2,224 | 2,382 | 0.934 | [0.868, 1.001] |
+| lpi placebo not yet treated | 1,049 | injury crashes, no pedestrian or cyclist hurt | 1,613 | 1,751 | 0.921 | [0.843, 1.002] |
+| lpi placebo same sites not yet treated | 865 | pedestrian injury crashes | 299 | 325 | 0.919 | [0.778, 1.079] |
+| lpi placebo same sites not yet treated | 865 | all injury crashes | 1,723 | 1,868 | 0.922 | [0.853, 0.994] |
+| lpi placebo same sites not yet treated | 865 | injury crashes, no pedestrian or cyclist hurt | 1,283 | 1,396 | 0.919 | [0.836, 1.004] |
+| lpi citywide | 867 | pedestrian injury crashes | 460 | 545 | 0.844 | [0.742, 0.947] |
+| lpi citywide | 867 | all injury crashes | 3,001 | 3,358 | 0.894 | [0.843, 0.950] |
+| lpi citywide | 867 | injury crashes, no pedestrian or cyclist hurt | 2,338 | 2,540 | 0.921 | [0.862, 0.986] |
+| lpi placebo citywide | 1,049 | pedestrian injury crashes | 397 | 451 | 0.880 | [0.770, 1.004] |
+| lpi placebo citywide | 1,049 | all injury crashes | 2,224 | 2,742 | 0.811 | [0.764, 0.858] |
+| lpi placebo citywide | 1,049 | injury crashes, no pedestrian or cyclist hurt | 1,613 | 2,034 | 0.793 | [0.739, 0.850] |
+| lpi placebo same sites citywide | 865 | pedestrian injury crashes | 299 | 349 | 0.857 | [0.733, 1.005] |
+| lpi placebo same sites citywide | 865 | all injury crashes | 1,723 | 2,116 | 0.814 | [0.763, 0.869] |
+| lpi placebo same sites citywide | 865 | injury crashes, no pedestrian or cyclist hurt | 1,283 | 1,594 | 0.805 | [0.749, 0.866] |
+
+Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
+
+- **Leading Pedestrian Interval signals**: failed (the effect's interval includes no change). Pedestrian injury crashes -18.8% (theta 0.812, [0.651, 1.008]) on the not yet treated comparison, 206 of 1,073 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- Naive before/after for Leading Pedestrian Interval signals (no comparison group, 1,073 sites): -31.0% (theta 0.690, [0.616, 0.763]).
+
+Note: The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical.
+
+Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
+
 ## T13_seattle Replication: Leading Pedestrian Intervals in Seattle (comparison-group before/after)
 
-Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it). 254,754 police-reported crashes (2003-10 to 2026-10), crashes within 50 m, 36 months before and after the install month. Programs: lpi (seattle-lpi: 933 records, 869 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it). 254,732 police-reported crashes (2004-01 to 2026-09), crashes within 50 m, 36 months before and after the install month. Programs: lpi (seattle-lpi: 933 records, 869 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
 
 | run | sites | outcome | after | expected | theta | 95% interval |
 |---|---|---|---|---|---|---|
@@ -208,7 +244,9 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's cras
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
 - **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -32.5% (theta 0.675, [0.476, 0.875]) on the not yet treated comparison, 226 of 616 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- Naive before/after for Leading Pedestrian Interval signals (no comparison group, 616 sites): -25.2% (theta 0.748, [0.648, 0.859]).
 
+Note: The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical.
 
 Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
 
@@ -227,13 +265,13 @@ Real programs:
 - Leading Pedestrian Interval signals: naive 0.762 [0.739, 0.786] claims 'reduced'; gate claims 'reduced'.
 - turn traffic calming: naive 0.738 [0.690, 0.791] claims 'reduced'; gate claims 'no evidence' (a placebo date before the install shows a change too).
 
-Registered rule, part (c) (gate below naive, upper bound at most 10%): met. The gate's false-claim rate is above the nominal 2.5% of a one-sided 95% interval; the bootstrap interval is too narrow when fake programs share hotspots, so a passed gate is strong evidence, not proof.
+Registered rule, part (c) (gate below naive, upper bound at most 10%): met. The gate's measured false-claim rate is higher than the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On the real programs the gate matters more: the naive analysis overstates the LPI effect and credits turn calming with a cut that had started before the work.
 
 Agentic arms (muse-spark-open, programs blinded; code run in isolated Modal sandboxes):
 
 | arm | fake programs analysed | claimed a reduction | real programs: claims | cost |
 |---|---|---|---|---|
-| ungated | 1 | 0 | — | $0.002 |
+| ungated | 1 | 0 | — | $0.003 |
 | gated | 0 | 0 | — | $0.000 |
 
 ## Data agent: adapters found and validated without hand-written code

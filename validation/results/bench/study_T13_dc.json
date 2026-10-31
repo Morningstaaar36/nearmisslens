@@ -1,0 +1,441 @@
+{
+ "id": "T13_dc",
+ "city": "dc",
+ "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it)",
+ "spec": {
+  "id": "T13_dc",
+  "city": "dc",
+  "title": "Replication: Leading Pedestrian Intervals in Washington DC",
+  "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it)",
+  "merge_m": 30,
+  "radius_m": 50,
+  "neighbour_m": 100,
+  "window_months": 36,
+  "placebo": {
+   "shift_months": 19,
+   "window_months": 18
+  },
+  "exclude_near": [
+   "dc-lpi"
+  ],
+  "programs": [
+   {
+    "key": "lpi",
+    "adapter": "dc-lpi",
+    "label": "Leading Pedestrian Interval signals",
+    "countermeasure": "Leading Pedestrian Interval",
+    "treated": "auto",
+    "comparisons": [
+     "not_yet_treated",
+     "citywide"
+    ],
+    "primary": "auto",
+    "outcome": "pedestrian",
+    "placebo_same_sites": [
+     "not_yet_treated",
+     "citywide"
+    ]
+   }
+  ],
+  "notes": [
+   "The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical."
+  ]
+ },
+ "data": {
+  "crashes": 354724,
+  "crash_months": [
+   "2008-06",
+   "2026-10"
+  ],
+  "programs": {
+   "lpi": {
+    "adapter": "dc-lpi",
+    "points": 1156,
+    "sites": 1144
+   }
+  }
+ },
+ "runs": {
+  "lpi_not_yet_treated": {
+   "treated_in_range": 1073,
+   "excluded_neighbour_treatment": 206,
+   "pedestrian": {
+    "theta": 0.812,
+    "ci95": [
+     0.651,
+     1.008
+    ],
+    "change_pct": -18.8,
+    "sites": 267,
+    "after": 197,
+    "before": 253,
+    "expected_after": 242.7,
+    "cg_ratio_median": 1.183,
+    "dropped_no_comparison": 600,
+    "cg_sites_min": 0,
+    "cg_sites_median": 486
+   },
+   "injury": {
+    "theta": 0.968,
+    "ci95": [
+     0.862,
+     1.084
+    ],
+    "change_pct": -3.2,
+    "sites": 267,
+    "after": 1258,
+    "before": 1434,
+    "expected_after": 1299.3,
+    "cg_ratio_median": 1.116,
+    "dropped_no_comparison": 600,
+    "cg_sites_min": 0,
+    "cg_sites_median": 486
+   },
+   "motorist_only": {
+    "theta": 1.016,
+    "ci95": [
+     0.894,
+     1.154
+    ],
+    "change_pct": 1.6,
+    "sites": 267,
+    "after": 998,
+    "before": 1113,
+    "expected_after": 982.7,
+    "cg_ratio_median": 1.024,
+    "dropped_no_comparison": 600,
+    "cg_sites_min": 0,
+    "cg_sites_median": 486
+   },
+   "install_months": [
+    "2011-06",
+    "2022-11"
+   ]
+  },
+  "lpi_placebo_not_yet_treated": {
+   "treated_in_range": 1070,
+   "excluded_neighbour_treatment": 21,
+   "pedestrian": {
+    "theta": 0.956,
+    "ci95": [
+     0.81,
+     1.109
+    ],
+    "change_pct": -4.4,
+    "sites": 1049,
+    "after": 397,
+    "before": 470,
+    "expected_after": 415.1,
+    "cg_ratio_median": 1.045,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "injury": {
+    "theta": 0.934,
+    "ci95": [
+     0.868,
+     1.001
+    ],
+    "change_pct": -6.6,
+    "sites": 1049,
+    "after": 2224,
+    "before": 2720,
+    "expected_after": 2381.7,
+    "cg_ratio_median": 0.991,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "motorist_only": {
+    "theta": 0.921,
+    "ci95": [
+     0.843,
+     1.002
+    ],
+    "change_pct": -7.9,
+    "sites": 1049,
+    "after": 1613,
+    "before": 2013,
+    "expected_after": 1750.6,
+    "cg_ratio_median": 0.953,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "install_months": [
+    "2011-07",
+    "2022-11"
+   ]
+  },
+  "lpi_placebo_same_sites_not_yet_treated": {
+   "treated_in_range": 1070,
+   "excluded_neighbour_treatment": 21,
+   "pedestrian": {
+    "theta": 0.919,
+    "ci95": [
+     0.778,
+     1.079
+    ],
+    "change_pct": -8.1,
+    "sites": 865,
+    "after": 299,
+    "before": 363,
+    "expected_after": 325.4,
+    "cg_ratio_median": 1.045,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "injury": {
+    "theta": 0.922,
+    "ci95": [
+     0.853,
+     0.994
+    ],
+    "change_pct": -7.8,
+    "sites": 865,
+    "after": 1723,
+    "before": 2102,
+    "expected_after": 1868.3,
+    "cg_ratio_median": 0.991,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "motorist_only": {
+    "theta": 0.919,
+    "ci95": [
+     0.836,
+     1.004
+    ],
+    "change_pct": -8.1,
+    "sites": 865,
+    "after": 1283,
+    "before": 1582,
+    "expected_after": 1396.0,
+    "cg_ratio_median": 0.953,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 42,
+    "cg_sites_median": 930
+   },
+   "install_months": [
+    "2011-07",
+    "2022-11"
+   ]
+  },
+  "lpi_citywide": {
+   "treated_in_range": 1073,
+   "excluded_neighbour_treatment": 206,
+   "pedestrian": {
+    "theta": 0.844,
+    "ci95": [
+     0.742,
+     0.947
+    ],
+    "change_pct": -15.6,
+    "sites": 867,
+    "after": 460,
+    "before": 658,
+    "expected_after": 544.9,
+    "cg_ratio_median": 0.895,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.894,
+    "ci95": [
+     0.843,
+     0.95
+    ],
+    "change_pct": -10.6,
+    "sites": 867,
+    "after": 3001,
+    "before": 3807,
+    "expected_after": 3358.3,
+    "cg_ratio_median": 0.996,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.921,
+    "ci95": [
+     0.862,
+     0.986
+    ],
+    "change_pct": -7.9,
+    "sites": 867,
+    "after": 2338,
+    "before": 2855,
+    "expected_after": 2539.7,
+    "cg_ratio_median": 0.983,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2011-06",
+    "2022-11"
+   ]
+  },
+  "lpi_placebo_citywide": {
+   "treated_in_range": 1070,
+   "excluded_neighbour_treatment": 21,
+   "pedestrian": {
+    "theta": 0.88,
+    "ci95": [
+     0.77,
+     1.004
+    ],
+    "change_pct": -12.0,
+    "sites": 1049,
+    "after": 397,
+    "before": 470,
+    "expected_after": 451.0,
+    "cg_ratio_median": 0.999,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.811,
+    "ci95": [
+     0.764,
+     0.858
+    ],
+    "change_pct": -18.9,
+    "sites": 1049,
+    "after": 2224,
+    "before": 2720,
+    "expected_after": 2742.4,
+    "cg_ratio_median": 1.019,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.793,
+    "ci95": [
+     0.739,
+     0.85
+    ],
+    "change_pct": -20.7,
+    "sites": 1049,
+    "after": 1613,
+    "before": 2013,
+    "expected_after": 2034.1,
+    "cg_ratio_median": 1.02,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2011-07",
+    "2022-11"
+   ]
+  },
+  "lpi_placebo_same_sites_citywide": {
+   "treated_in_range": 1070,
+   "excluded_neighbour_treatment": 21,
+   "pedestrian": {
+    "theta": 0.857,
+    "ci95": [
+     0.733,
+     1.005
+    ],
+    "change_pct": -14.3,
+    "sites": 865,
+    "after": 299,
+    "before": 363,
+    "expected_after": 348.9,
+    "cg_ratio_median": 0.999,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.814,
+    "ci95": [
+     0.763,
+     0.869
+    ],
+    "change_pct": -18.6,
+    "sites": 865,
+    "after": 1723,
+    "before": 2102,
+    "expected_after": 2116.3,
+    "cg_ratio_median": 1.019,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.805,
+    "ci95": [
+     0.749,
+     0.866
+    ],
+    "change_pct": -19.5,
+    "sites": 865,
+    "after": 1283,
+    "before": 1582,
+    "expected_after": 1594.5,
+    "cg_ratio_median": 1.02,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2011-07",
+    "2022-11"
+   ]
+  }
+ },
+ "gates": {
+  "lpi": {
+   "countermeasure": "Leading Pedestrian Interval",
+   "treatment": "Leading Pedestrian Interval signals",
+   "outcome": "pedestrian",
+   "primary": "lpi_not_yet_treated",
+   "placebos": [
+    "lpi_placebo_not_yet_treated",
+    "lpi_placebo_same_sites_not_yet_treated"
+   ],
+   "rule_met": false,
+   "placebo_ok": true,
+   "passed": false,
+   "reason": "the effect's interval includes no change",
+   "brief_cmf": [
+    {
+     "cmf_id": "9903",
+     "cmf": 0.81,
+     "stars": "5\u2605",
+     "crash_type": "Vehicle/pedestrian",
+     "severity": "All"
+    }
+   ]
+  }
+ },
+ "naive": {
+  "lpi": {
+   "pedestrian": {
+    "theta": 0.69,
+    "change_pct": -31.0,
+    "sites": 1073,
+    "after": 608,
+    "before": 881,
+    "ci95": [
+     0.616,
+     0.763
+    ]
+   },
+   "injury": {
+    "theta": 0.782,
+    "change_pct": -21.8,
+    "sites": 1073,
+    "after": 3923,
+    "before": 5017,
+    "ci95": [
+     0.739,
+     0.824
+    ]
+   },
+   "motorist_only": {
+    "theta": 0.824,
+    "change_pct": -17.6,
+    "sites": 1073,
+    "after": 3030,
+    "before": 3679,
+    "ci95": [
+     0.773,
+     0.873
+    ]
+   }
+  }
+ },
+ "run_date": "2026-10-31"
+}

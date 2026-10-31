@@ -40,7 +40,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;borde
 </style></head><body>
 <header><h1>Junction Safety Copilot</h1><span class="sub">Official record → cited fixes → checked brief. __CITIES__.</span>
 <input id="q" placeholder="an intersection, e.g. __EXAMPLE__"><button id="go">Brief</button></header>
-<main><div id="map"></div><div id="side"><div class="card"><b>How to use</b><p class="sub">Click a dot (NYC Vision Zero priority intersections; red = injury crashes and no recorded safety treatment in 5 years) or search an intersection. The brief takes 20–90 s the first time.</p><div id="top"></div></div><div id="out"></div></div></main>
+<main><div id="map"></div><div id="side"><div class="card"><b>How to use</b><p class="sub">Click a dot (the city's priority intersections; red = at least 10 injury crashes and no recorded safety treatment in 5 years) or search an intersection. The brief takes 20–90 s the first time.</p><div id="top"></div></div><div id="out"></div></div></main>
 <script>
 const map=L.map('map').setView(__VIEW__,11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
@@ -54,7 +54,7 @@ fetch('/citywide').then(r=>r.json()).then(d=>{
 fetch('/evidence').then(r=>r.json()).then(e=>{
  if(!e.programs||!e.programs.length)return;
  const pct=v=>(v>0?'+':'')+v+'%';
- const rows=e.programs.map(p=>`<tr><td>${p.passed?'<span class="nogap">✓ works</span>':'<span class="legend">✗ not shown</span>'}</td><td><b>${esc(p.program)}</b><div class="legend">${esc(p.city_name)} · ${p.sites??'?'} sites · vs ${esc(p.comparison)}</div></td><td>${p.effect_pct!=null?pct(p.effect_pct):'n/a'}${p.ci_pct?`<div class="legend">${pct(p.ci_pct[0])} to ${pct(p.ci_pct[1])}</div>`:''}</td><td class="legend">${p.passed?'placebo date before the install: '+pct(p.placebo_pct)+', no change':esc(p.reason||'')}</td></tr>`).join('');
+ const rows=e.programs.map(p=>`<tr><td>${p.passed?'<span class="nogap">✓ works</span>':'<span class="legend">✗ not shown</span>'}</td><td><b>${esc(p.program)}</b><div class="legend">${esc(p.city_name)} · ${p.sites??'?'} sites · vs ${esc(p.comparison)}</div></td><td>${p.effect_pct!=null?pct(p.effect_pct):'n/a'}${p.ci_pct?`<div class="legend">${pct(p.ci_pct[0])} to ${pct(p.ci_pct[1])}</div>`:''}</td><td class="legend">${p.passed?'placebo date before the install: '+pct(p.placebo_pct)+', no change':esc(p.reason||'')}${p.naive_pct!=null?`<br>a simple before/after would say ${pct(p.naive_pct)}`:''}</td></tr>`).join('');
  const f=e.fake_programs?`<p class="legend">The gate was also tested on ${e.fake_programs.gate.programs} fake programs (random sites and dates, nothing installed): it claimed an effect for ${(100*e.fake_programs.gate.rate).toFixed(1)}% of them, against ${(100*e.fake_programs.naive.rate).toFixed(1)}% for a simple before/after.</p>`:'';
  const div=document.createElement('div');div.className='card';
  div.innerHTML=`<b>What has worked here</b> <span class="legend">each program tested on the city's own crash records; a fix only counts if a fake earlier date shows no change</span><table style="margin-top:6px">${rows}</table>${f}`;
@@ -73,10 +73,11 @@ async function run(q){
  const imgs=[f.aerial_photo?`<figure><img src="/media?p=${encodeURIComponent(f.aerial_photo)}"><figcaption class="legend">City aerial photo</figcaption></figure>`:'',
   f.street_photo?`<figure><img src="/media?p=${encodeURIComponent(f.street_photo.image)}"><figcaption class="legend">Street level, ${esc(f.street_photo.captured)} (<a href="${f.street_photo.url}" target="_blank">Mapillary</a>, CC BY-SA)</figcaption></figure>`:''].join('');
  const ill=f.illustration?`<div class="card"><b>Proposed fix, drawn by Muse Image on the city photo</b> (${esc(f.illustration.countermeasure)}; SAM 3.1 check ${f.illustration.check_passed?'passed':'failed'})<img style="width:100%;border-radius:8px;margin-top:8px" src="/media?p=${encodeURIComponent(f.illustration.image)}"></div>`:'';
- const nums=f.brief&&f.brief.brief?(f.brief.brief.match(/\d[\d,]*(\.\d+)?/g)||[]).length:0;
+ const prose=f.brief&&f.brief.brief?f.brief.brief.split('\n').filter(l=>!/^(\s*\||_|# |Injury crashes here cost|Already in place)/.test(l)).join(' '):'';
+ const nums=(prose.match(/\d[\d,]*(\.\d+)?/g)||[]).length;
  const local=(fx.options||[]).filter(o=>o.local_evidence).length;
  const receipts=`<div class="card"><b>Receipts</b> <span class="legend">which check verified what</span><ul class="legend" style="margin:6px 0 0 18px;padding:0">
- ${f.brief&&f.brief.brief?`<li>${nums} numbers in the brief, each found in the official record by the checker${f.brief.attempts>1?` (${f.brief.attempts-1} draft(s) rejected and fixed)`:''}</li>`:''}
+ ${f.brief&&f.brief.brief?`<li>${nums} numbers in the written brief, each found in the official record by the checker (the table is computed by code)${f.brief.attempts>1?` (${f.brief.attempts-1} draft(s) rejected and fixed)`:''}</li>`:''}
  <li>${(fx.options||[]).slice(0,8).length} fixes, each citing a CMF Clearinghouse record; dollar values from USDOT's official crash costs</li>
  ${local?`<li>${local} fix(es) with this city's own before/after result, shown only because it passed the placebo check</li>`:''}
  ${f.illustration?`<li>the drawing ${f.illustration.check_passed?'passed':'failed'} the SAM 3.1 check (the fix was actually drawn; real cars untouched)</li>`:''}
@@ -114,7 +115,8 @@ def evidence() -> dict:
                              "effect_pct": m.get("change_pct"), "sites": m.get("sites"),
                              "ci_pct": [round(100 * (v - 1), 1) for v in m["ci95"]] if m.get("ci95") else None,
                              "placebo_pct": pl and pl.get("change_pct"),
-                             "comparison": g["primary"][len(key) + 1:].replace("_", " ")})
+                             "comparison": g["primary"][len(key) + 1:].replace("_", " "),
+                             "naive_pct": ((res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}).get("change_pct")})
     t12 = RESULTS_DIR / "bench" / "experiment_T12.json"
     fake = json.loads(t12.read_text())["summary"] if t12.exists() else None
     return {"programs": programs, "fake_programs": fake}

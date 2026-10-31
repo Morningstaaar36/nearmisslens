@@ -493,6 +493,78 @@
    "reason": "a placebo date before the install shows a change too"
   }
  },
+ "naive": {
+  "lpi": {
+   "pedestrian": {
+    "theta": 0.762,
+    "change_pct": -23.8,
+    "sites": 4779,
+    "after": 7724,
+    "before": 10135,
+    "ci95": [
+     0.739,
+     0.786
+    ]
+   },
+   "injury": {
+    "theta": 0.889,
+    "change_pct": -11.1,
+    "sites": 4779,
+    "after": 25712,
+    "before": 28929,
+    "ci95": [
+     0.87,
+     0.907
+    ]
+   },
+   "motorist_only": {
+    "theta": 0.924,
+    "change_pct": -7.6,
+    "sites": 4779,
+    "after": 13388,
+    "before": 14497,
+    "ci95": [
+     0.897,
+     0.952
+    ]
+   }
+  },
+  "turn_calming": {
+   "pedestrian": {
+    "theta": 0.738,
+    "change_pct": -26.2,
+    "sites": 586,
+    "after": 1957,
+    "before": 2651,
+    "ci95": [
+     0.69,
+     0.791
+    ]
+   },
+   "injury": {
+    "theta": 0.864,
+    "change_pct": -13.6,
+    "sites": 586,
+    "after": 5748,
+    "before": 6650,
+    "ci95": [
+     0.825,
+     0.904
+    ]
+   },
+   "motorist_only": {
+    "theta": 0.945,
+    "change_pct": -5.5,
+    "sites": 586,
+    "after": 2738,
+    "before": 2896,
+    "ci95": [
+     0.887,
+     1.01
+    ]
+   }
+  }
+ },
  "projection": {
   "intersections": 304,
   "without_program": 119,

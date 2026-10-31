@@ -3,13 +3,37 @@
  "city": "seattle",
  "title": "Replication: Leading Pedestrian Intervals in Seattle",
  "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it)",
- "merge_m": 30, "radius_m": 50, "neighbour_m": 100, "window_months": 36,
- "placebo": {"shift_months": 19, "window_months": 18},
- "exclude_near": ["seattle-lpi"],
+ "merge_m": 30,
+ "radius_m": 50,
+ "neighbour_m": 100,
+ "window_months": 36,
+ "placebo": {
+  "shift_months": 19,
+  "window_months": 18
+ },
+ "exclude_near": [
+  "seattle-lpi"
+ ],
  "programs": [
-  {"key": "lpi", "adapter": "seattle-lpi", "label": "Leading Pedestrian Interval signals",
-   "countermeasure": "Leading Pedestrian Interval", "treated": "auto",
-   "comparisons": ["not_yet_treated", "citywide"], "primary": "auto", "outcome": "pedestrian",
-   "placebo_same_sites": ["not_yet_treated", "citywide"]}
+  {
+   "key": "lpi",
+   "adapter": "seattle-lpi",
+   "label": "Leading Pedestrian Interval signals",
+   "countermeasure": "Leading Pedestrian Interval",
+   "treated": "auto",
+   "comparisons": [
+    "not_yet_treated",
+    "citywide"
+   ],
+   "primary": "auto",
+   "outcome": "pedestrian",
+   "placebo_same_sites": [
+    "not_yet_treated",
+    "citywide"
+   ]
+  }
+ ],
+ "notes": [
+  "The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical."
  ]
 }

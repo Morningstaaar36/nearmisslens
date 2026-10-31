@@ -9,6 +9,13 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Routes and signal state on entry.** Verified by `routes` (route accuracy 0.947 / 0.947 / 0.955).
 - [x] **Hotspots:** 15 m cells ranked by the exact Poisson 95% lower bound. Verified by `audit` and `tests/test_audit.py`.
 
+## Falsification gates
+- [x] **Causal gate, any city** (`treatments.py`, `nml treatments`): a registered comparison-group before/after design, the rule, and placebo dates, for any dated program in the registry; designs are JSON files in `validation/studies/`. Verified by `tests/test_treatments.py` (recovers a planted effect, fails a program whose placebo drops, drops cohorts without comparisons) and by T11 reproducing exactly from its spec.
+- [x] **Replication (T13):** Seattle's leading pedestrian intervals pass (−33%, placebos clean); DC, San Francisco and more New York programs are registered with the same design.
+- [x] **Fake programs (T12):** 200 null programs; the gate credits 5.5% of them, a naive before/after 8.0%. Verified in `validation/BENCH.md`.
+- [ ] **AI analyst with and without the gate (T12 agentic arms):** Muse Spark Open writes and runs its own analysis code in a sandbox (Modal, or a local network-isolated fallback); the gated arm explores on half the sites and the gate decides on the other half. Built and tested; the full run is in progress.
+- [x] **Registry-driven cities:** crash datasets, treatment programs, district offices, agencies and factor vocabularies are data in `registry.json`; no city is named in the engine's code.
+
 ## Junction Safety Copilot
 - [x] **Safety Brief for any address** (`nml brief`): official crash record, city designations and recorded treatments, FHWA countermeasures ranked by expected crashes avoided (CMF method), condition-scaled where the record gives darkness or wet-road shares, verify-on-site flags, aerial and street photos. Verified by `tests/test_v2.py` and real briefs in `runs/briefs/`.
 - [x] **Checked memo:** code builds the ranking; the agent writes the narrative; a checker rejects any number not in the facts. Verified by T8 (0 of 34 ungrounded with the checker vs 4 of 34 without).
@@ -18,6 +25,10 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Dollar values for every fix** (`harm.py`): U.S. DOT BCA Guidance 2026 Update, Table A-1 ($342,400 per injury crash, 2024 $), break-even cost over 10 years at 7%. Verified by `tests/test_treatments.py`.
 - [x] **Fix illustration on the city's aerial photo:** Muse Image edit composited around the junction, real road users protected by SAM 3.1 masks, SAM 3.1 check. 13 of 20 pass on the top-20 briefs.
 - [x] **Web app** (`nml app`): map with the citywide layer, search, briefs. Verified by headless Chrome screenshots and the demo recording.
+- [x] **What has worked here** panel and **receipts** on every brief (which gate verified which claim).
+- [x] **Letters** (`letter.py`, `nml brief --letter`, the app's "Draft a letter"): addressed to the council district and community board from the city's district maps; every number checked; sources added by code. Verified by `tests/test_treatments.py` (an invented number is refused).
+- [ ] **Hosted copilot on Modal** (`nearmisslens/modal_web.py`): public mode with daily and per-address caps and no new drawings. Built; deployment waits for Modal to be reachable and for the go-ahead to make it public.
+- [x] **Voice studio** (`nml voice`): the narrator records each demo line in the browser; `nml demo --copilot` uses the takes.
 - [x] **Open-weights tier:** the same agents on Muse Spark Open (Baseten) and Muse Glimmer (Modal GPU). Complaint accuracy 78% and 87.5%; memos 0 of 34 ungrounded on both.
 - [x] **Near-miss and crash fusion** (`fusion.py`): negative binomial + Empirical Bayes with near-miss counts; tested on held-out DC blocks and future years (T10, negative result for residents' reports).
 

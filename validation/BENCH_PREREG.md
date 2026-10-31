@@ -247,3 +247,7 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
   - The client now forces a call only after 11 tool calls, and a gated agent is made to commit a design before it can finish.
   - Both arms were rerun from the start under the same settings.
   - Modal was unreachable from the build machine (AWS us-east-1 routing), so the analysts' code runs in a local sandbox: a separate Python environment, no network (Linux namespaces), a 3 GB memory cap and a 180 s limit per run. Each run records its executor.
+- **Change to T13 (2026-10-31, disclosed):**
+  - A city's crash record now runs from the first to the last month with at least a tenth of the median monthly count. DC's table has stray dates back to 1825, which stretched the "first crash month".
+  - The rule was added after the first DC run, and both DC runs are reported (both failed the gate).
+  - New York's record is unchanged by the rule, and Seattle's results are identical.

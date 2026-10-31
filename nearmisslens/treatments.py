@@ -151,8 +151,13 @@ def crashes(city: str, org: tuple[float, float] | None = None) -> pd.DataFrame:
     out = pd.DataFrame({"month": when.dt.year * 12 + when.dt.month - 1, "pedestrian": ped > 0, "injury": injury,
                         "motorist_only": injury & (ped == 0) & (cyc == 0)}).dropna(subset=["month"])
     out["month"] = out["month"].astype(int)
+    # the record's coverage: from the first to the last month with at least a tenth of the median monthly count, so
+    # stray dates (DC's table has some from 1825) do not stretch the study period
+    per = out["month"].value_counts()
+    full = per[per >= 0.1 * per.median()].index
+    out = out[out["month"].between(full.min(), full.max())]
     p = xy(df.loc[out.index, "_lat"], df.loc[out.index, "_lon"], org or origin(city))
-    out["x"], out["y"] = p[:, 0], p[:, 1]
+    out = out.assign(x=p[:, 0], y=p[:, 1])
     return out.reset_index(drop=True)
 
 
@@ -327,6 +332,23 @@ def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame]
             res["install_months"] = [_label(int(cohorts.min()) + shift), _label(int(cohorts.max()) + shift)]
             return res
 
+        # the naive estimate (after / before at the treated sites, no comparison group), for contrast with the gate
+        lo_, hi_ = (m0 + window, m1 - window) if prog_spec["treated"] == "auto" else \
+            tuple(_month(d) for d in prog_spec["treated"])
+        real = prog["month"].to_numpy()
+        ok = np.flatnonzero((real >= lo_) & (real <= hi_) & (real - window >= m0) & (real + window <= m1))
+        naive = {}
+        for o in outcomes:
+            b = _window_sum(counts[o][ok], real[ok] - window - m0, window)
+            a = _window_sum(counts[o][ok], real[ok] + 1 - m0, window)
+            rng = np.random.default_rng(SEED)
+            boots = [(w * a).sum() / max((w * b).sum(), 1)
+                     for w in rng.multinomial(len(ok), np.full(len(ok), 1 / max(len(ok), 1)), size=N_BOOT)] if len(ok) else []
+            t = a.sum() / max(b.sum(), 1)
+            naive[o] = {"theta": round(float(t), 3), "change_pct": round(100 * (float(t) - 1), 1), "sites": int(len(ok)),
+                        "after": int(a.sum()), "before": int(b.sum()),
+                        "ci95": [round(float(v), 3) for v in np.percentile(boots, [2.5, 97.5])] if boots else None}
+        out["naive"] = {**out.get("naive", {}), key: naive}
         pl = spec["placebo"]
         for comparison in prog_spec["comparisons"]:
             main = study(comparison)
