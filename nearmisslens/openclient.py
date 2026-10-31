@@ -21,7 +21,7 @@ PRICE = {"input": 1.25, "output": 4.25}
 FORCE_FINISH_AFTER = 6
 
 
-def to_chat(payload: dict, model: str = MODEL) -> dict:
+def to_chat(payload: dict, model: str = MODEL, force_after: int = FORCE_FINISH_AFTER) -> dict:
     """A Responses-API agent request as a chat-completions request."""
     msgs = [{"role": "system", "content": payload.get("instructions", "")}]
     pending_images: list[dict] = []
@@ -63,8 +63,12 @@ def to_chat(payload: dict, model: str = MODEL) -> dict:
     if tools:
         calls = sum(1 for i in payload.get("input", []) if i.get("type") == "function_call")
         names = {t["function"]["name"] for t in tools}
-        # Spark Open, required to call a tool every turn, keeps reading; after FORCE_FINISH_AFTER calls it must finish
-        choice = ({"type": "function", "function": {"name": "finish"}} if calls >= FORCE_FINISH_AFTER and "finish" in names
+        # Spark Open, required to call a tool every turn, keeps reading; after force_after calls it must finish, and
+        # an agent with a commit step (the gated analyst) is made to commit before it can finish
+        committed = any(i.get("type") == "function_call" and i.get("name") == "commit_design"
+                        for i in payload.get("input", []))
+        step = "commit_design" if "commit_design" in names and not committed else "finish"
+        choice = ({"type": "function", "function": {"name": step}} if calls >= force_after and step in names
                   else "required")
         body |= {"tools": tools, "tool_choice": choice}
     return body
@@ -93,11 +97,13 @@ class OpenWeightsClient:
     on Baseten (default) or Muse Glimmer on Modal (glimmer())."""
 
     def __init__(self, ledger: Path | None = None, base_url: str = BASE_URL, model: str = MODEL,
-                 key_env: str = "BASETEN_API_KEY", auth: str = "Api-Key", price: dict | None = PRICE):
+                 key_env: str = "BASETEN_API_KEY", auth: str = "Api-Key", price: dict | None = PRICE,
+                 force_finish_after: int = FORCE_FINISH_AFTER):
         self.cache = Cache(SETTINGS.cache_dir, replay=SETTINGS.replay)
         self.ledger = ledger or SETTINGS.runs_dir / "ledger_baseten.jsonl"
         self.base_url, self.model, self.key_env, self.auth, self.price = base_url, model, key_env, auth, price
         self.spent = 0.0
+        self.force_finish_after = force_finish_after
 
     @classmethod
     def glimmer(cls) -> "OpenWeightsClient":
@@ -112,7 +118,7 @@ class OpenWeightsClient:
         key = os.environ.get(self.key_env)
         if not key:
             raise RuntimeError(f"{self.key_env} is not set (put it in .env)")
-        body = to_chat(payload, self.model)
+        body = to_chat(payload, self.model, self.force_finish_after)
         for attempt in range(8):
             # Modal answers long requests with a 303 to a result URL; a cold start returns 503 while the model loads
             with httpx.Client(timeout=900, follow_redirects=True) as c:
@@ -127,7 +133,7 @@ class OpenWeightsClient:
     def cached(self, namespace: str, request: dict, run, cost_fn, estimate_usd: float, what: str,
                require_text: bool = False, complete=None) -> dict:
         served = "baseten" if self.base_url == BASE_URL else self.base_url  # keeps earlier Baseten cache keys valid
-        req = {**request, "model": self.model, "served_by": served, "force_finish_after": FORCE_FINISH_AFTER}
+        req = {**request, "model": self.model, "served_by": served, "force_finish_after": self.force_finish_after}
         k = request_key(f"open_{namespace}", req)
         hit = self.cache.get(f"open_{namespace}", k)
         if hit is not None:

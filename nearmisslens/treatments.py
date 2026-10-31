@@ -68,7 +68,8 @@ def crash_adapter(city: str) -> dict:
 def _crash_fields(a: dict) -> list[str]:
     modes = [f for m in (a.get("injured", {}), a.get("killed", {})) for fs in m.values() for f in fs]
     return [f for f in dict.fromkeys([a.get("id_field"), a["date_field"], a.get("lat_field"), a.get("lon_field"),
-                                      *modes, *a.get("serious_injured", []), *a.get("crash_type_fields", [])]) if f]
+                                      *modes, *a.get("serious_injured", []), *a.get("crash_type_fields", []),
+                                      *a.get("pedestrian_involved", []), *a.get("cyclist_involved", [])]) if f]
 
 
 def download(a: dict, d: Path) -> None:
@@ -91,27 +92,27 @@ def download(a: dict, d: Path) -> None:
                 break
             (d / f"page_{k}.csv").write_text(r.text)
         return
-    import httpx as _h
-    offset, k, buf = 0, 0, []
-    with _h.Client(headers=context.UA, timeout=300) as c:
+    # ArcGIS: keyset paging on the object id (offset paging stops early on some servers)
+    oid = a.get("oid_field", "OBJECTID")
+    last, k, buf = -1, 0, []
+    with httpx.Client(headers=context.UA, timeout=300) as c:
         while True:
             r = c.get(f"{a['endpoint']}/query", params={
-                "where": a.get("where", "1=1"), "outFields": ",".join(fields), "returnGeometry": "true",
-                "outSR": 4326, "f": "json", "resultOffset": offset, "resultRecordCount": 2000,
-                "orderByFields": a.get("id_field") or ""})
+                "where": f"({a.get('where', '1=1')}) AND {oid} > {last}", "outFields": ",".join(fields + [oid]),
+                "returnGeometry": "true", "outSR": 4326, "f": "json", "orderByFields": f"{oid} ASC",
+                "resultRecordCount": a.get("page_size", 1000)})
             r.raise_for_status()
-            js = r.json()
-            feats = js.get("features", [])
+            feats = r.json().get("features", [])
             for f in feats:
                 g = f.get("geometry") or {}
                 buf.append({**f.get("attributes", {}), "_lat": g.get("y"), "_lon": g.get("x")})
-            last = not feats or not js.get("exceededTransferLimit")
-            if buf and (len(buf) >= PAGE or last):
+            if feats:
+                last = max(f["attributes"][oid] for f in feats)
+            if buf and (len(buf) >= PAGE or not feats):
                 pd.DataFrame(buf).to_csv(d / f"page_{k}.csv", index=False)
                 buf, k = [], k + 1
-            if last:
+            if not feats:
                 break
-            offset += len(feats)
 
 
 def crashes(city: str, org: tuple[float, float] | None = None) -> pd.DataFrame:
@@ -137,7 +138,10 @@ def crashes(city: str, org: tuple[float, float] | None = None) -> pd.DataFrame:
     cyc = total(inj.get("cyclist", []) + kil.get("cyclist", []))
     hurt = total([f for m in (inj, kil) for fs in m.values() for f in fs])
     injury = (hurt > 0) | (total(a.get("serious_injured", [])) > 0)
-    if "pedestrian" not in inj:  # injuries not split by mode: the crash type says who was involved
+    if "pedestrian" not in inj and a.get("pedestrian_involved"):  # people involved by mode, injuries in total
+        ped = ((total(a["pedestrian_involved"]) > 0) & injury).astype(int)
+        cyc = ((total(a.get("cyclist_involved", [])) > 0) & injury).astype(int)
+    elif "pedestrian" not in inj:  # injuries not split by mode: the crash type says who was involved
         kind = df[[c for c in a.get("crash_type_fields", []) if c in df]].astype(str).agg(" ".join, axis=1).str.lower()
         ped = (kind.str.contains("pedestrian") & injury).astype(int)
         cyc = ((kind.str.contains("cycl") | kind.str.contains("bicycl")) & injury).astype(int)
@@ -285,7 +289,10 @@ def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame]
         out["data"]["programs"][key] = {"adapter": aid, "points": int(len(points[aid])), "sites": int(len(prog))}
 
         def study(comparison, shift=0, length=window, only=None):
-            lo, hi = (_month(d) for d in prog_spec["treated"])
+            if prog_spec["treated"] == "auto":  # three years after the first crash month to three years before the last
+                lo, hi = m0 + window, m1 - window
+            else:
+                lo, hi = (_month(d) for d in prog_spec["treated"])
             real = prog["month"].to_numpy()
             fake = real - shift
             # windows [m - length, m - 1] and [m + 1, m + length] around the (possibly fake) install month m
@@ -328,6 +335,9 @@ def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame]
             if comparison in prog_spec.get("placebo_same_sites", []):
                 out["runs"][f"{key}_placebo_same_sites_{comparison}"] = study(
                     comparison, pl["shift_months"], pl["window_months"], only=main["_keep"])
+        if prog_spec["primary"] == "auto":  # fixed by data availability: sites treated later, if 100 sites have them
+            nyt = (out["runs"].get(f"{key}_not_yet_treated") or {}).get(prog_spec["outcome"]) or {}
+            prog_spec = {**prog_spec, "primary": "not_yet_treated" if (nyt.get("sites") or 0) >= 100 else "citywide"}
         out["gates"][key] = gate(out["runs"], prog_spec)
     for v in out["runs"].values():
         v.pop("_keep", None)

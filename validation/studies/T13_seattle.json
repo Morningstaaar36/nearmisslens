@@ -1,0 +1,15 @@
+{
+ "id": "T13_seattle",
+ "city": "seattle",
+ "title": "Replication: Leading Pedestrian Intervals in Seattle",
+ "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it)",
+ "merge_m": 30, "radius_m": 50, "neighbour_m": 100, "window_months": 36,
+ "placebo": {"shift_months": 19, "window_months": 18},
+ "exclude_near": ["seattle-lpi"],
+ "programs": [
+  {"key": "lpi", "adapter": "seattle-lpi", "label": "Leading Pedestrian Interval signals",
+   "countermeasure": "Leading Pedestrian Interval", "treated": "auto",
+   "comparisons": ["not_yet_treated", "citywide"], "primary": "auto", "outcome": "pedestrian",
+   "placebo_same_sites": ["not_yet_treated", "citywide"]}
+ ]
+}

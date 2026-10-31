@@ -281,6 +281,11 @@ def cmd_discover(args) -> int:
     return 0 if a else 1
 
 
+def cmd_voice(args) -> int:
+    from . import voicestudio
+    return voicestudio.serve(args.port)
+
+
 def cmd_treatments(args) -> int:
     from . import bench, treatments
     names = args.study or sorted(p.stem for p in treatments.STUDIES.glob("*.json"))
@@ -384,6 +389,8 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("--meta", action="store_true")
     cw = sub.add_parser("citywide", help="plan-gap screen of every priority intersection a city lists (open data)")
     cw.add_argument("--city", help="registry city id (default: the first city with a priority-intersection list)")
+    vs = sub.add_parser("voice", help="voice studio: record the demo narration line by line in the browser")
+    vs.add_argument("--port", type=int, default=8792)
     tm = sub.add_parser("treatments", help="city treatment studies with the causal gate (validation/studies/*.json)")
     tm.add_argument("study", nargs="*", help="study ids (default: all registered studies)")
     ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")
@@ -413,7 +420,7 @@ def run_command(args) -> int:
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
-            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments, "voice": cmd_voice,
             "app": cmd_app}[args.cmd](args)
 
 

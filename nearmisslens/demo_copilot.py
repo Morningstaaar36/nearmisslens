@@ -196,8 +196,10 @@ def render(out: Path | None = None) -> Path:
     clips = []
     try:
         for k, s in enumerate(script()):
-            wav = work / f"{k:02d}_{s.name}.wav"
-            secs = narrate(s.narration, wav) + PAD_S
+            from . import voicestudio
+            mine = voicestudio.take(k, s.name, s.narration)  # the narrator's own recording, if it matches the line
+            wav = mine or work / f"{k:02d}_{s.name}.wav"
+            secs = (demo._duration(wav) if mine else narrate(s.narration, wav)) + PAD_S
             if s.kind == "card":
                 seg = demo.card(s.title, s.caption or s.target, work / f"card_{s.name}", work, secs)
             elif s.kind == "image":

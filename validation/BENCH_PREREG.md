@@ -217,3 +217,33 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
 
   Every arm is reported either way.
 - **Cost:** about $3–5 of Baseten credit and $1 of Modal; the deterministic arms are free.
+
+## T13 Does the gate's verdict replicate in other cities and programs? (registered 2026-10-31, before any crash data for these cities or programs was downloaded for it)
+- **Question:** run T11's design and causal gate, unchanged, on every dated treatment program that research R15 found usable. Does the LPI effect replicate in other cities? Which other programs pass?
+- **Programs** (sources and counts in `~/BUET/meta/research/R15_treatment_datasets.md`):
+  - Washington DC Leading Pedestrian Intervals (DDOT TrafficSafety layer 1, `ConfigRevisionDate`, `LPI_Y_OR_N = 'Y'`);
+  - Seattle Leading Pedestrian Intervals (SDOT layer 8, `LPI_Install_Date`);
+  - NYC Enhanced Crossings (`6ax4-q5k4`, `date_imple`);
+  - NYC speed humps (`jknp-skuy`, `date_insta`; block segments, located at their middle);
+  - San Francisco painted safety zones (`vtn2-q8ky`, `install_da`);
+  - San Francisco continental crosswalks (`g9zy-srvv`, `report_date`, rows with an install year).
+- **Excluded in advance:**
+  - Los Angeles LPIs: crash records start in 2017, and LAPD injury reporting breaks in 2021;
+  - Chicago speed cameras: the crash series starts in 2017–2018;
+  - programs with fewer than 100 dated sites.
+- **Design (T11's, unchanged):**
+  - crashes within 50 m, 36 months before and after the install month;
+  - sites merged within 30 m;
+  - a site is excluded if another dated program in the same city installed within 100 m inside its windows;
+  - placebo: install date 19 months early, with 18-month windows;
+  - treated sites installed from three years after the city's first crash month to three years before its last.
+- **Outcome:**
+  - pedestrian injury crashes (DC and NYC by mode; Seattle: injury crashes with a pedestrian involved; San Francisco: injury crashes in the vehicle-pedestrian group);
+  - for NYC speed humps, all injury crashes.
+- **Comparison group:** fixed by data availability, not by results. It is the not-yet-treated sites when at least 100 treated sites have comparison sites; otherwise the citywide trend. The other comparison is reported as a sensitivity check.
+- **Rule:** as T11. A program passes the gate if its interval is entirely below 1 and every placebo of its primary comparison shows no change. Every program is reported, pass or fail.
+- **Change to T12 (2026-10-31, disclosed):**
+  - The first agentic runs were discarded. The open-weights client forced a `finish` call after 6 tool calls, so the gated analyst could not reach `commit_design`, and both arms were capped at 6 code runs.
+  - The client now forces a call only after 11 tool calls, and a gated agent is made to commit a design before it can finish.
+  - Both arms were rerun from the start under the same settings.
+  - Modal was unreachable from the build machine (AWS us-east-1 routing), so the analysts' code runs in a local sandbox: a separate Python environment, no network (Linux namespaces), a 3 GB memory cap and a 180 s limit per run. Each run records its executor.

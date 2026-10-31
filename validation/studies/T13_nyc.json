@@ -1,0 +1,56 @@
+{
+ "id": "T13_nyc",
+ "merge_m": 30,
+ "radius_m": 50,
+ "neighbour_m": 100,
+ "window_months": 36,
+ "placebo": {
+  "shift_months": 19,
+  "window_months": 18
+ },
+ "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's program data was downloaded for it)",
+ "city": "nyc",
+ "title": "Replication: other New York programs",
+ "exclude_near": [
+  "nyc-lpi",
+  "nyc-turn-calming",
+  "nyc-enhanced-crossings",
+  "nyc-speed-humps"
+ ],
+ "programs": [
+  {
+   "key": "enhanced_crossings",
+   "adapter": "nyc-enhanced-crossings",
+   "label": "enhanced crossings",
+   "countermeasure": "Crosswalk Visibility Enhancements",
+   "treated": "auto",
+   "comparisons": [
+    "not_yet_treated",
+    "citywide"
+   ],
+   "primary": "auto",
+   "outcome": "pedestrian",
+   "placebo_same_sites": [
+    "not_yet_treated",
+    "citywide"
+   ]
+  },
+  {
+   "key": "speed_humps",
+   "adapter": "nyc-speed-humps",
+   "label": "speed humps",
+   "countermeasure": null,
+   "treated": "auto",
+   "comparisons": [
+    "not_yet_treated",
+    "citywide"
+   ],
+   "primary": "auto",
+   "outcome": "injury",
+   "placebo_same_sites": [
+    "not_yet_treated",
+    "citywide"
+   ]
+  }
+ ]
+}

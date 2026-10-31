@@ -71,6 +71,8 @@ def _date(v) -> dt.date | None:
     if isinstance(v, (int, float)):
         return dt.datetime.utcfromtimestamp(v / 1000).date()
     text = str(v).strip()
+    if text.isdigit() and len(text) >= 11:  # epoch milliseconds written as text
+        return dt.datetime.utcfromtimestamp(int(text) / 1000).date()
     try:
         return dt.date.fromisoformat(text[:10])
     except ValueError:
@@ -122,6 +124,8 @@ def rows_all(a: dict, fields: list[str] | None = None, page: int = 50_000) -> li
     rows = []
     if a["platform"] == "socrata":
         params = {"$limit": page}
+        if a.get("where"):
+            params["$where"] = a["where"]
         if fields:
             params["$select"] = ",".join(dict.fromkeys(fields + [a["geo_field"]] if a.get("geo_field") else fields))
         offset = 0
@@ -168,6 +172,8 @@ def point_of(r: dict, a: dict) -> tuple[float, float] | None:
         if isinstance(g, dict):
             if "x" in g:
                 return float(g["y"]), float(g["x"])
+            if g.get("points"):
+                return float(g["points"][0][1]), float(g["points"][0][0])
             for k in ("paths", "rings"):
                 if g.get(k):
                     v = g[k][0][len(g[k][0]) // 2]

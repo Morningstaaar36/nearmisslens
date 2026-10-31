@@ -189,7 +189,7 @@ def run(name: str = "T12", programs: int | None = None) -> dict:
 
 
 def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", only: list[str] | None = None,
-               arms: tuple[bool, ...] = (False, True), workers: int = 4) -> dict:
+               arms: tuple[bool, ...] = (False, True), workers: int = 4, executor: str = "modal") -> dict:
     """The agentic arms: the first fake programs and the real ones, blinded, each analysed ungated and gated. Results
     are saved after every run (experiment_<id>_agents_<model>.json), and a finished run is not repeated."""
     from . import analyst
@@ -210,7 +210,8 @@ def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", 
     from concurrent.futures import ThreadPoolExecutor
     path = RESULTS_DIR / "bench" / f"experiment_{exp['id']}_agents_{model_label}.json"
     done = json.loads(path.read_text()) if path.exists() else {"id": exp["id"], "model": model_label, "runs": []}
-    have = {(r["program_key"], r["gated"]) for r in done["runs"] if r.get("stopped") == "finish_tool"}
+    have = {(r["program_key"], r["gated"]) for r in done["runs"]
+            if r.get("stopped") == "finish_tool" and r.get("executor", "modal") == executor}
     done["runs"] = [r for r in done["runs"] if (r["program_key"], r["gated"]) in have]
     lock = threading.Lock()
     jobs = [(key, pts, treated, gated) for key, pts, treated in progs if not only or key in only
@@ -220,7 +221,7 @@ def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", 
         key, pts, treated, gated = job
         try:
             res = analyst.analyse(client, blind[key], pts, cr, org, avoid, gated, exp, base, treated,
-                                  tag=f"T12 {model_label}")
+                                  tag=f"T12 {model_label}", executor=executor)
         except Exception as e:  # recorded, not hidden; a later call retries it
             res = {"program": blind[key], "gated": gated, "claim": None, "stopped": f"error: {type(e).__name__}: {e}",
                    "turns": 0, "code_runs": 0, "usd": 0.0}

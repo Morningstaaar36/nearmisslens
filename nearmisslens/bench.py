@@ -601,7 +601,7 @@ def write_bench_md() -> str:
                             for c in g.get("brief_cmf", []))
             L.append(f"- **{g['treatment']}**: {'passed' if g['passed'] else 'failed (' + g['reason'] + ')'}. "
                      f"{names[g['outcome']].capitalize()} {_f(m['change_pct'], 1)}% (theta {_f(m['theta'])}, "
-                     f"[{_f(m['ci95'][0])}, {_f(m['ci95'][1])}]) on the {g['primary'].split('_', 1)[1].replace('_', ' ')} "
+                     f"[{_f(m['ci95'][0])}, {_f(m['ci95'][1])}]) on the {g['primary'][len(key) + 1:].replace('_', ' ')} "
                      f"comparison, {tr['runs'][g['primary']]['excluded_neighbour_treatment']:,} of "
                      f"{tr['runs'][g['primary']]['treated_in_range']:,} sites excluded for another treatment within "
                      f"{sp['neighbour_m']} m in their windows." + (f" {cmf}." if cmf else ""))
@@ -619,6 +619,48 @@ def write_bench_md() -> str:
                   f"{pj['avoided_per_year_interval'][0]:.0f}–{pj['avoided_per_year_interval'][1]:.0f}), about "
                   f"${pj['harm_avoided_usd_per_year'] / 1e6:.1f} million a year at the U.S. DOT injury-crash value. "
                   "Each site needs an engineer's check.", ""]
+    t12 = _load("experiment_T12.json")
+    if t12:
+        sm, ex = t12["summary"], t12["experiment"]
+        L += ["## T12 Falsification gates: fake programs and an AI analyst", "",
+              f"Registered: {t12['registered']}. {sm['naive']['programs']} fake programs in New York: "
+              f"{ex['fake']['sites']} sites each, drawn from {t12['cells']} injury-crash hotspots more than "
+              f"{ex['fake']['clear_of_m']} m from any recorded treatment, each with a random install month. Nothing was "
+              "installed, so every claimed reduction is false. Pedestrian injury crashes within "
+              f"{ex['radius_m']} m, {ex['window_months']} months before and after.", "",
+              "| analysis | fake programs with a claimed reduction | 95% interval | mean theta |", "|---|---|---|---|"]
+        for arm, name in (("naive", "naive before/after"), ("comparison", "comparison group, no placebo"),
+                          ("gate", "full causal gate (comparison group + placebos)")):
+            a = sm[arm]
+            L.append(f"| {name} | {a['false_claims']} of {a['programs']} ({_f(100 * a['rate'], 1)}%) | "
+                     f"{_f(100 * a['wilson95'][0], 1)}–{_f(100 * a['wilson95'][1], 1)}% | {_f(a['mean_theta'])} |")
+        L += ["", "Real programs:", ""]
+        for r in t12["real"]:
+            L.append(f"- {r['label']}: naive {_f(r['naive']['theta'])} [{_f(r['naive']['ci95'][0])}, "
+                     f"{_f(r['naive']['ci95'][1])}] claims '{r['claims']['naive']}'; gate claims '{r['claims']['gate']}'"
+                     + (f" ({r['gate']['reason']})" if r['gate'].get('reason') else "") + ".")
+        L += ["", f"Registered rule, part (c) (gate below naive, upper bound at most 10%): "
+                  f"{'met' if t12['rule_met_part_c'] else 'not met'}. The gate's measured false-claim rate is higher than "
+                  "the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On the "
+                  "real programs the gate matters more: the naive analysis overstates the LPI effect and credits turn "
+                  "calming with a cut that had started before the work.", ""]
+        for model in ("muse-spark-open", "muse-glimmer"):
+            ag = _load(f"experiment_T12_agents_{model}.json")
+            runs = [r for r in (ag or {}).get("runs", []) if r.get("stopped") == "finish_tool" and r.get("claim")]
+            if not runs:
+                continue
+            L += [f"Agentic arms ({model}, programs blinded; code run in isolated Modal sandboxes):", "",
+                  "| arm | fake programs analysed | claimed a reduction | real programs: claims | cost |",
+                  "|---|---|---|---|---|"]
+            for gated in (False, True):
+                rs = [r for r in runs if r["gated"] == gated]
+                fk = [r for r in rs if r["fake"]]
+                real = "; ".join(f"{r['program_key']}: {r['claim']['claim']} ({_f(r['claim']['effect_pct'], 1)}%)"
+                                 for r in rs if not r["fake"])
+                L.append(f"| {'gated' if gated else 'ungated'} | {len(fk)} | "
+                         f"{sum(r['claim']['claim'] == 'reduced' for r in fk)} | {real or '—'} | "
+                         f"${sum(r['usd'] for r in rs):.3f} |")
+            L.append("")
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:

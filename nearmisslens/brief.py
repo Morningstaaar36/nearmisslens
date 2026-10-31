@@ -320,7 +320,8 @@ def build(address: str | None = None, lat: float | None = None, lon: float | Non
                                      f"brief {slug}")
     prev = out_dir / "brief.json"
     if "illustration" not in facts and prev.exists() and (out_dir / "fix.jpg").exists():  # keep an earlier drawing
-        facts["illustration"] = json.loads(prev.read_text()).get("illustration")
+        kept = json.loads(prev.read_text()).get("illustration")
+        facts["illustration"] = {**kept, "image": str(out_dir / "fix.jpg")} if kept else None  # paths move with the runs dir
     prev.write_text(json.dumps(facts, indent=1, default=str))
     if facts.get("brief", {}).get("brief"):
         (out_dir / "brief.md").write_text(facts["brief"]["brief"])

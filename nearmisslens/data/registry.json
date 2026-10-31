@@ -111,7 +111,10 @@
    "provenance": {
     "found_by": "seed (written by hand)"
    },
-   "city": "dc"
+   "city": "dc",
+   "lat_field": "LATITUDE",
+   "lon_field": "LONGITUDE",
+   "id_field": "CRIMEID"
   },
   {
    "id": "chicago-crashes",
@@ -506,12 +509,14 @@
      "latest": "2026-10-18"
     },
     "attempts": 3,
-    "factor_conditions": "seed (written by hand)"
+    "factor_conditions": "seed (written by hand)",
+    "involved_fields": "seed (written by hand, T13)"
    },
    "city": "seattle",
    "factor_conditions": {
     "pedrownotgrnt": "a turning movement"
-   }
+   },
+   "id_field": "OBJECTID"
   },
   {
    "id": "nyc-council",
@@ -567,6 +572,181 @@
    "source": "NYC Open Data, Community Districts (5crt-au7u)",
    "provenance": {
     "found_by": "seed (written by hand)"
+   }
+  },
+  {
+   "id": "dc-lpi",
+   "kind": "project",
+   "city": "dc",
+   "place": "Washington DC",
+   "bbox": [
+    38.79,
+    -77.12,
+    38.996,
+    -76.9
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DDOT/TrafficSafety/MapServer/1",
+   "where": "LPI_Y_OR_N='Y'",
+   "date_field": "ConfigRevisionDate",
+   "name_field": "IntersectionName",
+   "label": "Leading Pedestrian Interval signal",
+   "countermeasure": "Leading Pedestrian Interval",
+   "radius_m": 60,
+   "source": "DDOT Traffic Signals LPI (TrafficSafety MapServer/1)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "seattle-lpi",
+   "kind": "project",
+   "city": "seattle",
+   "place": "Seattle",
+   "bbox": [
+    47.38512220625224,
+    -122.66621381718583,
+    47.83427779374775,
+    -121.99998618281417
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Vision_Zero_-_Leading_Pedestrian_Intervals_ACTIVE/FeatureServer/8",
+   "where": "LPI_Install_Date IS NOT NULL",
+   "date_field": "LPI_Install_Date",
+   "name_field": "LOCATION",
+   "label": "Leading Pedestrian Interval signal",
+   "countermeasure": "Leading Pedestrian Interval",
+   "radius_m": 60,
+   "source": "SDOT Vision Zero Leading Pedestrian Intervals (layer 8)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "nyc-enhanced-crossings",
+   "kind": "project",
+   "city": "nyc",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/6ax4-q5k4.json",
+   "geo_field": "the_geom",
+   "date_field": "date_imple",
+   "label": "enhanced crossing",
+   "countermeasure": "Crosswalk Visibility Enhancements",
+   "radius_m": 60,
+   "source": "NYC Vision Zero View, Enhanced Crossings (6ax4-q5k4)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "nyc-speed-humps",
+   "kind": "project",
+   "city": "nyc",
+   "place": "New York City",
+   "bbox": [
+    40.49,
+    -74.27,
+    40.92,
+    -73.68
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/jknp-skuy.json",
+   "geo_field": "the_geom",
+   "date_field": "date_insta",
+   "label": "speed humps",
+   "radius_m": 60,
+   "source": "NYC Vision Zero View, Speed Humps (jknp-skuy)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "sf-crashes",
+   "kind": "crash",
+   "city": "sf",
+   "place": "San Francisco",
+   "bbox": [
+    37.7,
+    -122.52,
+    37.84,
+    -122.35
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.sf.gov/resource/ubvf-ztfx.json",
+   "geo_field": "point",
+   "lat_field": "tb_latitude",
+   "lon_field": "tb_longitude",
+   "date_field": "collision_date",
+   "source": "DataSF, Traffic Crashes Resulting in Injury (ubvf-ztfx)",
+   "injured": {
+    "any": [
+     "number_injured"
+    ]
+   },
+   "killed": {
+    "any": [
+     "number_killed"
+    ]
+   },
+   "crash_type_fields": [
+    "dph_col_grp_description"
+   ],
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "sf-painted-safety-zones",
+   "kind": "project",
+   "city": "sf",
+   "place": "San Francisco",
+   "bbox": [
+    37.7,
+    -122.52,
+    37.84,
+    -122.35
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.sf.gov/resource/vtn2-q8ky.json",
+   "geo_field": "shape",
+   "date_field": "install_da",
+   "label": "painted safety zone",
+   "countermeasure": "Crosswalk Visibility Enhancements",
+   "radius_m": 60,
+   "source": "DataSF, Painted Safety Zones (vtn2-q8ky)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
+   }
+  },
+  {
+   "id": "sf-continental-crosswalks",
+   "kind": "project",
+   "city": "sf",
+   "place": "San Francisco",
+   "bbox": [
+    37.7,
+    -122.52,
+    37.84,
+    -122.35
+   ],
+   "platform": "socrata",
+   "endpoint": "https://data.sf.gov/resource/g9zy-srvv.json",
+   "geo_field": "shape",
+   "where": "yr_install != '0'",
+   "date_field": "report_date",
+   "label": "continental crosswalk",
+   "countermeasure": "Crosswalk Visibility Enhancements",
+   "radius_m": 60,
+   "source": "DataSF, Continental Crosswalks (g9zy-srvv)",
+   "provenance": {
+    "found_by": "research R15 (agent), adapter written by hand"
    }
   }
  ],
@@ -625,6 +805,17 @@
     -121.99998618281417
    ],
    "agency": "the Seattle Department of Transportation (SDOT)"
+  },
+  {
+   "id": "sf",
+   "name": "San Francisco",
+   "bbox": [
+    37.7,
+    -122.52,
+    37.84,
+    -122.35
+   ],
+   "agency": "the San Francisco Municipal Transportation Agency (SFMTA)"
   }
  ]
 }

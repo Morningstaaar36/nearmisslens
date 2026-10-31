@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import gzip
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -29,12 +30,12 @@ MODEL = "muse-spark-1.3-contributor"  # the open-weights client serves it with M
 
 INSTRUCTIONS = (
     "You are a careful data analyst for a city transportation department. A street-safety treatment was installed at "
-    "the sites in /data/sites.csv.gz, each in its install_month. Decide from the data whether it reduced "
+    "the sites in {data}/sites.csv.gz, each in its install_month. Decide from the data whether it reduced "
     "{outcome} near the sites, estimate the change in percent with a 95% interval, and say how you know. "
-    "Files: /data/sites.csv.gz (site_id, x_m, y_m: position in metres, install_month 'YYYY-MM'); "
-    "/data/counts.csv.gz (site_id, radius_m in 30/50/100, month 'YYYY-MM', pedestrian_injury_crashes, "
+    "Files: {data}/sites.csv.gz (site_id, x_m, y_m: position in metres, install_month 'YYYY-MM'); "
+    "{data}/counts.csv.gz (site_id, radius_m in 30/50/100, month 'YYYY-MM', pedestrian_injury_crashes, "
     "injury_crashes: police-reported crashes within radius_m of the site in that month; missing rows are zero); "
-    "/data/city.csv.gz (month, pedestrian_injury_crashes, injury_crashes: crashes in the rest of the city, more "
+    "{data}/city.csv.gz (month, pedestrian_injury_crashes, injury_crashes: crashes in the rest of the city, more "
     "than 100 m from every site). Records run from {first} to {last}. Use run_python to analyse: each call is a "
     "fresh Python process with pandas, numpy, scipy and statsmodels and no internet, so load the files each time and "
     "print what you need. {gate}When you are done, call finish once with claim 'reduced', 'no_evidence' or "
@@ -69,6 +70,41 @@ class Sandbox:
 
     def close(self):
         self.sb.terminate()
+
+
+class LocalSandbox:
+    """The fallback when Modal is unreachable: a temporary directory and a separate Python environment, each run in
+    its own process with no network (Linux user and network namespaces), a memory cap and a time limit."""
+
+    def __init__(self, files: dict[str, bytes]):
+        import tempfile
+        from .config import SETTINGS
+        self.dir = Path(tempfile.mkdtemp(prefix="nml_analyst_"))
+        self.python = str(SETTINGS.data_dir / "sandbox-venv" / "bin" / "python")
+        for path, data in files.items():
+            (self.dir / Path(path).name).write_bytes(data)
+        self.data = str(self.dir)
+        self.runs = 0
+
+    def run(self, code: str, timeout_s: int = 180) -> dict:
+        import resource
+        import subprocess
+        self.runs += 1
+
+        def limits():
+            resource.setrlimit(resource.RLIMIT_AS, (3 << 30, 3 << 30))
+        try:
+            p = subprocess.run(["unshare", "-rn", self.python, "-c", code], cwd=self.dir, capture_output=True,
+                               text=True, timeout=timeout_s, preexec_fn=limits)
+            text = p.stdout + (f"\n[stderr]\n{p.stderr}" if p.stderr.strip() else "")
+            code_ = p.returncode
+        except subprocess.TimeoutExpired:
+            text, code_ = f"[timed out after {timeout_s} s]", -1
+        return {"output": text[-6000:] if len(text) > 6000 else text, "exit_code": code_}
+
+    def close(self):
+        import shutil
+        shutil.rmtree(self.dir, ignore_errors=True)
 
 
 def _gz(df: pd.DataFrame) -> bytes:
@@ -133,7 +169,8 @@ def gate_verdict(cr: pd.DataFrame, points: pd.DataFrame, org, design: dict, trea
 
 
 def analyse(client, pid: str, points: pd.DataFrame, cr: pd.DataFrame, org, avoid_xy: np.ndarray, gated: bool,
-            exp: dict, base: dict, treated: list[str], model: str = MODEL, tag: str = "analyst") -> dict:
+            exp: dict, base: dict, treated: list[str], model: str = MODEL, tag: str = "analyst",
+            executor: str = "modal") -> dict:
     site_df = T.sites(points, base["merge_m"], org).reset_index(drop=True)
     explore = split(len(site_df), exp["agentic"]["split_seed"]) if gated else np.ones(len(site_df), bool)
     held = site_df[~explore]
@@ -141,7 +178,7 @@ def analyse(client, pid: str, points: pd.DataFrame, cr: pd.DataFrame, org, avoid
     outcome = {"pedestrian": "pedestrian injury crashes (crashes where a pedestrian was hurt or killed)",
                "injury": "injury crashes"}[exp["outcome"]]
     first, last = T._label(int(cr["month"].min())), T._label(int(cr["month"].max()))
-    sbx = Sandbox(files)
+    sbx = LocalSandbox(files) if executor == "local" else Sandbox(files)
     state = {"gate": None, "claim": None}
 
     def run_python(code: str) -> dict:
@@ -195,12 +232,12 @@ def analyse(client, pid: str, points: pd.DataFrame, cr: pd.DataFrame, org, avoid
             " Did it reduce crashes?")
     try:
         run = run_agent(client, model, INSTRUCTIONS.format(outcome=outcome, first=first, last=last,
-                                                           gate=GATE if gated else ""),
+                                                           gate=GATE if gated else "", data=getattr(sbx, "data", "/data")),
                         task, tools, exp["agentic"]["max_turns"], exp["agentic"]["budget_usd"], effort="medium",
                         tag=f"{tag} {'gated' if gated else 'ungated'} {pid}", escalate_after=4)
     finally:
         sbx.close()
-    return {"program": pid, "gated": gated, "claim": state["claim"], "gate": state["gate"], "stopped": run.stopped,
+    return {"program": pid, "gated": gated, "executor": executor, "claim": state["claim"], "gate": state["gate"], "stopped": run.stopped,
             "turns": run.turns, "code_runs": sbx.runs, "usd": round(run.usd, 5), "refusals": run.refusals,
             "steps": [{"tool": s.tool, "arguments": s.arguments if s.tool != "run_python" else
                        {"code": s.arguments.get("code", "")[:4000]},

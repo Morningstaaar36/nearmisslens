@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import os
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -47,9 +48,17 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 fetch('/citywide').then(r=>r.json()).then(d=>{
  if(!d.rows)return;const s=d.summary;
  const usd=s.harm_usd_per_year?` Their injury crashes cost about <b>$${(s.harm_usd_per_year/1e6).toFixed(0)} million a year</b> in the U.S. DOT's official values.`:'';
- document.getElementById('top').innerHTML=`<p><b>${s.plan_gap} of ${s.intersections}</b> NYC priority intersections had ≥10 injury crashes in 5 years and no recorded safety treatment nearby in that period (${(s.injury_crashes_distinct??s.injury_crashes_total).toLocaleString()} injury crashes, ${s.killed_distinct??s.killed_total} deaths at all ${s.intersections}).${usd}</p>`;
+ document.getElementById('top').innerHTML=`<p><b>${s.plan_gap} of ${s.intersections}</b> ${esc(d.city_name)} priority intersections had ≥10 injury crashes in 5 years and no recorded safety treatment nearby in that period (${(s.injury_crashes_distinct??s.injury_crashes_total).toLocaleString()} injury crashes, ${s.killed_distinct??s.killed_total} deaths at all ${s.intersections}).${usd}</p>`;
  for(const r of d.rows){const c=L.circleMarker([r.lat,r.lon],{radius:4+Math.sqrt(r.injury_crashes||0)/2,color:r.plan_gap?'#ef5350':'#3ecf8e',weight:1,fillOpacity:.6}).addTo(map);
   c.bindTooltip(`${esc(r.name)}: ${r.injury_crashes} injury crashes`);c.on('click',()=>run({lat:r.lat,lon:r.lon,name:r.name}));}});
+fetch('/evidence').then(r=>r.json()).then(e=>{
+ if(!e.programs||!e.programs.length)return;
+ const pct=v=>(v>0?'+':'')+v+'%';
+ const rows=e.programs.map(p=>`<tr><td>${p.passed?'<span class="nogap">✓ works</span>':'<span class="legend">✗ not shown</span>'}</td><td><b>${esc(p.program)}</b><div class="legend">${esc(p.city_name)} · ${p.sites??'?'} sites · vs ${esc(p.comparison)}</div></td><td>${p.effect_pct!=null?pct(p.effect_pct):'n/a'}${p.ci_pct?`<div class="legend">${pct(p.ci_pct[0])} to ${pct(p.ci_pct[1])}</div>`:''}</td><td class="legend">${p.passed?'placebo date before the install: '+pct(p.placebo_pct)+', no change':esc(p.reason||'')}</td></tr>`).join('');
+ const f=e.fake_programs?`<p class="legend">The gate was also tested on ${e.fake_programs.gate.programs} fake programs (random sites and dates, nothing installed): it claimed an effect for ${(100*e.fake_programs.gate.rate).toFixed(1)}% of them, against ${(100*e.fake_programs.naive.rate).toFixed(1)}% for a simple before/after.</p>`:'';
+ const div=document.createElement('div');div.className='card';
+ div.innerHTML=`<b>What has worked here</b> <span class="legend">each program tested on the city's own crash records; a fix only counts if a fake earlier date shows no change</span><table style="margin-top:6px">${rows}</table>${f}`;
+ document.getElementById('top').after(div);});
 document.getElementById('go').onclick=()=>run({address:document.getElementById('q').value});
 const qs=new URLSearchParams(location.search);
 if(qs.get('q')){document.getElementById('q').value=qs.get('q');run(qs.get('lat')?{address:qs.get('q'),lat:+qs.get('lat'),lon:+qs.get('lon')}:{address:qs.get('q')});}
@@ -64,6 +73,14 @@ async function run(q){
  const imgs=[f.aerial_photo?`<figure><img src="/media?p=${encodeURIComponent(f.aerial_photo)}"><figcaption class="legend">City aerial photo</figcaption></figure>`:'',
   f.street_photo?`<figure><img src="/media?p=${encodeURIComponent(f.street_photo.image)}"><figcaption class="legend">Street level, ${esc(f.street_photo.captured)} (<a href="${f.street_photo.url}" target="_blank">Mapillary</a>, CC BY-SA)</figcaption></figure>`:''].join('');
  const ill=f.illustration?`<div class="card"><b>Proposed fix, drawn by Muse Image on the city photo</b> (${esc(f.illustration.countermeasure)}; SAM 3.1 check ${f.illustration.check_passed?'passed':'failed'})<img style="width:100%;border-radius:8px;margin-top:8px" src="/media?p=${encodeURIComponent(f.illustration.image)}"></div>`:'';
+ const nums=f.brief&&f.brief.brief?(f.brief.brief.match(/\d[\d,]*(\.\d+)?/g)||[]).length:0;
+ const local=(fx.options||[]).filter(o=>o.local_evidence).length;
+ const receipts=`<div class="card"><b>Receipts</b> <span class="legend">which check verified what</span><ul class="legend" style="margin:6px 0 0 18px;padding:0">
+ ${f.brief&&f.brief.brief?`<li>${nums} numbers in the brief, each found in the official record by the checker${f.brief.attempts>1?` (${f.brief.attempts-1} draft(s) rejected and fixed)`:''}</li>`:''}
+ <li>${(fx.options||[]).slice(0,8).length} fixes, each citing a CMF Clearinghouse record; dollar values from USDOT's official crash costs</li>
+ ${local?`<li>${local} fix(es) with this city's own before/after result, shown only because it passed the placebo check</li>`:''}
+ ${f.illustration?`<li>the drawing ${f.illustration.check_passed?'passed':'failed'} the SAM 3.1 check (the fix was actually drawn; real cars untouched)</li>`:''}
+ <li>sources: ${esc(cr.source||'no crash data')} · ${esc(pl.source||'no plan data')}</li></ul></div>`;
  const memo=f.brief&&f.brief.brief?`<div class="card memo"><b>Safety Brief</b> <span class="legend">every number checked against the record</span>${DOMPurify.sanitize(marked.parse(f.brief.brief))}</div>`:'';
  out.innerHTML=`<div class="card"><h2 style="margin:0 0 4px">${esc(f.junction)}</h2><div class="kpi">
  <div><b>${cr.crashes??'n/a'}</b>crashes, 5 yr</div><div><b>${cr.injury_crashes??'n/a'}</b>injury crashes</div>
@@ -71,7 +88,7 @@ async function run(q){
  <p>${pl.designated?'On the city\'s priority network.':'Not on the city\'s priority lists.'} ${d.plan_gap?'<span class="gap">Plan gap: no recorded safety treatment in the period.</span>':(d.plan_gap===false?'<span class="nogap">Recorded treatment in the period.</span>':'')}</p>
  <p class="legend">${esc(cr.source||'')} · ${esc(pl.source||'')} · ${((Date.now()-t0)/1000).toFixed(0)} s</p></div>
  <div class="imgs">${imgs}</div>${ill}
- <div class="card"><b>Ranked fixes</b> <span class="legend">${esc(fx.method||'')}</span><table><tr><th>FHWA Proven Safety Countermeasure</th><th>CMF Clearinghouse</th><th>Targets</th><th>Expected crashes avoided</th><th>Harm avoided (USDOT $)</th></tr>${rows}</table>${(fx.in_place||[]).map(x=>`<p class="legend">Already in place (city records): ${esc(x.countermeasure)}${x.year?' since '+x.year:''}; not proposed again.</p>`).join('')}</div>${memo}
+ <div class="card"><b>Ranked fixes</b> <span class="legend">${esc(fx.method||'')}</span><table><tr><th>FHWA Proven Safety Countermeasure</th><th>CMF Clearinghouse</th><th>Targets</th><th>Expected crashes avoided</th><th>Harm avoided (USDOT $)</th></tr>${rows}</table>${(fx.in_place||[]).map(x=>`<p class="legend">Already in place (city records): ${esc(x.countermeasure)}${x.year?' since '+x.year:''}; not proposed again.</p>`).join('')}</div>${memo}${receipts}
  <div class="card"><b>Ask for the fix</b> <span class="legend">a letter to the people who can request it, checked against the record; you review and send it</span><div style="margin-top:8px"><button id="ltr">Draft a letter</button></div><div id="ltrout"></div></div>`;
  document.getElementById('ltr').onclick=async()=>{const o=document.getElementById('ltrout');o.innerHTML='<p class="legend">Finding the council district and community board, drafting…</p>';
   const lr=await (await fetch('/letter',{method:'POST',body:JSON.stringify(q)})).json();
@@ -80,6 +97,27 @@ async function run(q){
   <p class="legend">${lr.rejected_drafts?lr.rejected_drafts+' draft(s) rejected by the checker and fixed · ':''}$${lr.usd} · <a href="#" id="cp">copy</a></p>`;
   document.getElementById('cp').onclick=e=>{e.preventDefault();navigator.clipboard.writeText(document.getElementById('ltrtxt').value);};};}
 </script></body></html>"""
+
+
+def evidence() -> dict:
+    """What the causal gate found for every registered program (validation/results/bench/study_*.json), and how the
+    gate fared on fake programs (T12)."""
+    from . import opendata, treatments
+    programs = []
+    for res in treatments.results():
+        for key, g in res.get("gates", {}).items():
+            m = (res["runs"].get(g["primary"]) or {}).get(g["outcome"]) or {}
+            pl = (res["runs"].get(g["placebos"][-1]) or {}).get(g["outcome"]) if g.get("placebos") else None
+            programs.append({"city": res["city"], "city_name": (opendata.city(res["city"]) or {}).get("name", res["city"]),
+                             "study": res["id"], "program": g["treatment"], "countermeasure": g.get("countermeasure"),
+                             "passed": g["passed"], "reason": g["reason"], "outcome": g["outcome"],
+                             "effect_pct": m.get("change_pct"), "sites": m.get("sites"),
+                             "ci_pct": [round(100 * (v - 1), 1) for v in m["ci95"]] if m.get("ci95") else None,
+                             "placebo_pct": pl and pl.get("change_pct"),
+                             "comparison": g["primary"][len(key) + 1:].replace("_", " ")})
+    t12 = RESULTS_DIR / "bench" / "experiment_T12.json"
+    fake = json.loads(t12.read_text())["summary"] if t12.exists() else None
+    return {"programs": programs, "fake_programs": fake}
 
 
 def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False) -> int:
@@ -98,8 +136,25 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
     s_, w_, n_, e_ = opendata.city(screens[0][0])["bbox"] if screens else opendata.load_cities()[0]["bbox"]
     page = (PAGE.replace("__CITIES__", ", ".join(c["name"] for c in opendata.load_cities()))
             .replace("__EXAMPLE__", example).replace("__VIEW__", f"[{(s_ + n_) / 2:.4f},{(w_ + e_) / 2:.4f}]"))
-    screen_json = json.dumps({**screens[0][1], "city": screens[0][0]}).encode() if screens else b"{}"
+    screen_json = json.dumps({**screens[0][1], "city": screens[0][0],
+                              "city_name": opendata.city(screens[0][0])["name"]}).encode() if screens else b"{}"
+    evidence_json = json.dumps(evidence()).encode()
     done: dict[str, bytes] = {}  # briefs already built in this session, by request
+    # public mode (the hosted demo): new model calls are capped per day and per address; nothing new is drawn
+    public = os.environ.get("NML_PUBLIC") == "1"
+    illustrate = illustrate and not public
+    calls: dict[str, list[float]] = {}
+    daily_cap, hourly_cap = int(os.environ.get("NML_PUBLIC_DAILY", "400")), int(os.environ.get("NML_PUBLIC_HOURLY", "30"))
+
+    def allow(addr: str, forwarded: str | None) -> bool:
+        who = (forwarded or addr).split(",")[0].strip()
+        now = time.time()
+        day = [t for t in calls.get("*", []) if now - t < 86400]
+        mine = [t for t in calls.get(who, []) if now - t < 3600]
+        if len(day) >= daily_cap or len(mine) >= hourly_cap:
+            return False
+        calls["*"], calls[who] = day + [now], mine + [now]
+        return True
 
     class H(BaseHTTPRequestHandler):
         def _send(self, code, body: bytes, ctype: str):
@@ -113,6 +168,8 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             u = urlparse(self.path)
             if u.path == "/citywide":
                 return self._send(200, screen_json, "application/json")
+            if u.path == "/evidence":
+                return self._send(200, evidence_json, "application/json")
             if u.path == "/media":
                 p = Path(unquote(parse_qs(u.query).get("p", [""])[0])).resolve()
                 if p.exists() and any(str(p).startswith(str(r)) for r in roots):
@@ -123,6 +180,10 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
         def do_POST(self):
             raw = self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}"
             q = json.loads(raw)
+            if public and not allow(self.client_address[0], self.headers.get("X-Forwarded-For")):
+                return self._send(200, json.dumps({"error": "the public demo's limit for new briefs is reached; "
+                                                            "try again later or run it yourself (nml app)"}).encode(),
+                                  "application/json")
             if urlparse(self.path).path == "/letter":  # a draft letter from the brief already built for q
                 try:
                     k = json.dumps(q, sort_keys=True)
@@ -154,5 +215,5 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             pass
 
     print(f"Junction Safety Copilot: http://127.0.0.1:{port}  (memos on {'Muse Spark Open, Baseten' if open_weights else 'Meta API'}; Ctrl+C to stop)")
-    ThreadingHTTPServer(("127.0.0.1", port), H).serve_forever()
+    ThreadingHTTPServer((os.environ.get("NML_HOST", "127.0.0.1"), port), H).serve_forever()
     return 0
