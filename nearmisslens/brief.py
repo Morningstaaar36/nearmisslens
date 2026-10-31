@@ -29,14 +29,56 @@ OVERPASS_SERVERS = (context.OVERPASS, "https://overpass.private.coffee/api/inter
                     "https://maps.mail.ru/osm/tools/overpass/api/interpreter")
 
 
+GEOCODES = Path(__file__).resolve().parent / "data" / "geocodes.json"
+
+
+def _key(address: str) -> str:
+    streets = address.split(",")[0].lower().replace(" and ", " & ")
+    return " & ".join(sorted(" ".join(x.split()) for x in streets.split("&")))
+
+
+def gazetteer() -> dict:
+    return json.loads(GEOCODES.read_text()) if GEOCODES.exists() else {}
+
+
+def save_gazetteer(extra: list[dict] | None = None) -> int:
+    """The offline geocode table: every screened priority intersection and the briefs already built, so known
+    places need no geocoding service (and replay works for them)."""
+    from . import citywide
+    table = gazetteer()
+    for city, res in citywide.screened():
+        for r in res.get("rows", []):
+            table[_key(r["name"])] = {"lat": r["lat"], "lon": r["lon"], "name": r["name"], "city": city}
+    for p in SETTINGS.runs_dir.glob("briefs/*/brief.json"):
+        f = json.loads(p.read_text())
+        d = f.get("dossier") or {}
+        if d.get("lat") is not None:
+            table.setdefault(_key(f["junction"]), {"lat": d["lat"], "lon": d["lon"], "name": f["junction"].split(",")[0],
+                                                   "city": d.get("city")})
+    for e in extra or []:
+        table[_key(e["name"])] = e
+    GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
+    return len(table)
+
+
 def geocode(address: str) -> tuple[float, float, str]:
-    """An address, or an intersection written 'Street A & Street B, City': Nominatim finds the area, and for an
-    intersection OpenStreetMap gives the node shared by the two streets nearest to it."""
+    """An address, or an intersection written 'Street A & Street B, City': the offline table first, then Nominatim
+    finds the area, and for an intersection OpenStreetMap gives the node shared by the two streets nearest to it."""
+    if not address or not address.strip():
+        raise ValueError("give an address or an intersection, e.g. 'Street A & Street B, City'")
+    known = gazetteer().get(_key(address))
+    if known:
+        return known["lat"], known["lon"], f"{known['name']}, {address.split(',', 1)[1].strip()}" \
+            if "," in address else known["name"]
+    if SETTINGS.replay:
+        raise ValueError(f"{address!r} is not in the offline set; run without replay to look it up")
+    from . import opendata
+    country = (json.loads(opendata.REGISTRY.read_text()).get("geocoder") or {}).get("countrycodes", "")
     streets = address.split(",")[0]
     rest = ",".join(address.split(",")[1:])
     first = streets.split("&")[0].strip() if "&" in streets else streets
     js, _ = context.fetch("https://nominatim.openstreetmap.org/search",
-                          {"q": f"{first},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": "us"})
+                          {"q": f"{first},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": country})
     if not js:
         raise ValueError(f"address not found: {address}")
     lat, lon, name = float(js[0]["lat"]), float(js[0]["lon"]), js[0].get("display_name", address)
@@ -44,7 +86,7 @@ def geocode(address: str) -> tuple[float, float, str]:
         return lat, lon, name
     a, b = (x.strip() for x in streets.split("&")[:2])
     jb, _ = context.fetch("https://nominatim.openstreetmap.org/search",
-                          {"q": f"{b},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": "us"})
+                          {"q": f"{b},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": country})
     if jb:  # long streets: search around the midpoint of the two streets' anchors, wide enough to reach both
         lat, lon = (lat + float(jb[0]["lat"])) / 2, (lon + float(jb[0]["lon"])) / 2
     q = (f'[out:json][timeout:90];way(around:12000,{lat},{lon})[highway][name~"^{a}$",i]->.a;'
@@ -62,6 +104,11 @@ def geocode(address: str) -> tuple[float, float, str]:
     if not nodes:
         raise ValueError(f"no intersection of {a} and {b} found near {name}")
     lat2, lon2 = min(nodes, key=lambda n: (n[0] - lat) ** 2 + (n[1] - lon) ** 2)
+    from . import context as _c
+    found = {"lat": lat2, "lon": lon2, "name": f"{a} & {b}", "city": _c.city_of(lat2, lon2)}
+    table = gazetteer()  # remembered, so the next lookup (and replay) needs no service
+    table[_key(address)] = found
+    GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
     return lat2, lon2, f"{a} & {b}, {rest.strip()}"
 
 

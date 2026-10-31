@@ -81,7 +81,11 @@ def osm(lat: float, lon: float) -> dict:
     roads = {}
     for w in ways:
         name = w.get("name") or w.get("ref") or "unnamed"
-        r = roads.setdefault(name, {"highway": w.get("highway"), "lanes": set(), "maxspeed": set()})
+        r = roads.setdefault(name, {"highway": w.get("highway"), "lanes": set(), "maxspeed": set(), "ref": set(),
+                                    "operator": set()})
+        for k in ("ref", "operator"):  # route numbers and operators say who may own the road
+            if w.get(k):
+                r[k].add(w[k])
         if w.get("lanes"):
             r["lanes"].add(w["lanes"])
         if w.get("maxspeed"):
@@ -93,12 +97,13 @@ def osm(lat: float, lon: float) -> dict:
             "stop_signs": sum(n.get("highway") in ("stop", "give_way") for n in nodes),
             "schools_400m": sum(n.get("amenity") in ("school", "kindergarten") for n in nodes),
             "bus_stops_200m": sum(n.get("highway") == "bus_stop" for n in nodes),
-            "roads": [{"name": k, "highway": v["highway"], "lanes": sorted(v["lanes"]), "maxspeed": sorted(v["maxspeed"])}
-                      for k, v in sorted(roads.items())]}
+            "roads": [{"name": k, "highway": v["highway"], "lanes": sorted(v["lanes"]), "maxspeed": sorted(v["maxspeed"]),
+                       "ref": sorted(v["ref"]), "operator": sorted(v["operator"])} for k, v in sorted(roads.items())]}
 
 
 def _since(years: int = YEARS) -> dt.date:
-    return dt.date.today().replace(year=dt.date.today().year - years)
+    from .config import since
+    return since(years)
 
 
 def registry_crashes(lat: float, lon: float) -> dict | None:

@@ -53,3 +53,23 @@ def resolve(p) -> Path:
         if s == token or s.startswith(token + "/"):
             return Path(base()) / s[len(token) + 1:]
     return Path(s).expanduser()
+
+
+ASOF_FILE = ROOT / "validation" / "ASOF"
+
+
+def asof():
+    """The date the record is read as of: NML_ASOF, else (in replay) the pinned date in validation/ASOF, else today.
+    Every query's window ends here, so a cached answer stays valid on any later day."""
+    import datetime as dt
+    text = os.environ.get("NML_ASOF") or (ASOF_FILE.read_text().strip() if SETTINGS.replay and ASOF_FILE.exists() else "")
+    return dt.date.fromisoformat(text) if text else dt.date.today()
+
+
+def since(years: int):
+    """The first day of a window of `years` years ending at the as-of date."""
+    a = asof()
+    try:
+        return a.replace(year=a.year - years)
+    except ValueError:  # 29 February
+        return a.replace(year=a.year - years, day=28)

@@ -61,8 +61,8 @@ def adapters_for(lat: float, lon: float, kind: str) -> list[dict]:
 
 
 def _since(years: int) -> dt.date:
-    t = dt.date.today()
-    return t.replace(year=t.year - years)
+    from .config import since
+    return since(years)
 
 
 def _date(v) -> dt.date | None:
@@ -98,7 +98,9 @@ def rows_near(a: dict, lat: float, lon: float, radius_m: float, since: dt.date |
     if a["platform"] == "socrata":
         where = f"within_circle({a['geo_field']},{lat},{lon},{radius_m})"
         if since and a.get("date_field"):
-            where += f" AND {a['date_field']} >= '{since.isoformat()}'"
+            from .config import asof
+            where += (f" AND {a['date_field']} >= '{since.isoformat()}'"
+                      f" AND {a['date_field']} < '{(asof() + dt.timedelta(days=1)).isoformat()}'")
         js, _ = context.fetch(a["endpoint"], {"$where": where, "$limit": 5000})
         return js if isinstance(js, list) else []
     rows, offset = [], 0
@@ -114,7 +116,9 @@ def rows_near(a: dict, lat: float, lon: float, radius_m: float, since: dt.date |
             break
         offset += len(feats)
     if since and a.get("date_field"):
-        rows = [r for r in rows if (_date(r.get(a["date_field"])) or dt.date.min) >= since]
+        from .config import asof
+        end = asof()
+        rows = [r for r in rows if since <= (_date(r.get(a["date_field"])) or dt.date.min) <= end]
     return rows
 
 
@@ -280,7 +284,9 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             elif v and v.lower() not in ("unspecified", "does not apply", "unknown", "n", "no", "false", "none", "0"):
                 factors[v] += 1
     n = len(rows)
+    from .config import asof
     return {"source": a["source"], "adapter": a["id"], "radius_m": radius_m, "since": since.isoformat(),
+            "asof": asof().isoformat(),
             "crashes": n, "injury_crashes": injury_crashes, "by_year": dict(sorted(years_c.items())),
             **{k: int(v) for k, v in sums.items() if v}, "crash_groups": dict(groups),
             "crash_type_recorded": bool(a.get("crash_type_fields")),

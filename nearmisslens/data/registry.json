@@ -39,7 +39,8 @@
     ]
    },
    "factor_fields": [
-    "contributing_factor_vehicle_1"
+    "contributing_factor_vehicle_1",
+    "contributing_factor_vehicle_2"
    ],
    "provenance": {
     "found_by": "seed (written by hand)"
@@ -52,6 +53,20 @@
     "traffic control disregarded": "an entry on yellow or red",
     "turning improperly": "a turning movement",
     "failure to yield right-of-way": "a turning movement"
+   },
+   "time_field": "crash_time",
+   "street_fields": [
+    "on_street_name",
+    "cross_street_name"
+   ],
+   "vehicle_fields": [
+    "vehicle_type_code1",
+    "vehicle_type_code2"
+   ],
+   "vehicle_groups": {
+    "truck or bus": "truck|tractor|dump|box|tank|semi|flat ?bed|garbage|refuse|bus|van ?camper|tow",
+    "two-wheeler": "bike|bicycle|moped|scooter|motorcycle|minibike|e-bike|e-sco",
+    "taxi or for-hire car": "taxi|livery|for.hire|limo"
    }
   },
   {
@@ -164,7 +179,8 @@
     "disregarding traffic signals": "an entry on yellow or red",
     "improper turning/no signal": "a turning movement",
     "failing to yield right-of-way": "a turning movement"
-   }
+   },
+   "time_field": "crash_hour"
   },
   {
    "id": "nyc-sip-intersections",
@@ -784,6 +800,42 @@
     },
     "attempts": 1
    }
+  },
+  {
+   "id": "nys-roadway-inventory",
+   "kind": "jurisdiction",
+   "place": "New York State",
+   "bbox": [
+    40.49,
+    -79.77,
+    45.02,
+    -71.85
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://gisportalny.dot.ny.gov/hostingny/rest/services/Roadways/RoadwayData/FeatureServer/0",
+   "name_field": "Roadway_Name",
+   "route_fields": [
+    "Route_Signing",
+    "Route_Number"
+   ],
+   "owner_field": "Owning_Jurisdiction",
+   "maint_field": "Maintenance_Jurisdiction",
+   "region_field": "DOT_Region_Number",
+   "radius_m": 30,
+   "covers": "state routes and the city's designated routes; ordinary city streets are not listed",
+   "owners": {
+    "01-NYSDOT": "the New York State Department of Transportation (NYSDOT), Region {region}",
+    "04-City or village": "city",
+    "02-County": "the county highway department",
+    "31-NYS Thruway": "the New York State Thruway Authority",
+    "32-Other Toll Authority": "the toll authority that runs this crossing",
+    "11-State Parks": "the New York State Office of Parks",
+    "12-Local Parks": "the city's parks department"
+   },
+   "source": "NYSDOT Roadway Inventory (RoadwayData FeatureServer layer 0)",
+   "provenance": {
+    "found_by": "seed (written by hand); owner codes read from the layer's distinct values"
+   }
   }
  ],
  "cities": [
@@ -853,5 +905,9 @@
    ],
    "agency": "the San Francisco Municipal Transportation Agency (SFMTA)"
   }
- ]
+ ],
+ "geocoder": {
+  "countrycodes": "us",
+  "note": "Nominatim country filter; a city's bbox narrows the search when the address names a registry city"
+ }
 }

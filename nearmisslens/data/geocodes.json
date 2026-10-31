@@ -1,0 +1,1832 @@
+{
+"1 avenue & east 116 street": {
+"lat": 40.7960054947155,
+"lon": -73.9354108488835,
+"name": "1 Avenue & East 116 Street",
+"city": "nyc"
+},
+"1 avenue & east 14 street": {
+"lat": 40.7314112434877,
+"lon": -73.9823862869688,
+"name": "East 14 Street & 1 Avenue",
+"city": "nyc"
+},
+"1 avenue & east 30 street": {
+"lat": 40.7412746797791,
+"lon": -73.9753426362324,
+"name": "1 Avenue & East 30 Street",
+"city": "nyc"
+},
+"1 avenue & east 62 street": {
+"lat": 40.7614848539671,
+"lon": -73.9606002764345,
+"name": "East 62 Street & 1 Avenue",
+"city": "nyc"
+},
+"10 avenue & west 204 street": {
+"lat": 40.8626058967197,
+"lon": -73.920276320115,
+"name": "West 204 Street & 10 Avenue",
+"city": "nyc"
+},
+"10 avenue & west 207 street": {
+"lat": 40.8644629120571,
+"lon": -73.9189422564482,
+"name": "West 207 Street & 10 Avenue",
+"city": "nyc"
+},
+"11 avenue & west 34 street": {
+"lat": 40.7557812496561,
+"lon": -74.0019850754596,
+"name": "11 Avenue & West 34 Street",
+"city": "nyc"
+},
+"117 street & myrtle avenue": {
+"lat": 40.7001079990695,
+"lon": -73.832668852043,
+"name": "Myrtle Avenue & 117 Street",
+"city": "nyc"
+},
+"121 street & hawtree creek road": {
+"lat": 40.6757951620008,
+"lon": -73.8170550033729,
+"name": "121 Street & Hawtree Creek Road",
+"city": "nyc"
+},
+"14th street northwest & u street northwest": {
+"lat": 38.917008,
+"lon": -77.031859,
+"name": "14th Street Northwest & U Street Northwest",
+"city": "dc"
+},
+"150 street & cross island parkway": {
+"lat": 40.7874930877491,
+"lon": -73.8133134728172,
+"name": "Cross Island Parkway & 150 Street",
+"city": "nyc"
+},
+"160 street & liberty avenue": {
+"lat": 40.7005130307623,
+"lon": -73.7967702321808,
+"name": "160 Street & Liberty Avenue",
+"city": "nyc"
+},
+"162 street & sanford avenue": {
+"lat": 40.7602704862939,
+"lon": -73.8039997129493,
+"name": "162 Street & Sanford Avenue",
+"city": "nyc"
+},
+"163 street & 89 avenue": {
+"lat": 40.7070162874604,
+"lon": -73.7982582940916,
+"name": "89 Avenue & 163 Street",
+"city": "nyc"
+},
+"164 street & jamaica avenue": {
+"lat": 40.7051483638308,
+"lon": -73.7956899324303,
+"name": "164 Street & Jamaica Avenue",
+"city": "nyc"
+},
+"168 street & 89 avenue": {
+"lat": 40.7086233454782,
+"lon": -73.7939479653059,
+"name": "89 Avenue & 168 Street",
+"city": "nyc"
+},
+"168 street & 93 avenue": {
+"lat": 40.7048566714357,
+"lon": -73.7916540054336,
+"name": "168 Street & 93 Avenue",
+"city": "nyc"
+},
+"170 street & jamaica avenue": {
+"lat": 40.707170825663,
+"lon": -73.7897497246031,
+"name": "170 Street & Jamaica Avenue",
+"city": "nyc"
+},
+"173 street & jamaica avenue": {
+"lat": 40.7078931942363,
+"lon": -73.7867215700796,
+"name": "173 Street & Jamaica Avenue",
+"city": "nyc"
+},
+"175 street & union turnpike": {
+"lat": 40.7249839263355,
+"lon": -73.7942126002605,
+"name": "Union Turnpike & 175 Street",
+"city": "nyc"
+},
+"197 street & hillside avenue": {
+"lat": 40.7183560326678,
+"lon": -73.7653979458666,
+"name": "197 Street & Hillside Avenue",
+"city": "nyc"
+},
+"2 avenue & east 125 street": {
+"lat": 40.8027521805067,
+"lon": -73.9335764484508,
+"name": "2 Avenue & East 125 Street",
+"city": "nyc"
+},
+"2 avenue & east 14 street": {
+"lat": 40.7323496722837,
+"lon": -73.9849455056661,
+"name": "2 Avenue & East 14 Street",
+"city": "nyc"
+},
+"2 avenue & east 57 street": {
+"lat": 40.7593078371802,
+"lon": -73.9652930752098,
+"name": "2 Avenue & East 57 Street",
+"city": "nyc"
+},
+"2 avenue & east 58 street": {
+"lat": 40.7599821388835,
+"lon": -73.9648007954378,
+"name": "2 Avenue & East 58 Street",
+"city": "nyc"
+},
+"2 avenue & queens midtown tunnel approach": {
+"lat": 40.7460777963724,
+"lon": -73.9749363317277,
+"name": "2 Avenue & Queens Midtown Tunnel Approach",
+"city": "nyc"
+},
+"21 street & 31 avenue": {
+"lat": 40.7673265523439,
+"lon": -73.9298564796982,
+"name": "31 Avenue & 21 Street",
+"city": "nyc"
+},
+"21 street & 37 avenue": {
+"lat": 40.758706604992,
+"lon": -73.9379170565222,
+"name": "37 Avenue & 21 Street",
+"city": "nyc"
+},
+"21 street & ed koch br upper roadway en ramp": {
+"lat": 40.7525301229961,
+"lon": -73.9438353678699,
+"name": "21 Street & Ed Koch Br Upper Roadway En Ramp",
+"city": "nyc"
+},
+"223 street & northern boulevard": {
+"lat": 40.7619947366756,
+"lon": -73.7584807501511,
+"name": "223 Street & Northern Boulevard",
+"city": "nyc"
+},
+"228 street & merrick boulevard": {
+"lat": 40.67669439474,
+"lon": -73.7422027448197,
+"name": "Merrick Boulevard & 228 Street",
+"city": "nyc"
+},
+"23 street & jackson avenue": {
+"lat": 40.7458181968944,
+"lon": -73.9456504266111,
+"name": "23 Street & Jackson Avenue",
+"city": "nyc"
+},
+"243 street & francis lewis boulevard": {
+"lat": 40.6652806192992,
+"lon": -73.7356118457787,
+"name": "Francis Lewis Boulevard & 243 Street",
+"city": "nyc"
+},
+"27 street & queens plaza": {
+"lat": 40.7503820107479,
+"lon": -73.9396334880883,
+"name": "Queens Plaza & 27 Street",
+"city": "nyc"
+},
+"3 avenue & 60 street": {
+"lat": 40.6420572375485,
+"lon": -74.0204219981359,
+"name": "3 Avenue & 60 Street",
+"city": "nyc"
+},
+"3 avenue & atlantic avenue": {
+"lat": 40.6853236272441,
+"lon": -73.9807014269497,
+"name": "Atlantic Avenue & 3 Avenue",
+"city": "nyc"
+},
+"3 avenue & east 110 street": {
+"lat": 40.7941314519645,
+"lon": -73.942810073432,
+"name": "3 Avenue & East 110 Street",
+"city": "nyc"
+},
+"3 avenue & east 23 street": {
+"lat": 40.7388318123146,
+"lon": -73.9831465491004,
+"name": "3 Avenue & East 23 Street",
+"city": "nyc"
+},
+"3 avenue & east 32 street": {
+"lat": 40.7444435517784,
+"lon": -73.979058495624,
+"name": "3 Avenue & East 32 Street",
+"city": "nyc"
+},
+"3 avenue & east 72 street": {
+"lat": 40.7697491867859,
+"lon": -73.9606018069175,
+"name": "3 Avenue & East 72 Street",
+"city": "nyc"
+},
+"3 avenue & morris avenue": {
+"lat": 40.8109498090945,
+"lon": -73.9271429986972,
+"name": "3 Avenue & Morris Avenue",
+"city": "nyc"
+},
+"30 avenue & 38 street": {
+"lat": 40.7642677710161,
+"lon": -73.9157911744227,
+"name": "30 Avenue & 38 Street",
+"city": "nyc"
+},
+"33 street & broadway": {
+"lat": 40.7612260860767,
+"lon": -73.9237884861526,
+"name": "Broadway & 33 Street",
+"city": "nyc"
+},
+"37 avenue & 81 street": {
+"lat": 40.7496511529992,
+"lon": -73.8852409883099,
+"name": "37 Avenue & 81 Street",
+"city": "nyc"
+},
+"37 avenue & 84 street": {
+"lat": 40.7499402833933,
+"lon": -73.8824505852871,
+"name": "37 Avenue & 84 Street",
+"city": "nyc"
+},
+"4 avenue & 85 street": {
+"lat": 40.6235717738347,
+"lon": -74.0280356548621,
+"name": "85 Street & 4 Avenue",
+"city": "nyc"
+},
+"46 avenue & utopia parkway": {
+"lat": 40.7530848125428,
+"lon": -73.7924309920004,
+"name": "Utopia Parkway & 46 Avenue",
+"city": "nyc"
+},
+"47 avenue & 47 street": {
+"lat": 40.7410471575243,
+"lon": -73.9181720533893,
+"name": "47 Avenue & 47 Street",
+"city": "nyc"
+},
+"47 avenue & van dam street": {
+"lat": 40.7428741789037,
+"lon": -73.9339367571356,
+"name": "47 Avenue & Van Dam Street",
+"city": "nyc"
+},
+"48 avenue & bell boulevard": {
+"lat": 40.7556576221995,
+"lon": -73.7671645165052,
+"name": "Bell Boulevard & 48 Avenue",
+"city": "nyc"
+},
+"5 avenue & 56 street": {
+"lat": 40.6417452469536,
+"lon": -74.0138139005646,
+"name": "56 Street & 5 Avenue",
+"city": "nyc"
+},
+"5 avenue & 9 street": {
+"lat": 40.669172665529,
+"lon": -73.9863042919239,
+"name": "9 Street & 5 Avenue",
+"city": "nyc"
+},
+"5 avenue & west 129 street": {
+"lat": 40.8089580957692,
+"lon": -73.9404034492804,
+"name": "West 129 Street & 5 Avenue",
+"city": "nyc"
+},
+"51 street & broadway": {
+"lat": 40.7542798139913,
+"lon": -73.9090125906669,
+"name": "Broadway & 51 Street",
+"city": "nyc"
+},
+"55 street & 7 avenue": {
+"lat": 40.6396446303588,
+"lon": -74.0088248188908,
+"name": "55 Street & 7 Avenue",
+"city": "nyc"
+},
+"57 avenue & 97 street": {
+"lat": 40.7371630953572,
+"lon": -73.8640473921154,
+"name": "97 Street & 57 Avenue",
+"city": "nyc"
+},
+"58 street & ft hamilton parkway": {
+"lat": 40.6340601209701,
+"lon": -74.004106516359,
+"name": "Ft Hamilton Parkway & 58 Street",
+"city": "nyc"
+},
+"59 avenue & 92 street": {
+"lat": 40.7341358594797,
+"lon": -73.8691747701604,
+"name": "92 Street & 59 Avenue",
+"city": "nyc"
+},
+"60 street & 8 avenue": {
+"lat": 40.6354929632736,
+"lon": -74.0095570842337,
+"name": "60 Street & 8 Avenue",
+"city": "nyc"
+},
+"63 drive & queens boulevard": {
+"lat": 40.7301164862937,
+"lon": -73.8623126326214,
+"name": "Queens Boulevard & 63 Drive",
+"city": "nyc"
+},
+"65 street & gowanus expressway eb en 65 st": {
+"lat": 40.6355214746843,
+"lon": -74.0166954638665,
+"name": "65 Street & Gowanus Expressway Eb En 65 St",
+"city": "nyc"
+},
+"65 street & new utrecht avenue": {
+"lat": 40.623680269239,
+"lon": -73.9977135899092,
+"name": "65 Street & New Utrecht Avenue",
+"city": "nyc"
+},
+"69 street & metropolitan avenue": {
+"lat": 40.7122077144948,
+"lon": -73.8863764977107,
+"name": "69 Street & Metropolitan Avenue",
+"city": "nyc"
+},
+"7 avenue & west 42 street": {
+"lat": 40.7560359025947,
+"lon": -73.9869487385455,
+"name": "7 Avenue & West 42 Street",
+"city": "nyc"
+},
+"75 street & roosevelt avenue": {
+"lat": 40.7469419389041,
+"lon": -73.8905012926299,
+"name": "75 Street & Roosevelt Avenue",
+"city": "nyc"
+},
+"8 avenue & west 34 street": {
+"lat": 40.7521900556092,
+"lon": -73.9934641775695,
+"name": "8 Avenue & West 34 Street",
+"city": "nyc"
+},
+"8 avenue & west 40 street": {
+"lat": 40.7559504054781,
+"lon": -73.9907263635924,
+"name": "8 Avenue & West 40 Street",
+"city": "nyc"
+},
+"8 avenue & west 49 street": {
+"lat": 40.761660122124,
+"lon": -73.9865613849157,
+"name": "8 Avenue & West 49 Street",
+"city": "nyc"
+},
+"80 street & atlantic avenue": {
+"lat": 40.6847533264485,
+"lon": -73.8607649589139,
+"name": "Atlantic Avenue & 80 Street",
+"city": "nyc"
+},
+"86 street & bay parkway": {
+"lat": 40.601950488727,
+"lon": -73.9938110930739,
+"name": "86 Street & Bay Parkway",
+"city": "nyc"
+},
+"86 street & stillwell avenue": {
+"lat": 40.5967438452849,
+"lon": -73.9852661422845,
+"name": "86 Street & Stillwell Avenue",
+"city": "nyc"
+},
+"9 avenue & west 47 street": {
+"lat": 40.761606315494,
+"lon": -73.990315176745,
+"name": "9 Avenue & West 47 Street",
+"city": "nyc"
+},
+"9 avenue & west 51 street": {
+"lat": 40.764112876583,
+"lon": -73.988495917739,
+"name": "9 Avenue & West 51 Street",
+"city": "nyc"
+},
+"90 street & northern boulevard": {
+"lat": 40.7563390099199,
+"lon": -73.8779303097397,
+"name": "90 Street & Northern Boulevard",
+"city": "nyc"
+},
+"adam clayton powell jr boulevard & west 135 street": {
+"lat": 40.8153063774452,
+"lon": -73.943699136201,
+"name": "Adam Clayton Powell Jr Boulevard & West 135 Street",
+"city": "nyc"
+},
+"allen street & east houston street": {
+"lat": 40.7229337194541,
+"lon": -73.988638627921,
+"name": "East Houston Street & Allen Street",
+"city": "nyc"
+},
+"allerton avenue & olinville avenue": {
+"lat": 40.865407983269,
+"lon": -73.8683689789427,
+"name": "Allerton Avenue & Olinville Avenue",
+"city": "nyc"
+},
+"amsterdam avenue & west 125 street": {
+"lat": 40.8133894332266,
+"lon": -73.9562588974543,
+"name": "West 125 Street & Amsterdam Avenue",
+"city": "nyc"
+},
+"amsterdam avenue & west 145 street": {
+"lat": 40.8252328592055,
+"lon": -73.9476050018585,
+"name": "West 145 Street & Amsterdam Avenue",
+"city": "nyc"
+},
+"amsterdam avenue & west 181 street": {
+"lat": 40.84811893808,
+"lon": -73.9308843013138,
+"name": "Amsterdam Avenue & West 181 Street",
+"city": "nyc"
+},
+"archer avenue & merrick boulevard": {
+"lat": 40.7044238610029,
+"lon": -73.7928484899777,
+"name": "Merrick Boulevard & Archer Avenue",
+"city": "nyc"
+},
+"archer avenue & sutphin boulevard": {
+"lat": 40.7005816873376,
+"lon": -73.8077420094613,
+"name": "Sutphin Boulevard & Archer Avenue",
+"city": "nyc"
+},
+"ascan avenue & manse street": {
+"lat": 40.7104130053089,
+"lon": -73.8455771114919,
+"name": "Ascan Avenue & Manse Street",
+"city": "nyc"
+},
+"ascan avenue & queens boulevard": {
+"lat": 40.7195841328717,
+"lon": -73.8397720926624,
+"name": "Queens Boulevard & Ascan Avenue",
+"city": "nyc"
+},
+"ashland place & dekalb avenue": {
+"lat": 40.6898389403668,
+"lon": -73.9786254596998,
+"name": "Dekalb Avenue & Ashland Place",
+"city": "nyc"
+},
+"ashland place & myrtle avenue": {
+"lat": 40.6934883229781,
+"lon": -73.9791671841899,
+"name": "Myrtle Avenue & Ashland Place",
+"city": "nyc"
+},
+"astoria boulevard & newtown avenue": {
+"lat": 40.7720214514569,
+"lon": -73.925351749641,
+"name": "Astoria Boulevard & Newtown Avenue",
+"city": "nyc"
+},
+"astoria boulevard north & hoyt avenue north": {
+"lat": 40.7703931110223,
+"lon": -73.9177021725707,
+"name": "Astoria Boulevard North & Hoyt Avenue North",
+"city": "nyc"
+},
+"atlantic avenue & bedford avenue": {
+"lat": 40.678721995365,
+"lon": -73.952986727097,
+"name": "Atlantic Avenue & Bedford Avenue",
+"city": "nyc"
+},
+"atlantic avenue & clinton street": {
+"lat": 40.6902394795511,
+"lon": -73.9943609281042,
+"name": "Atlantic Avenue & Clinton Street",
+"city": "nyc"
+},
+"atlantic avenue & court street": {
+"lat": 40.6896901233195,
+"lon": -73.9923636703446,
+"name": "Atlantic Avenue & Court Street",
+"city": "nyc"
+},
+"atlantic avenue & crescent street": {
+"lat": 40.6816844566352,
+"lon": -73.8715615041733,
+"name": "Atlantic Avenue & Crescent Street",
+"city": "nyc"
+},
+"atlantic avenue & eastern parkway": {
+"lat": 40.6761893326124,
+"lon": -73.9080881951826,
+"name": "Atlantic Avenue & Eastern Parkway",
+"city": "nyc"
+},
+"atlantic avenue & flatbush avenue": {
+"lat": 40.684024,
+"lon": -73.977368,
+"name": "Atlantic Avenue & Flatbush Avenue",
+"city": "nyc"
+},
+"atlantic avenue & hoyt street": {
+"lat": 40.6877731158013,
+"lon": -73.987000014801,
+"name": "Atlantic Avenue & Hoyt Street",
+"city": "nyc"
+},
+"atlantic avenue & logan street": {
+"lat": 40.6800144372114,
+"lon": -73.8774268615491,
+"name": "Atlantic Avenue & Logan Street",
+"city": "nyc"
+},
+"atlantic avenue & milford street": {
+"lat": 40.6797390535215,
+"lon": -73.8783885584955,
+"name": "Atlantic Avenue & Milford Street",
+"city": "nyc"
+},
+"atlantic avenue & nostrand avenue": {
+"lat": 40.6784566810114,
+"lon": -73.9496756746924,
+"name": "Atlantic Avenue & Nostrand Avenue",
+"city": "nyc"
+},
+"atlantic avenue & rockaway avenue": {
+"lat": 40.6763444450577,
+"lon": -73.9109260087847,
+"name": "Atlantic Avenue & Rockaway Avenue",
+"city": "nyc"
+},
+"atlantic avenue & thomas s boyland street": {
+"lat": 40.6764956725308,
+"lon": -73.9136960554112,
+"name": "Atlantic Avenue & Thomas S Boyland Street",
+"city": "nyc"
+},
+"atlantic avenue & utica avenue": {
+"lat": 40.6774130379324,
+"lon": -73.9303176277009,
+"name": "Atlantic Avenue & Utica Avenue",
+"city": "nyc"
+},
+"avenue c & coney island avenue": {
+"lat": 40.641382446125,
+"lon": -73.9693990307528,
+"name": "Coney Island Avenue & Avenue C",
+"city": "nyc"
+},
+"avenue h & coney island avenue": {
+"lat": 40.6295427069643,
+"lon": -73.9660819139354,
+"name": "Coney Island Avenue & Avenue H",
+"city": "nyc"
+},
+"avenue h & flatbush avenue": {
+"lat": 40.631708161977,
+"lon": -73.9464796183596,
+"name": "Flatbush Avenue & Avenue H",
+"city": "nyc"
+},
+"avenue i & flatbush avenue": {
+"lat": 40.629480051797,
+"lon": -73.944467840856,
+"name": "Flatbush Avenue & Avenue I",
+"city": "nyc"
+},
+"avenue j & ocean avenue": {
+"lat": 40.6257299714681,
+"lon": -73.9563932741483,
+"name": "Avenue J & Ocean Avenue",
+"city": "nyc"
+},
+"avenue m & ocean avenue": {
+"lat": 40.6185578038669,
+"lon": -73.9550369822424,
+"name": "Avenue M & Ocean Avenue",
+"city": "nyc"
+},
+"avenue of the americas & west 14 street": {
+"lat": 40.7373608885231,
+"lon": -73.9968399395198,
+"name": "Avenue Of The Americas & West 14 Street",
+"city": "nyc"
+},
+"avenue of the americas & west 23 street": {
+"lat": 40.7429100197963,
+"lon": -73.9928034095111,
+"name": "Avenue Of The Americas & West 23 Street",
+"city": "nyc"
+},
+"avenue of the americas & west 34 street": {
+"lat": 40.7497870285672,
+"lon": -73.987769059979,
+"name": "Avenue Of The Americas & West 34 Street",
+"city": "nyc"
+},
+"avenue p & kings highway": {
+"lat": 40.6109871845036,
+"lon": -73.9525655307703,
+"name": "Kings Highway & Avenue P",
+"city": "nyc"
+},
+"avenue u & flatbush avenue": {
+"lat": 40.609809079339,
+"lon": -73.9224975086074,
+"name": "Flatbush Avenue & Avenue U",
+"city": "nyc"
+},
+"avenue u & ocean parkway": {
+"lat": 40.5978330935287,
+"lon": -73.9654861820263,
+"name": "Ocean Parkway & Avenue U",
+"city": "nyc"
+},
+"avenue x & ocean parkway": {
+"lat": 40.5911019152731,
+"lon": -73.9651438521543,
+"name": "Ocean Parkway & Avenue X",
+"city": "nyc"
+},
+"avenue y & nostrand avenue": {
+"lat": 40.591684006195,
+"lon": -73.9402010506897,
+"name": "Avenue Y & Nostrand Avenue",
+"city": "nyc"
+},
+"baisley boulevard & bedell street": {
+"lat": 40.6804860465299,
+"lon": -73.7746973018044,
+"name": "Baisley Boulevard & Bedell Street",
+"city": "nyc"
+},
+"baron boulevard & victory boulevard": {
+"lat": 40.5970958248715,
+"lon": -74.182048134122,
+"name": "Victory Boulevard & Baron Boulevard",
+"city": "nyc"
+},
+"bay parkway & shore parkway": {
+"lat": 40.5964418079517,
+"lon": -73.9995104945307,
+"name": "Shore Parkway & Bay Parkway",
+"city": "nyc"
+},
+"bayard street & bowery": {
+"lat": 40.7150369561919,
+"lon": -73.9968060709481,
+"name": "Bowery & Bayard Street",
+"city": "nyc"
+},
+"beach 20 street & mott avenue": {
+"lat": 40.6042598963093,
+"lon": -73.7528497283329,
+"name": "Mott Avenue & Beach 20 Street",
+"city": "nyc"
+},
+"beach 31 street & seagirt boulevard": {
+"lat": 40.5958876913136,
+"lon": -73.763852218801,
+"name": "Seagirt Boulevard & Beach 31 Street",
+"city": "nyc"
+},
+"beach channel drive & mott avenue": {
+"lat": 40.605334438591,
+"lon": -73.7552738464614,
+"name": "Beach Channel Drive & Mott Avenue",
+"city": "nyc"
+},
+"bedell avenue & hylan boulevard": {
+"lat": 40.5067561237924,
+"lon": -74.2330619803055,
+"name": "Hylan Boulevard & Bedell Avenue",
+"city": "nyc"
+},
+"belmont avenue & pennsylvania avenue": {
+"lat": 40.6706257873184,
+"lon": -73.8955434185889,
+"name": "Pennsylvania Avenue & Belmont Avenue",
+"city": "nyc"
+},
+"belmont avenue & rockaway avenue": {
+"lat": 40.6684147566884,
+"lon": -73.9104159691917,
+"name": "Rockaway Avenue & Belmont Avenue",
+"city": "nyc"
+},
+"bergen street & new york avenue": {
+"lat": 40.6759418506491,
+"lon": -73.9471460240458,
+"name": "Bergen Street & New York Avenue",
+"city": "nyc"
+},
+"beverley road & nostrand avenue": {
+"lat": 40.6451316778007,
+"lon": -73.9489638812177,
+"name": "Beverley Road & Nostrand Avenue",
+"city": "nyc"
+},
+"blake avenue & pennsylvania avenue": {
+"lat": 40.6678335023913,
+"lon": -73.8948312611268,
+"name": "Pennsylvania Avenue & Blake Avenue",
+"city": "nyc"
+},
+"bowery & delancey street": {
+"lat": 40.7203209795615,
+"lon": -73.9940415521952,
+"name": "Delancey Street & Bowery",
+"city": "nyc"
+},
+"bowery & east houston street": {
+"lat": 40.7241364492458,
+"lon": -73.9926032228393,
+"name": "East Houston Street & Bowery",
+"city": "nyc"
+},
+"brighton beach avenue & ocean parkway": {
+"lat": 40.5763050316014,
+"lon": -73.9685323413963,
+"name": "Ocean Parkway & Brighton Beach Avenue",
+"city": "nyc"
+},
+"broadway & chambers street": {
+"lat": 40.7141658269391,
+"lon": -74.0063096954319,
+"name": "Broadway & Chambers Street",
+"city": "nyc"
+},
+"broadway & forest avenue": {
+"lat": 40.6289411968839,
+"lon": -74.1161894870662,
+"name": "Broadway & Forest Avenue",
+"city": "nyc"
+},
+"broadway & gates avenue": {
+"lat": 40.6894898407395,
+"lon": -73.9220713378152,
+"name": "Broadway & Gates Avenue",
+"city": "nyc"
+},
+"broadway & lafayette avenue": {
+"lat": 40.6926038115379,
+"lon": -73.9275068532508,
+"name": "Broadway & Lafayette Avenue",
+"city": "nyc"
+},
+"broadway & malcolm x boulevard": {
+"lat": 40.6947127695501,
+"lon": -73.9312119990827,
+"name": "Broadway & Malcolm X Boulevard",
+"city": "nyc"
+},
+"broadway & queens boulevard": {
+"lat": 40.7367525997919,
+"lon": -73.8776694651163,
+"name": "Queens Boulevard & Broadway",
+"city": "nyc"
+},
+"broadway & west 230 street": {
+"lat": 40.8768772274137,
+"lon": -73.9064960099633,
+"name": "Broadway & West 230 Street",
+"city": "nyc"
+},
+"bruckner boulevard & east 138 street": {
+"lat": 40.8046154915237,
+"lon": -73.9122087782498,
+"name": "Bruckner Boulevard & East 138 Street",
+"city": "nyc"
+},
+"bruckner boulevard & hunts point avenue": {
+"lat": 40.82015865327,
+"lon": -73.8906388337241,
+"name": "Bruckner Boulevard & Hunts Point Avenue",
+"city": "nyc"
+},
+"buffalo avenue & fulton street": {
+"lat": 40.679031976178,
+"lon": -73.9245929407646,
+"name": "Buffalo Avenue & Fulton Street",
+"city": "nyc"
+},
+"buffalo avenue & prospect place": {
+"lat": 40.6729536002859,
+"lon": -73.9251615542688,
+"name": "Prospect Place & Buffalo Avenue",
+"city": "nyc"
+},
+"canal street & centre street": {
+"lat": 40.718017094712,
+"lon": -73.999956209187,
+"name": "Canal Street & Centre Street",
+"city": "nyc"
+},
+"canal street & forsyth street": {
+"lat": 40.7156208641324,
+"lon": -73.9942720057511,
+"name": "Canal Street & Forsyth Street",
+"city": "nyc"
+},
+"canal street & manhattan br approach": {
+"lat": 40.71599802468,
+"lon": -73.9954372446764,
+"name": "Canal Street & Manhattan Br Approach",
+"city": "nyc"
+},
+"chrystie street & grand street": {
+"lat": 40.718144476603,
+"lon": -73.9938278564378,
+"name": "Grand Street & Chrystie Street",
+"city": "nyc"
+},
+"church avenue & east 4 street": {
+"lat": 40.6440038658953,
+"lon": -73.9765765874406,
+"name": "East 4 Street & Church Avenue",
+"city": "nyc"
+},
+"church avenue & nostrand avenue": {
+"lat": 40.6508078999487,
+"lon": -73.949571130514,
+"name": "Church Avenue & Nostrand Avenue",
+"city": "nyc"
+},
+"church avenue & ocean avenue": {
+"lat": 40.6500826025707,
+"lon": -73.9610079711361,
+"name": "Ocean Avenue & Church Avenue",
+"city": "nyc"
+},
+"church avenue & ocean parkway": {
+"lat": 40.644913064715,
+"lon": -73.9744236930093,
+"name": "Ocean Parkway & Church Avenue",
+"city": "nyc"
+},
+"church avenue & utica avenue": {
+"lat": 40.6517340541729,
+"lon": -73.9303814432352,
+"name": "Utica Avenue & Church Avenue",
+"city": "nyc"
+},
+"clarkson avenue & new york avenue": {
+"lat": 40.6555937871611,
+"lon": -73.9471589632107,
+"name": "New York Avenue & Clarkson Avenue",
+"city": "nyc"
+},
+"clarkson avenue & utica avenue": {
+"lat": 40.6566103554164,
+"lon": -73.9309035498809,
+"name": "Utica Avenue & Clarkson Avenue",
+"city": "nyc"
+},
+"clifton place & nostrand avenue": {
+"lat": 40.6891318502365,
+"lon": -73.9513189491695,
+"name": "Clifton Place & Nostrand Avenue",
+"city": "nyc"
+},
+"college point boulevard & maple avenue": {
+"lat": 40.7537212533265,
+"lon": -73.8328201197816,
+"name": "College Point Boulevard & Maple Avenue",
+"city": "nyc"
+},
+"columbia street & east houston street": {
+"lat": 40.7199337063335,
+"lon": -73.9787523494858,
+"name": "East Houston Street & Columbia Street",
+"city": "nyc"
+},
+"coney island avenue & ocean view avenue": {
+"lat": 40.5800804719735,
+"lon": -73.9598009798773,
+"name": "Coney Island Avenue & Ocean View Avenue",
+"city": "nyc"
+},
+"court street & hamilton avenue": {
+"lat": 40.6739319717765,
+"lon": -73.999947592199,
+"name": "Hamilton Avenue & Court Street",
+"city": "nyc"
+},
+"cross bay boulevard & woodhaven boulevard": {
+"lat": 40.6807003276581,
+"lon": -73.8446446578818,
+"name": "Cross Bay Boulevard & Woodhaven Boulevard",
+"city": "nyc"
+},
+"delancey street & essex street": {
+"lat": 40.7185556795128,
+"lon": -73.9882017367061,
+"name": "Delancey Street & Essex Street",
+"city": "nyc"
+},
+"draper place & travis avenue": {
+"lat": 40.5933741988416,
+"lon": -74.1636026828199,
+"name": "Travis Avenue & Draper Place",
+"city": "nyc"
+},
+"dyckman street & sherman avenue": {
+"lat": 40.8635736640286,
+"lon": -73.9260109287094,
+"name": "Dyckman Street & Sherman Avenue",
+"city": "nyc"
+},
+"east 105 street & flatlands avenue": {
+"lat": 40.6475293348957,
+"lon": -73.8946791245162,
+"name": "Flatlands Avenue & East 105 Street",
+"city": "nyc"
+},
+"east 116 street & lexington avenue": {
+"lat": 40.7986236388535,
+"lon": -73.9416192260777,
+"name": "Lexington Avenue & East 116 Street",
+"city": "nyc"
+},
+"east 12 street & kings highway": {
+"lat": 40.6076931015818,
+"lon": -73.960909773739,
+"name": "Kings Highway & East 12 Street",
+"city": "nyc"
+},
+"east 125 street & lexington avenue": {
+"lat": 40.8043746781098,
+"lon": -73.9374185277738,
+"name": "East 125 Street & Lexington Avenue",
+"city": "nyc"
+},
+"east 125 street & madison avenue": {
+"lat": 40.8057366880429,
+"lon": -73.9406457361917,
+"name": "Madison Avenue & East 125 Street",
+"city": "nyc"
+},
+"east 135 street & willis avenue bridge": {
+"lat": 40.8071867173938,
+"lon": -73.9242798083954,
+"name": "East 135 Street & Willis Avenue Bridge",
+"city": "nyc"
+},
+"east 14 street & union square east": {
+"lat": 40.7344347899322,
+"lon": -73.9899029606618,
+"name": "East 14 Street & Union Square East",
+"city": "nyc"
+},
+"east 149 street & grand concourse": {
+"lat": 40.8185596334992,
+"lon": -73.9273165318768,
+"name": "Grand Concourse & East 149 Street",
+"city": "nyc"
+},
+"east 149 street & melrose avenue": {
+"lat": 40.816065917067,
+"lon": -73.9176450290155,
+"name": "East 149 Street & Melrose Avenue",
+"city": "nyc"
+},
+"east 149 street & morris avenue": {
+"lat": 40.8173882846885,
+"lon": -73.9227588225709,
+"name": "Morris Avenue & East 149 Street",
+"city": "nyc"
+},
+"east 149 street & park avenue": {
+"lat": 40.8180126680461,
+"lon": -73.9251848653289,
+"name": "Park Avenue & East 149 Street",
+"city": "nyc"
+},
+"east 158 street & grand concourse": {
+"lat": 40.82541321981,
+"lon": -73.9234737917854,
+"name": "Grand Concourse & East 158 Street",
+"city": "nyc"
+},
+"east 16 street & quentin road": {
+"lat": 40.6083653478007,
+"lon": -73.9572607632208,
+"name": "Quentin Road & East 16 Street",
+"city": "nyc"
+},
+"east 161 street & morris avenue": {
+"lat": 40.8255769237329,
+"lon": -73.9184613325899,
+"name": "Morris Avenue & East 161 Street",
+"city": "nyc"
+},
+"east 161 street & sheridan avenue": {
+"lat": 40.8263973748895,
+"lon": -73.9211528593444,
+"name": "East 161 Street & Sheridan Avenue",
+"city": "nyc"
+},
+"east 165 street & morris avenue": {
+"lat": 40.8292895505863,
+"lon": -73.9164098085938,
+"name": "Morris Avenue & East 165 Street",
+"city": "nyc"
+},
+"east 167 street & grand concourse": {
+"lat": 40.8345150078009,
+"lon": -73.9177029915447,
+"name": "Grand Concourse & East 167 Street",
+"city": "nyc"
+},
+"east 167 street & webster avenue": {
+"lat": 40.8307373725139,
+"lon": -73.9104901064049,
+"name": "East 167 Street & Webster Avenue",
+"city": "nyc"
+},
+"east 170 street & walton avenue": {
+"lat": 40.8395519738549,
+"lon": -73.9159400877387,
+"name": "Walton Avenue & East 170 Street",
+"city": "nyc"
+},
+"east 188 street & east fordham road": {
+"lat": 40.8622104361979,
+"lon": -73.8996426172858,
+"name": "East Fordham Road & East 188 Street",
+"city": "nyc"
+},
+"east 188 street & valentine avenue": {
+"lat": 40.8609970003044,
+"lon": -73.8964250069176,
+"name": "Valentine Avenue & East 188 Street",
+"city": "nyc"
+},
+"east 192 street & grand concourse": {
+"lat": 40.8642155662248,
+"lon": -73.8957930826572,
+"name": "Grand Concourse & East 192 Street",
+"city": "nyc"
+},
+"east 23 street & park avenue south": {
+"lat": 40.740184799905,
+"lon": -73.98636141743,
+"name": "East 23 Street & Park Avenue South",
+"city": "nyc"
+},
+"east 34 street & franklin d roosevelt drive": {
+"lat": 40.7432054908754,
+"lon": -73.9721089759358,
+"name": "Franklin D Roosevelt Drive & East 34 Street",
+"city": "nyc"
+},
+"east 59 street & lexington avenue": {
+"lat": 40.7622268209155,
+"lon": -73.9681868776014,
+"name": "Lexington Avenue & East 59 Street",
+"city": "nyc"
+},
+"east 61 street & york avenue": {
+"lat": 40.7599127857448,
+"lon": -73.9588095546709,
+"name": "East 61 Street & York Avenue",
+"city": "nyc"
+},
+"east 86 street & park avenue": {
+"lat": 40.780177504998,
+"lon": -73.9571989255537,
+"name": "Park Avenue & East 86 Street",
+"city": "nyc"
+},
+"east 88 street & ralph avenue": {
+"lat": 40.6507065075693,
+"lon": -73.9205801245201,
+"name": "Ralph Avenue & East 88 Street",
+"city": "nyc"
+},
+"east 92 street & rutland road": {
+"lat": 40.6619084295835,
+"lon": -73.9275666414535,
+"name": "East 92 Street & Rutland Road",
+"city": "nyc"
+},
+"east 98 street & legion street": {
+"lat": 40.658392571802,
+"lon": -73.9155662958101,
+"name": "East 98 Street & Legion Street",
+"city": "nyc"
+},
+"east 98 street & winthrop street": {
+"lat": 40.6633138558026,
+"lon": -73.921050817709,
+"name": "Winthrop Street & East 98 Street",
+"city": "nyc"
+},
+"east broadway & pike street": {
+"lat": 40.7138444046751,
+"lon": -73.9927226638986,
+"name": "East Broadway & Pike Street",
+"city": "nyc"
+},
+"east burnside avenue & jerome avenue": {
+"lat": 40.853816414221,
+"lon": -73.9073328972563,
+"name": "Jerome Avenue & East Burnside Avenue",
+"city": "nyc"
+},
+"east drive & parkside avenue": {
+"lat": 40.6548811911402,
+"lon": -73.9618808642939,
+"name": "Parkside Avenue & East Drive",
+"city": "nyc"
+},
+"east fordham road & marion avenue": {
+"lat": 40.861832192973,
+"lon": -73.8928516912281,
+"name": "East Fordham Road & Marion Avenue",
+"city": "nyc"
+},
+"east fordham road & valentine avenue": {
+"lat": 40.8622583435509,
+"lon": -73.8958838749648,
+"name": "East Fordham Road & Valentine Avenue",
+"city": "nyc"
+},
+"east gun hill road & hering avenue": {
+"lat": 40.8733005990478,
+"lon": -73.8536363873982,
+"name": "East Gun Hill Road & Hering Avenue",
+"city": "nyc"
+},
+"east gun hill road & webster avenue": {
+"lat": 40.8786461358456,
+"lon": -73.8715965832961,
+"name": "East Gun Hill Road & Webster Avenue",
+"city": "nyc"
+},
+"east houston street & essex street": {
+"lat": 40.7222419197319,
+"lon": -73.9862857400163,
+"name": "East Houston Street & Essex Street",
+"city": "nyc"
+},
+"east kingsbridge road & elm place": {
+"lat": 40.862021435022,
+"lon": -73.8937147036442,
+"name": "East Kingsbridge Road & Elm Place",
+"city": "nyc"
+},
+"east kingsbridge road & grand concourse": {
+"lat": 40.8660688514858,
+"lon": -73.894381303399,
+"name": "Grand Concourse & East Kingsbridge Road",
+"city": "nyc"
+},
+"east new york avenue & remsen avenue": {
+"lat": 40.6627554040851,
+"lon": -73.9315563888567,
+"name": "East New York Avenue & Remsen Avenue",
+"city": "nyc"
+},
+"east tremont avenue & park avenue": {
+"lat": 40.8473665106386,
+"lon": -73.8994997290296,
+"name": "Park Avenue & East Tremont Avenue",
+"city": "nyc"
+},
+"eastchester road & waters place": {
+"lat": 40.8463601609702,
+"lon": -73.8446198474663,
+"name": "Eastchester Road & Waters Place",
+"city": "nyc"
+},
+"eastern parkway & new york avenue": {
+"lat": 40.6697134423065,
+"lon": -73.9477299629851,
+"name": "Eastern Parkway & New York Avenue",
+"city": "nyc"
+},
+"eastern parkway & ralph avenue": {
+"lat": 40.6683732108687,
+"lon": -73.9226321075878,
+"name": "Eastern Parkway & Ralph Avenue",
+"city": "nyc"
+},
+"eastern parkway & rochester avenue": {
+"lat": 40.6686471938869,
+"lon": -73.9283496720714,
+"name": "Eastern Parkway & Rochester Avenue",
+"city": "nyc"
+},
+"eastern parkway & st marks avenue": {
+"lat": 40.6730784848905,
+"lon": -73.9112303844012,
+"name": "Eastern Parkway & St Marks Avenue",
+"city": "nyc"
+},
+"eastern parkway & washington avenue": {
+"lat": 40.6716222450324,
+"lon": -73.962571231991,
+"name": "Eastern Parkway & Washington Avenue",
+"city": "nyc"
+},
+"edgecombe avenue & west 145 street": {
+"lat": 40.823647800726,
+"lon": -73.9438427568398,
+"name": "Edgecombe Avenue & West 145 Street",
+"city": "nyc"
+},
+"eliot avenue & fresh pond road": {
+"lat": 40.7146223152966,
+"lon": -73.9011575260474,
+"name": "Eliot Avenue & Fresh Pond Road",
+"city": "nyc"
+},
+"emmons avenue & ocean avenue": {
+"lat": 40.5836685161374,
+"lon": -73.9484260367378,
+"name": "Emmons Avenue & Ocean Avenue",
+"city": "nyc"
+},
+"empire boulevard & schenectady avenue": {
+"lat": 40.6636027308517,
+"lon": -73.9343912774582,
+"name": "Schenectady Avenue & Empire Boulevard",
+"city": "nyc"
+},
+"empire boulevard & utica avenue": {
+"lat": 40.663556722971,
+"lon": -73.9316074341971,
+"name": "Utica Avenue & Empire Boulevard",
+"city": "nyc"
+},
+"endor avenue & milford drive": {
+"lat": 40.6101100357149,
+"lon": -74.1008025311631,
+"name": "Milford Drive & Endor Avenue",
+"city": "nyc"
+},
+"farmers boulevard & south conduit avenue": {
+"lat": 40.6666958340877,
+"lon": -73.7671295423619,
+"name": "South Conduit Avenue & Farmers Boulevard",
+"city": "nyc"
+},
+"farragut road & flatbush avenue": {
+"lat": 40.6360759070586,
+"lon": -73.9510883134596,
+"name": "Flatbush Avenue & Farragut Road",
+"city": "nyc"
+},
+"featherbed lane & macombs road": {
+"lat": 40.8457000253121,
+"lon": -73.9171067319273,
+"name": "Macombs Road & Featherbed Lane",
+"city": "nyc"
+},
+"fingerboard road & narrows road north": {
+"lat": 40.6036251111569,
+"lon": -74.0693014282659,
+"name": "Narrows Road North & Fingerboard Road",
+"city": "nyc"
+},
+"flatbush avenue & glenwood road": {
+"lat": 40.634507481931,
+"lon": -73.9494497814428,
+"name": "Flatbush Avenue & Glenwood Road",
+"city": "nyc"
+},
+"flatlands avenue & remsen avenue": {
+"lat": 40.6402382485242,
+"lon": -73.9059722144709,
+"name": "Flatlands Avenue & Remsen Avenue",
+"city": "nyc"
+},
+"flatlands avenue & rockaway parkway": {
+"lat": 40.6436599139709,
+"lon": -73.9006699415831,
+"name": "Flatlands Avenue & Rockaway Parkway",
+"city": "nyc"
+},
+"flushing avenue & knickerbocker avenue": {
+"lat": 40.7047169502889,
+"lon": -73.9287377323206,
+"name": "Flushing Avenue & Knickerbocker Avenue",
+"city": "nyc"
+},
+"flushing avenue & thornton street": {
+"lat": 40.7004245231551,
+"lon": -73.9443878859108,
+"name": "Flushing Avenue & Thornton Street",
+"city": "nyc"
+},
+"foch boulevard & guy r brewer boulevard": {
+"lat": 40.684277450492,
+"lon": -73.7830155472508,
+"name": "Guy R Brewer Boulevard & Foch Boulevard",
+"city": "nyc"
+},
+"foch boulevard & merrick boulevard": {
+"lat": 40.6870165942427,
+"lon": -73.7748624917344,
+"name": "Merrick Boulevard & Foch Boulevard",
+"city": "nyc"
+},
+"forest avenue & summerfield place": {
+"lat": 40.6265296264821,
+"lon": -74.1605026863944,
+"name": "Forest Avenue & Summerfield Place",
+"city": "nyc"
+},
+"fountain avenue & loring avenue": {
+"lat": 40.6667066592776,
+"lon": -73.8718205092712,
+"name": "Loring Avenue & Fountain Avenue",
+"city": "nyc"
+},
+"franklin avenue & fulton street": {
+"lat": 40.6811369599825,
+"lon": -73.9556660154226,
+"name": "Franklin Avenue & Fulton Street",
+"city": "nyc"
+},
+"frederick douglass boulevard & west 125 street": {
+"lat": 40.8101728946813,
+"lon": -73.951165486529,
+"name": "West 125 Street & Frederick Douglass Boulevard",
+"city": "nyc"
+},
+"frederick douglass boulevard & west 145 street": {
+"lat": 40.8228374991299,
+"lon": -73.9419171755539,
+"name": "Frederick Douglass Boulevard & West 145 Street",
+"city": "nyc"
+},
+"ft george hill & nagle avenue": {
+"lat": 40.8613629994759,
+"lon": -73.9252421853923,
+"name": "Nagle Avenue & Ft George Hill",
+"city": "nyc"
+},
+"fulton street & malcolm x boulevard": {
+"lat": 40.6792764333605,
+"lon": -73.9290572825647,
+"name": "Malcolm X Boulevard & Fulton Street",
+"city": "nyc"
+},
+"fulton street & nostrand avenue": {
+"lat": 40.680390402954,
+"lon": -73.9495568866668,
+"name": "Fulton Street & Nostrand Avenue",
+"city": "nyc"
+},
+"fulton street & pennsylvania avenue": {
+"lat": 40.6772076492891,
+"lon": -73.8972257034502,
+"name": "Pennsylvania Avenue & Fulton Street",
+"city": "nyc"
+},
+"gates avenue & myrtle avenue": {
+"lat": 40.6994395576877,
+"lon": -73.9122889585084,
+"name": "Myrtle Avenue & Gates Avenue",
+"city": "nyc"
+},
+"gates avenue & nostrand avenue": {
+"lat": 40.6862036666465,
+"lon": -73.9507358007648,
+"name": "Gates Avenue & Nostrand Avenue",
+"city": "nyc"
+},
+"glenwood road & ralph avenue": {
+"lat": 40.6344827186588,
+"lon": -73.9188516450105,
+"name": "Glenwood Road & Ralph Avenue",
+"city": "nyc"
+},
+"glenwood road & remsen avenue": {
+"lat": 40.6417296419696,
+"lon": -73.9076366131002,
+"name": "Glenwood Road & Remsen Avenue",
+"city": "nyc"
+},
+"gold street & myrtle avenue": {
+"lat": 40.6936521305401,
+"lon": -73.9834019715814,
+"name": "Myrtle Avenue & Gold Street",
+"city": "nyc"
+},
+"graham avenue & metropolitan avenue": {
+"lat": 40.7145316012505,
+"lon": -73.9443874651766,
+"name": "Graham Avenue & Metropolitan Avenue",
+"city": "nyc"
+},
+"grand avenue & west fordham road": {
+"lat": 40.8627352828915,
+"lon": -73.9033184537255,
+"name": "Grand Avenue & West Fordham Road",
+"city": "nyc"
+},
+"guy r brewer boulevard & tuskegee airmen way": {
+"lat": 40.6997564713323,
+"lon": -73.7935770869621,
+"name": "Guy R Brewer Boulevard & Tuskegee Airmen Way",
+"city": "nyc"
+},
+"guyon avenue & hylan boulevard": {
+"lat": 40.5603932067177,
+"lon": -74.1200526670103,
+"name": "Hylan Boulevard & Guyon Avenue",
+"city": "nyc"
+},
+"halsey street & malcolm x boulevard": {
+"lat": 40.684168803304,
+"lon": -73.9293091652651,
+"name": "Malcolm X Boulevard & Halsey Street",
+"city": "nyc"
+},
+"hempstead avenue & springfield boulevard": {
+"lat": 40.7132857142948,
+"lon": -73.7357926816175,
+"name": "Springfield Boulevard & Hempstead Avenue",
+"city": "nyc"
+},
+"herkimer street & ralph avenue": {
+"lat": 40.6781157140037,
+"lon": -73.9217115999962,
+"name": "Ralph Avenue & Herkimer Street",
+"city": "nyc"
+},
+"highland avenue & homelawn street": {
+"lat": 40.7126132798405,
+"lon": -73.793216356346,
+"name": "Homelawn Street & Highland Avenue",
+"city": "nyc"
+},
+"hillside avenue & springfield boulevard": {
+"lat": 40.7298102084509,
+"lon": -73.7446824149144,
+"name": "Springfield Boulevard & Hillside Avenue",
+"city": "nyc"
+},
+"hook creek boulevard & south conduit avenue": {
+"lat": 40.6653476116936,
+"lon": -73.729849442902,
+"name": "South Conduit Avenue & Hook Creek Boulevard",
+"city": "nyc"
+},
+"horace harding expressway & springfield boulevard": {
+"lat": 40.7495750106232,
+"lon": -73.7569899156367,
+"name": "Springfield Boulevard & Horace Harding Expressway",
+"city": "nyc"
+},
+"hylan boulevard & midland avenue": {
+"lat": 40.5779442458706,
+"lon": -74.1023160728603,
+"name": "Hylan Boulevard & Midland Avenue",
+"city": "nyc"
+},
+"hylan boulevard & quintard street": {
+"lat": 40.5958901209557,
+"lon": -74.0858751187572,
+"name": "Hylan Boulevard & Quintard Street",
+"city": "nyc"
+},
+"jamaica avenue & springfield boulevard": {
+"lat": 40.71850275396,
+"lon": -73.7352580115627,
+"name": "Springfield Boulevard & Jamaica Avenue",
+"city": "nyc"
+},
+"jamaica avenue & woodhaven boulevard": {
+"lat": 40.6936613587354,
+"lon": -73.8521649579714,
+"name": "Woodhaven Boulevard & Jamaica Avenue",
+"city": "nyc"
+},
+"jerome avenue & ogden avenue": {
+"lat": 40.8295951863603,
+"lon": -73.9310142221704,
+"name": "Jerome Avenue & Ogden Avenue",
+"city": "nyc"
+},
+"kingston avenue & st johns place": {
+"lat": 40.6711853768658,
+"lon": -73.9420302369576,
+"name": "St Johns Place & Kingston Avenue",
+"city": "nyc"
+},
+"kissena boulevard & main street": {
+"lat": 40.7581935356809,
+"lon": -73.8294693022501,
+"name": "Main Street & Kissena Boulevard",
+"city": "nyc"
+},
+"knickerbocker avenue & troutman street": {
+"lat": 40.703239374154,
+"lon": -73.9261394088031,
+"name": "Knickerbocker Avenue & Troutman Street",
+"city": "nyc"
+},
+"lefferts boulevard & metropolitan avenue": {
+"lat": 40.7061416775935,
+"lon": -73.8317640107341,
+"name": "Lefferts Boulevard & Metropolitan Avenue",
+"city": "nyc"
+},
+"lenox avenue & west 116 street": {
+"lat": 40.8020233844589,
+"lon": -73.949680151874,
+"name": "Lenox Avenue & West 116 Street",
+"city": "nyc"
+},
+"lenox avenue & west 125 street": {
+"lat": 40.8077726270228,
+"lon": -73.9454819519538,
+"name": "Lenox Avenue & West 125 Street",
+"city": "nyc"
+},
+"lenox avenue & west 135 street": {
+"lat": 40.8141059417701,
+"lon": -73.9408555513935,
+"name": "Lenox Avenue & West 135 Street",
+"city": "nyc"
+},
+"liberty avenue & sutphin boulevard": {
+"lat": 40.6961693080009,
+"lon": -73.8044898379544,
+"name": "Sutphin Boulevard & Liberty Avenue",
+"city": "nyc"
+},
+"lighthouse avenue & richmond road": {
+"lat": 40.572422552446,
+"lon": -74.1411063134447,
+"name": "Richmond Road & Lighthouse Avenue",
+"city": "nyc"
+},
+"lily pond avenue & mc clean avenue": {
+"lat": 40.5989348596575,
+"lon": -74.0637593338735,
+"name": "Lily Pond Avenue & Mc Clean Avenue",
+"city": "nyc"
+},
+"linden boulevard & utica avenue": {
+"lat": 40.6538049557591,
+"lon": -73.9306040560165,
+"name": "Linden Boulevard & Utica Avenue",
+"city": "nyc"
+},
+"linden place & whitestone expressway": {
+"lat": 40.7716191179112,
+"lon": -73.8335067549242,
+"name": "Whitestone Expressway & Linden Place",
+"city": "nyc"
+},
+"little neck parkway & nassau boulevard": {
+"lat": 40.7654282246271,
+"lon": -73.724592610954,
+"name": "Little Neck Parkway & Nassau Boulevard",
+"city": "nyc"
+},
+"main street & northern boulevard": {
+"lat": 40.7629534949396,
+"lon": -73.8319580684053,
+"name": "Main Street & Northern Boulevard",
+"city": "nyc"
+},
+"main street & vleigh place": {
+"lat": 40.72494883295,
+"lon": -73.8209317059659,
+"name": "Main Street & Vleigh Place",
+"city": "nyc"
+},
+"major deegan expwy et 7 n sb & undercliff avenue": {
+"lat": 40.8444221904359,
+"lon": -73.925043426772,
+"name": "Undercliff Avenue & Major Deegan Expwy Et 7 N Sb",
+"city": "nyc"
+},
+"mermaid avenue & west 33 street": {
+"lat": 40.5749842073613,
+"lon": -73.9996151232393,
+"name": "Mermaid Avenue & West 33 Street",
+"city": "nyc"
+},
+"merrick boulevard & springfield boulevard": {
+"lat": 40.6801168857825,
+"lon": -73.7532381725102,
+"name": "Springfield Boulevard & Merrick Boulevard",
+"city": "nyc"
+},
+"morani street & victory boulevard": {
+"lat": 40.6080546654827,
+"lon": -74.1573508081964,
+"name": "Victory Boulevard & Morani Street",
+"city": "nyc"
+},
+"myrtle avenue & north portland avenue": {
+"lat": 40.6933608181606,
+"lon": -73.9758481580474,
+"name": "Myrtle Avenue & North Portland Avenue",
+"city": "nyc"
+},
+"myrtle avenue & woodhaven boulevard": {
+"lat": 40.7025955007179,
+"lon": -73.855292759578,
+"name": "Woodhaven Boulevard & Myrtle Avenue",
+"city": "nyc"
+},
+"nereid avenue & white plains road": {
+"lat": 40.898449654556,
+"lon": -73.8542988276157,
+"name": "White Plains Road & Nereid Avenue",
+"city": "nyc"
+},
+"northern boulevard & parsons boulevard": {
+"lat": 40.764651790935,
+"lon": -73.8234824517867,
+"name": "Parsons Boulevard & Northern Boulevard",
+"city": "nyc"
+},
+"northern boulevard & union street": {
+"lat": 40.763941059706,
+"lon": -73.8281474373839,
+"name": "Union Street & Northern Boulevard",
+"city": "nyc"
+},
+"parsons boulevard & sanford avenue": {
+"lat": 40.7588722674011,
+"lon": -73.8206359335518,
+"name": "Parsons Boulevard & Sanford Avenue",
+"city": "nyc"
+},
+"parsons boulevard & union turnpike": {
+"lat": 40.7199116047397,
+"lon": -73.8090403272284,
+"name": "Union Turnpike & Parsons Boulevard",
+"city": "nyc"
+},
+"pelham parkway north & wallace avenue": {
+"lat": 40.8566906635728,
+"lon": -73.8647402485638,
+"name": "Pelham Parkway North & Wallace Avenue",
+"city": "nyc"
+},
+"reservoir avenue & west kingsbridge road": {
+"lat": 40.8680173014926,
+"lon": -73.8999657568072,
+"name": "Reservoir Avenue & West Kingsbridge Road",
+"city": "nyc"
+},
+"richmond avenue & staten island expwy et 7 wb": {
+"lat": 40.6162218837148,
+"lon": -74.1568267440607,
+"name": "Richmond Avenue & Staten Island Expwy Et 7 Wb",
+"city": "nyc"
+},
+"riverdale avenue & rockaway avenue": {
+"lat": 40.6610144899222,
+"lon": -73.9085235897441,
+"name": "Riverdale Avenue & Rockaway Avenue",
+"city": "nyc"
+},
+"rockaway boulevard & south conduit avenue": {
+"lat": 40.6667523197475,
+"lon": -73.7799358548606,
+"name": "Rockaway Boulevard & South Conduit Avenue",
+"city": "nyc"
+},
+"rockaway boulevard & sutphin boulevard": {
+"lat": 40.6730096258949,
+"lon": -73.7880864730488,
+"name": "Rockaway Boulevard & Sutphin Boulevard",
+"city": "nyc"
+},
+"rockaway parkway & rutland road": {
+"lat": 40.6643774026953,
+"lon": -73.9237487863751,
+"name": "Rockaway Parkway & Rutland Road",
+"city": "nyc"
+},
+"rockaway parkway & seaview avenue": {
+"lat": 40.6338023995916,
+"lon": -73.8896954244173,
+"name": "Rockaway Parkway & Seaview Avenue",
+"city": "nyc"
+},
+"rockaway parkway & willmohr street": {
+"lat": 40.6578590897387,
+"lon": -73.9164859003135,
+"name": "Rockaway Parkway & Willmohr Street",
+"city": "nyc"
+},
+"sedgwick avenue & west fordham road": {
+"lat": 40.8631547994839,
+"lon": -73.9090643878511,
+"name": "Sedgwick Avenue & West Fordham Road",
+"city": "nyc"
+},
+"springfield boulevard & union turnpike": {
+"lat": 40.7357783791258,
+"lon": -73.7465407472178,
+"name": "Union Turnpike & Springfield Boulevard",
+"city": "nyc"
+},
+"st johns place & utica avenue": {
+"lat": 40.6705828043655,
+"lon": -73.9309511308813,
+"name": "Utica Avenue & St Johns Place",
+"city": "nyc"
+},
+"st nicholas avenue & west 125 street": {
+"lat": 40.8107653329594,
+"lon": -73.9525912574091,
+"name": "St Nicholas Avenue & West 125 Street",
+"city": "nyc"
+},
+"st nicholas avenue & west 145 street": {
+"lat": 40.8240315561633,
+"lon": -73.9447564885339,
+"name": "St Nicholas Avenue & West 145 Street",
+"city": "nyc"
+},
+"university avenue & west fordham road": {
+"lat": 40.8627495742251,
+"lon": -73.9049338596667,
+"name": "University Avenue & West Fordham Road",
+"city": "nyc"
+},
+"university avenue & west kingsbridge road": {
+"lat": 40.8682839038254,
+"lon": -73.9010654082942,
+"name": "University Avenue & West Kingsbridge Road",
+"city": "nyc"
+},
+"varick street & west houston street": {
+"lat": 40.7286044942879,
+"lon": -74.0053136916415,
+"name": "West Houston Street & Varick Street",
+"city": "nyc"
+},
+"watchogue road & woolley avenue": {
+"lat": 40.6162998253141,
+"lon": -74.1398218476857,
+"name": "Woolley Avenue & Watchogue Road",
+"city": "nyc"
+},
+"west houston street & west street": {
+"lat": 40.7291129464871,
+"lon": -74.0106737601728,
+"name": "West Street & West Houston Street",
+"city": "nyc"
+},
+"westchester avenue & westchester avenue bridge": {
+"lat": 40.8279042534187,
+"lon": -73.8830933565069,
+"name": "Westchester Avenue & Westchester Avenue Bridge",
+"city": "nyc"
+},
+"westchester avenue & white plains road": {
+"lat": 40.8329206826025,
+"lon": -73.8627227344839,
+"name": "White Plains Road & Westchester Avenue",
+"city": "nyc"
+}
+}
