@@ -112,11 +112,13 @@ def analyst(ungated: tuple[int, int], gated: tuple[int, int], real: list[dict], 
         d.text((1550, y + 6), f"{n} of {of} fakes credited", font=fs, fill=INK)
     y = 600
     d.text((140, y), "Real programs", font=f, fill=INK)
+    d.text((900, y + 6), "without the gate", font=fs, fill=INK)
+    d.text((1420, y + 6), "with the gate", font=fs, fill=INK)
     y += 70
-    for r in real[:6]:
+    for r in real[:7]:
         d.text((140, y), r["label"], font=fs, fill=INK)
-        d.text((900, y), f"without the gate: {r['ungated']}", font=fs, fill=MUTED)
-        d.text((1400, y), f"with the gate: {r['gated']}", font=fs, fill=GREEN if r["gated"].startswith("reduced") else MUTED)
+        d.text((900, y), r["ungated"], font=fs, fill=MUTED)
+        d.text((1420, y), r["gated"], font=fs, fill=GREEN if r["gated"].startswith("reduced") else MUTED)
         y += 52
     img.save(out)
     return out

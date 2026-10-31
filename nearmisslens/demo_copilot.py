@@ -115,7 +115,10 @@ def _analyst_real() -> list[dict]:
         c = r["claim"]
         out.setdefault(r["program_key"], {})["gated" if r["gated"] else "ungated"] = \
             f"{c['claim'].replace('_', ' ')} ({c['effect_pct']:+.0f}%)" if c["claim"] != "no_evidence" else "no evidence"
-    labels = {"lpi": "NYC leading pedestrian intervals", "turn_calming": "NYC turn calming"}
+    labels = {"lpi": "New York pedestrian intervals", "turn_calming": "New York turn calming",
+              "T13_seattle:lpi": "Seattle pedestrian intervals", "T13_dc:lpi": "Washington pedestrian intervals",
+              "T13_nyc:speed_humps": "New York speed humps", "T13_nyc:enhanced_crossings": "New York enhanced crossings",
+              "T13_sf:continental_crosswalks": "San Francisco crosswalks"}
     return [{"label": labels.get(k, k.replace("T13_", "").replace(":", " ").replace("_", " ")),
              "ungated": v.get("ungated", "?"), "gated": v.get("gated", "?")} for k, v in out.items()]
 
@@ -261,7 +264,8 @@ def render(out: Path | None = None) -> Path:
         for k, s in enumerate(script()):
             from . import voicestudio
             mine = voicestudio.take(k, s.name, s.narration)  # the narrator's own recording, if it matches the line
-            wav = mine or work / f"{k:02d}_{s.name}.wav"
+            import hashlib
+            wav = mine or work / f"{k:02d}_{s.name}_{hashlib.sha256(s.narration.encode()).hexdigest()[:10]}.wav"
             secs = (demo._duration(wav) if mine else narrate(s.narration, wav)) + PAD_S
             if s.kind == "card":
                 seg = demo.card(s.title, s.caption or s.target, work / f"card_{s.name}", work, secs, credit="")
