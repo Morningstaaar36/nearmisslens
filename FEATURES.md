@@ -36,10 +36,10 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Countermeasures:** FHWA Proven Safety Countermeasures with CMF Clearinghouse citations, checked against road user, site control and observed condition. Verified by `audit` and `tests/test_countermeasures.py`.
 - [x] **Audit memo:** every number traced to the data, with rejections listed. Command: `nml audit`. Verified by `tests/test_audit.py`.
 - [x] **Video review (Muse Spark):** verdicts on event clips. Verified by the `verifier` row.
-- [x] **Review panel, built:** Proposer (Muse Spark), Skeptic (Muse Spark) and Judge (Muse Wonder). Command: `nml panel`. Verified by `tests/test_panel.py`.
+- [x] **Review panel, built:** Proposer (Muse Spark), Skeptic (Muse Spark) and Arbiter (Muse Wonder). Command: `nml panel`. Verified by `tests/test_panel.py`.
 - [x] **Grounding checker:** rejects fabricated CMF ids, rejected countermeasures, missing hotspots and invented numbers on the real dev audit. Verified by the `grounding` row.
 - [x] **Fix illustration (Muse Image + SAM 3.1 check), built:** road users protected, edit checked by SAM. Verified by `tests/test_render.py`.
-- [x] **Review panel run** on the test and held-out SAM audits. The Judge rejected recommendations the video review showed were tracking artefacts or mismatches (`runs/audit/*_sam/panel.md`).
+- [x] **Review panel run** on the test and held-out SAM audits. The Arbiter rejected recommendations the video review showed were tracking artefacts or mismatches (`runs/audit/*_sam/panel.md`).
 - [x] **Fix illustration run:** 5 of 6 pass the SAM 3.1 check on the current audits.
 - [x] **Voice complaints, built:** Muse Voice Transcribe, then Muse Spark extraction, then a fixed matching rule. Synthetic complaints in 3 languages are spoken by MMS-TTS. Verified by `tests/test_voice.py`.
 - [x] **Voice complaints run:** 8 of 8 synthetic complaints matched correctly (English, Spanish, French, plus decoys). Mean word error rate 7–13%.
@@ -54,7 +54,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **B0 baseline, built:** scorer and windows as pre-registered. Verified by `tests/test_baseline.py`.
 - [x] **B0 run:** near-miss F1 is 0.32 for the pipeline against 0.02 for Muse Spark alone.
 - [x] **Verifier precision-gain test, built:** command `nml verifier`.
-- [x] **Verifier run:** precision 0.69 for events judged real, against 0.46 for the severity ranking at matched recall.
+- [x] **Verifier run:** precision 0.69 for events rated real, against 0.46 for the severity ranking at matched recall.
 
 ## Display
 - [x] **Viewer (GitHub Pages, `docs/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).

@@ -384,7 +384,7 @@ function renderPanel() {
     $("panel").innerHTML = `<p class="empty">The review panel has not run on this audit. Run <code>nml panel ${esc(st.view.split)}</code>.</p>`;
     return;
   }
-  const role = { proposer: "Proposer", skeptic: "Skeptic", judge: "Judge" };
+  const role = { proposer: "Proposer", skeptic: "Skeptic", arbiter: "Arbiter" };
   let h = `<div class="stages">${p.stages.map((s) => `<div class="stagecard ${s.accepted ? "ok" : ""}"><h3>${role[s.role] || esc(s.role)}</h3>` +
     `<p class="meta">${esc(s.model)}, ${s.turns} turns, $${fmt(s.usd, 4)}. ${s.accepted ? "Accepted by the checker." : `Stopped: ${esc(s.stopped)}.`}</p>` +
     (s.caught.length ? `<ul class="caught">${s.caught.map((e) => `<li>Rejected: ${esc(e)}</li>`).join("")}</ul>` : "") + "</div>").join("")}</div>`;
@@ -398,7 +398,7 @@ function renderPanel() {
     h += `<details><summary>Skeptic's objections (${p.objections.length})</summary><ul>${p.objections.map((o) =>
       `<li>Hotspot ${o.rank}${o.crfid ? `, CMF ${esc(o.crfid)}` : ""}${o.blocking ? " (blocking)" : ""}: ${esc(o.objection)}</li>`).join("")}</ul></details>`;
   }
-  if (p.memo) h += `<h3>Judge's memo</h3><div class="memo">${md(p.memo)}</div>`;
+  if (p.memo) h += `<h3>Arbiter's memo</h3><div class="memo">${md(p.memo)}</div>`;
   $("panel").innerHTML = h;
 }
 

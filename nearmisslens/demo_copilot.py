@@ -177,7 +177,7 @@ def script() -> list[Scene]:
         cal = max((v["calibrated_false_passes"] for v in t14.values()), default=None)
         rank = (_bench("study_T11.json").get("gates", {}).get("lpi", {}).get("fake_rank") or {}).get("rank")
         scenes.append(Scene(
-            "analyst", "We gave an AI analyst, Muse Spark Open, programs to judge blind, writing its own code. Alone, it "
+            "analyst", "We gave an AI analyst, Muse Spark Open, programs to assess blind, writing its own code. Alone, it "
                        "missed New York's pedestrian intervals, credited two programs the data doesn't support, and "
                        f"contradicted itself once. The gate fixed all of that. But it let {gc} of {len(ga)} fake programs "
                        "through, so we tested the tester: a stricter gate cuts false passes to "

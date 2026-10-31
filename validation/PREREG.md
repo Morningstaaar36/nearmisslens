@@ -76,7 +76,7 @@ Made before any test or held-out run, after a literature review (`research/R6_pa
 6. **Verifier and B0 scoring, made precise.** Recorded before any test or held-out run.
    - **Event matching:** an event matches a reference conflict when it has the same unordered pair of road-user classes and its time is within 1 s. Matching is one to one, minimising total time difference. The reference is the conflict table built by `audit.conflict_table` from the reference trajectories: one row per pair, PET ≤ 1.5 s or TTC ≤ 1.5 s.
    - **Verifier at matched recall:** "precision gain at matched recall" compares two sets at equal recall:
-     - the events Muse Spark judges real;
+     - the events Muse Spark rates real;
      - the smallest set of most severe candidates (lowest PET or TTC) that reaches the same recall, which is the no-model ranking.
    - Precision and recall before filtering are reported as well.
 7. **Signal state on entry, decided after the test and held-out runs and disclosed as such.**

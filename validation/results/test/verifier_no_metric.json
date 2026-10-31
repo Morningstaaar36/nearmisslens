@@ -2,7 +2,7 @@
  "split": "test",
  "arm": "no_metric",
  "candidates": 176,
- "judged_real": 27,
+ "rated_real": 27,
  "artefact_share": 0.847,
  "before": {
   "ref_events": 435,

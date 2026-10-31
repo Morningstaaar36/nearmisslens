@@ -55,12 +55,12 @@ Signal state on entry, SAM 3.1 tracks against the reference (share of entries):
 | vehicle | reference | 239 | 0.929 | 0.046 | 0.025 |
 | vehicle | sam | 180 | 0.917 | 0.028 | 0.056 |
 
-Muse Spark verifier on 175 candidate conflicts: 36 judged real (artefact share 0.794, $0.00038 per event).
+Muse Spark verifier on 175 candidate conflicts: 36 rated real (artefact share 0.794, $0.00038 per event).
 
 | set | events | matched | precision | recall | F1 |
 |---|---|---|---|---|---|
 | all candidates | 175 | 97 | 0.554 | 0.223 | 0.318 |
-| judged real by Muse Spark | 36 | 25 | 0.694 | 0.057 | 0.106 |
+| rated real by Muse Spark | 36 | 25 | 0.694 | 0.057 | 0.106 |
 | most severe, same recall | 54 | 25 | 0.463 | 0.057 | 0.102 |
 
 B0, event level (same class pair, within 1.0 s) against 435 reference conflicts in 600 s:

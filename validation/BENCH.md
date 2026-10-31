@@ -52,7 +52,7 @@ Removing the 882 road users who entered on red removes 1528 of 11411 conflicts (
 | spark_open_checked | 0.781 | 0.583 | 0.750 | 0.750 | 1.000 | 1.000 | 1 | $0.0255 |
 | glimmer_checked | 0.875 | 0.750 | 1.000 | 0.750 | 1.000 | 1.000 | 0 | Modal GPU time |
 
-Ungrounded claims are counted with the checker that reads decimal commas ("185,7"). The first run's checker misread them: it flagged one Spanish and one French answer as ungrounded, and on one complaint Muse Wonder spent its budget correcting a correct number (post-hoc fix, disclosed). Wonder's one remaining miss answered "not observed" for a hotspot where Muse Spark's video review had judged 0 of 3 conflicts real; the label ignores the video review.
+Ungrounded claims are counted with the checker that reads decimal commas ("185,7"). The first run's checker misread them: it flagged one Spanish and one French answer as ungrounded, and on one complaint Muse Wonder spent its budget correcting a correct number (post-hoc fix, disclosed). Wonder's one remaining miss answered "not observed" for a hotspot where Muse Spark's video review had rated 0 of 3 conflicts real; the label ignores the video review.
 
 ## T5 Grounding: review panel with and without the checker
 
@@ -95,7 +95,7 @@ Descriptive only: "project" means a record in the city's open project datasets w
 
 ## Verifier ablation (test split, 175 candidate conflicts)
 
-| arm | judged real | precision | recall | F1 |
+| arm | rated real | precision | recall | F1 |
 |---|---|---|---|---|
 | full | 36 | 0.694 | 0.057 | 0.106 |
 | no_video | 71 | 0.704 | 0.115 | 0.198 |

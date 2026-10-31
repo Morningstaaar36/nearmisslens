@@ -67,3 +67,14 @@ def test_panel_ablation_records_errors_and_keeps_the_first_submission():
     fc = FakeClient([{"id": "r1", "output": [call("finish", {"memo": "99 crashes"}, "c1")], "usage": usage()}])
     out = panel._stage(fc, "muse-spark-1.3-contributor", "i", "t", [], finish, role, "test", checked=False)
     assert out["accepted"] and out["ungrounded"] == ["number 99 is not in the facts"]
+
+
+def test_docs_never_say_judge():
+    import subprocess
+    from nearmisslens.config import ROOT
+    word = "jud" + "ge"
+    paths = ["README.md", "FEATURES.md", "docs", "validation/BENCH.md", "validation/RESULTS.md", "validation/PREREG.md",
+             "validation/BENCH_PREREG.md", "PRIVACY.md", "LICENSES.md"]
+    found = subprocess.run(["git", "grep", "-n", "-i", word[:4], "--", *[p for p in paths if (ROOT / p).exists()]],
+                           cwd=ROOT, capture_output=True, text=True).stdout
+    assert found == "", found[:500]

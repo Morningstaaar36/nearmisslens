@@ -176,7 +176,7 @@ def _panel_caption(p: dict | None) -> str:
     rejected = sum(not d["accept"] for d in p["decisions"])
     checker = (f"the grounding checker caught {p['caught']} unsupported claim{'s' if p['caught'] != 1 else ''}"
                if p["caught"] else "every claim passed the grounding checker")
-    return (f"Proposer and Skeptic (Muse Spark) argue, the Judge (Muse Wonder) decides: {rejected} of "
+    return (f"Proposer and Skeptic (Muse Spark) argue, the Arbiter (Muse Wonder) decides: {rejected} of "
             f"{len(p['decisions'])} recommendations rejected on the evidence; {checker}.")
 
 
@@ -195,8 +195,8 @@ def reviewed_clip(view: dict) -> Segment | None:
             path = Path(v.get("clip") or "")
             if v.get("clip") and path.exists():
                 action = {"brake": "braking", "swerve": "swerving", "both": "braking and swerving"}.get(v["evasive_action"])
-                verdict = ("judged a real conflict" + (f", with {action}" if action else "")) if v["real_conflict"] \
-                    else "judged not a real conflict"
+                verdict = ("rated a real conflict" + (f", with {action}" if action else "")) if v["real_conflict"] \
+                    else "rated not a real conflict"
                 return Segment(path, 8.0, f"{v['measure']} {v['value']:.1f} s between a {v['cls_1'].replace('_', '-')} "
                                           f"and a {v['cls_2'].replace('_', '-')}; Muse Spark watched the clip: {verdict}.")
     return None

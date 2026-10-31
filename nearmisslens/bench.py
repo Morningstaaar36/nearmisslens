@@ -478,7 +478,7 @@ def write_bench_md() -> str:
         L += ["", "Ungrounded claims are counted with the checker that reads decimal commas (\"185,7\"). The first run's "
               "checker misread them: it flagged one Spanish and one French answer as ungrounded, and on one complaint "
               "Muse Wonder spent its budget correcting a correct number (post-hoc fix, disclosed). Wonder's one "
-              "remaining miss answered \"not observed\" for a hotspot where Muse Spark's video review had judged 0 of 3 "
+              "remaining miss answered \"not observed\" for a hotspot where Muse Spark's video review had rated 0 of 3 "
               "conflicts real; the label ignores the video review.", ""]
     pa = _load("panel_ablation.json")
     if pa:
@@ -532,10 +532,10 @@ def write_bench_md() -> str:
         L.append("")
     arms = [(a, RESULTS_DIR / "test" / f"verifier{'' if a == 'full' else '_' + a}.json") for a in ("full", "no_video", "no_metric")]
     if all(p.exists() for _, p in arms):
-        L += ["## Verifier ablation (test split, 175 candidate conflicts)", "", "| arm | judged real | precision | recall | F1 |", "|---|---|---|---|---|"]
+        L += ["## Verifier ablation (test split, 175 candidate conflicts)", "", "| arm | rated real | precision | recall | F1 |", "|---|---|---|---|---|"]
         for a, pth in arms:
             v = json.loads(pth.read_text())
-            L.append(f"| {a} | {v['judged_real']} | {_f(v['after']['precision'])} | {_f(v['after']['recall'])} | {_f(v['after']['f1'])} |")
+            L.append(f"| {a} | {v['rated_real']} | {_f(v['after']['precision'])} | {_f(v['after']['recall'])} | {_f(v['after']['f1'])} |")
         L.append("")
     rs = _load("fresh_reseed.json")
     if rs:
@@ -925,7 +925,7 @@ def open_agent_arms(oc, arm: str = "spark_open_checked", t8_key: str = "open_che
 
 
 def fresh_verify_open(windows_list=None, n_boot: int = 2000) -> dict:
-    """Registered: Muse Spark Open (Baseten) judges every candidate conflict of the re-seeded fresh windows from the
+    """Registered: Muse Spark Open (Baseten) rates every candidate conflict of the re-seeded fresh windows from the
     speed trace and metric (no video); scored before and after against the reference conflict table."""
     from . import evaluate, openweights, reseed, verifier, windows
     from .baseline import score

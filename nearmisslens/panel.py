@@ -304,7 +304,7 @@ def panel_markdown(result: dict, title: str) -> str:
         lines += ["| Hotspot | Countermeasure | CMF | Decision | Reason |", "|---|---|---|---|---|"]
         lines += [f"| {d['rank']} | {psc[(d['rank'], d['crfid'])]} | {d['crfid']} | "
                   f"{'accept' if d['accept'] else 'reject'} | {d['reason']} |" for d in result["decisions"]]
-        lines += ["", "## Judge's memo", "", result["memo"].strip(), ""]
+        lines += ["", "## Arbiter's memo", "", result["memo"].strip(), ""]
     if result.get("objections"):
         lines += ["## Skeptic's objections", ""]
         lines += [f"- Hotspot {o['rank']}{', CMF ' + o['crfid'] if o['crfid'] else ''}"

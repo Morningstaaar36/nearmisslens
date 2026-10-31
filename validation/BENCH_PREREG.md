@@ -51,7 +51,7 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
   - Muse Wonder with the checker. Wonder is capped at $0.12 per complaint and Spark at $0.02.
 - **Metrics:**
   - accuracy (verdict right and, when supported, a correct hotspot);
-  - answers with ungrounded claims (judged by the same checker);
+  - answers with ungrounded claims (scored by the same checker);
   - cost per complaint.
 - **Scope:** these complaints are templated text, not recordings. The demo's spoken complaints are separate and not scored here.
 
@@ -152,11 +152,11 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
 - **Scope:** residents' reports are a near-miss proxy, not video measurement. The method takes any near-miss source (video conflicts, reports) as the same input; video-measured near-misses cannot be tested here because no public dataset links them to a city's crash records.
 
 ## Open-weights verifier on re-seeded fresh windows (registered 2026-10-31, before it was run)
-- **Why:** re-seeding raised recall but lowered precision (PET ≤ 1.5 s: 0.61 → 0.47). The verifier ablation on the test split found that Muse Spark judges better from the speed trace and the measured metric than from video (F1 0.20 vs 0.11).
+- **Why:** re-seeding raised recall but lowered precision (PET ≤ 1.5 s: 0.61 → 0.47). The verifier ablation on the test split found that Muse Spark rates conflicts better from the speed trace and the measured metric than from video (F1 0.20 vs 0.11).
 - **Method:**
-  - every candidate conflict in the audit's conflict table (PET ≤ 1.5 s or TTC ≤ 1.5 s) from the 11 fresh windows, tracked with re-seeding and the change-10 kinematics, is judged by Muse Spark Open on Baseten;
+  - every candidate conflict in the audit's conflict table (PET ≤ 1.5 s or TTC ≤ 1.5 s) from the 11 fresh windows, tracked with re-seeding and the change-10 kinematics, is rated by Muse Spark Open on Baseten;
   - the inputs are the speed trace and the metric, without video, with the same instructions as the hosted verifier;
-  - candidates judged not real are dropped.
+  - candidates rated not real are dropped.
 - **Scoring:** as in PREREG change 6 (same class pair, within 1 s, one-to-one) against the reference conflict table of the same frames, before and after the verifier.
 - **Rule:** the verifier is reported as an improvement only if pooled F1 rises and a 95% bootstrap interval over windows (2,000 resamples, seed 0) for the difference is above 0.
 - **Cost:** Baseten credit only.
@@ -260,7 +260,7 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
     - θ is below the 2.5th percentile of the fake programs' θ;
     - the T11 rule holds (the interval entirely below 1);
     - every placebo includes 1.
-  - An increase is judged the same way with the 97.5th percentile.
+  - An increase is assessed the same way with the 97.5th percentile.
 - **Fresh fake programs for testing:** seeds 1000–1099 (never used before), 300 sites each, as in T12.
 - **Tests:**
   - (a) False-pass rate on the fresh fake programs, old gate against calibrated gate, under two designs:
@@ -273,3 +273,8 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
   - it still passes NYC's LPIs on all sites.
 
   Everything is reported either way.
+
+## Wording change (2026-11-01)
+
+Several verbs were reworded to "rate", "score" or "assess" in this file and in PREREG.md (and the review panel's
+deciding role is now called the Arbiter in the docs). No rule, threshold, sample or outcome changed.

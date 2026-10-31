@@ -206,10 +206,10 @@ def _extra_results(split: str) -> list[str]:
         lines.append("")
     if (d / "verifier.json").exists():
         v = json.loads((d / "verifier.json").read_text())
-        lines += [f"Muse Spark verifier on {v['candidates']} candidate conflicts: {v['judged_real']} judged real "
+        lines += [f"Muse Spark verifier on {v['candidates']} candidate conflicts: {v['rated_real']} rated real "
                   f"(artefact share {_rate(v['artefact_share'])}, ${v['usd_per_event']} per event).", "",
                   "| set | events | matched | precision | recall | F1 |", "|---|---|---|---|---|---|"]
-        for name, key in (("all candidates", "before"), ("judged real by Muse Spark", "after"),
+        for name, key in (("all candidates", "before"), ("rated real by Muse Spark", "after"),
                           ("most severe, same recall", "severity_at_matched_recall")):
             r = v[key]
             lines.append(f"| {name} | {r['pred_events']} | {r['tp']} | {_rate(r['precision'])} | {_rate(r['recall'])} | {_rate(r['f1'])} |")

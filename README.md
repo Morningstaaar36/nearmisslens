@@ -75,7 +75,7 @@ Two of these results changed the product. The brief now shows a city's own measu
 | Tracker | SAM 3.1 (video and image) | Zero-shot tracking of every road user in drone video |
 | Engineer | Muse Image + SAM 3.1 | Draws the fix on the aerial photo; SAM checks it and protects real road users |
 | Intake | Muse Voice Transcribe + Muse Spark | Checks a resident's spoken complaint against the measured evidence |
-| Review panel | Muse Spark, Muse Wonder | Proposer, skeptic and judge on countermeasures, with human sign-off |
+| Review panel | Muse Spark, Muse Wonder | Proposer, skeptic and arbiter on countermeasures, with human sign-off |
 
 The open-weights path covers the whole copilot: the web app's briefs and letters run on Muse Spark Open by default.
 

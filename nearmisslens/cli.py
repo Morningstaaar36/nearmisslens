@@ -406,7 +406,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="Muse Spark reviews the video of each hotspot's N most severe conflicts")
     au.add_argument("--illustrate", action="store_true",
                     help="Muse Image before/after of the first illustratable countermeasure per hotspot, checked by SAM 3.1")
-    pa = sub.add_parser("panel", help="Proposer, Skeptic and Judge agents review an audit, held to the data by a checker")
+    pa = sub.add_parser("panel", help="Proposer, Skeptic and Arbiter agents review an audit, held to the data by a checker")
     pa.add_argument("split", choices=["dev", "test", "heldout"])
     pa.add_argument("--source", choices=["reference", "sam"], default="reference")
     ex = sub.add_parser("export", help="viewer data (docs/) from an audit run")

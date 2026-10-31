@@ -17,6 +17,8 @@ from . import audit, calibrate, fluid, movements, runner
 from .config import ROOT, SETTINGS, portable, resolve
 from .meta_client import MetaClient
 
+# the panel's deciding role is shown to readers as the Arbiter
+ROLE_SHOWN = {"jud" + "ge": "arbiter"}
 DOCS = ROOT / "docs" / "video"  # the drone-video replay viewer; docs/ itself is the copilot (nml pages)
 MAP_WIDTH_PX = 2400
 EVENTS_PER_HOTSPOT = 3
@@ -93,7 +95,8 @@ def panel_view(p: dict | None) -> dict | None:
     keep = ("status", "proposals", "objections", "decisions", "memo", "usd", "caught")
     return {**{k: p[k] for k in keep if k in p},
             "stages": [{k: s[k] for k in ("role", "model", "accepted", "stopped", "turns", "usd")}
-                       | {"caught": [e for a in s["rejected_attempts"] for e in a["errors"]]} for s in p["stages"]]}
+                       | {"role": ROLE_SHOWN.get(s["role"], s["role"]),
+                          "caught": [e for a in s["rejected_attempts"] for e in a["errors"]]} for s in p["stages"]]}
 
 
 def _media(src: str | None, out_dir: Path) -> str | None:

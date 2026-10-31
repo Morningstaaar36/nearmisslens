@@ -85,5 +85,5 @@ What NearMissLens does differently is narrower: one fixed, registered quasi-expe
 
 - The study is observational. Sites are chosen by the city, so regression to the mean can remain even with the placebo; no Empirical Bayes model is fitted.
 - Work recorded outside the open datasets is not seen, and police-reported crashes miss some injuries.
-- The gate tests whether a program worked where it was installed. Whether it will work at a new junction is still an engineer's judgement; the brief shows the local result next to the national CMF and does not replace either.
+- The gate tests whether a program worked where it was installed. Whether it will work at a new junction is still an engineer's call; the brief shows the local result next to the national CMF and does not replace either.
 - The gate can be wrong in both directions: about 1 in 20 fake programs passed under the registered design, 5 in 20 when the analyst picked short designs on half the data, and a real effect on few sites can fail for lack of data. A stricter calibrated version (T14) controls false passes but misses the LPI effects.

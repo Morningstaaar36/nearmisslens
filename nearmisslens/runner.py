@@ -88,7 +88,7 @@ def severity_at_recall(cand: pd.DataFrame, ref: pd.DataFrame, recall: float) -> 
 
 def run_verifier(split: str, client: MetaClient | None = None, arm: str = "full") -> dict:
     """Pre-registered verifier test: Muse Spark reviews every candidate conflict the pipeline finds on SAM 3.1 tracks;
-    precision and recall against the reference conflict table before and after dropping the events it judges not real."""
+    precision and recall against the reference conflict table before and after dropping the events it rates not real."""
     from .baseline import score
     client = client or MetaClient(SETTINGS)
     c, ours = site_states(split, "sam", client)
@@ -107,7 +107,7 @@ def run_verifier(split: str, client: MetaClient | None = None, arm: str = "full"
                              arm=arm) for k, e in enumerate(cand.to_dict("records"))]
     kept = cand[[bool(v["real_conflict"]) for v in verdicts]]
     after = score(kept, ref)
-    out = {"split": split, "arm": arm, "candidates": int(len(cand)), "judged_real": int(len(kept)),
+    out = {"split": split, "arm": arm, "candidates": int(len(cand)), "rated_real": int(len(kept)),
            "artefact_share": round(1 - len(kept) / len(cand), 3) if len(cand) else None,
            "before": score(cand, ref), "after": after, "severity_at_matched_recall": severity_at_recall(cand, ref, after["recall"]),
            "usd_per_event": (round(client.meter.spent_on(f"verify {split} event ") / len(cand), 5) if arm == "full" else

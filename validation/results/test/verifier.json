@@ -1,7 +1,7 @@
 {
  "split": "test",
  "candidates": 175,
- "judged_real": 36,
+ "rated_real": 36,
  "artefact_share": 0.794,
  "before": {
   "ref_events": 435,
