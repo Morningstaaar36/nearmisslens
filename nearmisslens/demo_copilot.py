@@ -250,11 +250,14 @@ def _record_case(base: str, q: dict, name: str, seconds: float, work: Path) -> P
         page.wait_for_timeout(int(demo.LOAD_S * 1000))
         target = "#letter" if q.get("letter") and q.get("section") == 5 else None
         page.evaluate("([n, t]) => { const el = t ? document.querySelector(t) : document.querySelectorAll('section.step')[n];"
-                      " if (el) el.scrollIntoView({block: 'start'}); }", [q.get("section", 0), target])
+                      " if (el) { el.scrollIntoView({block: 'start'}); window.scrollBy(0, -12); } }", [q.get("section", 0), target])
+        # the case itself scrolls slowly through its sentences; every other scene holds its section in view
+        step = 22 if q.get("section", 0) == 0 and not target else 0
         for _ in range(int(seconds)):
             page.wait_for_timeout(1000)
-            page.mouse.wheel(0, 60)
-    return demo.record(base, name, steps, work / "rec")
+            if step:
+                page.mouse.wheel(0, step)
+    return demo.record(base, name, steps, work / "rec", zoom=1.6)
 
 
 def render(out: Path | None = None) -> Path:

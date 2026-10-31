@@ -433,7 +433,7 @@ def main(argv: list[str] | None = None) -> int:
     vf.add_argument("split", choices=["dev", "test", "heldout"])
     de = sub.add_parser("demo", help="render the demo video from viewer recordings and run outputs")
     de.add_argument("--audit", help="viewer audit key, e.g. heldout_sam (default: the best available)")
-    de.add_argument("--copilot", action="store_true", help="the narrated Junction Safety Copilot demo (Kokoro voice)")
+    de.add_argument("--copilot", action="store_true", help="the safety-engineer demo: your voice-studio takes, Kokoro guide voice for lines not yet recorded")
     bn = sub.add_parser("bench", help="NML-Bench (validation/BENCH_PREREG.md); without flags only rewrites BENCH.md")
     bn.add_argument("--free", action="store_true", help="T3 persistence and T7 fix test on all 14 flights ($0)")
     bn.add_argument("--kinematics", action="store_true", help="tune Kalman/RTS on dev, re-score test and held-out ($0)")

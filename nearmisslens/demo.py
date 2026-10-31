@@ -94,15 +94,15 @@ def _serve(directory: Path) -> tuple[http.server.ThreadingHTTPServer, str]:
     return srv, f"http://127.0.0.1:{srv.server_address[1]}/"
 
 
-def record(base: str, name: str, steps, out_dir: Path) -> Path:
+def record(base: str, name: str, steps, out_dir: Path, zoom: float = ZOOM) -> Path:
     """Record one viewer scene; steps(page) drives it."""
     from playwright.sync_api import sync_playwright
     out_dir.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=shutil.which("google-chrome") or shutil.which("chromium"),
                                     args=["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--ignore-gpu-blocklist"])
-        ctx = browser.new_context(viewport={"width": int(W / ZOOM), "height": int(H / ZOOM)}, record_video_dir=str(out_dir),
-                                  record_video_size={"width": int(W / ZOOM), "height": int(H / ZOOM)})
+        ctx = browser.new_context(viewport={"width": int(W / zoom), "height": int(H / zoom)}, record_video_dir=str(out_dir),
+                                  record_video_size={"width": int(W / zoom), "height": int(H / zoom)})
         page = ctx.new_page()
         steps(page, base)
         video = page.video.path()
