@@ -17,7 +17,7 @@ from . import audit, calibrate, fluid, movements, runner
 from .config import ROOT, SETTINGS, portable, resolve
 from .meta_client import MetaClient
 
-DOCS = ROOT / "docs"
+DOCS = ROOT / "docs" / "video"  # the drone-video replay viewer; docs/ itself is the copilot (nml pages)
 MAP_WIDTH_PX = 2400
 EVENTS_PER_HOTSPOT = 3
 WINDOW_S = (-4.0, 3.0)

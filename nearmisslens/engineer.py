@@ -298,34 +298,42 @@ def slug(name: str) -> str:
     return re.sub(r"_+", "_", "".join(ch if ch.isalnum() else "_" for ch in name.split(",")[0].lower())).strip("_")[:60]
 
 
-def precompute(city: str, top: int | None = None, letters: int = 0, letter_client=None, out_dir=None) -> list[dict]:
+def precompute(city: str, top: int | None = None, letters: int = 0, letter_client=None, out_dir=None,
+               workers: int = 1) -> list[dict]:
     """The deterministic report for every screened corner of a city (worst first), for the static site; the first
-    `letters` corners also get a drafted, checked letter. Returns the index rows."""
+    `letters` corners also get a drafted, checked letter. Saved reports are reused. workers > 1 builds corners in
+    parallel (keep it small: OpenStreetMap's Overpass allows a few requests at a time). Returns the index rows."""
+    from concurrent.futures import ThreadPoolExecutor
     from .config import SETTINGS
     out_dir = out_dir or SETTINGS.runs_dir / "engineer" / city
     out_dir.mkdir(parents=True, exist_ok=True)
-    desk = Desk()
-    data, rid = screen_city(desk, city, top or 10_000)
-    index = []
-    for k, j in enumerate(data["top"]):
-        s = slug(j["name"])
-        path = out_dir / f"{s}.json"
-        if path.exists() and (k >= letters or json.loads(path.read_text())["findings"]["draft_request"].get("letter")):
+    data, _ = screen_city(Desk(), city, top or 10_000)
+
+    def one(k: int, j: dict) -> dict | None:
+        path = out_dir / f"{slug(j['name'])}.json"
+        if path.exists():
             rep = json.loads(path.read_text())
-        else:
-            try:
-                rep = investigate(Desk(), j["name"], f"{j['name']}, {data['name']}", j["lat"], j["lon"],
-                                  letter_client=letter_client if k < letters else None)
-            except Exception as e:  # one corner's failure is recorded, not fatal
-                print(f"  {j['name']}: {type(e).__name__}: {e}")
-                continue
-            path.write_text(json.dumps(rep, indent=0, default=str))
-        index.append({"slug": s, "name": j["name"], "lat": j["lat"], "lon": j["lon"], "rank": k + 1,
+            if k >= letters or rep["findings"]["draft_request"].get("letter"):
+                return rep
+        try:
+            rep = investigate(Desk(), j["name"], f"{j['name']}, {data['name']}", j["lat"], j["lon"],
+                              letter_client=letter_client if k < letters else None)
+        except Exception as e:  # one corner's failure is recorded, not fatal
+            print(f"  {j['name']}: {type(e).__name__}: {e}", flush=True)
+            return None
+        path.write_text(json.dumps(rep, indent=0, default=str))
+        return rep
+
+    with ThreadPoolExecutor(max(1, workers)) as pool:
+        reports = list(pool.map(lambda kj: one(*kj), enumerate(data["top"])))
+    index = []
+    for k, (j, rep) in enumerate(zip(data["top"], reports)):
+        if rep is None:
+            continue
+        index.append({"slug": slug(j["name"]), "name": j["name"], "lat": j["lat"], "lon": j["lon"], "rank": k + 1,
                       "injury_crashes": j.get("injury_crashes"), "plan_gap": j.get("plan_gap"),
                       "claim_errors": len(rep["claim_errors"]),
                       "letter": bool(rep["findings"]["draft_request"].get("letter"))})
-        if (k + 1) % 25 == 0:
-            print(f"  {k + 1} corners")
     return index
 
 

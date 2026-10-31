@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NearMissLens</title>
+<meta name="description" content="A safety engineer for city streets: the worst corners, what their crashes have in common, what the city already tried, the fix and its price, who must act, and the request letter. Every claim carries a receipt.">
+<meta name="nml-mode" content="__MODE__">
+<meta name="nml-live" content="__LIVE__">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="copilot.css">
+</head><body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand"><h1>NearMissLens</h1>
+      <p>A safety engineer for city streets. Pick a corner: you get what its crashes have in common, what the city already tried, the fix the record supports, who must act, and the request.</p></div>
+    <form class="search" id="search"><label for="q" class="sr" hidden>Intersection</label>
+      <input id="q" placeholder="Search a corner, e.g. Hunts Point Avenue" autocomplete="off"><button>Find</button></form>
+    <div id="map" aria-label="Map of the city's priority intersections"></div>
+    <p class="citynote" id="citynote">Loading the city's priority corners…</p>
+    <ol class="corners" id="corners" aria-label="Priority corners, most injury crashes first"></ol>
+  </aside>
+  <main id="out">
+    <div class="empty"><h2>Which corner should the city fix first, and who has to do it?</h2>
+      <p>Pick a corner on the map or in the list. Each case is built by six tools over public records (police crash reports, the city's own past programs, federal crash-reduction studies, road ownership and council districts), and every sentence links to the receipt that shows where it came from.</p></div>
+  </main>
+</div>
+<script src="copilot.js"></script>
+</body></html>

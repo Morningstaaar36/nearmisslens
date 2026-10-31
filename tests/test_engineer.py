@@ -62,3 +62,10 @@ def test_overclaiming_words_are_refused(monkeypatch):
     assert E.check_claims([{"text": "Trucks caused these crashes.", "receipt": rid}], desk)
     assert E.check_claims([{"text": "Speed humps: not shown.", "receipt": rid}], desk) == []
     assert E.check_summary("No program failed.", desk) and E.check_summary("Speed humps were not shown.", desk) == []
+
+
+def test_text_report_and_agent_entry_point_exist(monkeypatch):
+    _fake(monkeypatch)
+    r = E.plan("Main St & Oak Ave")
+    out = E.text(r)
+    assert "Receipts:" in out and "R1" in out and callable(E.run) and "finish" in E.INSTRUCTIONS

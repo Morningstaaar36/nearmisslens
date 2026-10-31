@@ -80,7 +80,7 @@ def cmd_panel(args) -> int:
 def cmd_export(args) -> int:
     from .export import export
     path = export(args.split, args.source)
-    print(f"written {path} ({path.stat().st_size / 1e6:.1f} MB); preview: python -m http.server -d docs")
+    print(f"written {path} ({path.stat().st_size / 1e6:.1f} MB); preview: python -m http.server -d docs/video")
     return 0
 
 

@@ -1,0 +1,98 @@
+"""The static copilot for GitHub Pages (nml pages): the same page as the live app, reading precomputed engineer reports.
+
+    docs/index.html, copilot.js, copilot.css      the page (nearmisslens/web/), mode "static"
+    docs/data/index.json                          the city's screened corners, worst first, and its summary
+    docs/data/evidence.json                       what the causal gate found for every tested program
+    docs/data/j/<slug>.json                       one engineer report per corner (engineer.precompute)
+    docs/data/media/<slug>/aerial.jpg             the city aerial photo, for corners with a saved brief
+
+Nothing here needs a key: the reports are deterministic, and letters appear only where one was drafted and checked.
+A live endpoint (the Modal app) can be named with --live; the page then sends other addresses to it."""
+from __future__ import annotations
+
+import json
+import re
+import shutil
+from pathlib import Path
+
+from . import citywide, engineer, opendata
+from .config import ROOT, SETTINGS, asof
+
+WEB = Path(__file__).resolve().parent / "web"
+DOCS = ROOT / "docs"
+SECRETISH = re.compile(r"(sk-[A-Za-z0-9]{16,}|api[_-]?key\"?\s*[:=]\s*\"[^\"]{8,}|Bearer\s+[A-Za-z0-9._-]{16,})", re.I)
+
+
+def page(mode: str, live: str = "") -> str:
+    if live and not live.startswith("https://"):
+        raise ValueError("the live endpoint must be an https:// URL")
+    return (WEB / "copilot.html").read_text().replace("__MODE__", mode).replace("__LIVE__", live)
+
+
+def compact(rep: dict) -> dict:
+    """The report without what the page never shows (full crash rows, long pattern tails, the dossier's raw lists)."""
+    f = dict(rep["findings"])
+    fx = dict(f.get("choose_fixes") or {})
+    cr = fx.get("crashes") or {}
+    fx["crashes"] = {k: v for k, v in cr.items() if not isinstance(v, (list, dict)) or k in ("crash_groups",)}
+    fx["options"] = (fx.get("options") or [])[:8]
+    f["choose_fixes"] = fx
+    rc = dict(f.get("root_cause") or {})
+    rc["patterns"] = (rc.get("patterns") or [])[:12]
+    f["root_cause"] = rc
+    f.pop("screen_city", None)
+    return {**{k: v for k, v in rep.items() if k != "findings"}, "findings": f}
+
+
+def _brief_dir(name: str) -> Path:
+    # brief.build's folder name for a junction
+    return SETTINGS.runs_dir / "briefs" / "".join(ch if ch.isalnum() else "_" for ch in name.split(",")[0].lower())[:60]
+
+
+def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int = 25) -> dict:
+    src = SETTINGS.runs_dir / "engineer" / city
+    index = engineer.precompute(city, out_dir=src)  # reuses saved reports; builds any that are missing
+    data = docs / "data"
+    if (data / "j").exists():
+        shutil.rmtree(data / "j")
+    (data / "j").mkdir(parents=True)
+    for k, row in enumerate(index):
+        rep = compact(json.loads((src / f"{row['slug']}.json").read_text()))
+        photo = _brief_dir(row["name"]) / "aerial.jpg"
+        if k < media_top and photo.exists():
+            dst = data / "media" / row["slug"] / "aerial.jpg"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(photo, dst)
+            rep["media"] = {"aerial": f"data/media/{row['slug']}/aerial.jpg"}
+        (data / "j" / f"{row['slug']}.json").write_text(json.dumps(rep, separators=(",", ":"), default=str))
+    screen = dict(citywide.screened()).get(city, {})
+    c = opendata.city(city) or {}
+    (data / "index.json").write_text(json.dumps({"city": city, "city_name": c.get("name", city), "bbox": c.get("bbox"),
+                                                 "asof": asof().isoformat(), "summary": screen.get("summary", {}),
+                                                 "corners": index}, indent=0))
+    from .app import evidence
+    (data / "evidence.json").write_text(json.dumps(evidence(), indent=0, default=str))
+    (docs / "index.html").write_text(page("static", live))
+    for name in ("copilot.js", "copilot.css"):
+        shutil.copyfile(WEB / name, docs / name)
+    (docs / ".nojekyll").write_text("")
+    problems = check(docs)
+    if problems:
+        raise RuntimeError("the static site failed its checks: " + "; ".join(problems[:5]))
+    size = sum(p.stat().st_size for p in data.rglob("*") if p.is_file())
+    return {"corners": len(index), "letters": sum(r["letter"] for r in index), "mb": round(size / 1e6, 1),
+            "claim_errors": sum(r["claim_errors"] for r in index), "path": str(docs.relative_to(ROOT))}
+
+
+def check(docs: Path = DOCS) -> list[str]:
+    """No machine paths and nothing that looks like a key in anything the site publishes."""
+    out = []
+    for p in [docs / "index.html", docs / "copilot.js", *(docs / "data").rglob("*.json")]:
+        if not p.exists() or "video" in p.parts:
+            continue
+        text = p.read_text()
+        if "/home/" in text or "/Users/" in text:
+            out.append(f"{p.relative_to(docs)} contains a machine path")
+        if SECRETISH.search(text):
+            out.append(f"{p.relative_to(docs)} contains something that looks like a key")
+    return out
