@@ -63,7 +63,10 @@ def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int =
         shutil.rmtree(data / "j")
     (data / "j").mkdir(parents=True)
     for k, row in enumerate(index):
-        rep = compact(engineer.recheck(json.loads((src / f"{row['slug']}.json").read_text())))
+        path = src / f"{row['slug']}.json"
+        full = engineer.refresh(json.loads(path.read_text()))
+        path.write_text(json.dumps(full, indent=0, default=str))  # the saved report matches what the site shows
+        rep = compact(full)
         row["claim_errors"] = len(rep["claim_errors"])
         photo = _brief_dir(row["name"]) / "aerial.jpg"
         if k < media_top and photo.exists():

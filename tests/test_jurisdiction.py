@@ -35,3 +35,13 @@ def test_without_an_inventory_osm_route_tags_are_designation_only(monkeypatch):
     out = J.who_must_act(0, 0, ["Route Road", "Elm Street"], layout)
     conf = {r["roads"][0]: r["confidence"] for r in out["owners"]}
     assert conf == {"Route Road": "designation only", "Elm Street": "inferred"}
+
+
+def test_one_entry_per_agency_with_inferred_roads_named():
+    rows = [{"party": "city", "roads": ["Main Ave (NY 1)"], "confidence": "recorded", "basis": {"dataset": "inv"}, "route": "NY 1"},
+            {"party": "city", "roads": ["Oak St"], "confidence": "inferred", "basis": {"dataset": "inv"}, "route": None},
+            {"party": "state", "roads": ["I 95"], "confidence": "recorded", "basis": {"dataset": "inv"}, "route": "I 95"}]
+    out = J.merge_parties(rows)
+    assert [o["party"] for o in out] == ["city", "state"]
+    assert out[0]["confidence"] == "recorded" and out[0]["roads"] == ["Main Ave (NY 1)", "Oak St"]
+    assert out[0]["inferred_roads"] == ["Oak St"] and "inferred_roads" not in out[1]

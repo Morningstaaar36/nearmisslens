@@ -183,6 +183,22 @@ def check_summary(summary: str, desk: Desk) -> list[str]:
     return [f"summary: {e}" for e in context.FactCheck(desk.data).text(s) + wording(s)]
 
 
+def refresh(report: dict) -> dict:
+    """A saved report's claims rewritten from its stored findings by the current code, then checked again; no request
+    is made, so wording fixes reach every saved report."""
+    by_tool = {r["tool"]: r["id"] for r in report["receipts"]}
+    if report.get("mode") != "deterministic" or not all(t in by_tool for t in REQUIRED + ("draft_request",)):
+        return recheck(report)
+    findings = dict(report["findings"])
+    who = dict(findings["who_must_act"])
+    who["owners"] = jurisdiction.merge_parties(who["owners"])  # reports saved before owners were merged per agency
+    who["summary"] = "; ".join(f"{r['party']} ({', '.join(r['roads'])})" for r in who["owners"]) or "no road owner found"
+    findings["who_must_act"] = who
+    report = {**report, "findings": findings}
+    rec = {t: (report["findings"][t], by_tool[t]) for t in REQUIRED + ("draft_request",)}
+    return recheck({**report, "claims": claims_for(report["junction"]["name"].split(",")[0], rec)})
+
+
 def recheck(report: dict) -> dict:
     """A saved report's claims checked again with the current checker (receipts rebuilt from its findings)."""
     desk = Desk(receipts=report["receipts"],
@@ -218,6 +234,9 @@ def _usd(v: float) -> str:
 def _basis(owner: dict) -> str:
     source = (owner.get("basis") or {}).get("dataset") or "the record"
     source = source.split(" (")[0]
+    if owner["confidence"] == "recorded" and owner.get("inferred_roads"):
+        return (f"owner recorded in {source}; {', '.join(owner['inferred_roads'])} not listed there, "
+                f"so {'a city street' if len(owner['inferred_roads']) == 1 else 'city streets'}")
     return {"recorded": f"owner recorded in {source}",
             "inferred": f"not listed in {source}, so a city street",
             "designation only": "signed route in OpenStreetMap; owner not confirmed"}.get(owner["confidence"], source)
@@ -232,7 +251,7 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
         killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
         out.append({"text": f"{name} had {cr.get('injury_crashes', 0)} injury crashes in police records since "
                             f"{cr.get('since')}: {cr.get('pedestrian_injured', 0)} pedestrians injured, "
-                            f"{cr.get('cyclist_injured', 0)} cyclists injured and {killed} people killed.",
+                            f"{cr.get('cyclist_injured', 0)} cyclists injured and {killed} {'person' if killed == 1 else 'people'} killed.",
                     "receipt": rf})
         if fx.get("harm"):
             out.append({"text": f"At the U.S. DOT's values that harm costs about {_usd(fx['harm']['usd_per_year'])} "
@@ -335,8 +354,14 @@ def precompute(city: str, top: int | None = None, letters: int = 0, letter_clien
     out_dir.mkdir(parents=True, exist_ok=True)
     data, _ = screen_city(Desk(), city, top or 10_000)
 
+    slugs, seen = [], {}
+    for j in data["top"]:
+        s0 = slug(j["name"])
+        seen[s0] = seen.get(s0, 0) + 1
+        slugs.append(s0 if seen[s0] == 1 else f"{s0}_{seen[s0]}")  # two screened points can share a name
+
     def one(k: int, j: dict) -> dict | None:
-        path = out_dir / f"{slug(j['name'])}.json"
+        path = out_dir / f"{slugs[k]}.json"
         if path.exists():
             rep = json.loads(path.read_text())
             if k >= letters or rep["findings"]["draft_request"].get("letter"):
@@ -358,7 +383,7 @@ def precompute(city: str, top: int | None = None, letters: int = 0, letter_clien
     for k, (j, rep) in enumerate(zip(data["top"], reports)):
         if rep is None:
             continue
-        index.append({"slug": slug(j["name"]), "name": j["name"], "lat": j["lat"], "lon": j["lon"], "rank": k + 1,
+        index.append({"slug": slugs[k], "name": j["name"], "lat": j["lat"], "lon": j["lon"], "rank": k + 1,
                       "injury_crashes": j.get("injury_crashes"), "plan_gap": j.get("plan_gap"),
                       "claim_errors": len(rep["claim_errors"]),
                       "letter": bool(rep["findings"]["draft_request"].get("letter"))})

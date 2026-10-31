@@ -100,6 +100,27 @@ def _merge(rows: list[dict]) -> list[dict]:
             out[k]["roads"].append(r["road"])
     for v in out.values():
         v.pop("road", None)
+    return merge_parties(list(out.values()))
+
+
+def merge_parties(rows: list[dict]) -> list[dict]:
+    """One entry per agency: a party that owns recorded roads and inferred ones (the city DOT, typically) is listed
+    once, with its recorded basis and the inferred roads named separately, so "two owners" means two agencies."""
+    out: dict[str, dict] = {}
+    for r in rows:
+        p = r["party"]
+        if p not in out:
+            out[p] = {**r, "roads": list(r["roads"]), "inferred_roads": list(r["roads"]) if r["confidence"] == "inferred" else []}
+            continue
+        o = out[p]
+        o["roads"] += [x for x in r["roads"] if x not in o["roads"]]
+        if r["confidence"] == "inferred":
+            o["inferred_roads"] += [x for x in r["roads"] if x not in o["inferred_roads"]]
+        elif o["confidence"] != "recorded":  # a recorded row gives the entry its basis
+            o.update(confidence="recorded", basis=r["basis"], route=r.get("route"))
+    for o in out.values():
+        if o["confidence"] == "inferred" or not o["inferred_roads"]:
+            o.pop("inferred_roads")
     return list(out.values())
 
 
@@ -112,5 +133,6 @@ def who_must_act(lat: float, lon: float, streets: list[str], street_layout: dict
                    "salutation": o.get("salutation"),
                    "basis": {"dataset": o.get("source"), "field": "district", "value": o["office"]},
                    "confidence": "recorded"} for o in opendata.offices_at(lat, lon) if o.get("source")]
+    rows = merge_parties(rows)
     return {"owners": rows, "requesters": requesters,
             "summary": "; ".join(f"{r['party']} ({', '.join(r['roads'])})" for r in rows) or "no road owner found"}

@@ -1,0 +1,216 @@
+{
+"programs": [
+{
+"city": "nyc",
+"city_name": "New York City",
+"study": "T11",
+"program": "Leading Pedestrian Interval signals",
+"countermeasure": "Leading Pedestrian Interval",
+"passed": true,
+"reason": null,
+"outcome": "pedestrian",
+"effect_pct": -16.7,
+"sites": 1651,
+"ci_pct": [
+-21.9,
+-11.3
+],
+"placebo_pct": 2.2,
+"comparison": "not yet treated",
+"naive_pct": -23.8,
+"fake_rank": 0.13
+},
+{
+"city": "nyc",
+"city_name": "New York City",
+"study": "T11",
+"program": "turn traffic calming",
+"countermeasure": null,
+"passed": false,
+"reason": "a placebo date before the install shows a change too",
+"outcome": "pedestrian",
+"effect_pct": -16.1,
+"sites": 227,
+"ci_pct": [
+-25.2,
+-6.3
+],
+"placebo_pct": -22.5,
+"comparison": "citywide",
+"naive_pct": -26.2,
+"fake_rank": 0.1
+},
+{
+"city": "dc",
+"city_name": "Washington DC",
+"study": "T13_dc",
+"program": "Leading Pedestrian Interval signals",
+"countermeasure": "Leading Pedestrian Interval",
+"passed": false,
+"reason": "the effect's interval includes no change",
+"outcome": "pedestrian",
+"effect_pct": -18.8,
+"sites": 267,
+"ci_pct": [
+-34.9,
+0.8
+],
+"placebo_pct": -8.1,
+"comparison": "not yet treated",
+"naive_pct": -31.0,
+"fake_rank": null
+},
+{
+"city": "nyc",
+"city_name": "New York City",
+"study": "T13_nyc",
+"program": "enhanced crossings",
+"countermeasure": "Crosswalk Visibility Enhancements",
+"passed": false,
+"reason": "the effect's interval includes no change",
+"outcome": "pedestrian",
+"effect_pct": -7.2,
+"sites": 96,
+"ci_pct": [
+-50.0,
+68.6
+],
+"placebo_pct": 16.4,
+"comparison": "citywide",
+"naive_pct": -20.4,
+"fake_rank": 0.305
+},
+{
+"city": "nyc",
+"city_name": "New York City",
+"study": "T13_nyc",
+"program": "speed humps",
+"countermeasure": null,
+"passed": false,
+"reason": "the effect's interval includes no change",
+"outcome": "injury",
+"effect_pct": -0.4,
+"sites": 1008,
+"ci_pct": [
+-9.1,
+8.5
+],
+"placebo_pct": -3.9,
+"comparison": "not yet treated",
+"naive_pct": -5.0,
+"fake_rank": 0.54
+},
+{
+"city": "seattle",
+"city_name": "Seattle",
+"study": "T13_seattle",
+"program": "Leading Pedestrian Interval signals",
+"countermeasure": "Leading Pedestrian Interval",
+"passed": true,
+"reason": null,
+"outcome": "pedestrian",
+"effect_pct": -32.5,
+"sites": 371,
+"ci_pct": [
+-52.4,
+-12.5
+],
+"placebo_pct": -4.2,
+"comparison": "not yet treated",
+"naive_pct": -25.2,
+"fake_rank": null
+},
+{
+"city": "sf",
+"city_name": "San Francisco",
+"study": "T13_sf",
+"program": "painted safety zones",
+"countermeasure": "Crosswalk Visibility Enhancements",
+"passed": false,
+"reason": "the effect's interval includes no change",
+"outcome": "pedestrian",
+"effect_pct": 2.1,
+"sites": 96,
+"ci_pct": [
+-19.7,
+33.9
+],
+"placebo_pct": -7.9,
+"comparison": "citywide",
+"naive_pct": -3.1,
+"fake_rank": null
+},
+{
+"city": "sf",
+"city_name": "San Francisco",
+"study": "T13_sf",
+"program": "continental crosswalks",
+"countermeasure": "Crosswalk Visibility Enhancements",
+"passed": false,
+"reason": "the effect's interval includes no change",
+"outcome": "pedestrian",
+"effect_pct": 4.0,
+"sites": 780,
+"ci_pct": [
+-25.4,
+32.6
+],
+"placebo_pct": -4.6,
+"comparison": "not yet treated",
+"naive_pct": -5.7,
+"fake_rank": null
+},
+{
+"city": "seattle",
+"city_name": "Seattle",
+"study": "auto_seattle",
+"program": "leading pedestrian intervals",
+"countermeasure": "Leading Pedestrian Interval",
+"passed": true,
+"reason": null,
+"outcome": "pedestrian",
+"effect_pct": -33.0,
+"sites": 366,
+"ci_pct": [
+-52.0,
+-12.8
+],
+"placebo_pct": -3.8,
+"comparison": "not yet treated",
+"naive_pct": -25.7,
+"fake_rank": null
+}
+],
+"fake_programs": {
+"naive": {
+"false_claims": 16,
+"programs": 200,
+"rate": 0.08,
+"wilson95": [
+0.05,
+0.126
+],
+"mean_theta": 0.958
+},
+"comparison": {
+"false_claims": 12,
+"programs": 200,
+"rate": 0.06,
+"wilson95": [
+0.035,
+0.102
+],
+"mean_theta": 0.984
+},
+"gate": {
+"false_claims": 11,
+"programs": 200,
+"rate": 0.055,
+"wilson95": [
+0.031,
+0.096
+],
+"mean_theta": null
+}
+}
+}

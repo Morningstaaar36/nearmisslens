@@ -17,7 +17,12 @@
 - **Who must act.** Two owners. The New York State DOT, Region 11, owns the Bruckner Expressway (I-278), which runs overhead, and the Sheridan Boulevard (NY 895), according to the state's road inventory. The surface streets are not in that inventory, so they are the city DOT's. Council District 17 and Bronx Community Board 2 can push for the work.
 - **The request.** A letter to both owners, copying the council member and the board, with each number checked against the record.
 
-The first run takes about 40 seconds of public-data requests. After that, a case rebuilds in under a second. The owner split matters for anyone asking for a fix here: a letter only to the city DOT would miss the state agency that owns the expressway above the junction.
+The first run takes about 40 seconds of public-data requests (median 36 s across the 304 corners). After that, a case rebuilds in under a second.
+
+**Across all 304 corners**, the same run found:
+- the city DOT is not the only road owner at 12 of them (the state DOT at 11, a toll authority at 1);
+- 54 already got turn calming, the program whose drop the city's own record cannot separate from an earlier trend, so the engineer flags them before the same thing is proposed again;
+- at 144, at least one crash pattern is more common than at the city's other priority corners. The owner split matters for anyone asking for a fix here: a letter only to the city DOT would miss the state agency that owns the expressway above the junction.
 
 ## How it works
 
