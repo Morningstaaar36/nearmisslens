@@ -14,7 +14,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import demo
+from . import demo, democharts
 from .config import ROOT, SETTINGS
 from .evaluate import RESULTS_DIR
 
@@ -85,6 +85,41 @@ def _gate(study: str, key: str) -> dict:
             "cmf": (g.get("brief_cmf") or [{}])[0].get("cmf")}
 
 
+def _forest_rows() -> list[dict]:
+    """Every registered program's gate result for the forest plot, passed ones first."""
+    from . import opendata, treatments
+    rows = []
+    for res in treatments.results():
+        if res["id"].startswith("auto_"):
+            continue
+        for key, g in res.get("gates", {}).items():
+            m = res["runs"][g["primary"]][g["outcome"]] or {}
+            nv = (res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}
+            city = (opendata.city(res["city"]) or {}).get("name", res["city"])
+            verdict = "passed" if g["passed"] else ("failed the placebo" if g["rule_met"] else "not shown")
+            name = g["treatment"].replace("Leading Pedestrian Interval signals", "leading pedestrian intervals")
+            city = {"New York City": "New York", "Washington DC": "Washington"}.get(city, city)
+            rows.append({"label": f"{city}: {name}", "passed": g["passed"], "verdict": verdict,
+                         "effect": m.get("change_pct"), "ci": [round(100 * (v - 1), 1) for v in m["ci95"]] if m.get("ci95") else None,
+                         "naive": nv.get("change_pct")})
+    return sorted(rows, key=lambda r: (not r["passed"], r["verdict"]))
+
+
+def _analyst_real() -> list[dict]:
+    """The analyst's claims on real programs, without and with the gate (New York and other cities)."""
+    runs = []
+    for f in ("experiment_T12_agents_muse-spark-open.json", "experiment_T12_agents_muse-spark-open_real.json"):
+        runs += [r for r in _bench(f).get("runs", []) if r.get("stopped") == "finish_tool" and r.get("claim") and not r["fake"]]
+    out = {}
+    for r in runs:
+        c = r["claim"]
+        out.setdefault(r["program_key"], {})["gated" if r["gated"] else "ungated"] = \
+            f"{c['claim'].replace('_', ' ')} ({c['effect_pct']:+.0f}%)" if c["claim"] != "no_evidence" else "no evidence"
+    labels = {"lpi": "NYC leading pedestrian intervals", "turn_calming": "NYC turn calming"}
+    return [{"label": labels.get(k, k.replace("T13_", "").replace(":", " ").replace("_", " ")),
+             "ungated": v.get("ungated", "?"), "gated": v.get("gated", "?")} for k, v in out.items()]
+
+
 def script() -> list[Scene]:
     h = hero()
     cw = _bench(f"citywide_{h['city']}.json").get("summary", {})
@@ -102,10 +137,12 @@ def script() -> list[Scene]:
                       f"{'the most' if h['rank'] == 1 else 'among the most'} of {h['city_name']}'s "
                       f"{h['of']} priority intersections. {h['peds']} pedestrians hurt. In the federal "
                       f"government's own values, that harm costs {h['harm_m']:.1f} million dollars a year. The city's "
-                      f"records show no safety work here since {h['last_project']}.", "card",
-              "One intersection, five years",
-              f"{h['name']}{', ' + h['area'] if h['area'] else ''}: {h['injury']} injury crashes, {h['peds']} pedestrians hurt, "
-              f"${h['harm_m']:.1f}M a year in harm (USDOT values). Last recorded safety work: {h['last_project']}."),
+                      f"records show no safety work here since {h['last_project']}.", "chart", target="hook",
+              q={"aerial": str(Path(h["fix_image"]).with_name("aerial.jpg")),
+                 "title": f"{h['name']}{', ' + h['area'] if h['area'] else ''}",
+                 "lines": [f"{h['injury']} injury crashes in five years, the most of {h['of']} priority intersections",
+                           f"{h['peds']} pedestrians hurt", f"${h['harm_m']:.1f} million a year in harm (U.S. DOT values)",
+                           f"last recorded safety work: {h['last_project']}"]}),
         Scene("brief", "NearMissLens is a street-safety copilot built on Meta's models. Ask about any corner. Agents pull "
                        "the police record and the city's past projects, then rank federal safety fixes by the crashes "
                        "each would prevent and what that is worth.", "app", target=h["q"]["address"], q=h["q"],
@@ -114,30 +151,26 @@ def script() -> list[Scene]:
                      f"drawn and that no real car moved. Refuge islands here would prevent about "
                      f"{top['expected_crashes_avoided_per_year']} pedestrian injury crashes a year.", "image",
               target=h["fix_image"], caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
-        Scene("gates", "But why trust an AI's numbers? Here, every claim meets a gate "
-                       "that tries to disprove it with public data. A number must be in the record. A drawing must pass "
-                       "SAM. And 'this fix works here' must survive the city's own history.", "card",
-              "Every claim meets a gate",
-              "Every claim meets a gate that tries to disprove it: numbers against the record, drawings against SAM 3.1, "
-              "'this fix works' against the city's own past installs and a placebo date."),
-        Scene("measured", f"So we tested New York's own installs. Leading pedestrian intervals passed: pedestrian injury "
-                          f"crashes fell {-lpi['effect']} percent against intersections treated later, and a fake earlier "
-                          f"date shows nothing. Turn calming failed: a simple before-and-after credits it with "
-                          f"{-turn['naive']} percent, but crashes were already falling before the work began. The same "
-                          f"test, unchanged, in Seattle: {-sea['effect']} percent, passed.", "card",
-              "What the gate found",
-              f"NYC leading pedestrian intervals: {lpi['effect']}% (passed). NYC turn calming: naive {turn['naive']}%, "
-              f"failed the placebo. Seattle leading pedestrian intervals: {sea['effect']}% (passed)."),
+        Scene("gates", "But why trust an AI's numbers? Here, every claim meets a gate that tries to disprove it with "
+                       "public data. A number must be in the record. A drawing must pass SAM. And 'this fix works here' "
+                       "must survive the city's own history.", "chart", target="gates"),
+        Scene("measured", f"So we tested the cities' own installs. New York's leading pedestrian intervals passed: "
+                          f"pedestrian injury crashes fell {-lpi['effect']} percent against intersections treated later, "
+                          f"and a fake earlier date shows nothing. Turn calming failed: a simple before-and-after credits "
+                          f"it with {-turn['naive']} percent, but crashes were already falling before the work began. The "
+                          f"same test, unchanged, in Seattle: {-sea['effect']} percent, passed. Most programs did not pass, "
+                          "and the gate says so.", "chart", target="forest", q={"rows": _forest_rows()}),
     ]
     if agents:
         un = [r for r in agents if not r["gated"] and r["fake"]]
         ga = [r for r in agents if r["gated"] and r["fake"]]
         uc, gc = (sum(r["claim"]["claim"] == "reduced" for r in x) for x in (un, ga))
+        real = _analyst_real()
         scenes.append(Scene(
-            "analyst", f"We also gave an AI analyst, Muse Spark Open, programs to judge, including fake ones where "
-                       f"nothing was installed. Writing its own code, it claimed a reduction for {uc} of {len(un)} fakes. "
-                       f"Through the gate: {gc} of {len(ga)}.", "card", "An AI analyst, with and without the gate",
-            f"Fake programs credited with a reduction: {uc} of {len(un)} without the gate, {gc} of {len(ga)} with it."))
+            "analyst", f"We also gave an AI analyst, Muse Spark Open, programs to judge, blind, including fake ones where "
+                       f"nothing was installed. Writing its own code, it credited {uc} of {len(un)} fakes; through the "
+                       f"gate, {gc} of {len(ga)}.", "chart", target="analyst",
+            q={"ungated": (uc, len(un)), "gated": (gc, len(ga)), "real": real}))
     else:
         scenes.append(Scene(
             "analyst", f"And on {fake.get('gate', {}).get('programs')} fake programs, where nothing was installed, a "
@@ -199,6 +232,7 @@ def _record_app(url: str, name: str, seconds: float, work: Path, scroll: bool) -
         page.wait_for_timeout(1500)
         if scroll:
             page.wait_for_selector("#out .card h2", timeout=180000)
+            page.evaluate("document.getElementById('out').scrollIntoView()")
             page.wait_for_timeout(1500)
             for _ in range(int(seconds)):
                 page.evaluate("document.getElementById('side').scrollBy(0, 70)")
@@ -225,7 +259,19 @@ def render(out: Path | None = None) -> Path:
             wav = mine or work / f"{k:02d}_{s.name}.wav"
             secs = (demo._duration(wav) if mine else narrate(s.narration, wav)) + PAD_S
             if s.kind == "card":
-                seg = demo.card(s.title, s.caption or s.target, work / f"card_{s.name}", work, secs)
+                seg = demo.card(s.title, s.caption or s.target, work / f"card_{s.name}", work, secs, credit="")
+            elif s.kind == "chart":
+                png = work / f"chart_{s.name}.png"
+                q = s.q or {}
+                if s.target == "hook":
+                    democharts.hook(Path(q["aerial"]), q["title"], q["lines"], png, work)
+                elif s.target == "gates":
+                    democharts.gates(png, work)
+                elif s.target == "forest":
+                    democharts.forest(q["rows"], png, work)
+                else:
+                    democharts.analyst(tuple(q["ungated"]), tuple(q["gated"]), q["real"], png, work)
+                seg = demo.Segment(png, secs, s.caption)
             elif s.kind == "image":
                 seg = demo.Segment(Path(s.target), secs, s.caption, caption_top=True)
             elif s.kind in ("app", "letter"):

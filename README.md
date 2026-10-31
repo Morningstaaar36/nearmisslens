@@ -33,6 +33,8 @@ The causal gate is the new part. [`docs/METHOD.md`](docs/METHOD.md) explains it 
 
 ## What the gates found
 
+![Each program's effect on pedestrian injury crashes as the causal gate measured it (dot and 95% interval, green when it passed) next to a simple before/after (orange ring)](docs/img/gates_forest.png)
+
 | Program | Simple before/after says | The causal gate says |
 |---|---|---|
 | New York leading pedestrian intervals, 1,651 intersections | pedestrian injury crashes −24% | **Passes: −17%** (95% interval −22% to −11%). A fake earlier date shows no change. The national figure the copilot ranks with is −19%. |

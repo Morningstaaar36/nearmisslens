@@ -11,8 +11,10 @@
 | MMS-TTS (`facebook/mms-tts-eng`, `-spa`, `-fra`) | CC BY-NC 4.0 | Generates synthetic test complaints locally. The audio is not published; only transcripts appear |
 | Muse Spark Open (`meta-models/muse-spark-open-1026`) | Meta open-weights licence | Served by Baseten (partner inference) for the open-weights agent tier |
 | Muse Glimmer 30B GGUF (`meta-models/Muse-Glimmer-30B-GGUF`) | Apache-2.0 | Served on a Modal GPU with llama.cpp (MIT) for the open-weights agent tier; weights are not redistributed |
-| Kokoro-82M (`hexgrad/Kokoro-82M`) | Apache-2.0 | Local narration of the demo video |
-| NYC, Washington DC, Chicago, Los Angeles and Seattle open data (crashes, Vision Zero / High Injury Network lists, street projects and treatments) | Each portal's open-data terms | Queried live by `nml brief`, `nml citywide` and the data agent; responses cached locally, cited by dataset id in every brief |
+| Kokoro-82M (`hexgrad/Kokoro-82M`) | Apache-2.0 | Guide voice for timing draft demo cuts only; the submitted video is narrated by a person (`nml voice-studio`) |
+| pandas, NumPy, SciPy, statsmodels | BSD-3-Clause | The AI analyst's sandbox environment |
+| NYC, Washington DC, Chicago, Los Angeles, Seattle and San Francisco open data (crashes, Vision Zero / High Injury Network lists, street projects, dated treatments such as LPIs, crossings, speed humps and crosswalks, council and community district boundaries) | Each portal's open-data terms | Queried live by `nml brief`, `nml citywide`, the data and program agents and the treatment studies; responses and crash tables cached locally, not redistributed; cited by dataset id in every brief, letter and study |
+| U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update | US government work | Crash cost values in `nearmisslens/data/usdot_bca.json` |
 | New York State orthoimagery (NYS GIS Program Office), DC orthophoto 2023 (OCTO) | Public open data | City aerial photos in briefs |
 | USGS The National Map imagery | US public domain | Aerial photos where no city orthophoto is registered |
 | Mapillary street-level images | CC BY-SA 4.0 | Shown in briefs with a link to the image and the licence |

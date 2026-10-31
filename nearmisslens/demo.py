@@ -63,7 +63,7 @@ def wrap(draw: ImageDraw.ImageDraw, text: str, f, width: int) -> list[str]:
     return lines + [line] if line else lines
 
 
-def card(title: str, body: str, out: Path, work: Path, seconds: float = 5.0) -> Segment:
+def card(title: str, body: str, out: Path, work: Path, seconds: float = 5.0, credit: str = CREDIT) -> Segment:
     img = Image.new("RGB", (W, H), PAPER)
     d = ImageDraw.Draw(img)
     d.rectangle([0, H - 18, W, H], fill=MARKING)
@@ -76,7 +76,8 @@ def card(title: str, body: str, out: Path, work: Path, seconds: float = 5.0) -> 
     for line in wrap(d, body, fb, W - 360):
         d.text((180, y), line, font=fb, fill=(91, 104, 113))
         y += 66
-    d.text((180, H - 90), CREDIT, font=font(28, work), fill=(91, 104, 113))
+    if credit:
+        d.text((180, H - 90), credit, font=font(28, work), fill=(91, 104, 113))
     png = out.with_suffix(".png")
     img.save(png)
     return Segment(png, seconds)

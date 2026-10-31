@@ -235,3 +235,54 @@ def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", 
     with ThreadPoolExecutor(workers) as ex:
         list(ex.map(one, jobs))
     return done
+
+
+def run_agents_real(client, items: list[tuple[str, str]], name: str = "T12", model_label: str = "muse-spark-open",
+                    workers: int = 3, executor: str = "local") -> dict:
+    """The agentic arms on registered real programs in any city (study id, program key), blinded as P23, P24...;
+    saved into the same results file as the New York arms."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    from . import analyst
+    exp = load(name)
+    path = RESULTS_DIR / "bench" / f"experiment_{exp['id']}_agents_{model_label}.json"
+    done = json.loads(path.read_text()) if path.exists() else {"id": exp["id"], "model": model_label, "runs": []}
+    have = {(r["program_key"], r["gated"]) for r in done["runs"] if r.get("stopped") == "finish_tool"}
+    lock = threading.Lock()
+    jobs, cache = [], {}
+    for j, (study, key) in enumerate(items):
+        spec = T.load_spec(study)
+        prog = next(p for p in spec["programs"] if p["key"] == key)
+        city = spec["city"]
+        if city not in cache:
+            org = T.origin(city)
+            cr = T.crashes(city, org)
+            cache[city] = (org, cr, treatment_vertices(spec.get("exclude_near") or [prog["adapter"]], org))
+        org, cr, avoid = cache[city]
+        m0, m1 = int(cr["month"].min()), int(cr["month"].max())
+        treated = prog["treated"] if prog["treated"] != "auto" else \
+            [f"{T._label(m0 + spec['window_months'])}-01", f"{T._label(m1 - spec['window_months'])}-28"]
+        pts = T.program_points(opendata.adapter(prog["adapter"]))
+        for gated in (False, True):
+            if (f"{study}:{key}", gated) not in have:
+                jobs.append((f"P{23 + j:02d}", f"{study}:{key}", pts, cr, org, avoid, treated, gated,
+                             {**exp, "outcome": prog["outcome"]}, spec))
+
+    def one(job):
+        pid, pkey, pts, cr, org, avoid, treated, gated, ex, spec = job
+        try:
+            res = analyst.analyse(client, pid, pts, cr, org, avoid, gated, ex, spec, treated,
+                                  tag=f"T12 {model_label}", executor=executor)
+        except Exception as e:  # recorded, not hidden; a later call retries it
+            res = {"program": pid, "gated": gated, "claim": None, "stopped": f"error: {type(e).__name__}: {e}",
+                   "turns": 0, "code_runs": 0, "usd": 0.0}
+        res.update(program_key=pkey, fake=False)
+        with lock:
+            done["runs"].append(res)
+            path.write_text(json.dumps(done, indent=1, default=float))
+        c = res.get("claim") or {}
+        print(f"{pid} ({pkey}) {'gated' if gated else 'ungated'}: {c.get('claim')} {c.get('effect_pct')} "
+              f"[{res['stopped']}, {res['turns']} turns, ${res['usd']}]", flush=True)
+    with ThreadPoolExecutor(workers) as ex_:
+        list(ex_.map(one, jobs))
+    return done

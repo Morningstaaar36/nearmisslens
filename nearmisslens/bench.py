@@ -649,7 +649,7 @@ def write_bench_md() -> str:
                   "the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On the "
                   "real programs the gate matters more: the naive analysis overstates the LPI effect and credits turn "
                   "calming with a cut that had started before the work.", ""]
-        for model in ("muse-spark-open", "muse-glimmer"):
+        for model in ("muse-spark-open", "muse-spark-open_real", "muse-glimmer"):
             ag = _load(f"experiment_T12_agents_{model}.json")
             runs = [r for r in (ag or {}).get("runs", []) if r.get("stopped") == "finish_tool" and r.get("claim")]
             if not runs:
