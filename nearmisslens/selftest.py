@@ -1,7 +1,7 @@
 """End-to-end self-test on real FLUID data and cached Meta API responses.
 
 Every number is recomputed from the data and the response cache; nothing is copied from earlier runs.
-With NML_REPLAY=1 no API call is made, and a check whose cached responses are missing is reported as SKIP.
+With NML_REPLAY=1 no API call is made, and a check whose cached responses are missing is reported as SKIP, and the run exits with code 3 (not a pass).
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ import pandas as pd
 
 from . import calibrate, conflicts, fluid, match, movements, pipeline, tiling, tracks, verifier, video
 from .cache import ReplayMiss
-from .config import ROOT, SETTINGS
+from .config import portable, ROOT, SETTINGS
 from .meta_client import MetaClient
 from .runlog import log_metrics
 
@@ -45,8 +45,10 @@ def check_data() -> Check:
         for p in (c.video, c.traj_path, c.signal_path, c.base_map):
             if not p.exists():
                 missing.append(str(p))
-    if missing:
-        ch.status, ch.detail = "FAIL", {"missing": missing}
+    if missing:  # the drone-video checks need FLUID (nml fetch, about 2 GB); without it they are not verified
+        ch.status = "SKIP"
+        ch.detail = {"reason": "FLUID video not downloaded; run nml fetch to verify the video checks",
+                     "missing": [portable(m) for m in missing[:4]] + ([f"... {len(missing) - 4} more"] if len(missing) > 4 else [])}
         return ch
     info = video.probe(fluid.clip(*fluid.DEV).video)
     ch.status, ch.detail = "PASS", info
@@ -172,15 +174,23 @@ def check_grounding() -> Check:
     first = facts["findings"][0]
     fake_id = str(max(int(i) for i in known if i.isdigit()) + 1)
     rejected_id = next((r["crfid"] for f in facts["findings"] for r in f["rejected"] if r.get("crfid")), None)
+    # a number absent from the data, chosen from the data (not by asking the checker what it rejects)
     invented = round(first["rate_per_1000"] * 1.37, 1)
-    while not g.text(f"{invented}") == [f"number {invented} does not appear in the audit or the tool results"]:
+    while any(abs(k - invented) < 0.051 for k in g.known):
         invented = round(invented + 0.1, 1)
     planted = {"fabricated_cmf": g.recommendation(first["rank"], fake_id),
-               "rejected_countermeasure": g.recommendation(first["rank"], rejected_id) if rejected_id else "none in audit",
                "missing_hotspot": g.recommendation(max(g.ranks) + 1, first["countermeasures"][0]["crfid"] if first["countermeasures"] else fake_id),
-               "invented_number": "; ".join(g.text(f"Hotspot {first['rank']} has {invented} conflicts per 1,000 road users"))}
-    ch.detail = {"honest_recommendations": len(honest), "honest_accepted": accepted, "planted_caught": planted}
-    ch.status = "PASS" if accepted and honest and all(planted.values()) else "FAIL"
+               "invented_number": "; ".join(e for e in g.text(f"Hotspot {first['rank']} has {invented} conflicts per 1,000 road users")
+                                            if str(invented) in e)}
+    not_applicable = []
+    if rejected_id:
+        planted["rejected_countermeasure"] = g.recommendation(first["rank"], rejected_id)
+    else:
+        not_applicable.append("rejected_countermeasure (the audit rejected none)")
+    ch.detail = {"honest_recommendations": len(honest), "honest_accepted": accepted, "planted_caught": planted,
+                 "not_applicable": not_applicable}
+    # every planted error that applies must be refused with a message (an empty message means it slipped through)
+    ch.status = "PASS" if accepted and honest and all(isinstance(v, str) and v for v in planted.values()) else "FAIL"
     return ch
 
 
@@ -246,12 +256,33 @@ def check_verifier(client: MetaClient) -> Check:
     return ch
 
 
+def check_engineer(address: str = "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY") -> Check:
+    ch = Check("engineer", criterion="the safety engineer on the README corner, from records as of validation/ASOF: all five corner "
+                                     "tools give receipts, every claim cites one and passes the checker, and the case names "
+                                     "at least one road owner and one priced fix")
+    from . import engineer
+    try:
+        r = engineer.plan(address)
+    except (FileNotFoundError, ReplayMiss, ValueError) as e:
+        ch.detail = {"reason": f"public records for this corner are not in the replay cache ({str(e)[:120]})"}
+        return ch
+    f = r["findings"]
+    tools = {x["tool"] for x in r["receipts"]}
+    ok = (not r["claim_errors"] and {"root_cause", "test_programs", "choose_fixes", "who_must_act", "draft_request"} <= tools
+          and f["who_must_act"]["owners"] and f["choose_fixes"].get("options"))
+    ch.status = "PASS" if ok else "FAIL"
+    ch.detail = {"claims": len(r["claims"]), "claim_errors": r["claim_errors"][:3], "receipts": sorted(tools),
+                 "owners": [o["party"] for o in f["who_must_act"]["owners"]],
+                 "top_fix": (f["choose_fixes"].get("options") or [{}])[0].get("countermeasure"), "seconds": r["seconds"]}
+    return ch
+
+
 def run(replay: bool = True) -> list[Check]:
     if replay:
         SETTINGS.replay = True
     client = MetaClient(SETTINGS)
     data = check_data()
-    checks = [data]
+    checks = [check_engineer(), data]
     if data.status == "PASS":
         checks += [check_calibration(), check_engine(), check_linking(), check_routes(), check_audit(), check_grounding(), check_tracking(client), check_verifier(client)]
     return checks
@@ -271,4 +302,10 @@ def main(replay: bool = True, write: bool = True) -> int:
     print(text)
     if write:
         (ROOT / "validation" / "SELFTEST.md").write_text(text)
-    return 1 if any(ch.status == "FAIL" for ch in checks) else 0
+    if any(ch.status == "FAIL" for ch in checks):
+        return 1
+    skipped = [ch.name for ch in checks if ch.status == "SKIP"]
+    if skipped:  # a skipped check proves nothing, so it is not a pass
+        print(f"not verified (no cached responses or data): {', '.join(skipped)}")
+        return 3
+    return 0
