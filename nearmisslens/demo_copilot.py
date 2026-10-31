@@ -1,11 +1,14 @@
-"""The demo video (under 3 minutes), made from the real product: screen recordings of the Junction Safety Copilot, the intake
-page and the near-miss viewer, plus title cards, narrated by a local open-source voice (Kokoro, Apache-2.0).
-Every number spoken comes from the result files in validation/; nothing is staged.
+"""The demo video (under 3 minutes), made from the real product: screen recordings of the copilot (the static site in
+docs/, built by nml pages) opening the safety engineer's case for the city's worst corner, the near-miss viewer, and
+charts drawn from the result files. The narration is the author's own voice (nml voice-studio); Kokoro is only a guide
+voice for timing drafts. Every number spoken comes from the engineer's report or validation/; nothing is staged.
 
-    uv run nml demo --copilot     # needs the app's cached briefs (nml brief ...) and the viewer data (nml export)"""
+    uv run nml pages              # the reports the scenes open
+    uv run nml demo --copilot"""
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import threading
 import time
@@ -43,34 +46,36 @@ def _bench(name: str) -> dict:
     return json.loads(p.read_text()) if p.exists() else {}
 
 
-def hero() -> dict:
-    """The opening junction, chosen from the results, not by hand: the plan-gap intersection with the most injury
-    crashes in a city screen whose brief has a fix drawing that passed the SAM 3.1 check."""
-    from . import brief, citywide, letter, opendata
-    from .countermeasures import load_cmf
-    for city in citywide.cities():
-        everyone = sorted(_bench(f"citywide_{city}.json").get("rows", []), key=lambda r: -(r.get("injury_crashes") or 0))
-        for rank, r in enumerate(everyone, 1):
-            if not r.get("plan_gap"):
-                continue
-            slug = "".join(ch if ch.isalnum() else "_" for ch in r["name"].lower())[:60]
-            path = SETTINGS.runs_dir / "briefs" / slug / "brief.json"
-            f = json.loads(path.read_text()) if path.exists() else {}
-            if not (f.get("illustration") or {}).get("check_passed"):
-                continue
-            d = f["dossier"]
-            fx = brief.fix_options(d, load_cmf())
-            top = fx["options"][0] if fx["options"] else None
-            area = next((o["area"] for o in letter.offices(d["lat"], d["lon"]) if o.get("area")), None)
-            return {"name": r["name"], "spoken": r["name"].replace("&", "and") + (f", {area}" if area else ""),
-                    "rank": rank, "of": len(everyone), "city": city, "city_name": opendata.city(city)["name"],
-                    "area": area, "slug": slug, "fix_image": str(resolve((f.get("illustration") or {}).get("image"))),
-                    "q": {"address": f["junction"], "lat": d["lat"], "lon": d["lon"]},
-                    "injury": d["crashes"]["injury_crashes"], "peds": d["crashes"].get("pedestrian_injured", 0),
-                    "harm_m": fx["harm"]["usd_per_year"] / 1e6, "top": top,
-                    "last_project": max((p["year"] for p in d["plans"]["projects"] if isinstance(p.get("year"), int)),
-                                        default=None)}
-    raise FileNotFoundError("no screened junction has a brief with a checked fix drawing (nml citywide, nml brief)")
+def hero(city: str | None = None) -> dict:
+    """The opening corner, chosen from the results, not by hand: the worst corner of the first screened city, with the
+    numbers of the engineer's saved report for it (nml pages / engineer.precompute)."""
+    from . import citywide, engineer, opendata, pages
+    for c in ([city] if city else citywide.cities()):
+        rows = sorted(_bench(f"citywide_{c}.json").get("rows", []), key=lambda r: -(r.get("injury_crashes") or 0))
+        if not rows:
+            continue
+        r = rows[0]
+        path = SETTINGS.runs_dir / "engineer" / c / f"{engineer.slug(r['name'])}.json"
+        if not path.exists():
+            raise FileNotFoundError(f"no engineer report for {r['name']}; run nml pages")
+        rep = json.loads(path.read_text())
+        f = rep["findings"]
+        cr, fx, who = f["choose_fixes"]["crashes"], f["choose_fixes"], f["who_must_act"]
+        # the over-represented pattern with the most excess crashes over the city's share
+        over = sorted(f["root_cause"].get("over_represented") or [], key=lambda t: -(t["share"] - t["city_share"]))
+        low = [o for o in fx.get("options", []) if o.get("scale") == "low-cost"]
+        offices = [x["party"] for x in who["requesters"]]
+        projects = [p["year"] for p in f["test_programs"].get("projects_here", []) if isinstance(p.get("year"), int)]
+        aerial = pages._brief_dir(r["name"]) / "aerial.jpg"
+        return {"name": r["name"], "slug": engineer.slug(r["name"]), "city": c, "of": len(rows),
+                "city_name": opendata.city(c)["name"], "spoken": r["name"].replace("&", "and"),
+                "aerial": str(aerial) if aerial.exists() else None,
+                "injury": cr.get("injury_crashes"), "peds": cr.get("pedestrian_injured", 0),
+                "harm_m": fx["harm"]["usd_per_year"] / 1e6 if fx.get("harm") else None,
+                "last_project": max(projects) if projects else None, "pattern": over[0] if over else None,
+                "top": low[0] if low else None, "owners": who["owners"], "offices": offices,
+                "letter": bool(f["draft_request"].get("letter")), "seconds": rep["seconds"]}
+    raise FileNotFoundError("no screened city (nml citywide)")
 
 
 def _gate(study: str, key: str) -> dict:
@@ -101,7 +106,7 @@ def _forest_rows() -> list[dict]:
             m = res["runs"][g["primary"]][g["outcome"]] or {}
             nv = (res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}
             city = (opendata.city(res["city"]) or {}).get("name", res["city"])
-            verdict = "passed" if g["passed"] else ("failed the placebo" if g["rule_met"] else "not shown")
+            verdict = "worked" if g["passed"] else ("earlier trend" if g["rule_met"] else "not shown")
             name = g["treatment"].replace("Leading Pedestrian Interval signals", "leading pedestrian intervals")
             city = {"New York City": "New York", "Washington DC": "Washington"}.get(city, city)
             rows.append({"label": f"{city}: {name}", "passed": g["passed"], "verdict": verdict,
@@ -128,87 +133,98 @@ def _analyst_real() -> list[dict]:
              "ungated": v.get("ungated", "?"), "gated": v.get("gated", "?")} for k, v in out.items()]
 
 
+def _owners_spoken(owners: list[dict]) -> str:
+    def short(party: str) -> str:
+        m = re.search(r"\(([A-Z][A-Za-z ]+)\)", party)  # "the New York State Department ... (NYSDOT)" -> NYSDOT
+        return m.group(1) if m else party.replace("the ", "", 1)
+    parts = [f"{short(o['party'])} for {o['roads'][0].split(' (')[0]}" for o in owners]
+    return ", and ".join(parts)
+
+
+def _cap(text: str) -> str:
+    return text[:1].upper() + text[1:]
+
+
+def _office_spoken(office: str) -> str:
+    m = re.match(r"Council Member, District (\d+)", office)
+    return f"the council member for District {m.group(1)}" if m else office
+
+
 def script() -> list[Scene]:
     h = hero()
-    cw = _bench(f"citywide_{h['city']}.json").get("summary", {})
-    fr = _bench("fresh.json").get("pooled", {})
-    rs = _bench("fresh_reseed.json").get("pooled", {})
-    pet0 = fr.get("v0", {}).get("pet<=1.5", {}).get("f1")
-    pet1 = rs.get("reseed", {}).get("pet<=1.5", {}).get("f1")
     lpi, turn, sea = _gate("T11", "lpi"), _gate("T11", "turn_calming"), _gate("T13_seattle", "lpi")
-    fake = _bench("experiment_T12.json").get("summary", {})
     agents = [r for r in _bench("experiment_T12_agents_muse-spark-open.json").get("runs", [])
               if r.get("stopped") == "finish_tool" and r.get("claim")]
-    top = h["top"]
+    top, pat = h["top"], h["pattern"]
+    usd = lambda v: f"{v / 1e6:.1f} million dollars" if v >= 1e6 else f"{round(v, -3):,.0f} dollars"
+    case = {"slug": h["slug"]}
     scenes = [
-        Scene("hook", f"{h['spoken']}. {h['injury']} injury crashes in five years, "
-                      f"{'the most' if h['rank'] == 1 else 'among the most'} of {h['city_name']}'s "
-                      f"{h['of']} priority intersections. {h['peds']} pedestrians hurt. In the federal "
-                      f"government's own values, that harm costs {h['harm_m']:.1f} million dollars a year. The city's "
-                      f"records show no safety work here since {h['last_project']}.", "chart", target="hook",
-              q={"aerial": str(Path(h["fix_image"]).with_name("aerial.jpg")),
-                 "title": f"{h['name']}{', ' + h['area'] if h['area'] else ''}",
+        Scene("hook", f"{h['spoken']}, in {h['city_name']}. {h['injury']} injury crashes in five years, the most of the "
+                      f"city's {h['of']} priority intersections, about {h['harm_m']:.1f} million dollars a year in harm. "
+                      + (f"No safety work recorded since {h['last_project']}. " if h["last_project"] else "")
+                      + "Who should fix it, with what, and has that fix worked here before?", "chart", target="hook",
+              q={"aerial": h["aerial"], "title": h["name"],
                  "lines": [f"{h['injury']} injury crashes in five years, the most of {h['of']} priority intersections",
-                           f"{h['peds']} pedestrians hurt", f"${h['harm_m']:.1f} million a year in harm (U.S. DOT values)",
-                           f"last recorded safety work: {h['last_project']}"]}),
-        Scene("brief", "Ask about any corner. Agents on Meta's models pull the police record and the city's past "
-                       "projects, and rank federal safety fixes by crashes prevented and dollars saved.", "app", target=h["q"]["address"], q=h["q"],
-              caption="Official record, ranked fixes with their dollar value, a checked brief"),
-        Scene("fix", f"Muse Image draws a proposed fix on the aerial photo, and SAM 3.1 checks it was really drawn. The "
-                     f"top estimated fix here, {_plain(top['countermeasure'])}, would prevent about "
-                     f"{top['expected_crashes_avoided_per_year']} {top['targets']} a year.", "image",
-              target=h["fix_image"], caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
-        Scene("gates", "But why trust an AI? Here every claim meets a gate that tries to disprove it with public data: "
-                       "numbers against the record, drawings against SAM, and 'this fix works' against the city's own "
-                       "history.", "chart", target="gates"),
-        Scene("measured", f"So we tested the cities' own installs. New York's leading pedestrian intervals passed: "
-                          f"pedestrian injury crashes fell {-lpi['effect']} percent against intersections treated later, "
-                          f"and a fake earlier date shows nothing. Turn calming failed: a simple before-and-after credits "
-                          f"it with {-turn['naive']} percent, but crashes were already falling before the work began. The "
-                          f"same test, unchanged, in Seattle: {-sea['effect']} percent, passed. Five other programs did not.",
-                          "chart", target="forest", q={"rows": _forest_rows()}),
+                           f"{h['peds']} pedestrians hurt", f"${h['harm_m']:.1f} million a year in harm (U.S. DOT values)"]
+                          + ([f"last recorded safety work: {h['last_project']}"] if h["last_project"] else [])}),
+        Scene("case", "NearMissLens is a safety engineer built on Meta's models. Give it a city and it screens every "
+                      "priority corner, opens the worst, and writes the case. Every sentence names its receipt: the "
+                      "dataset, the date, the check it passed. A sentence that doesn't match its receipt is refused.",
+              "case", q={**case, "section": 0}, caption="The case, sentence by sentence, each with its receipt"),
     ]
+    if pat:
+        scenes.append(Scene("pattern", f"What do the crashes here have in common? {treat_pct(pat['share'])} percent "
+                                       f"{pat['phrase']}, against {treat_pct(pat['city_share'])} percent at the city's "
+                                       "other priority corners. It says 'have in common', never 'caused'.",
+                            "case", q={**case, "section": 1}, caption="Patterns tested against the city's priority corners"))
+    scenes.append(Scene("tried", "What has the city already tried? Each program is tested on its own crash records, "
+                                 "against places treated later, with a fake earlier date that must show nothing. New "
+                                 f"York's leading pedestrian intervals: {-lpi['effect']} percent fewer pedestrian injury "
+                                 f"crashes. Turn calming looks like a {-turn['naive']} percent drop, but crashes were already "
+                                 f"falling before the work. Seattle: {-sea['effect']} percent fewer, the same test, unchanged.",
+                        "chart", target="forest", q={"rows": _forest_rows()}))
+    if top:
+        scenes.append(Scene("fix", f"The fix the record supports here: {_plain(top['countermeasure'])}, about "
+                                   f"{top['expected_crashes_avoided_per_year']:g} fewer crashes a year, worth "
+                                   f"{usd(top['harm_avoided_usd_per_year'])} a year, from the federal study that fits "
+                                   "this signalized corner.", "case", q={**case, "section": 3},
+                            caption="Federal countermeasures, priced only where a study fits the corner"))
+    if h["owners"]:
+        scenes.append(Scene("who", f"Who must act? {'Two owners' if len(h['owners']) == 2 else 'The owner'}: "
+                                   f"{_owners_spoken(h['owners'])}. "
+                                   + ("A request to the city alone would miss the state. " if len(h["owners"]) > 1 else "")
+                                   + (_cap(' and '.join(_office_spoken(o) for o in h['offices'])) + " can push for it."
+                                      if h["offices"] else ""),
+                            "case", q={**case, "section": 4}, caption="Road owners from the state inventory; offices from district maps"))
+    scenes.append(Scene("letter", "Then it drafts the request to the owners, copying the offices, and checks every number "
+                                  "before you see it. You send it; NearMissLens sends nothing.", "case",
+                        q={**case, "section": 5, "letter": h["letter"]}, caption="The request letter, checked number by number"))
     if agents:
         un = [r for r in agents if not r["gated"] and r["fake"]]
         ga = [r for r in agents if r["gated"] and r["fake"]]
         uc, gc = (sum(r["claim"]["claim"] != "no_evidence" for r in x) for x in (un, ga))
-        real = _analyst_real()
-        t14 = _bench("experiment_T14a.json").get("designs", {})
-        cal = max((v["calibrated_false_passes"] for v in t14.values()), default=None)
         rank = (_bench("study_T11.json").get("gates", {}).get("lpi", {}).get("fake_rank") or {}).get("rank")
         scenes.append(Scene(
-            "analyst", "We gave an AI analyst, Muse Spark Open, programs to assess blind, writing its own code. Alone, it "
-                       "missed New York's pedestrian intervals, credited two programs the data doesn't support, and "
-                       f"contradicted itself once. The gate fixed all of that. But it let {gc} of {len(ga)} fake programs "
-                       "through, so we tested the tester: a stricter gate cuts false passes to "
-                       f"{cal} in a hundred, and shows New York's effect is less certain than it looked"
-                       + (f", stronger than {round(100 * (1 - rank))} percent of fakes" if rank is not None else "")
-                       + ". We report both.", "chart", target="analyst",
-            q={"ungated": (uc, len(un)), "gated": (gc, len(ga)), "real": real}))
-    else:
-        scenes.append(Scene(
-            "analyst", f"And on {fake.get('gate', {}).get('programs')} fake programs, where nothing was installed, a "
-                       f"simple before-and-after found an effect {round(100 * fake.get('naive', {}).get('rate', 0))} "
-                       f"percent of the time; the gate, {100 * fake.get('gate', {}).get('rate', 0):.1f}.", "card",
-            "Fake programs", "Fake programs credited with a reduction: naive "
-            f"{100 * fake.get('naive', {}).get('rate', 0):.1f}%, gate {100 * fake.get('gate', {}).get('rate', 0):.1f}%."))
+            "analyst", "Why trust it? We gave an AI analyst, Muse Spark Open, the programs blind. Alone, it missed New "
+                       "York's pedestrian intervals and credited two programs the data doesn't support. The gate fixed "
+                       f"that, but let {gc} of {len(ga)} fake programs through, so we tested the tester and report "
+                       "where it is weak"
+                       + (f": New York's effect beats {round(100 * (1 - rank))} percent of fake programs, not all of them"
+                          if rank is not None else "") + ".", "chart", target="analyst",
+            q={"ungated": (uc, len(un)), "gated": (gc, len(ga)), "real": _analyst_real()}))
     scenes += [
-        Scene("map", f"Each red dot is a priority intersection with many injury crashes and nothing done, "
-                     f"{cw.get('plan_gap')} of them, and this panel shows what has worked in the city.",
-              "app", target="", caption="What has worked here: each program tested on the city's own crash records"),
-        Scene("letter", "Then it drafts a checked letter to the council member and community board, found from the "
-                        "city's district maps. The resident sends it.", "letter", target=h["q"]["address"], q=h["q"],
-              caption="A checked letter to the council district and community board, drafted from the record"),
-        Scene("video", "Where drone video exists, SAM 3.1 tracks every road user and measures near misses before "
-                       "crashes happen.",
-              "viewer", caption="SAM 3.1 near-miss measurement on drone video (FLUID dataset, CC BY 4.0)"),
-        Scene("open", "Meta's open weights run the analyst, the briefs and the letters: Muse Spark Open on Baseten, and "
-                      "Muse Glimmer on a Modal GPU.", "card", "Meta models throughout",
-              "SAM 3.1 · Muse Spark · Muse Wonder · Muse Image · Voice Transcribe · Muse Spark Open · Muse Glimmer"),
-        Scene("end", "NearMissLens. Every claim tested before it is shown. Built during the hackathon; engineers decide.",
-              "card", "NearMissLens", "Every claim tested before it is shown. Open source, built during the hackathon."),
+        Scene("video", "Where drone video exists, SAM 3.1 tracks the road users and measures near misses before "
+                       "crashes happen.", "viewer", caption="SAM 3.1 near-miss measurement on drone video (FLUID dataset, CC BY 4.0)"),
+        Scene("end", f"NearMissLens. {h['of']} corners, each case built from public records in seconds, every claim "
+                     "with its receipt. Open source, built during the hackathon. Engineers decide.", "card", "NearMissLens",
+              "A safety engineer that shows its receipts. Muse Spark Open on Baseten, Muse Spark, SAM 3.1, Muse Image."),
     ]
     return scenes
+
+
+def treat_pct(share: float) -> int:
+    from .treatments import pct
+    return pct(100 * share)
 
 
 _PIPE = []
@@ -226,44 +242,30 @@ def narrate(text: str, out: Path) -> float:
     return demo._duration(out)
 
 
-def _record_letter(url: str, name: str, seconds: float, work: Path) -> Path:
-    def steps(page, base):
-        page.goto(url)
-        page.wait_for_selector("#ltr", timeout=180000)
-        page.click("#ltr")
-        page.wait_for_selector("#ltrtxt", timeout=180000)
-        page.evaluate("document.getElementById('ltrout').scrollIntoView()")
+def _record_case(base: str, q: dict, name: str, seconds: float, work: Path) -> Path:
+    """Open the copilot on a corner's case and hold one section in view, scrolling slowly through it."""
+    def steps(page, _base):
+        page.goto(f"{base}/#{q['slug']}")
+        page.wait_for_selector("h2.corner", timeout=60000)
+        page.wait_for_timeout(int(demo.LOAD_S * 1000))
+        target = "#letter" if q.get("letter") and q.get("section") == 5 else None
+        page.evaluate("([n, t]) => { const el = t ? document.querySelector(t) : document.querySelectorAll('section.step')[n];"
+                      " if (el) el.scrollIntoView({block: 'start'}); }", [q.get("section", 0), target])
         for _ in range(int(seconds)):
-            page.evaluate("document.getElementById('ltrtxt').scrollBy(0, 40)")
             page.wait_for_timeout(1000)
-    return demo.record(url, name, steps, work / "rec")
-
-
-def _record_app(url: str, name: str, seconds: float, work: Path, scroll: bool) -> Path:
-    def steps(page, base):
-        page.goto(url)
-        page.wait_for_timeout(1500)
-        if scroll:
-            page.wait_for_selector("#out .card h2", timeout=180000)
-            page.evaluate("document.getElementById('out').scrollIntoView()")
-            page.wait_for_timeout(1500)
-            for _ in range(int(seconds)):
-                page.evaluate("document.getElementById('side').scrollBy(0, 70)")
-                page.wait_for_timeout(1000)
-        else:
-            page.wait_for_timeout(int(seconds * 1000))
-    return demo.record(url, name, steps, work / "rec")
+            page.mouse.wheel(0, 60)
+    return demo.record(base, name, steps, work / "rec")
 
 
 def render(out: Path | None = None) -> Path:
-    from .app import serve as app_serve
-    from .serve import serve as intake_serve
+    from . import pages
     work = SETTINGS.data_dir / "work" / "demo_copilot"
     work.mkdir(parents=True, exist_ok=True)
-    threading.Thread(target=app_serve, kwargs={"port": 8790}, daemon=True).start()
-    threading.Thread(target=intake_serve, args=("test_sam", 8791, "muse-spark-1.3-contributor"), daemon=True).start()
+    if not (pages.DOCS / "data" / "index.json").exists():
+        raise FileNotFoundError("the static site is not built; run nml pages")
     srv, docs = demo._serve(demo.DOCS)
-    time.sleep(3)
+    site, base = demo._serve(pages.DOCS)
+    time.sleep(1)
     clips = []
     try:
         for k, s in enumerate(script()):
@@ -288,30 +290,8 @@ def render(out: Path | None = None) -> Path:
                 seg = demo.Segment(png, secs, s.caption)
             elif s.kind == "image":
                 seg = demo.Segment(Path(s.target), secs, s.caption, caption_top=True)
-            elif s.kind in ("app", "letter"):
-                from urllib.parse import quote
-                q = s.q or {"address": s.target}
-                if s.target:  # build the brief (and letter) once before recording, so the scene shows them
-                    import httpx
-                    httpx.post("http://127.0.0.1:8790/brief", json=q, timeout=600)
-                    if s.kind == "letter":
-                        httpx.post("http://127.0.0.1:8790/letter", json=q, timeout=600)
-                url = "http://127.0.0.1:8790/" + (f"?q={quote(s.target)}" if s.target else "") + \
-                    (f"&lat={q['lat']}&lon={q['lon']}" if s.target and "lat" in q else "")
-                webm = (_record_letter(url, s.name, secs + 3, work) if s.kind == "letter"
-                        else _record_app(url, s.name, secs + 3, work, scroll=bool(s.target)))
-                seg = demo.Segment(webm, secs, s.caption, skip=demo.LOAD_S)
-            elif s.kind == "intake":
-                import httpx
-                httpx.post("http://127.0.0.1:8791/ask_text", content=s.target.encode(), timeout=600)  # warm the answer
-
-                def steps(page, base, text=s.target, secs=secs):
-                    page.goto("http://127.0.0.1:8791/")
-                    page.fill("#txt", text)
-                    page.click("#send")
-                    page.wait_for_selector(".verdict", timeout=180000)
-                    page.wait_for_timeout(int(secs * 1000))
-                webm = demo.record("http://127.0.0.1:8791/", s.name, steps, work / "rec")
+            elif s.kind == "case":
+                webm = _record_case(base, s.q, s.name, secs + 2, work)
                 seg = demo.Segment(webm, secs, s.caption, skip=demo.LOAD_S)
             else:  # the near-miss viewer: 3D replay of the worst conflict at the held-out junction
                 key = "heldout_sam"
@@ -328,6 +308,7 @@ def render(out: Path | None = None) -> Path:
             print(f"scene {s.name}: {secs:.1f} s", flush=True)
     finally:
         srv.shutdown()
+        site.shutdown()
     lst = work / "parts.txt"
     lst.write_text("".join(f"file '{p}'\n" for p in clips))
     out = out or SETTINGS.runs_dir / "demo" / "nearmisslens_copilot_demo.mp4"
