@@ -11,6 +11,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import re
 import time
 from collections import Counter
 from pathlib import Path
@@ -156,13 +157,52 @@ INSTRUCTIONS = (
     "when a source is missing. Call finish with the memo; if it is rejected, fix the errors.")
 
 
+# a number written next to one of these words must be the record's value for it (the field names it maps to)
+LABELS = [  # (name, words before the number, words after it, field-name pattern)
+    ("crashes avoided", r"\b(prevent|prevents|avoid|avoids|avoided|cut|cuts|save|saves)\b[^.;]{0,25}$", None,
+     r"avoided"),
+    ("deaths", None, r"^[^.;\d]{0,30}\b(killed|deaths?|died|dead|fatal|fatalities)\b", r"killed|death|fatal"),
+    ("pedestrians injured", None, r"^\s*pedestrians?\b[^.;\d]{0,20}\b(injured|hurt)\b", r"pedestrian.*injur"),
+    ("cyclists injured", None, r"^\s*(cyclists?|bicyclists?)\b[^.;\d]{0,20}\b(injured|hurt)\b", r"cyclist.*injur"),
+    ("injury crashes", None, r"^\s*(\w+\s){0,2}(injury crashes|crashes with injur)", r"injury_crash"),
+    ("dollars", r"\$\s*$", None, r"usd|harm|cost|dollar|million"),
+]
+
+
+def _labelled(facts) -> dict[str, list[float]]:
+    """Every numeric value in the facts by the name of the field holding it."""
+    out: dict[str, list[float]] = {}
+
+    def walk(o, key=""):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, str(k))
+        elif isinstance(o, (list, tuple)):
+            for v in o:
+                walk(v, key)
+        elif isinstance(o, (int, float)) and not isinstance(o, bool):
+            out.setdefault(key.lower(), []).append(float(o))
+    walk(facts)
+    return out
+
+
 class FactCheck:
-    """Numbers a memo may use: those in the dossier."""
+    """Numbers a memo may use: those in the dossier. A number written next to a label (deaths, pedestrians injured,
+    injury crashes, crashes avoided, dollars) must also be the record's value for that label, so "29 pedestrians were
+    killed" is refused where the record has 29 pedestrians injured and no deaths."""
 
     def __init__(self, facts: dict):
         # numbers in values and in field names (schools_400m, by_year keys such as 2022) are both in the dossier
         self.known = set(panel.numbers_in(facts)) | {panel._value(t) for t in panel.NUMBER.findall(
             json.dumps(facts, default=str))}
+        fields = _labelled(facts)
+        self.by_label = {}
+        for name, before, after, pattern in LABELS:
+            vals = [v for k, vs in fields.items() if re.search(pattern, k) for v in vs]
+            if name == "dollars":  # "$8.8 million" and "$561,000" both name a dollar field
+                vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
+            self.by_label[name] = vals or [0.0]  # an absent count is zero (the record lists only non-zero counts)
+        self.known |= {round(v, 1) for v in self.by_label["dollars"]} | {0.0}  # "$8.8 million"; absent counts are 0
 
     def text(self, text: str) -> list[str]:
         a, b = self._text(text), self._text(panel.normalise_decimals(text))
@@ -170,11 +210,22 @@ class FactCheck:
 
     def _text(self, text: str) -> list[str]:
         bad = []
-        for t in dict.fromkeys(panel.NUMBER.findall(text)):
+        for m in panel.NUMBER.finditer(text):
+            t = m.group(0)
             v, tol = panel._value(t), 0.5 * 10 ** -panel._decimals(t) + 1e-9
             if not any(abs(k - v) <= tol for k in self.known):
                 bad.append(f"number {t} is not in the dossier")
-        return bad
+                continue
+            tail = text[m.end():m.end() + 45]
+            if tail.lstrip().startswith("%") or (len(t) == 4 and t[:2] in ("19", "20")):
+                continue  # percentages and years carry no label
+            head = text[max(0, m.start() - 30):m.start()]
+            for name, before, after, _ in LABELS:
+                if (before and re.search(before, head, re.I)) or (after and re.search(after, tail, re.I)):
+                    if not any(abs(k - v) <= tol for k in self.by_label[name]):
+                        bad.append(f"{t} is not the record's number of {name}")
+                    break
+        return list(dict.fromkeys(bad))
 
 
 def memo(client: MetaClient, d: dict, tag: str, checked: bool = True) -> dict:

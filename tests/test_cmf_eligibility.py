@@ -59,3 +59,19 @@ def test_shipped_subset_has_every_curated_record():
     sub = cm._load(str(cm.ALLOWED_PATH))
     ids = {e["crfid"] for i in cm.psc_items() for e in i.get("cmf_allow", [])}
     assert ids <= set(sub["crfid"])
+
+
+def test_number_checker_binds_numbers_to_their_labels():
+    from nearmisslens.context import FactCheck
+    facts = {"crashes": {"crashes": 310, "injury_crashes": 129, "pedestrian_injured": 29, "motorist_injured": 160,
+                         "by_year": {"2021": 12}},
+             "fixes": {"options": [{"expected_crashes_avoided_per_year": 7.0, "harm_avoided_usd_per_year": 2403000.0}],
+                       "harm": {"usd_per_year": 8834000.0}}}
+    c = FactCheck(facts)
+    assert c.text("29 pedestrians were killed in 2021.")
+    assert c.text("There were 310 deaths and 129 crashes.")
+    assert c.text("Refuge islands would prevent 29 pedestrian injury crashes a year.")
+    assert c.text("129 pedestrians were injured.")
+    assert c.text("29 pedestrians were injured and 129 injury crashes were recorded.") == []
+    assert c.text("Longer yellow times would prevent about 7.0 injury crashes a year, worth $2,403,000.") == []
+    assert c.text("The harm costs about $8.8 million a year; no one was killed (0 deaths).") == []
