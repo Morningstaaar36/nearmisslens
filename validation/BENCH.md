@@ -171,8 +171,8 @@ Registered: validation/BENCH_PREREG.md, T11 (2026-10-31, before any crash data w
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
-- **turn traffic calming**: failed (a placebo date before the install shows a change too). Pedestrian injury crashes -16.1% (theta 0.839, [0.748, 0.937]) on the citywide comparison, 359 of 586 sites excluded for another treatment within 100 m in their windows.
+- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut. Rank among 200 fake programs (T14): 0.130.
+- **turn traffic calming**: failed (a placebo date before the install shows a change too). Pedestrian injury crashes -16.1% (theta 0.839, [0.748, 0.937]) on the citywide comparison, 359 of 586 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.100.
 - Naive before/after for Leading Pedestrian Interval signals (no comparison group, 4,779 sites): -23.8% (theta 0.762, [0.739, 0.786]).
 - Naive before/after for turn traffic calming (no comparison group, 586 sites): -26.2% (theta 0.738, [0.690, 0.791]).
 
@@ -261,8 +261,8 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's prog
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **enhanced crossings**: failed (the effect's interval includes no change). Pedestrian injury crashes -7.2% (theta 0.928, [0.500, 1.686]) on the citywide comparison, 73 of 169 sites excluded for another treatment within 100 m in their windows.
-- **speed humps**: failed (the effect's interval includes no change). All injury crashes -0.4% (theta 0.996, [0.909, 1.085]) on the not yet treated comparison, 594 of 1,668 sites excluded for another treatment within 100 m in their windows.
+- **enhanced crossings**: failed (the effect's interval includes no change). Pedestrian injury crashes -7.2% (theta 0.928, [0.500, 1.686]) on the citywide comparison, 73 of 169 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.305.
+- **speed humps**: failed (the effect's interval includes no change). All injury crashes -0.4% (theta 0.996, [0.909, 1.085]) on the not yet treated comparison, 594 of 1,668 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.540.
 - Naive before/after for enhanced crossings (no comparison group, 169 sites): -20.4% (theta 0.796, [0.582, 1.104]).
 - Naive before/after for speed humps (no comparison group, 1,668 sites): -5.0% (theta 0.950, [0.890, 1.009]).
 
@@ -406,12 +406,45 @@ Real programs:
 
 Registered rule, part (c) (gate below naive, upper bound at most 10%): met. The gate's measured false-claim rate is higher than the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On the real programs the gate matters more: the naive analysis overstates the LPI effect and credits turn calming with a cut that had started before the work.
 
-Agentic arms (muse-spark-open, programs blinded; code run in isolated Modal sandboxes):
+Agentic arms (muse-spark-open, programs blinded; code run in a local sandbox with no network):
 
-| arm | fake programs analysed | claimed a reduction | real programs: claims | cost |
-|---|---|---|---|---|
-| ungated | 6 | 0 | — | $0.020 |
-| gated | 7 | 1 | — | $0.026 |
+| arm | fake programs analysed | claimed a reduction | claimed any effect | real programs: claims | cost |
+|---|---|---|---|---|---|
+| ungated | 20 | 2 | 2 | lpi: no_evidence (0.2%); turn_calming: reduced (-9.1%) | $0.084 |
+| gated | 20 | 4 | 5 | lpi: reduced (-15.5%); turn_calming: no_evidence (-2.6%) | $0.079 |
+
+Agentic arms (muse-spark-open_real, programs blinded; code run in isolated Modal sandboxes):
+
+| arm | fake programs analysed | claimed a reduction | claimed any effect | real programs: claims | cost |
+|---|---|---|---|---|---|
+| ungated | 0 | 0 | 0 | T13_seattle:lpi: reduced (-17.0%); T13_dc:lpi: increased (-14.8%); T13_sf:continental_crosswalks: no_evidence (-8.7%); T13_nyc:speed_humps: reduced (-10.9%); T13_nyc:enhanced_crossings: no_evidence (-10.6%) | $0.017 |
+| gated | 0 | 0 | 0 | T13_dc:lpi: no_evidence (-20.6%); T13_nyc:speed_humps: no_evidence (5.6%); T13_nyc:enhanced_crossings: no_evidence (28.7%); T13_sf:continental_crosswalks: no_evidence (8.1%); T13_seattle:lpi: reduced (-46.8%) | $0.017 |
+
+## T14 A calibrated gate: a real program must beat fake programs run through the same design
+
+Registered after T12's agentic results (validation/BENCH_PREREG.md, T14). The calibrated gate keeps the original gate's checks and also requires theta below the 2.5th percentile of 200 fake programs of the same size and design in the same city.
+
+(a) False passes on 100 fresh fake programs (seeds 1000–1099):
+
+| design | null 2.5th–97.5th percentile | original gate | calibrated gate |
+|---|---|---|---|
+| T11 (50 m, 36 months) | 0.632–1.452 | 6 of 100 (2.8–12.5%) | 3 of 100 (1.0–8.5%) |
+| short (30 m, 12 months) | 0.614–1.473 | 3 of 100 (1.0–8.5%) | 2 of 100 (0.6–7.0%) |
+
+(b) Power on the leading pedestrian interval programs (T11's design):
+
+| program | sites | effect | interval | original gate | calibrated gate | rank among fakes |
+|---|---|---|---|---|---|---|
+| T11 all sites | 1789 | -19.0% | [-24.0, -14.0] | reduced | no_evidence | 0.070 |
+| T11 held-out half | 1418 | -17.1% | [-22.9, -11.1] | reduced | no_evidence | 0.145 |
+| T13_seattle all sites | 371 | -32.5% | [-52.4, -12.5] | reduced | no_evidence | 0.082 |
+| T13_seattle held-out half | 233 | -25.8% | [-51.2, 2.5] | no_evidence | no_evidence | 0.184 |
+
+These runs exclude only the program's own neighbouring installs, so New York's numbers differ slightly from T11's (which also excludes turn calming). Seattle has only 43 hotspot cells, so its null is drawn from few places and narrowed by the square-root rule.
+
+(c) The gated analyst's runs with the calibrated verdict: false passes on fake programs 5 → 2 of 20; New York's LPIs: reduced → no_evidence.
+
+Registered rule: (a) met (both upper bounds at most 10%); (b) not met (the calibrated gate does not pass New York's LPIs). The calibrated gate therefore does not replace the original gate. The product keeps the original gate and shows each program's rank among fake programs next to its verdict. Reading: fake programs at untreated hotspots vary more than each program's own bootstrap interval suggests, so the original gate's intervals are optimistic; a real program needs to be larger or have more sites to pass the stricter check.
 
 ## Data agent: adapters found and validated without hand-written code
 

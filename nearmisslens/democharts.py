@@ -109,7 +109,7 @@ def analyst(ungated: tuple[int, int], gated: tuple[int, int], real: list[dict], 
         d.rectangle([620, y, 620 + 900, y + 60], outline=GREY, width=2)
         if of:
             d.rectangle([620, y, 620 + int(900 * n / of), y + 60], fill=RED)
-        d.text((1550, y + 6), f"{n} of {of} fake programs credited", font=fs, fill=INK)
+        d.text((1550, y + 6), f"{n} of {of} fakes credited", font=fs, fill=INK)
     y = 600
     d.text((140, y), "Real programs", font=f, fill=INK)
     y += 70

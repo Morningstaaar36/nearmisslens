@@ -1,0 +1,82 @@
+{
+ "id": "T14b",
+ "registered": "validation/BENCH_PREREG.md, T14",
+ "programs": [
+  {
+   "study": "T11",
+   "program": "lpi",
+   "part": "all sites",
+   "sites": 1789,
+   "effect_pct": -19.0,
+   "interval_pct": [
+    -24.0,
+    -14.0
+   ],
+   "old": "reduced",
+   "calibrated": "no_evidence",
+   "cells": 434,
+   "verdict": "no_evidence",
+   "null_p2_5": 0.768,
+   "null_p97_5": 1.195,
+   "null_n": 200,
+   "null_rank": 0.07
+  },
+  {
+   "study": "T11",
+   "program": "lpi",
+   "part": "held-out half",
+   "sites": 1418,
+   "effect_pct": -17.1,
+   "interval_pct": [
+    -22.9,
+    -11.1
+   ],
+   "old": "reduced",
+   "calibrated": "no_evidence",
+   "cells": 434,
+   "verdict": "no_evidence",
+   "null_p2_5": 0.749,
+   "null_p97_5": 1.23,
+   "null_n": 200,
+   "null_rank": 0.145
+  },
+  {
+   "study": "T13_seattle",
+   "program": "lpi",
+   "part": "all sites",
+   "sites": 371,
+   "effect_pct": -32.5,
+   "interval_pct": [
+    -52.4,
+    -12.5
+   ],
+   "old": "reduced",
+   "calibrated": "no_evidence",
+   "cells": 43,
+   "verdict": "no_evidence",
+   "null_p2_5": 0.623,
+   "null_p97_5": 2.067,
+   "null_n": 147,
+   "null_rank": 0.082
+  },
+  {
+   "study": "T13_seattle",
+   "program": "lpi",
+   "part": "held-out half",
+   "sites": 233,
+   "effect_pct": -25.8,
+   "interval_pct": [
+    -51.2,
+    2.5
+   ],
+   "old": "no_evidence",
+   "calibrated": "no_evidence",
+   "cells": 43,
+   "verdict": "no_evidence",
+   "null_p2_5": 0.55,
+   "null_p97_5": 2.5,
+   "null_n": 147,
+   "null_rank": 0.184
+  }
+ ]
+}

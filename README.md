@@ -11,7 +11,7 @@ NearMissLens found that in about a minute, from open records. It ranked the fede
 
 ## Why the agents need gates
 
-A city choosing a fix usually relies on national averages and rarely checks what its own past installs did. An AI analyst can make that worse: give one a list of sites and dates and it will produce a confident estimate, whether or not anything happened.
+A city choosing a fix usually relies on national averages and rarely checks what its own past installs did. An AI analyst asked to check is not enough on its own: in our tests, Muse Spark Open writing its own analysis code missed New York's leading pedestrian interval effect, credited two programs the data does not support, and once reported an "increase" alongside a 15% drop.
 
 NearMissLens builds on Meta's verifiable-agent pattern (the Agents 102 workshop), which puts the checks inside the tools so an agent cannot finish until its work passes them. Meta's checks compare claims with documents. NearMissLens adds checks for claims about the world: **a falsification gate** is a deterministic test, inside the tool an agent finishes with, that tries to show the claim is wrong. The claim goes through only if the test fails to break it.
 
@@ -42,7 +42,9 @@ The causal gate is the new part. [`docs/METHOD.md`](docs/METHOD.md) explains it 
 | Seattle leading pedestrian intervals, 371 intersections | −25% | **Passes: −33%** (−52% to −12%), the same design run unchanged in a second city. Both placebos show no change. |
 | Washington DC leading pedestrian intervals, 267 intersections | −31% | **Not shown: −19%**, but the interval (−35% to +1%) includes no change. 600 of DC's sites had no later-treated comparison, so the test had little data; the gate says "not shown", not "doesn't work". |
 | 200 fake programs in New York (random sites and dates, nothing installed) | credits 8.0% of them | credits 5.5% of them (95% interval 3.1–9.6%) |
-| An AI analyst (Muse Spark Open) writing its own code, without and with the gate | *running* | *running* |
+| An AI analyst (Muse Spark Open) writing and running its own code, programs blinded | Without the gate: missed New York's LPIs, credited turn calming (−9%) and New York's speed humps (−11%), and called DC's LPIs an "increase" while reporting −15%; credited 2 of 20 fake programs | With the gate deciding on held-out sites: confirmed New York's and Seattle's LPIs and refused the other three. But it passed 5 of 20 fake programs, all with short designs (30 m, 12–24 months) the analyst chose itself |
+
+**We tested the tester, and it has a weak spot.** Those 5 false passes led to a stricter, calibrated gate (T14, registered before it ran): a program must also beat 97.5% of 200 fake programs run through the same design. It cut false passes to 2–3% on 100 fresh fake programs, but it no longer confirms the LPIs: New York's effect ranks at the 13th percentile of fake programs (Seattle and DC have too few untreated hotspots to build a fair comparison). So the original gate stays, its intervals are optimistic, and the copilot shows each program's rank among fake programs next to its verdict. Read the LPI result as consistent evidence across two cities and three published studies, not as proof.
 
 The same design also ran, unchanged, on four more programs. None passed, and the reasons differ. New York's enhanced crossings and San Francisco's painted safety zones had fewer than 100 usable sites, so their intervals are too wide to show anything (not shown). New York's speed humps (1,008 sites, all injury crashes: θ 0.996, 0.909–1.085) and San Francisco's continental crosswalks (780 sites: θ 1.04, 0.75–1.33) show no measurable change. In total: 7 programs in 4 cities, 2 passed, both of them leading pedestrian intervals.
 

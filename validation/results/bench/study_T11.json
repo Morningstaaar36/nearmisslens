@@ -477,7 +477,13 @@
      "crash_type": "Vehicle/pedestrian",
      "severity": "All"
     }
-   ]
+   ],
+   "fake_rank": {
+    "rank": 0.13,
+    "null_n": 200,
+    "null_p2_5": 0.761,
+    "cells": 434
+   }
   },
   "turn_calming": {
    "countermeasure": null,
@@ -490,7 +496,13 @@
    "rule_met": true,
    "placebo_ok": false,
    "passed": false,
-   "reason": "a placebo date before the install shows a change too"
+   "reason": "a placebo date before the install shows a change too",
+   "fake_rank": {
+    "rank": 0.1,
+    "null_n": 200,
+    "null_p2_5": 0.78,
+    "cells": 434
+   }
   }
  },
  "naive": {

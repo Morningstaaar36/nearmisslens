@@ -54,7 +54,7 @@ fetch('/citywide').then(r=>r.json()).then(d=>{
 fetch('/evidence').then(r=>r.json()).then(e=>{
  if(!e.programs||!e.programs.length)return;
  const pct=v=>(v>0?'+':'')+v+'%';
- const rows=e.programs.map(p=>`<tr><td>${p.passed?'<span class="nogap">✓ works</span>':'<span class="legend">✗ not shown</span>'}</td><td><b>${esc(p.program)}</b><div class="legend">${esc(p.city_name)} · ${p.sites??'?'} sites · vs ${esc(p.comparison)}</div></td><td>${p.effect_pct!=null?pct(p.effect_pct):'n/a'}${p.ci_pct?`<div class="legend">${pct(p.ci_pct[0])} to ${pct(p.ci_pct[1])}</div>`:''}</td><td class="legend">${p.passed?'placebo date before the install: '+pct(p.placebo_pct)+', no change':esc(p.reason||'')}${p.naive_pct!=null?`<br>a simple before/after would say ${pct(p.naive_pct)}`:''}</td></tr>`).join('');
+ const rows=e.programs.map(p=>`<tr><td>${p.passed?'<span class="nogap">✓ works</span>':'<span class="legend">✗ not shown</span>'}</td><td><b>${esc(p.program)}</b><div class="legend">${esc(p.city_name)} · ${p.sites??'?'} sites · vs ${esc(p.comparison)}</div></td><td>${p.effect_pct!=null?pct(p.effect_pct):'n/a'}${p.ci_pct?`<div class="legend">${pct(p.ci_pct[0])} to ${pct(p.ci_pct[1])}</div>`:''}</td><td class="legend">${p.passed?'placebo date before the install: '+pct(p.placebo_pct)+', no change':esc(p.reason||'')}${p.naive_pct!=null?`<br>a simple before/after would say ${pct(p.naive_pct)}`:''}${p.passed&&p.fake_rank!=null?`<br>stronger than ${Math.round(100*(1-p.fake_rank))}% of 200 fake programs`:''}</td></tr>`).join('');
  const f=e.fake_programs?`<p class="legend">The gate was also tested on ${e.fake_programs.gate.programs} fake programs (random sites and dates, nothing installed): it claimed an effect for ${(100*e.fake_programs.gate.rate).toFixed(1)}% of them, against ${(100*e.fake_programs.naive.rate).toFixed(1)}% for a simple before/after.</p>`:'';
  const div=document.createElement('div');div.className='card';
  div.innerHTML=`<b>What has worked here</b> <span class="legend">each program tested on the city's own crash records; a fix only counts if a fake earlier date shows no change</span><table style="margin-top:6px">${rows}</table>${f}`;
@@ -116,7 +116,8 @@ def evidence() -> dict:
                              "ci_pct": [round(100 * (v - 1), 1) for v in m["ci95"]] if m.get("ci95") else None,
                              "placebo_pct": pl and pl.get("change_pct"),
                              "comparison": g["primary"][len(key) + 1:].replace("_", " "),
-                             "naive_pct": ((res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}).get("change_pct")})
+                             "naive_pct": ((res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}).get("change_pct"),
+                             "fake_rank": (g.get("fake_rank") or {}).get("rank")})
     t12 = RESULTS_DIR / "bench" / "experiment_T12.json"
     fake = json.loads(t12.read_text())["summary"] if t12.exists() else None
     return {"programs": programs, "fake_programs": fake}

@@ -143,33 +143,39 @@ def script() -> list[Scene]:
                  "lines": [f"{h['injury']} injury crashes in five years, the most of {h['of']} priority intersections",
                            f"{h['peds']} pedestrians hurt", f"${h['harm_m']:.1f} million a year in harm (U.S. DOT values)",
                            f"last recorded safety work: {h['last_project']}"]}),
-        Scene("brief", "NearMissLens is a street-safety copilot built on Meta's models. Ask about any corner. Agents pull "
-                       "the police record and the city's past projects, then rank federal safety fixes by the crashes "
-                       "each would prevent and what that is worth.", "app", target=h["q"]["address"], q=h["q"],
+        Scene("brief", "Ask about any corner. Agents on Meta's models pull the police record and the city's past "
+                       "projects, and rank federal safety fixes by crashes prevented and dollars saved.", "app", target=h["q"]["address"], q=h["q"],
               caption="Official record, ranked fixes with their dollar value, a checked brief"),
-        Scene("fix", f"Muse Image draws the top fix on the state's aerial photo, and SAM 3.1 checks that it was really "
-                     f"drawn and that no real car moved. Refuge islands here would prevent about "
-                     f"{top['expected_crashes_avoided_per_year']} pedestrian injury crashes a year.", "image",
+        Scene("fix", f"Muse Image draws the top fix on the aerial photo, and SAM 3.1 checks it was really drawn. Refuge "
+                     f"islands here would prevent about {top['expected_crashes_avoided_per_year']} pedestrian injury "
+                     f"crashes a year.", "image",
               target=h["fix_image"], caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
-        Scene("gates", "But why trust an AI's numbers? Here, every claim meets a gate that tries to disprove it with "
-                       "public data. A number must be in the record. A drawing must pass SAM. And 'this fix works here' "
-                       "must survive the city's own history.", "chart", target="gates"),
+        Scene("gates", "But why trust an AI? Here every claim meets a gate that tries to disprove it with public data: "
+                       "numbers against the record, drawings against SAM, and 'this fix works' against the city's own "
+                       "history.", "chart", target="gates"),
         Scene("measured", f"So we tested the cities' own installs. New York's leading pedestrian intervals passed: "
                           f"pedestrian injury crashes fell {-lpi['effect']} percent against intersections treated later, "
                           f"and a fake earlier date shows nothing. Turn calming failed: a simple before-and-after credits "
                           f"it with {-turn['naive']} percent, but crashes were already falling before the work began. The "
-                          f"same test, unchanged, in Seattle: {-sea['effect']} percent, passed. Most programs did not pass, "
-                          "and the gate says so.", "chart", target="forest", q={"rows": _forest_rows()}),
+                          f"same test, unchanged, in Seattle: {-sea['effect']} percent, passed. Five other programs did not.",
+                          "chart", target="forest", q={"rows": _forest_rows()}),
     ]
     if agents:
         un = [r for r in agents if not r["gated"] and r["fake"]]
         ga = [r for r in agents if r["gated"] and r["fake"]]
-        uc, gc = (sum(r["claim"]["claim"] == "reduced" for r in x) for x in (un, ga))
+        uc, gc = (sum(r["claim"]["claim"] != "no_evidence" for r in x) for x in (un, ga))
         real = _analyst_real()
+        t14 = _bench("experiment_T14a.json").get("designs", {})
+        cal = max((v["calibrated_false_passes"] for v in t14.values()), default=None)
+        rank = (_bench("study_T11.json").get("gates", {}).get("lpi", {}).get("fake_rank") or {}).get("rank")
         scenes.append(Scene(
-            "analyst", f"We also gave an AI analyst, Muse Spark Open, programs to judge, blind, including fake ones where "
-                       f"nothing was installed. Writing its own code, it credited {uc} of {len(un)} fakes; through the "
-                       f"gate, {gc} of {len(ga)}.", "chart", target="analyst",
+            "analyst", "We gave an AI analyst, Muse Spark Open, programs to judge blind, writing its own code. Alone, it "
+                       "missed New York's pedestrian intervals, credited two programs the data doesn't support, and "
+                       f"contradicted itself once. The gate fixed all of that. But it let {gc} of {len(ga)} fake programs "
+                       "through, so we tested the tester: a stricter gate cuts false passes to "
+                       f"{cal} in a hundred, and shows New York's effect is less certain than it looked"
+                       + (f", stronger than {round(100 * (1 - rank))} percent of fakes" if rank is not None else "")
+                       + ". We report both.", "chart", target="analyst",
             q={"ungated": (uc, len(un)), "gated": (gc, len(ga)), "real": real}))
     else:
         scenes.append(Scene(
@@ -179,15 +185,14 @@ def script() -> list[Scene]:
             "Fake programs", "Fake programs credited with a reduction: naive "
             f"{100 * fake.get('naive', {}).get('rate', 0):.1f}%, gate {100 * fake.get('gate', {}).get('rate', 0):.1f}%."))
     scenes += [
-        Scene("map", f"Every dot is a priority intersection; red means many injury crashes and nothing done, "
-                     f"{cw.get('plan_gap')} of them. This panel lists what has worked in this city, tested on its own records.",
+        Scene("map", f"Each red dot is a priority intersection with many injury crashes and nothing done, "
+                     f"{cw.get('plan_gap')} of them, and this panel shows what has worked in the city.",
               "app", target="", caption="What has worked here: each program tested on the city's own crash records"),
-        Scene("letter", "Then it drafts a letter to the people who can ask for the fix, the council member and the "
-                        "community board, found from the city's district maps. Every number is checked, the sources are "
-                        "attached, and the resident sends it.", "letter", target=h["q"]["address"], q=h["q"],
+        Scene("letter", "Then it drafts a checked letter to the council member and community board, found from the "
+                        "city's district maps. The resident sends it.", "letter", target=h["q"]["address"], q=h["q"],
               caption="A checked letter to the council district and community board, drafted from the record"),
-        Scene("video", "Where video exists, SAM 3.1 tracks every road user in drone footage and measures near misses "
-                       f"before crashes happen. On footage it had never seen, agreement rose from {pet0:.2f} to {pet1:.2f}.",
+        Scene("video", "Where drone video exists, SAM 3.1 tracks every road user and measures near misses before "
+                       "crashes happen.",
               "viewer", caption="SAM 3.1 near-miss measurement on drone video (FLUID dataset, CC BY 4.0)"),
         Scene("open", "Meta's open weights run the analyst, the briefs and the letters: Muse Spark Open on Baseten, and "
                       "Muse Glimmer on a Modal GPU.", "card", "Meta models throughout",

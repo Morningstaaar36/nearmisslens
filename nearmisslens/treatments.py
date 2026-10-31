@@ -32,6 +32,7 @@ STUDIES = ROOT / "validation" / "studies"
 OUTCOMES = ("pedestrian", "injury", "motorist_only")
 SEED, N_BOOT = 0, 2000
 PAGE = 500_000
+_TREES: dict = {}
 
 
 def _month(d) -> int | None:
@@ -193,8 +194,11 @@ def sites(points: pd.DataFrame, merge_m: float, org: tuple[float, float]) -> pd.
 
 def monthly_counts(site_df: pd.DataFrame, cr: pd.DataFrame, m0: int, m1: int, radius_m: float) -> dict[str, np.ndarray]:
     """Crashes within radius_m of each site per month (m0..m1) for each outcome: arrays of sites x months."""
-    tree = cKDTree(cr[["x", "y"]].to_numpy())
-    near = tree.query_ball_point(site_df[["x", "y"]].to_numpy(), radius_m)
+    key = (id(cr), len(cr))
+    if key not in _TREES:  # one index per crash table (the calibrated gate runs hundreds of studies on it)
+        _TREES.clear()
+        _TREES[key] = cKDTree(cr[["x", "y"]].to_numpy())
+    near = _TREES[key].query_ball_point(site_df[["x", "y"]].to_numpy(), radius_m)
     si = np.repeat(np.arange(len(site_df)), [len(n) for n in near])
     ci = np.concatenate([np.asarray(n, int) for n in near]) if len(si) else np.zeros(0, int)
     months = cr["month"].to_numpy()[ci] - m0
@@ -231,6 +235,9 @@ def estimate(after: np.ndarray, before: np.ndarray, cohort: np.ndarray, cg_after
         return {"theta": None, "ci95": None, "sites": int(len(after)), "after": int(after.sum()),
                 "before": int(before.sum()), "expected_after": 0.0, "dropped_no_comparison": dropped}
     theta = after.sum() / pi.sum()
+    if n_boot == 0:  # point estimate only (the calibrated gate's fake programs)
+        return {"theta": round(float(theta), 4), "ci95": None, "sites": int(len(after)), "after": int(after.sum()),
+                "before": int(before.sum()), "expected_after": round(float(pi.sum()), 1), "dropped_no_comparison": dropped}
     rng = np.random.default_rng(seed)
     nt, nc = len(after), ca.shape[1]
     boots = np.empty(n_boot)
@@ -321,14 +328,14 @@ def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame]
                     elig = _not_yet_treated(cohorts, length, prog, nb_own)
                     cb = np.stack([_window_sum(mat, np.full(len(prog), c - length - m0), length) for c in cohorts])
                     ca = np.stack([_window_sum(mat, np.full(len(prog), c + 1 - m0), length) for c in cohorts])
-                    est = estimate(after, before, cohort_of, ca, cb, elig)
+                    est = estimate(after, before, cohort_of, ca, cb, elig, n_boot=spec.get("n_boot", N_BOOT))
                     est["cg_sites_min"] = int(elig.sum(1).min())
                     est["cg_sites_median"] = int(np.median(elig.sum(1)))
                 else:
                     cm = city[o]
                     cb = np.array([[_window_sum(cm, np.array([c - length - m0]), length)[0]] for c in cohorts])
                     ca = np.array([[_window_sum(cm, np.array([c + 1 - m0]), length)[0]] for c in cohorts])
-                    est = estimate(after, before, cohort_of, ca, cb, np.ones_like(ca, bool))
+                    est = estimate(after, before, cohort_of, ca, cb, np.ones_like(ca, bool), n_boot=spec.get("n_boot", N_BOOT))
                 res[o] = est
             res["install_months"] = [_label(int(cohorts.min()) + shift), _label(int(cohorts.max()) + shift)]
             return res
@@ -344,16 +351,18 @@ def evaluate_suite(spec: dict, cr: pd.DataFrame, points: dict[str, pd.DataFrame]
             a = _window_sum(counts[o][ok], real[ok] + 1 - m0, window)
             rng = np.random.default_rng(SEED)
             boots = [(w * a).sum() / max((w * b).sum(), 1)
-                     for w in rng.multinomial(len(ok), np.full(len(ok), 1 / max(len(ok), 1)), size=N_BOOT)] if len(ok) else []
+                     for w in rng.multinomial(len(ok), np.full(len(ok), 1 / max(len(ok), 1)), size=spec.get("n_boot", N_BOOT))] if len(ok) and spec.get("n_boot", N_BOOT) else []
             t = a.sum() / max(b.sum(), 1)
             naive[o] = {"theta": round(float(t), 3), "change_pct": round(100 * (float(t) - 1), 1), "sites": int(len(ok)),
                         "after": int(a.sum()), "before": int(b.sum()),
                         "ci95": [round(float(v), 3) for v in np.percentile(boots, [2.5, 97.5])] if boots else None}
         out["naive"] = {**out.get("naive", {}), key: naive}
-        pl = spec["placebo"]
+        pl = spec.get("placebo")
         for comparison in prog_spec["comparisons"]:
             main = study(comparison)
             out["runs"][f"{key}_{comparison}"] = main
+            if not pl:  # no placebo runs (the calibrated gate's fake programs)
+                continue
             out["runs"][f"{key}_placebo_{comparison}"] = study(comparison, pl["shift_months"], pl["window_months"])
             if comparison in prog_spec.get("placebo_same_sites", []):
                 out["runs"][f"{key}_placebo_same_sites_{comparison}"] = study(
@@ -476,9 +485,12 @@ def local_evidence(city: str | None, countermeasure: str) -> dict | None:
             return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"],
                     "placebo_theta": placebo and placebo["theta"], "placebo_ci95": placebo and placebo["ci95"],
                     "study": res["id"], "source": f"NML-Bench {res['id']} (validation/BENCH.md)",
+                    "fake_rank": (g.get("fake_rank") or {}).get("rank"),
                     "text": f"{outcome} fell {round(-main['change_pct'])}% (95% interval {lo}-{hi}%) at "
                             f"{main['sites']:,} intersections after the city installed it, against sites that got "
-                            "it later; a placebo date before the install shows no drop."}
+                            "it later; a placebo date before the install shows no drop."
+                            + (f" A stricter check is less sure: {round(100 * (1 - g['fake_rank']['rank']))}% of 200 "
+                               "fake programs show a smaller drop." if (g.get("fake_rank") or {}).get("rank") is not None else "")}
     return None
 
 

@@ -729,7 +729,13 @@
    "placebo_ok": true,
    "passed": false,
    "reason": "the effect's interval includes no change",
-   "brief_cmf": []
+   "brief_cmf": [],
+   "fake_rank": {
+    "rank": 0.305,
+    "null_n": 200,
+    "null_p2_5": 0.7,
+    "cells": 434
+   }
   },
   "speed_humps": {
    "countermeasure": null,
@@ -743,7 +749,13 @@
    "rule_met": false,
    "placebo_ok": true,
    "passed": false,
-   "reason": "the effect's interval includes no change"
+   "reason": "the effect's interval includes no change",
+   "fake_rank": {
+    "rank": 0.54,
+    "null_n": 200,
+    "null_p2_5": 0.857,
+    "cells": 434
+   }
   }
  },
  "naive": {

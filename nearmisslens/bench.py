@@ -604,7 +604,8 @@ def write_bench_md() -> str:
                      f"[{_f(m['ci95'][0])}, {_f(m['ci95'][1])}]) on the {g['primary'][len(key) + 1:].replace('_', ' ')} "
                      f"comparison, {tr['runs'][g['primary']]['excluded_neighbour_treatment']:,} of "
                      f"{tr['runs'][g['primary']]['treated_in_range']:,} sites excluded for another treatment within "
-                     f"{sp['neighbour_m']} m in their windows." + (f" {cmf}." if cmf else ""))
+                     f"{sp['neighbour_m']} m in their windows." + (f" {cmf}." if cmf else "")
+                     + (f" Rank among 200 fake programs (T14): {_f(g['fake_rank']['rank'])}." if (g.get('fake_rank') or {}).get('rank') is not None else ""))
         for key, nv in tr.get("naive", {}).items():
             v = nv.get(tr["gates"][key]["outcome"]) or {}
             if v.get("ci95"):
@@ -654,18 +655,59 @@ def write_bench_md() -> str:
             runs = [r for r in (ag or {}).get("runs", []) if r.get("stopped") == "finish_tool" and r.get("claim")]
             if not runs:
                 continue
-            L += [f"Agentic arms ({model}, programs blinded; code run in isolated Modal sandboxes):", "",
-                  "| arm | fake programs analysed | claimed a reduction | real programs: claims | cost |",
-                  "|---|---|---|---|---|"]
+            where = sorted({r.get("executor", "modal") for r in runs})
+            sandbox = " and ".join({"modal": "isolated Modal sandboxes", "local": "a local sandbox with no network"}[e]
+                                   for e in where)
+            L += [f"Agentic arms ({model}, programs blinded; code run in {sandbox}):", "",
+                  "| arm | fake programs analysed | claimed a reduction | claimed any effect | real programs: claims | cost |",
+                  "|---|---|---|---|---|---|"]
             for gated in (False, True):
                 rs = [r for r in runs if r["gated"] == gated]
                 fk = [r for r in rs if r["fake"]]
                 real = "; ".join(f"{r['program_key']}: {r['claim']['claim']} ({_f(r['claim']['effect_pct'], 1)}%)"
                                  for r in rs if not r["fake"])
                 L.append(f"| {'gated' if gated else 'ungated'} | {len(fk)} | "
-                         f"{sum(r['claim']['claim'] == 'reduced' for r in fk)} | {real or '—'} | "
+                         f"{sum(r['claim']['claim'] == 'reduced' for r in fk)} | "
+                         f"{sum(r['claim']['claim'] != 'no_evidence' for r in fk)} | {real or '—'} | "
                          f"${sum(r['usd'] for r in rs):.3f} |")
             L.append("")
+    a14, b14, c14 = _load("experiment_T14a.json"), _load("experiment_T14b.json"), _load("experiment_T14c.json")
+    if a14:
+        L += ["## T14 A calibrated gate: a real program must beat fake programs run through the same design", "",
+              "Registered after T12's agentic results (validation/BENCH_PREREG.md, T14). The calibrated gate keeps the "
+              "original gate's checks and also requires theta below the 2.5th percentile of 200 fake programs of the "
+              "same size and design in the same city.", "",
+              "(a) False passes on 100 fresh fake programs (seeds 1000–1099):", "",
+              "| design | null 2.5th–97.5th percentile | original gate | calibrated gate |", "|---|---|---|---|"]
+        for name, v in a14["designs"].items():
+            d = v["design"]
+            L.append(f"| {name} ({d['radius_m']} m, {d['window_months']} months) | {_f(v['null_p2_5'])}–{_f(v['null_p97_5'])} | "
+                     f"{v['old_false_passes']} of {v['programs']} ({_f(100 * v['old_wilson95'][0], 1)}–{_f(100 * v['old_wilson95'][1], 1)}%) | "
+                     f"{v['calibrated_false_passes']} of {v['programs']} ({_f(100 * v['calibrated_wilson95'][0], 1)}–"
+                     f"{_f(100 * v['calibrated_wilson95'][1], 1)}%) |")
+    if b14:
+        L += ["", "(b) Power on the leading pedestrian interval programs (T11's design):", "",
+              "| program | sites | effect | interval | original gate | calibrated gate | rank among fakes |",
+              "|---|---|---|---|---|---|---|"]
+        for r in b14["programs"]:
+            L.append(f"| {r['study']} {r['part']} | {r['sites']} | {_f(r['effect_pct'], 1)}% | {r['interval_pct']} | {r['old']} | "
+                     f"{r['calibrated']} | {_f(r['null_rank'])} |")
+        L += ["", "These runs exclude only the program's own neighbouring installs, so New York's numbers differ slightly "
+                  "from T11's (which also excludes turn calming). Seattle has only "
+                  f"{next((r['cells'] for r in b14['programs'] if r['study'] == 'T13_seattle'), '?')} hotspot cells, so its "
+                  "null is drawn from few places and narrowed by the square-root rule."]
+    if c14:
+        sm = c14["summary"]
+        L += ["", f"(c) The gated analyst's runs with the calibrated verdict: false passes on fake programs "
+                  f"{sm['old_false']} → {sm['calibrated_false']} of {sm['fake_programs']}; New York's LPIs: "
+                  + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
+    if a14 and b14:
+        L += ["", "Registered rule: (a) met (both upper bounds at most 10%); (b) not met (the calibrated gate does not "
+                  "pass New York's LPIs). The calibrated gate therefore does not replace the original gate. The product "
+                  "keeps the original gate and shows each program's rank among fake programs next to its verdict. "
+                  "Reading: fake programs at untreated hotspots vary more than each program's own bootstrap interval "
+                  "suggests, so the original gate's intervals are optimistic; a real program needs to be larger or have "
+                  "more sites to pass the stricter check.", ""]
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:

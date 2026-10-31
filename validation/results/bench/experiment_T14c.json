@@ -1,0 +1,407 @@
+{
+ "id": "T14c",
+ "registered": "validation/BENCH_PREREG.md, T14",
+ "runs": [
+  {
+   "program_key": "fake_0",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 122,
+   "effect_pct": 33.2,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.429,
+   "null_p97_5": 2.199,
+   "null_n": 200,
+   "null_rank": 0.805
+  },
+  {
+   "program_key": "fake_2",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 120,
+   "effect_pct": -27.6,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.461,
+   "null_p97_5": 1.931,
+   "null_n": 200,
+   "null_rank": 0.245
+  },
+  {
+   "program_key": "fake_1",
+   "fake": true,
+   "design": {
+    "radius_m": 100,
+    "window_months": 24,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 105,
+   "effect_pct": -19.5,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.572,
+   "null_p97_5": 1.616,
+   "null_n": 200,
+   "null_rank": 0.25
+  },
+  {
+   "program_key": "fake_4",
+   "fake": true,
+   "design": {
+    "radius_m": 50,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 126,
+   "effect_pct": 15.8,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.458,
+   "null_p97_5": 1.713,
+   "null_n": 200,
+   "null_rank": 0.705
+  },
+  {
+   "program_key": "fake_3",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 118,
+   "effect_pct": -49.5,
+   "old": "reduced",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.451,
+   "null_p97_5": 1.947,
+   "null_n": 200,
+   "null_rank": 0.065
+  },
+  {
+   "program_key": "fake_5",
+   "fake": true,
+   "design": {
+    "radius_m": 50,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 119,
+   "effect_pct": -2.2,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.527,
+   "null_p97_5": 1.957,
+   "null_n": 200,
+   "null_rank": 0.535
+  },
+  {
+   "program_key": "fake_6",
+   "fake": true,
+   "design": {
+    "radius_m": 50,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 108,
+   "effect_pct": -13.0,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.434,
+   "null_p97_5": 1.784,
+   "null_n": 200,
+   "null_rank": 0.43
+  },
+  {
+   "program_key": "fake_7",
+   "fake": true,
+   "design": {
+    "radius_m": 100,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 119,
+   "effect_pct": -23.4,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.592,
+   "null_p97_5": 1.569,
+   "null_n": 200,
+   "null_rank": 0.135
+  },
+  {
+   "program_key": "fake_8",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 119,
+   "effect_pct": -15.4,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.478,
+   "null_p97_5": 1.967,
+   "null_n": 200,
+   "null_rank": 0.365
+  },
+  {
+   "program_key": "fake_9",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 24,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 110,
+   "effect_pct": -46.1,
+   "old": "reduced",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.464,
+   "null_p97_5": 1.884,
+   "null_n": 200,
+   "null_rank": 0.065
+  },
+  {
+   "program_key": "fake_11",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 107,
+   "effect_pct": 42.7,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.419,
+   "null_p97_5": 1.966,
+   "null_n": 200,
+   "null_rank": 0.875
+  },
+  {
+   "program_key": "fake_10",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 121,
+   "effect_pct": -57.4,
+   "old": "reduced",
+   "verdict": "reduced",
+   "null_p2_5": 0.468,
+   "null_p97_5": 1.838,
+   "null_n": 200,
+   "null_rank": 0.025
+  },
+  {
+   "program_key": "fake_12",
+   "fake": true,
+   "design": {
+    "radius_m": 50,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 116,
+   "effect_pct": -12.0,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.438,
+   "null_p97_5": 1.963,
+   "null_n": 200,
+   "null_rank": 0.485
+  },
+  {
+   "program_key": "fake_13",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 117,
+   "effect_pct": -49.9,
+   "old": "reduced",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.403,
+   "null_p97_5": 2.192,
+   "null_n": 200,
+   "null_rank": 0.065
+  },
+  {
+   "program_key": "fake_15",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 24,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 108,
+   "effect_pct": -27.1,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.465,
+   "null_p97_5": 1.833,
+   "null_n": 200,
+   "null_rank": 0.27
+  },
+  {
+   "program_key": "fake_14",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "citywide",
+    "outcome": "pedestrian"
+   },
+   "sites": 144,
+   "effect_pct": 20.8,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.606,
+   "null_p97_5": 1.627,
+   "null_n": 200,
+   "null_rank": 0.765
+  },
+  {
+   "program_key": "fake_16",
+   "fake": true,
+   "design": {
+    "radius_m": 100,
+    "window_months": 24,
+    "comparison": "not_yet_treated",
+    "outcome": "injury"
+   },
+   "sites": 81,
+   "effect_pct": 3.6,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.739,
+   "null_p97_5": 1.35,
+   "null_n": 200,
+   "null_rank": 0.615
+  },
+  {
+   "program_key": "fake_17",
+   "fake": true,
+   "design": {
+    "radius_m": 100,
+    "window_months": 12,
+    "comparison": "citywide",
+    "outcome": "pedestrian"
+   },
+   "sites": 149,
+   "effect_pct": 36.6,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.721,
+   "null_p97_5": 1.402,
+   "null_n": 200,
+   "null_rank": 0.955
+  },
+  {
+   "program_key": "fake_19",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 119,
+   "effect_pct": 142.0,
+   "old": "increased",
+   "verdict": "increased",
+   "null_p2_5": 0.478,
+   "null_p97_5": 1.967,
+   "null_n": 200,
+   "null_rank": 0.995
+  },
+  {
+   "program_key": "lpi",
+   "fake": false,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 1524,
+   "effect_pct": -15.5,
+   "old": "reduced",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.789,
+   "null_p97_5": 1.198,
+   "null_n": 200,
+   "null_rank": 0.095
+  },
+  {
+   "program_key": "fake_18",
+   "fake": true,
+   "design": {
+    "radius_m": 30,
+    "window_months": 24,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 106,
+   "effect_pct": -39.3,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.46,
+   "null_p97_5": 1.867,
+   "null_n": 200,
+   "null_rank": 0.1
+  },
+  {
+   "program_key": "turn_calming",
+   "fake": false,
+   "design": {
+    "radius_m": 30,
+    "window_months": 12,
+    "comparison": "not_yet_treated",
+    "outcome": "pedestrian"
+   },
+   "sites": 237,
+   "effect_pct": -2.6,
+   "old": "no_evidence",
+   "verdict": "no_evidence",
+   "null_p2_5": 0.589,
+   "null_p97_5": 1.705,
+   "null_n": 200,
+   "null_rank": 0.545
+  }
+ ],
+ "summary": {
+  "fake_programs": 20,
+  "old_false": 5,
+  "calibrated_false": 2
+ }
+}

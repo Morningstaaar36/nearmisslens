@@ -397,7 +397,12 @@
      "crash_type": "Vehicle/pedestrian",
      "severity": "All"
     }
-   ]
+   ],
+   "fake_rank": {
+    "rank": null,
+    "cells": 5,
+    "note": "too few hotspot cells for a null"
+   }
   }
  },
  "naive": {

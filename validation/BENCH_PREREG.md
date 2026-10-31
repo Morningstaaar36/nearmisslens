@@ -251,3 +251,25 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
   - A city's crash record now runs from the first to the last month with at least a tenth of the median monthly count. DC's table has stray dates back to 1825, which stretched the "first crash month".
   - The rule was added after the first DC run, and both DC runs are reported (both failed the gate).
   - New York's record is unchanged by the rule, and Seattle's results are identical.
+
+## T14 A calibrated causal gate (registered 2026-10-31, after the T12 agentic results and before any run of it)
+- **Why:** in T12's gated arm, the analyst chose short designs (30 m radius, 12- or 24-month windows) on half the sites, and the gate passed 4 of 20 fake programs as reductions and 1 as an increase. The ungated analyst passed 2 of 20. The gate's bootstrap interval is too narrow for small designs, so a design choice can defeat it.
+- **Calibrated gate:** for a committed design, run the same design on M = 200 fake programs in the same city.
+  - Each fake program has as many sites as the program under test, drawn from the T12 hotspot cells, with random install months over the program's install range.
+  - A reduction passes only if all three hold:
+    - θ is below the 2.5th percentile of the fake programs' θ;
+    - the T11 rule holds (the interval entirely below 1);
+    - every placebo includes 1.
+  - An increase is judged the same way with the 97.5th percentile.
+- **Fresh fake programs for testing:** seeds 1000–1099 (never used before), 300 sites each, as in T12.
+- **Tests:**
+  - (a) False-pass rate on the fresh fake programs, old gate against calibrated gate, under two designs:
+    - T11's (50 m, 36 months);
+    - the short design the T12 analyst chose most often (30 m, 12 months).
+  - (b) Power: NYC and Seattle leading pedestrian intervals under T11's design, on all sites and on the held-out half.
+  - (c) The T12 gated analyst arm rerun with the calibrated gate on the same 20 fake programs and the real programs. Its earlier explorations are replayed from the cache; only the gate's verdict changes.
+- **Rule:** the calibrated gate replaces the old one in the product only if both hold:
+  - its false-pass rate in (a) has an upper 95% bound of at most 10% under both designs;
+  - it still passes NYC's LPIs on all sites.
+
+  Everything is reported either way.

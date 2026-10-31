@@ -727,7 +727,12 @@
    "placebo_ok": false,
    "passed": false,
    "reason": "the effect's interval includes no change",
-   "brief_cmf": []
+   "brief_cmf": [],
+   "fake_rank": {
+    "rank": null,
+    "cells": 50,
+    "note": "too few hotspot cells for a null"
+   }
   },
   "continental_crosswalks": {
    "countermeasure": "Crosswalk Visibility Enhancements",
@@ -742,7 +747,12 @@
    "placebo_ok": true,
    "passed": false,
    "reason": "the effect's interval includes no change",
-   "brief_cmf": []
+   "brief_cmf": [],
+   "fake_rank": {
+    "rank": null,
+    "cells": 50,
+    "note": "too few hotspot cells for a null"
+   }
   }
  },
  "naive": {

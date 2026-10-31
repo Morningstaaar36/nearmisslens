@@ -286,3 +286,185 @@ def run_agents_real(client, items: list[tuple[str, str]], name: str = "T12", mod
     with ThreadPoolExecutor(workers) as ex_:
         list(ex_.map(one, jobs))
     return done
+
+
+# ---------------------------------------------------------------- T14: the calibrated gate
+
+def null_thetas(cr: pd.DataFrame, cells: np.ndarray, org, design: dict, n_sites: int, install_range: list[str],
+                base: dict, m: int = 200, seed0: int = 50_000) -> np.ndarray:
+    """theta for m fake programs run through the same design (point estimates only): the empirical null a real
+    program must beat. Fake programs have as many sites as the program under test, up to 80% of the hotspot cells;
+    for a larger program the spread of log theta is narrowed by sqrt(cells used / sites), as averages over more sites
+    are."""
+    size = min(n_sites, int(0.8 * len(cells)))
+    comp = design["comparison"]
+    spec = {"id": "null", "city": "null", "merge_m": base["merge_m"], "neighbour_m": base["neighbour_m"],
+            "radius_m": int(design["radius_m"]), "window_months": int(design["window_months"]), "placebo": None,
+            "n_boot": 0, "outcomes": [design["outcome"]], "exclude_near": ["prog"],
+            "programs": [{"key": "prog", "adapter": "prog", "treated": install_range, "comparisons": [comp],
+                          "primary": comp, "outcome": design["outcome"]}]}
+    lo, hi = (T._month(d) for d in install_range)
+    out = []
+    for k in range(m):
+        rng = np.random.default_rng(seed0 + k)
+        pick = cells[rng.choice(len(cells), size=size, replace=False)]
+        lat, lon = latlon(pick, org)
+        pts = pd.DataFrame({"lat": lat, "lon": lon, "month": rng.integers(lo, hi + 1, size=size)})
+        r = T.evaluate_suite(spec, cr, {"prog": pts}, org)["runs"][f"prog_{comp}"][design["outcome"]]
+        if r and r.get("theta"):
+            out.append(r["theta"])
+    t = np.log(np.array(out))
+    if n_sites > size:
+        c = np.median(t)
+        t = c + (t - c) * np.sqrt(size / n_sites)
+    return np.exp(t)
+
+
+def calibrated(verdict_reduced: bool, verdict_increased: bool, theta: float | None, null: np.ndarray) -> dict:
+    """The calibrated verdict: the old gate's verdict, and theta beyond the 2.5th (or 97.5th) percentile of the null."""
+    lo, hi = (float(np.percentile(null, q)) for q in (2.5, 97.5))
+    red = bool(verdict_reduced and theta is not None and theta < lo)
+    inc = bool(verdict_increased and theta is not None and theta > hi)
+    return {"verdict": "reduced" if red else ("increased" if inc else "no_evidence"), "null_p2_5": round(lo, 3),
+            "null_p97_5": round(hi, 3), "null_n": int(len(null)),
+            "null_rank": round(float((null <= theta).mean()), 3) if theta is not None else None}
+
+
+def run_t14a(name: str = "T12", seeds: range = range(1000, 1100), designs: dict | None = None, m: int = 200) -> dict:
+    """T14 (a): false-pass rates of the old and calibrated gates on fresh fake programs under two designs."""
+    exp = load(name)
+    base = T.load_spec(exp["base_study"])
+    org = T.origin(exp["city"])
+    cr = T.crashes(exp["city"], org)
+    cells = hotspot_cells(cr, exp["fake"], treatment_vertices(exp["fake"]["clear_of"], org))
+    designs = designs or {"T11": {"radius_m": 50, "window_months": 36, "comparison": "not_yet_treated", "outcome": "pedestrian"},
+                          "short": {"radius_m": 30, "window_months": 12, "comparison": "not_yet_treated", "outcome": "pedestrian"}}
+    rng_range = exp["fake"]["install_range"]
+    out = {"id": "T14a", "registered": "validation/BENCH_PREREG.md, T14", "designs": {}}
+    for dname, design in designs.items():
+        null = null_thetas(cr, cells, org, design, exp["fake"]["sites"], rng_range, base, m=m)
+        w = int(design["window_months"])
+        spec = {"id": "t14", "city": "t14", "merge_m": base["merge_m"], "neighbour_m": base["neighbour_m"],
+                "radius_m": int(design["radius_m"]), "window_months": w,
+                "placebo": {"shift_months": w // 2 + 1, "window_months": w // 2}, "outcomes": [design["outcome"]],
+                "exclude_near": ["prog"],
+                "programs": [{"key": "prog", "adapter": "prog", "treated": rng_range, "comparisons": [design["comparison"]],
+                              "primary": design["comparison"], "outcome": design["outcome"],
+                              "placebo_same_sites": [design["comparison"]]}]}
+        rows = []
+        for k in seeds:
+            pts = fake_points(k, cells, exp["fake"], org)
+            res = T.evaluate_suite(spec, cr, {"prog": pts}, org)
+            g = res["gates"]["prog"]
+            mm = res["runs"][g["primary"]][design["outcome"]] or {}
+            inc = bool(mm.get("ci95") and mm["ci95"][0] > 1 and g["placebo_ok"])
+            cal = calibrated(g["passed"], inc, mm.get("theta"), null)
+            rows.append({"seed": k, "theta": mm.get("theta"), "ci95": mm.get("ci95"), "old": "reduced" if g["passed"] else
+                         ("increased" if inc else "no_evidence"), "calibrated": cal["verdict"], "null_rank": cal["null_rank"]})
+        n = len(rows)
+        old_k = sum(r["old"] != "no_evidence" for r in rows)
+        cal_k = sum(r["calibrated"] != "no_evidence" for r in rows)
+        out["designs"][dname] = {"design": design, "null_p2_5": round(float(np.percentile(null, 2.5)), 3),
+                                 "null_p97_5": round(float(np.percentile(null, 97.5)), 3), "null_n": int(len(null)),
+                                 "old_false_passes": old_k, "calibrated_false_passes": cal_k, "programs": n,
+                                 "old_wilson95": wilson(old_k, n), "calibrated_wilson95": wilson(cal_k, n), "rows": rows}
+        print(dname, "old", old_k, "calibrated", cal_k, "of", n, flush=True)
+    (RESULTS_DIR / "bench" / "experiment_T14a.json").write_text(json.dumps(out, indent=1, default=float))
+    return out
+
+
+def run_t14b(name: str = "T12", m: int = 200) -> dict:
+    """T14 (b): power. The calibrated gate on New York's and Seattle's LPIs under T11's design, all sites and the
+    held-out half (split seed of the T12 agentic arms)."""
+    from . import analyst
+    exp = load(name)
+    design = {"radius_m": 50, "window_months": 36, "comparison": "not_yet_treated", "outcome": "pedestrian"}
+    out = {"id": "T14b", "registered": "validation/BENCH_PREREG.md, T14", "programs": []}
+    for study, key in (("T11", "lpi"), ("T13_seattle", "lpi")):
+        spec = T.load_spec(study)
+        prog = next(p for p in spec["programs"] if p["key"] == key)
+        city = spec["city"]
+        org = T.origin(city)
+        cr = T.crashes(city, org)
+        clear = [a["id"] for a in opendata.adapters_of(city, "project")]
+        cells = hotspot_cells(cr, exp["fake"], treatment_vertices(clear, org))
+        m0, m1 = int(cr["month"].min()), int(cr["month"].max())
+        treated = prog["treated"] if prog["treated"] != "auto" else \
+            [f"{T._label(m0 + 36)}-01", f"{T._label(m1 - 36)}-28"]
+        pts = T.program_points(opendata.adapter(prog["adapter"]))
+        site_df = T.sites(pts, spec["merge_m"], org).reset_index(drop=True)
+        half = analyst.split(len(site_df), exp["agentic"]["split_seed"])
+        for part, subset in (("all sites", site_df), ("held-out half", site_df[~half])):
+            g = analyst.gate_verdict(cr, subset[["lat", "lon", "month"]], org, design, treated, spec)
+            theta = None if g["effect_pct"] is None else 1 + g["effect_pct"] / 100
+            null = null_thetas(cr, cells, org, design, int(g["sites"] or 0), treated, spec, m=m)
+            cal = calibrated(g["verdict"] == "reduced", g["verdict"] == "increased", theta, null)
+            out["programs"].append({"study": study, "program": key, "part": part, "sites": g["sites"],
+                                    "effect_pct": g["effect_pct"], "interval_pct": g["interval_pct"],
+                                    "old": g["verdict"], "calibrated": cal["verdict"], "cells": int(len(cells)), **cal})
+            print(study, part, g["sites"], g["effect_pct"], g["interval_pct"], "old", g["verdict"], "calibrated",
+                  cal["verdict"], "null 2.5%", cal["null_p2_5"], "rank", cal["null_rank"], "cells", len(cells), flush=True)
+    (RESULTS_DIR / "bench" / "experiment_T14b.json").write_text(json.dumps(out, indent=1, default=float))
+    return out
+
+
+def run_t14c(name: str = "T12", m: int = 200) -> dict:
+    """T14 (c): the gated analyst arm with the calibrated gate. The analyst's committed design and the gate's held-out
+    estimate are already stored; only the verdict changes (the finish tool forces the claim to match it)."""
+    exp = load(name)
+    base = T.load_spec(exp["base_study"])
+    org = T.origin(exp["city"])
+    cr = T.crashes(exp["city"], org)
+    cells = hotspot_cells(cr, exp["fake"], treatment_vertices(exp["fake"]["clear_of"], org))
+    runs = json.loads((RESULTS_DIR / "bench" / f"experiment_{exp['id']}_agents_muse-spark-open.json").read_text())["runs"]
+    out = {"id": "T14c", "registered": "validation/BENCH_PREREG.md, T14", "runs": []}
+    for r in runs:
+        g = r.get("gate")
+        if not r["gated"] or not g or g.get("effect_pct") is None:
+            continue
+        treated = exp["fake"]["install_range"] if r["fake"] else \
+            next(p for p in base["programs"] if p["key"] == r["program_key"])["treated"]
+        null = null_thetas(cr, cells, org, g["design"], int(g["sites"]), treated, base, m=m)
+        cal = calibrated(g["verdict"] == "reduced", g["verdict"] == "increased", 1 + g["effect_pct"] / 100, null)
+        out["runs"].append({"program_key": r["program_key"], "fake": r["fake"], "design": g["design"], "sites": g["sites"],
+                            "effect_pct": g["effect_pct"], "old": g["verdict"], **cal})
+        print(r["program_key"], g["design"], g["effect_pct"], "old", g["verdict"], "calibrated", cal["verdict"],
+              "rank", cal["null_rank"], flush=True)
+    fk = [x for x in out["runs"] if x["fake"]]
+    out["summary"] = {"fake_programs": len(fk), "old_false": sum(x["old"] != "no_evidence" for x in fk),
+                      "calibrated_false": sum(x["verdict"] != "no_evidence" for x in fk)}
+    (RESULTS_DIR / "bench" / "experiment_T14c.json").write_text(json.dumps(out, indent=1, default=float))
+    return out
+
+
+def rank_studies(m: int = 200, min_cells: int = 200, name: str = "T12") -> list[dict]:
+    """Where each studied program's effect falls among m fake programs run through its registered design (T14's
+    null), saved into its study result as gates[key]["fake_rank"]. Cities with fewer than min_cells hotspot cells get
+    no rank: too few places to build a fair null."""
+    exp = load(name)
+    done = []
+    for path in sorted((RESULTS_DIR / "bench").glob("study_*.json")):
+        res = json.loads(path.read_text())
+        sp, city = res["spec"], res["city"]
+        org = T.origin(city)
+        cr = T.crashes(city, org)
+        clear = [a["id"] for a in opendata.adapters_of(city, "project")]
+        cells = hotspot_cells(cr, exp["fake"], treatment_vertices(clear, org))
+        m0, m1 = int(cr["month"].min()), int(cr["month"].max())
+        for key, g in res["gates"].items():
+            main = (res["runs"].get(g["primary"]) or {}).get(g["outcome"]) or {}
+            if len(cells) < min_cells or not main.get("theta"):
+                g["fake_rank"] = {"rank": None, "cells": int(len(cells)), "note": "too few hotspot cells for a null"}
+            else:
+                prog = next(p for p in sp["programs"] if p["key"] == key)
+                treated = prog["treated"] if prog["treated"] != "auto" else \
+                    [f"{T._label(m0 + sp['window_months'])}-01", f"{T._label(m1 - sp['window_months'])}-28"]
+                design = {"radius_m": sp["radius_m"], "window_months": sp["window_months"],
+                          "comparison": g["primary"][len(key) + 1:], "outcome": g["outcome"]}
+                null = null_thetas(cr, cells, org, design, int(main["sites"]), treated, sp, m=m)
+                g["fake_rank"] = {"rank": round(float((null <= main["theta"]).mean()), 3), "null_n": int(len(null)),
+                                  "null_p2_5": round(float(np.percentile(null, 2.5)), 3), "cells": int(len(cells))}
+            done.append({"study": res["id"], "program": key, **g["fake_rank"]})
+            print(res["id"], key, g["fake_rank"], flush=True)
+        path.write_text(json.dumps(res, indent=1, default=float))
+    return done

@@ -46,6 +46,22 @@ Studies are JSON files (`validation/studies/`), so a city, a program, a radius o
 
 The registered rule (the gate below the naive rate, with an upper bound of at most 10%) was met. The gate's rate is still higher than the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On random dates, crash trends partly cancel out, which is why the naive rate is not higher; on the real programs above, where sites were chosen by the city, the naive analysis overstated the LPI effect and credited turn calming.
 
+**An AI analyst with and without the gate.** Muse Spark Open, given blinded programs, wrote and ran its own analysis code (staggered difference-in-differences with site and month fixed effects, mostly) in a sandbox with no network.
+
+| | Without the gate | With the gate (design chosen on half the sites, decided on the other half) |
+|---|---|---|
+| 20 fake New York programs | 2 credited with a reduction | 4 credited with a reduction and 1 with an increase |
+| New York LPIs | "no evidence" (missed) | "reduced", −15.5% |
+| New York turn calming | "reduced", −9% | "no evidence" |
+| New York speed humps | "reduced", −11% | "no evidence" |
+| DC LPIs | "increased", while reporting −15% | "no evidence" |
+| Seattle LPIs | "reduced", −17% | "reduced", −47% (held-out half) |
+| SF crosswalks, NYC enhanced crossings | "no evidence" | "no evidence" |
+
+The gate fixed every disagreement on a real program. On fake programs it did worse: all five false passes came from short designs the analyst chose (a 30 m radius and 12- or 24-month windows) on half the sites, where the gate's bootstrap interval is too narrow.
+
+**Testing the tester (T14).** We then registered a calibrated gate. It keeps the original checks and adds one: the program must beat 97.5% of 200 fake programs of the same size, run through the same design in the same city. On 100 fresh fake programs, it passed 3 (T11's design) and 2 (the short design), against 6 and 3 for the original gate. It also failed the registered power check, because it does not pass New York's or Seattle's LPIs: New York's effect ranks at the 7th to 13th percentile of fake programs, depending on the run. Under the rule written beforehand, the original gate stays. The copilot now shows every program's rank among fake programs next to the gate's verdict, wherever the city has enough untreated hotspots (200 or more) to build one. The reading is that fake programs at untreated hotspots vary more than a program's own bootstrap interval suggests. The original gate's intervals are optimistic, and the LPI result should be read as consistent evidence across two cities and three published studies, not as proof.
+
 ## How this compares with published LPI evaluations
 
 | Study | Design | Result |
@@ -70,4 +86,4 @@ What NearMissLens does differently is narrower: one fixed, registered quasi-expe
 - The study is observational. Sites are chosen by the city, so regression to the mean can remain even with the placebo; no Empirical Bayes model is fitted.
 - Work recorded outside the open datasets is not seen, and police-reported crashes miss some injuries.
 - The gate tests whether a program worked where it was installed. Whether it will work at a new junction is still an engineer's judgement; the brief shows the local result next to the national CMF and does not replace either.
-- The gate can be wrong in both directions: about 1 in 20 fake programs passed, and a real effect on few sites can fail for lack of data.
+- The gate can be wrong in both directions: about 1 in 20 fake programs passed under the registered design, 5 in 20 when the analyst picked short designs on half the data, and a real effect on few sites can fail for lack of data. A stricter calibrated version (T14) controls false passes but misses the LPI effects.

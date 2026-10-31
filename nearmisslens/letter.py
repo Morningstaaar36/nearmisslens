@@ -60,7 +60,8 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
             "fix": _plain(measured["countermeasure"]),
             "result": (f"where the city installed it at {ev['sites']:,} intersections, pedestrian injury crashes fell "
                        f"{round(100 * (1 - ev['theta']))}% (95% interval {round(100 * (1 - ev['ci95'][1]))}% to "
-                       f"{round(100 * (1 - ev['ci95'][0]))}%) compared with intersections that got it later"),
+                       f"{round(100 * (1 - ev['ci95'][0]))}%) compared with intersections that got it later"
+                       + ("; a stricter check against fake programs is less certain" if ev.get("fake_rank") is not None else "")),
             "needs_site_check_for": measured.get("verify_on_site")} if measured else None,
         "already_in_place": fx.get("in_place", []),
         "dollar_values": "the U.S. DOT's official values for the cost of crashes (2024 dollars)",
