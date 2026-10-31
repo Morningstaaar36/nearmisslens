@@ -85,7 +85,7 @@ def test_pinned_asof_makes_crash_queries_independent_of_today(monkeypatch):
     from nearmisslens import config, context, opendata
     seen = []
     monkeypatch.setattr(context, "fetch", lambda url, params=None, **k: (seen.append(params) or [], 0))
-    a = {"id": "x", "endpoint": "https://e", "geo_field": "loc", "date_field": "d"}
+    a = {"id": "x", "platform": "socrata", "endpoint": "https://e", "geo_field": "loc", "date_field": "d"}
     monkeypatch.setenv("NML_ASOF", "2026-10-31")
     for _ in range(2):  # the query depends only on the pinned date, never on today
         opendata.rows_near(a, 40.0, -73.0, 100, config.since(5))
