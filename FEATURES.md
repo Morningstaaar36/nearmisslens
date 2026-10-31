@@ -2,7 +2,21 @@
 
 A box is ticked only when a unit test or a `nml selftest` row verifies the feature. "Built" means the code is done and tested with a scripted fake model. "Run" means it has produced real results on FLUID with the Meta Model API.
 
-## Measurement
+## The safety engineer
+- [x] **Six checked tools with receipts** (`engineer.py`, `nml engineer`): screen the city, what the crashes have in common, what the city tried, the fix and its price, who must act, the request. Each returns its data with the datasets, as-of date, checks and seconds. Verified by `tests/test_engineer.py` and the selftest `engineer` row.
+- [x] **Finish gate:** a claim without a receipt, a number that is not the receipt's value for its label, or the words "caused", "failed" or "proves" are refused; the corner's own street numbers are places, and quoted police wording is the record's. Verified by `tests/test_engineer.py`.
+- [x] **Agent mode** (`--agent`): Muse Spark Open chooses the steps and writes the claims; run on the README corner (7 turns, $0.07 on Baseten, every claim passed).
+- [x] **What the crashes have in common** (`rootcause.py`): one-sided binomial tests against the city's priority corners with a Holm correction, at least 10 crashes, fields the dataset lacks listed as not recorded. Verified by `tests/test_rootcause.py`.
+- [x] **Who must act** (`jurisdiction.py`): road owners from the NYSDOT roadway inventory, inferred city streets marked, OpenStreetMap route tags as a designation-only fallback, offices from district maps. Verified by `tests/test_jurisdiction.py`.
+- [x] **What the city tried** (`treatments.programs`): worked, earlier trend, not shown or worse for every tested program; a repeat-risk flag when a corner already got a program whose effect was not shown; a fix is ranked lower only when the city's interval rules out the national CMF. Verified by `tests/test_program_status.py`.
+- [x] **CMF eligibility:** 25 curated CMF Clearinghouse records; control and crash population must match, the FHWA-cited record or the median is used, never the largest; fixes without an eligible record are listed without a number. Verified by `tests/test_cmf_eligibility.py`.
+- [x] **Request letter to the owners,** copying the offices, salutations from the registry, every number label-checked. Verified by `tests/test_treatments.py` and `tests/test_engineer.py`.
+- [x] **Pinned as-of date** (`validation/ASOF`) and an offline gazetteer, so replay gives the same answers on any later day. Verified by `tests/test_hygiene.py`.
+- [x] **Static copilot** (`nml pages`, `docs/`): one engineer report per screened corner, checked for machine paths and key-like strings. Verified by `tests/test_hosting.py` and headless Chrome at desktop and phone width.
+- [x] **Live endpoint hardening** (`app.py`, `budget.py`): bad JSON or points are 400, paths stay inside `docs/`, no request log, global daily caps on requests and model dollars. Verified by `tests/test_hosting.py`.
+- [ ] **Hosted live endpoint on Modal** (`modal_web.py`): one container, a named secret, caps in a `modal.Dict`. Built; deployment waits for the go-ahead to make it public.
+
+## Drone video: measurement
 - [x] **Calibration:** video pixels to metres via homography to the base map. Verified by the selftest `calibration` row (median 0.31–0.39 m).
 - [x] **Tracking (SAM 3.1):** tiled video tracking with 10 s windows, saturation splitting and one-to-one re-linking. Verified by `tracking_smoke` (vehicles: recall 0.77, precision 0.95) and `window_linking` (IDF1 0.99).
 - [x] **Conflicts:** TTC and PET with FHWA SSAM definitions. Verified by `conflict_engine` and `tests/test_conflicts.py`.
@@ -13,23 +27,22 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Causal gate, any city** (`treatments.py`, `nml treatments`): a registered comparison-group before/after design, the rule, and placebo dates, for any dated program in the registry; designs are JSON files in `validation/studies/`. Verified by `tests/test_treatments.py` (recovers a planted effect, fails a program whose placebo drops, drops cohorts without comparisons) and by T11 reproducing exactly from its spec.
 - [x] **Replication (T13):** Seattle's leading pedestrian intervals pass (−33%, placebos clean); DC, San Francisco and more New York programs are registered with the same design.
 - [x] **Fake programs (T12):** 200 null programs; the gate credits 5.5% of them, a naive before/after 8.0%. Verified in `validation/BENCH.md`.
-- [ ] **AI analyst with and without the gate (T12 agentic arms):** Muse Spark Open writes and runs its own analysis code in a sandbox (Modal, or a local network-isolated fallback); the gated arm explores on half the sites and the gate decides on the other half. Built and tested; the full run is in progress.
+- [x] **AI analyst with and without the gate (T12 agentic arms):** Muse Spark Open writes and runs its own analysis code in a sandbox (Modal, or a local network-isolated fallback); the gated arm explores on half the sites and the gate decides on the other half. Built and tested; the full run is in progress.
 - [x] **Registry-driven cities:** crash datasets, treatment programs, district offices, agencies and factor vocabularies are data in `registry.json`; no city is named in the engine's code.
 
-## Junction Safety Copilot
-- [x] **Safety Brief for any address** (`nml brief`): official crash record, city designations and recorded treatments, FHWA countermeasures ranked by expected crashes avoided (CMF method), condition-scaled where the record gives darkness or wet-road shares, verify-on-site flags, aerial and street photos. Verified by `tests/test_v2.py` and real briefs in `runs/briefs/`.
+## Briefs, screens and studies
+- [x] **Safety Brief for any address** (`nml brief`): official crash record, city designations and recorded treatments, eligible FHWA countermeasures ranked by expected crashes avoided (CMF method), dollar values, aerial and street photos, a checked memo.
 - [x] **Checked memo:** code builds the ranking; the agent writes the narrative; a checker rejects any number not in the facts. Verified by T8 (0 of 34 ungrounded with the checker vs 4 of 34 without).
 - [x] **Open-data registry and data agent** (`nml discover`): any city's crash data as a validated adapter; validator inside the agent's tool. Run on Seattle (no hand-written support): adapter accepted after two validator refusals.
-- [x] **Citywide screen** (`nml citywide`): all 304 NYC Vision Zero priority intersections; 225 plan gaps; injury crashes counted once each (11,474) and costed at the U.S. DOT value ($786 million a year). Verified by T9 in `validation/BENCH.md`.
+- [x] **Citywide screen** (`nml citywide`): all 304 NYC Vision Zero priority intersections; 225 plan gaps; injury crashes counted once each (11,477 at the pinned date) and costed at the U.S. DOT value ($786 million a year). Verified by T9 in `validation/BENCH.md`.
 - [x] **Did the city's fixes work?** (`treatments.py`, `nml treatments`): comparison-group before/after study of 1,651 NYC Leading Pedestrian Interval sites against sites treated later, with a placebo date; pedestrian injury crashes −17% (95% interval 11–22%), placebo null. Turn calming not credited (placebo fails). Verified by T11 in `validation/BENCH.md` and `tests/test_treatments.py` (recovers a planted effect).
 - [x] **Dollar values for every fix** (`harm.py`): U.S. DOT BCA Guidance 2026 Update, Table A-1 ($342,400 per injury crash, 2024 $), break-even cost over 10 years at 7%. Verified by `tests/test_treatments.py`.
 - [x] **Fix illustration on the city's aerial photo:** Muse Image edit composited around the junction, real road users protected by SAM 3.1 masks, SAM 3.1 check. 13 of 20 pass on the top-20 briefs.
-- [x] **Web app** (`nml app`): map with the citywide layer, search, briefs. Verified by headless Chrome screenshots and the demo recording.
-- [x] **What has worked here** panel and **receipts** on every brief (which gate verified which claim).
+- [x] **Copilot** (`nml app` locally, `docs/` on Pages): map of the screened corners, search, the engineer's case for each. Verified by headless Chrome screenshots.
+- [x] **What the city tried** and **receipts** on every case (which check verified which claim).
 - [x] **Letters** (`letter.py`, `nml brief --letter`, the app's "Draft a letter"): addressed to the council district and community board from the city's district maps; every number checked; sources added by code. Verified by `tests/test_treatments.py` (an invented number is refused).
-- [ ] **Hosted copilot on Modal** (`nearmisslens/modal_web.py`): public mode with daily and per-address caps and no new drawings. Built; deployment waits for Modal to be reachable and for the go-ahead to make it public.
 - [x] **Voice studio** (`nml voice-studio`): the narrator records each demo line in the browser; `nml demo --copilot` uses the takes.
-- [x] **Open-weights tier:** the same agents on Muse Spark Open (Baseten) and Muse Glimmer (Modal GPU). Complaint accuracy 78% and 87.5%; memos 0 of 34 ungrounded on both.
+- [x] **Open-weights tier:** Muse Spark Open (Baseten) runs the engineer agent, the analyst and the letters. Muse Glimmer (Modal GPU) was compared on complaint checking only (T4, 87.5%).
 - [x] **Near-miss and crash fusion** (`fusion.py`): negative binomial + Empirical Bayes with near-miss counts; tested on held-out DC blocks and future years (T10, negative result for residents' reports).
 
 ## Decision support
@@ -57,7 +70,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Verifier run:** precision 0.69 for events rated real, against 0.46 for the severity ranking at matched recall.
 
 ## Display
-- [x] **Viewer (GitHub Pages, `docs/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).
+- [x] **Drone-video viewer (`docs/video/`):** hotspot map, case-file rail, memo and scorecard. Data comes from `nml export`. Verified by `tests/test_export.py` and headless Chrome screenshots at desktop and phone width (no horizontal scroll).
 - [x] **3D replay of top conflicts:** three.js, measured positions, sizes and headings; heights are schematic. Verified by a headless WebGL screenshot.
 - [x] **Panel debate view:** shows real panel runs.
 - [x] **Scorecard:** generated from the self-test and `RESULTS.md`.
@@ -71,15 +84,17 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **LICENSES.md and PRIVACY.md.**
 - [x] **Data download:** `nml fetch` reads clips out of remote ZIP64 archives with resumable range requests and a CRC32 check, verifies MD5s, and completes the CMF server's certificate chain from its AIA URL. Verified by `tests/test_fetch.py`.
 - [x] **Demo video renderer, built:** `nml demo` records the viewer with headless Chrome, adds the reviewed event clip with Spark's verdict, and makes title cards from run outputs. A trial render on dev data was checked frame by frame.
-- [x] Final demo video (2:09, `nml demo --copilot`, narrated with Kokoro) and a 20 s X cut; attached to the release.
-- [x] Replay cache published as a release asset, so `--replay` works from a clean clone (`cache/` is gitignored).
+- [x] Earlier demo video (2:09, Kokoro guide voice) and a 20 s X cut on the v2.0 release.
+- [ ] Final demo re-scripted around the engineer (`nml demo --copilot`), narrated by the author (`nml voice-studio`).
+- [x] Replay cache published as a release asset (v2.0).
+- [ ] Replay cache refreshed for the engineer (`nml pack-cache`: contact details removed, refused if a key is found).
 - [x] No keys in the tree, the git history, the replay cache or run outputs (scanned for every key value in `.env` and the Modal token).
 - [ ] Repo public, Pages live.
 - [ ] Submitted on the portal before Nov 4, 12:00 Dhaka.
 
 ## How to check
 ```bash
-nml --replay selftest   # every row PASS, free and offline
+nml --replay selftest   # exit 0 only if every row passes; 3 if a row could not be checked
 pytest -q               # all unit tests pass
 nml cost                # Meta API spend so far
 ```
