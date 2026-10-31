@@ -55,3 +55,22 @@ def test_live_endpoint_must_be_https():
     with pytest.raises(ValueError):
         pages.page("static", "http://example.com")
     assert 'content="static"' in pages.page("static")
+
+
+def test_pack_cache_removes_contacts_and_refuses_keys(tmp_path):
+    import json, tarfile
+    from nearmisslens import packcache
+    cache = tmp_path / "cache"
+    (cache / "context").mkdir(parents=True)
+    (cache / "context" / "a.json").write_text(json.dumps(
+        {"elements": [{"tags": {"name": "Shop", "contact:email": "x@y.z", "phone": "1", "amenity": "cafe"}}]}))
+    (cache / "context" / "b.json").write_text(json.dumps({"rows": [1, 2]}))
+    out = packcache.pack(tmp_path / "c.tar.gz", cache)
+    assert out["files"] == 2 and out["scrubbed"] == 1
+    with tarfile.open(tmp_path / "c.tar.gz") as tar:
+        a = json.loads(tar.extractfile("cache/context/a.json").read())
+    assert a["elements"][0]["tags"] == {"name": "Shop", "amenity": "cafe"}
+    (cache / "agent").mkdir()
+    (cache / "agent" / "k.json").write_text('{"authorization": "Bearer abcdefghijklmnopqrstuvwxyz"}')
+    with pytest.raises(RuntimeError):
+        packcache.pack(tmp_path / "d.tar.gz", cache)

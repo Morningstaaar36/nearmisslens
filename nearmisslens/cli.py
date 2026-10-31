@@ -280,6 +280,14 @@ def cmd_engineer(args) -> int:
     return 0 if not rep["claim_errors"] else 1
 
 
+def cmd_pack_cache(args) -> int:
+    from pathlib import Path
+    from . import packcache
+    out = packcache.pack(Path(args.out))
+    print(f"{out['files']} files, contact details removed from {out['scrubbed']}, {out['mb']} MB: {out['path']}")
+    return 0
+
+
 def cmd_pages(args) -> int:
     from pathlib import Path
     from . import pages
@@ -485,6 +493,8 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--agent", action="store_true", help="let Muse Spark Open choose the steps and write the claims")
     en.add_argument("--letter", action="store_true", help="draft the checked request letter (Muse Spark Open)")
     en.add_argument("--meta", action="store_true", help="draft the letter on the Meta API instead")
+    pk = sub.add_parser("pack-cache", help="the replay cache for the GitHub release, contact details removed, refused if a key is found")
+    pk.add_argument("--out", default="runs/release/nearmisslens_replay_cache.tar.gz")
     pg2 = sub.add_parser("pages", help="the static copilot for GitHub Pages: one engineer report per screened corner (docs/)")
     pg2.add_argument("--city", default="nyc")
     pg2.add_argument("--live", help="https URL of the live endpoint for addresses outside the precomputed corners")
@@ -518,7 +528,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "pack-cache": cmd_pack_cache}[args.cmd](args)
 
 
 if __name__ == "__main__":
