@@ -1,6 +1,6 @@
 # NearMissLens
 
-**A street-safety copilot whose agents have to prove what they say.**
+**A street-safety copilot whose every claim has to survive an attempt to disprove it.**
 
 ![Bruckner Boulevard & Hunts Point Avenue, the Bronx: the state's aerial photo (left) and the copilot's top fix, pedestrian refuge islands, drawn on it (right)](docs/img/hero_bruckner_hunts_point.jpg)
 <sub>Bruckner Boulevard & Hunts Point Avenue, the Bronx. Left: New York State's aerial photo. Right: the copilot's top fix, pedestrian refuge islands, drawn by Muse Image. SAM 3.1 checked that islands were added and that no real car was moved. An AI illustration, not an engineering design.</sub>
@@ -29,7 +29,7 @@ flowchart LR
 | "This fix works in this city" | **The causal gate:** the city's own past installs must show the effect against sites treated later, a fake install date before the real one must show nothing, and the design runs once on sites the agent never saw |
 | "The drawing shows the fix" | SAM 3.1 must find the fix in the edited photo, with every real road user unchanged |
 
-The causal gate is the new part. [`docs/METHOD.md`](docs/METHOD.md) explains it in full; every test was registered in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md) before it ran, and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md).
+The causal gate is the new part. [`docs/METHOD.md`](docs/METHOD.md) explains it in full; the rules of every test were written in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md) before it ran (our own record, not an external registry), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md).
 
 ## What the gates found
 
@@ -58,6 +58,8 @@ Two of these results changed the product. The brief now shows a city's own measu
 6. **A letter.** One click drafts a letter to the council member and community board for that corner (found from the city's district maps), with every number checked and the sources attached. NearMissLens sends nothing; the resident reviews and sends it.
 7. **Near-misses from video**, where video exists. SAM 3.1 tracks every road user in drone video and the conflict engine measures time-to-collision and post-encroachment time (FHWA SSAM definitions), so hotspots show up before crashes do.
 
+**The whole loop can run without a person wiring the city.** The program agent (`nml programs CITY`) searches the public catalogs for a city's dated safety programs, maps each one (install date, filter, FHWA countermeasure), and a validator inside its tool refuses mappings whose dates don't parse, are only years, or fall outside the city. Given only the city name, it found Seattle's leading pedestrian interval layer on its first try and turned down 39 other layers (bike counters, asset inventories, an Austin dataset); `nml gate seattle` then ran the causal gate on what it found: −33% on 366 intersections, passed, matching the hand-built study.
+
 **Cities are data, not code.** Each dataset, district map and transport agency is an entry in [`registry.json`](nearmisslens/data/registry.json), and each study is a JSON file in [`validation/studies/`](validation/studies/). For a city it has never seen, the data agent (`nml discover LAT LON`) searches the public Socrata and ArcGIS catalogs and maps the fields; its validator refused two wrong mappings for Seattle before accepting a working adapter, for $0.03.
 
 ## Meta models
@@ -75,7 +77,7 @@ The open-weights path covers the whole copilot: the web app's briefs and letters
 
 ## Other results
 
-From the same benchmark, all pre-registered:
+From the same benchmark, each with its rules written down before it ran:
 
 - **Near-misses from video** (11 unseen one-minute windows, 241 reference conflicts): better kinematics and re-seeding raised PET ≤ 1.5 s F1 from 0.23 to 0.36 and recall from 0.19 to 0.29. Agreement is with FLUID's reference trajectories, not ground truth, and pedestrians are not tracked from 120 m altitude.
 - **Hotspots persist** across days at the same junction (Kendall tau 0.47 over 26 pairs, p = 0.001).

@@ -216,6 +216,59 @@ Note: The coverage rule (a city's record runs from the first to the last month w
 
 Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
 
+## T13_nyc Replication: other New York programs (comparison-group before/after)
+
+Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's program data was downloaded for it). 2,052,347 police-reported crashes (2012-07 to 2026-10), crashes within 50 m, 36 months before and after the install month. Programs: enhanced_crossings (nyc-enhanced-crossings: 195 records, 193 sites); speed_humps (nyc-speed-humps: 4,327 records, 4,165 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+
+| run | sites | outcome | after | expected | theta | 95% interval |
+|---|---|---|---|---|---|---|
+| enhanced crossings not yet treated | 59 | pedestrian injury crashes | 18 | 14 | 1.278 | [0.431, 3.629] |
+| enhanced crossings not yet treated | 63 | all injury crashes | 93 | 110 | 0.843 | [0.476, 1.392] |
+| enhanced crossings not yet treated | 63 | injury crashes, no pedestrian or cyclist hurt | 62 | 66 | 0.934 | [0.498, 1.716] |
+| enhanced crossings placebo not yet treated | 142 | pedestrian injury crashes | 38 | 39 | 0.967 | [0.517, 1.828] |
+| enhanced crossings placebo not yet treated | 143 | all injury crashes | 111 | 92 | 1.210 | [0.798, 1.701] |
+| enhanced crossings placebo not yet treated | 143 | injury crashes, no pedestrian or cyclist hurt | 59 | 47 | 1.263 | [0.751, 2.003] |
+| enhanced crossings placebo same sites not yet treated | 91 | pedestrian injury crashes | 15 | 12 | 1.205 | [0.435, 3.836] |
+| enhanced crossings placebo same sites not yet treated | 92 | all injury crashes | 62 | 49 | 1.266 | [0.770, 2.000] |
+| enhanced crossings placebo same sites not yet treated | 92 | injury crashes, no pedestrian or cyclist hurt | 37 | 31 | 1.197 | [0.658, 2.152] |
+| enhanced crossings citywide | 96 | pedestrian injury crashes | 29 | 31 | 0.928 | [0.500, 1.686] |
+| enhanced crossings citywide | 96 | all injury crashes | 131 | 130 | 1.006 | [0.746, 1.310] |
+| enhanced crossings citywide | 96 | injury crashes, no pedestrian or cyclist hurt | 85 | 81 | 1.047 | [0.726, 1.424] |
+| enhanced crossings placebo citywide | 144 | pedestrian injury crashes | 38 | 37 | 1.036 | [0.650, 1.823] |
+| enhanced crossings placebo citywide | 144 | all injury crashes | 111 | 98 | 1.134 | [0.842, 1.593] |
+| enhanced crossings placebo citywide | 144 | injury crashes, no pedestrian or cyclist hurt | 59 | 52 | 1.143 | [0.766, 1.750] |
+| enhanced crossings placebo same sites citywide | 93 | pedestrian injury crashes | 15 | 13 | 1.164 | [0.527, 2.779] |
+| enhanced crossings placebo same sites citywide | 93 | all injury crashes | 62 | 52 | 1.197 | [0.815, 1.837] |
+| enhanced crossings placebo same sites citywide | 93 | injury crashes, no pedestrian or cyclist hurt | 37 | 34 | 1.082 | [0.677, 1.891] |
+| speed humps not yet treated | 1,008 | pedestrian injury crashes | 388 | 477 | 0.814 | [0.670, 0.954] |
+| speed humps not yet treated | 1,008 | all injury crashes | 1,775 | 1,783 | 0.996 | [0.909, 1.085] |
+| speed humps not yet treated | 1,008 | injury crashes, no pedestrian or cyclist hurt | 1,149 | 1,085 | 1.059 | [0.941, 1.185] |
+| speed humps placebo not yet treated | 1,379 | pedestrian injury crashes | 342 | 344 | 0.993 | [0.854, 1.139] |
+| speed humps placebo not yet treated | 1,379 | all injury crashes | 1,295 | 1,333 | 0.971 | [0.892, 1.050] |
+| speed humps placebo not yet treated | 1,379 | injury crashes, no pedestrian or cyclist hurt | 783 | 825 | 0.949 | [0.850, 1.055] |
+| speed humps placebo same sites not yet treated | 1,063 | pedestrian injury crashes | 223 | 241 | 0.925 | [0.766, 1.092] |
+| speed humps placebo same sites not yet treated | 1,063 | all injury crashes | 906 | 943 | 0.961 | [0.869, 1.055] |
+| speed humps placebo same sites not yet treated | 1,063 | injury crashes, no pedestrian or cyclist hurt | 566 | 596 | 0.949 | [0.832, 1.076] |
+| speed humps citywide | 1,074 | pedestrian injury crashes | 424 | 529 | 0.801 | [0.696, 0.923] |
+| speed humps citywide | 1,074 | all injury crashes | 1,901 | 2,079 | 0.914 | [0.845, 0.985] |
+| speed humps citywide | 1,074 | injury crashes, no pedestrian or cyclist hurt | 1,224 | 1,273 | 0.962 | [0.874, 1.057] |
+| speed humps placebo citywide | 1,379 | pedestrian injury crashes | 342 | 359 | 0.954 | [0.830, 1.093] |
+| speed humps placebo citywide | 1,379 | all injury crashes | 1,295 | 1,412 | 0.917 | [0.842, 0.996] |
+| speed humps placebo citywide | 1,379 | injury crashes, no pedestrian or cyclist hurt | 783 | 872 | 0.897 | [0.808, 0.995] |
+| speed humps placebo same sites citywide | 1,063 | pedestrian injury crashes | 223 | 252 | 0.886 | [0.753, 1.058] |
+| speed humps placebo same sites citywide | 1,063 | all injury crashes | 906 | 1,004 | 0.902 | [0.817, 0.996] |
+| speed humps placebo same sites citywide | 1,063 | injury crashes, no pedestrian or cyclist hurt | 566 | 634 | 0.893 | [0.785, 1.014] |
+
+Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
+
+- **enhanced crossings**: failed (the effect's interval includes no change). Pedestrian injury crashes -7.2% (theta 0.928, [0.500, 1.686]) on the citywide comparison, 73 of 169 sites excluded for another treatment within 100 m in their windows.
+- **speed humps**: failed (the effect's interval includes no change). All injury crashes -0.4% (theta 0.996, [0.909, 1.085]) on the not yet treated comparison, 594 of 1,668 sites excluded for another treatment within 100 m in their windows.
+- Naive before/after for enhanced crossings (no comparison group, 169 sites): -20.4% (theta 0.796, [0.582, 1.104]).
+- Naive before/after for speed humps (no comparison group, 1,668 sites): -5.0% (theta 0.950, [0.890, 1.009]).
+
+
+Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
+
 ## T13_seattle Replication: Leading Pedestrian Intervals in Seattle (comparison-group before/after)
 
 Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's crash data was downloaded for it). 254,732 police-reported crashes (2004-01 to 2026-09), crashes within 50 m, 36 months before and after the install month. Programs: lpi (seattle-lpi: 933 records, 869 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
@@ -250,6 +303,39 @@ Note: The coverage rule (a city's record runs from the first to the last month w
 
 Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
 
+## auto_seattle Programs found by the agent in Seattle (comparison-group before/after)
+
+Registered: exploratory: T13's registered design, applied to programs the program agent found. 254,732 police-reported crashes (2004-01 to 2026-09), crashes within 50 m, 36 months before and after the install month. Programs: leading_pedestrian_intervals_0 (auto-seattle-leading-pedestrian-intervals-a6e028e2f8c4: 926 records, 862 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+
+| run | sites | outcome | after | expected | theta | 95% interval |
+|---|---|---|---|---|---|---|
+| leading pedestrian intervals 0 not yet treated | 366 | pedestrian injury crashes | 167 | 249 | 0.670 | [0.480, 0.872] |
+| leading pedestrian intervals 0 not yet treated | 366 | all injury crashes | 1,041 | 1,064 | 0.978 | [0.848, 1.122] |
+| leading pedestrian intervals 0 not yet treated | 366 | injury crashes, no pedestrian or cyclist hurt | 783 | 742 | 1.055 | [0.884, 1.237] |
+| leading pedestrian intervals 0 placebo not yet treated | 517 | pedestrian injury crashes | 189 | 189 | 0.998 | [0.799, 1.238] |
+| leading pedestrian intervals 0 placebo not yet treated | 517 | all injury crashes | 896 | 851 | 1.053 | [0.945, 1.168] |
+| leading pedestrian intervals 0 placebo not yet treated | 517 | injury crashes, no pedestrian or cyclist hurt | 623 | 588 | 1.059 | [0.927, 1.207] |
+| leading pedestrian intervals 0 placebo same sites not yet treated | 384 | pedestrian injury crashes | 129 | 134 | 0.962 | [0.734, 1.244] |
+| leading pedestrian intervals 0 placebo same sites not yet treated | 384 | all injury crashes | 624 | 602 | 1.037 | [0.910, 1.173] |
+| leading pedestrian intervals 0 placebo same sites not yet treated | 384 | injury crashes, no pedestrian or cyclist hurt | 441 | 424 | 1.041 | [0.883, 1.221] |
+| leading pedestrian intervals 0 citywide | 385 | pedestrian injury crashes | 171 | 265 | 0.645 | [0.532, 0.776] |
+| leading pedestrian intervals 0 citywide | 385 | all injury crashes | 1,072 | 1,023 | 1.048 | [0.951, 1.154] |
+| leading pedestrian intervals 0 citywide | 385 | injury crashes, no pedestrian or cyclist hurt | 807 | 706 | 1.143 | [1.024, 1.276] |
+| leading pedestrian intervals 0 placebo citywide | 517 | pedestrian injury crashes | 189 | 188 | 1.004 | [0.821, 1.244] |
+| leading pedestrian intervals 0 placebo citywide | 517 | all injury crashes | 896 | 803 | 1.115 | [1.015, 1.228] |
+| leading pedestrian intervals 0 placebo citywide | 517 | injury crashes, no pedestrian or cyclist hurt | 623 | 562 | 1.108 | [0.985, 1.248] |
+| leading pedestrian intervals 0 placebo same sites citywide | 384 | pedestrian injury crashes | 129 | 134 | 0.965 | [0.756, 1.219] |
+| leading pedestrian intervals 0 placebo same sites citywide | 384 | all injury crashes | 624 | 567 | 1.101 | [0.978, 1.238] |
+| leading pedestrian intervals 0 placebo same sites citywide | 384 | injury crashes, no pedestrian or cyclist hurt | 441 | 403 | 1.093 | [0.942, 1.261] |
+
+Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
+
+- **leading pedestrian intervals**: passed. Pedestrian injury crashes -33.0% (theta 0.670, [0.480, 0.872]) on the not yet treated comparison, 224 of 609 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- Naive before/after for leading pedestrian intervals (no comparison group, 609 sites): -25.7% (theta 0.743, [0.644, 0.857]).
+
+
+Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
+
 ## T12 Falsification gates: fake programs and an AI analyst
 
 Registered: validation/BENCH_PREREG.md, T12 (2026-10-31, before any fake program was generated or any agent was run). 200 fake programs in New York: 300 sites each, drawn from 957 injury-crash hotspots more than 150 m from any recorded treatment, each with a random install month. Nothing was installed, so every claimed reduction is false. Pedestrian injury crashes within 50 m, 36 months before and after.
@@ -271,8 +357,8 @@ Agentic arms (muse-spark-open, programs blinded; code run in isolated Modal sand
 
 | arm | fake programs analysed | claimed a reduction | real programs: claims | cost |
 |---|---|---|---|---|
-| ungated | 1 | 0 | — | $0.003 |
-| gated | 0 | 0 | — | $0.000 |
+| ungated | 5 | 0 | — | $0.016 |
+| gated | 4 | 0 | — | $0.017 |
 
 ## Data agent: adapters found and validated without hand-written code
 

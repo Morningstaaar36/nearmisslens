@@ -1,0 +1,822 @@
+{
+ "id": "T13_nyc",
+ "city": "nyc",
+ "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's program data was downloaded for it)",
+ "spec": {
+  "id": "T13_nyc",
+  "merge_m": 30,
+  "radius_m": 50,
+  "neighbour_m": 100,
+  "window_months": 36,
+  "placebo": {
+   "shift_months": 19,
+   "window_months": 18
+  },
+  "registered": "validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's program data was downloaded for it)",
+  "city": "nyc",
+  "title": "Replication: other New York programs",
+  "exclude_near": [
+   "nyc-lpi",
+   "nyc-turn-calming",
+   "nyc-enhanced-crossings",
+   "nyc-speed-humps"
+  ],
+  "programs": [
+   {
+    "key": "enhanced_crossings",
+    "adapter": "nyc-enhanced-crossings",
+    "label": "enhanced crossings",
+    "countermeasure": "Crosswalk Visibility Enhancements",
+    "treated": "auto",
+    "comparisons": [
+     "not_yet_treated",
+     "citywide"
+    ],
+    "primary": "auto",
+    "outcome": "pedestrian",
+    "placebo_same_sites": [
+     "not_yet_treated",
+     "citywide"
+    ]
+   },
+   {
+    "key": "speed_humps",
+    "adapter": "nyc-speed-humps",
+    "label": "speed humps",
+    "countermeasure": null,
+    "treated": "auto",
+    "comparisons": [
+     "not_yet_treated",
+     "citywide"
+    ],
+    "primary": "auto",
+    "outcome": "injury",
+    "placebo_same_sites": [
+     "not_yet_treated",
+     "citywide"
+    ]
+   }
+  ]
+ },
+ "data": {
+  "crashes": 2052347,
+  "crash_months": [
+   "2012-07",
+   "2026-10"
+  ],
+  "programs": {
+   "enhanced_crossings": {
+    "adapter": "nyc-enhanced-crossings",
+    "points": 195,
+    "sites": 193
+   },
+   "speed_humps": {
+    "adapter": "nyc-speed-humps",
+    "points": 4327,
+    "sites": 4165
+   }
+  }
+ },
+ "runs": {
+  "enhanced_crossings_not_yet_treated": {
+   "treated_in_range": 169,
+   "excluded_neighbour_treatment": 73,
+   "pedestrian": {
+    "theta": 1.278,
+    "ci95": [
+     0.431,
+     3.629
+    ],
+    "change_pct": 27.8,
+    "sites": 59,
+    "after": 18,
+    "before": 17,
+    "expected_after": 14.1,
+    "cg_ratio_median": 0.908,
+    "dropped_no_comparison": 37,
+    "cg_sites_min": 0,
+    "cg_sites_median": 11
+   },
+   "injury": {
+    "theta": 0.843,
+    "ci95": [
+     0.476,
+     1.392
+    ],
+    "change_pct": -15.7,
+    "sites": 63,
+    "after": 93,
+    "before": 80,
+    "expected_after": 110.4,
+    "cg_ratio_median": 0.988,
+    "dropped_no_comparison": 33,
+    "cg_sites_min": 0,
+    "cg_sites_median": 11
+   },
+   "motorist_only": {
+    "theta": 0.934,
+    "ci95": [
+     0.498,
+     1.716
+    ],
+    "change_pct": -6.6,
+    "sites": 63,
+    "after": 62,
+    "before": 48,
+    "expected_after": 66.4,
+    "cg_ratio_median": 1.0,
+    "dropped_no_comparison": 33,
+    "cg_sites_min": 0,
+    "cg_sites_median": 11
+   },
+   "install_months": [
+    "2015-07",
+    "2022-05"
+   ]
+  },
+  "enhanced_crossings_placebo_not_yet_treated": {
+   "treated_in_range": 166,
+   "excluded_neighbour_treatment": 22,
+   "pedestrian": {
+    "theta": 0.967,
+    "ci95": [
+     0.517,
+     1.828
+    ],
+    "change_pct": -3.3,
+    "sites": 142,
+    "after": 38,
+    "before": 34,
+    "expected_after": 39.3,
+    "cg_ratio_median": 0.894,
+    "dropped_no_comparison": 2,
+    "cg_sites_min": 1,
+    "cg_sites_median": 84
+   },
+   "injury": {
+    "theta": 1.21,
+    "ci95": [
+     0.798,
+     1.701
+    ],
+    "change_pct": 21.0,
+    "sites": 143,
+    "after": 111,
+    "before": 87,
+    "expected_after": 91.7,
+    "cg_ratio_median": 1.104,
+    "dropped_no_comparison": 1,
+    "cg_sites_min": 1,
+    "cg_sites_median": 84
+   },
+   "motorist_only": {
+    "theta": 1.263,
+    "ci95": [
+     0.751,
+     2.003
+    ],
+    "change_pct": 26.3,
+    "sites": 143,
+    "after": 59,
+    "before": 45,
+    "expected_after": 46.7,
+    "cg_ratio_median": 1.088,
+    "dropped_no_comparison": 1,
+    "cg_sites_min": 1,
+    "cg_sites_median": 84
+   },
+   "install_months": [
+    "2015-09",
+    "2022-05"
+   ]
+  },
+  "enhanced_crossings_placebo_same_sites_not_yet_treated": {
+   "treated_in_range": 166,
+   "excluded_neighbour_treatment": 22,
+   "pedestrian": {
+    "theta": 1.205,
+    "ci95": [
+     0.435,
+     3.836
+    ],
+    "change_pct": 20.5,
+    "sites": 91,
+    "after": 15,
+    "before": 13,
+    "expected_after": 12.4,
+    "cg_ratio_median": 0.905,
+    "dropped_no_comparison": 2,
+    "cg_sites_min": 1,
+    "cg_sites_median": 83
+   },
+   "injury": {
+    "theta": 1.266,
+    "ci95": [
+     0.77,
+     2.0
+    ],
+    "change_pct": 26.6,
+    "sites": 92,
+    "after": 62,
+    "before": 48,
+    "expected_after": 49.0,
+    "cg_ratio_median": 1.112,
+    "dropped_no_comparison": 1,
+    "cg_sites_min": 1,
+    "cg_sites_median": 83
+   },
+   "motorist_only": {
+    "theta": 1.197,
+    "ci95": [
+     0.658,
+     2.152
+    ],
+    "change_pct": 19.7,
+    "sites": 92,
+    "after": 37,
+    "before": 31,
+    "expected_after": 30.9,
+    "cg_ratio_median": 1.044,
+    "dropped_no_comparison": 1,
+    "cg_sites_min": 1,
+    "cg_sites_median": 83
+   },
+   "install_months": [
+    "2015-09",
+    "2022-05"
+   ]
+  },
+  "enhanced_crossings_citywide": {
+   "treated_in_range": 169,
+   "excluded_neighbour_treatment": 73,
+   "pedestrian": {
+    "theta": 0.928,
+    "ci95": [
+     0.5,
+     1.686
+    ],
+    "change_pct": -7.2,
+    "sites": 96,
+    "after": 29,
+    "before": 30,
+    "expected_after": 31.2,
+    "cg_ratio_median": 1.048,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 1.006,
+    "ci95": [
+     0.746,
+     1.31
+    ],
+    "change_pct": 0.6,
+    "sites": 96,
+    "after": 131,
+    "before": 116,
+    "expected_after": 130.3,
+    "cg_ratio_median": 1.005,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 1.047,
+    "ci95": [
+     0.726,
+     1.424
+    ],
+    "change_pct": 4.7,
+    "sites": 96,
+    "after": 85,
+    "before": 72,
+    "expected_after": 81.1,
+    "cg_ratio_median": 1.003,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-07",
+    "2022-05"
+   ]
+  },
+  "enhanced_crossings_placebo_citywide": {
+   "treated_in_range": 166,
+   "excluded_neighbour_treatment": 22,
+   "pedestrian": {
+    "theta": 1.036,
+    "ci95": [
+     0.65,
+     1.823
+    ],
+    "change_pct": 3.6,
+    "sites": 144,
+    "after": 38,
+    "before": 34,
+    "expected_after": 36.7,
+    "cg_ratio_median": 0.979,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 1.134,
+    "ci95": [
+     0.842,
+     1.593
+    ],
+    "change_pct": 13.4,
+    "sites": 144,
+    "after": 111,
+    "before": 87,
+    "expected_after": 97.9,
+    "cg_ratio_median": 1.035,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 1.143,
+    "ci95": [
+     0.766,
+     1.75
+    ],
+    "change_pct": 14.3,
+    "sites": 144,
+    "after": 59,
+    "before": 45,
+    "expected_after": 51.6,
+    "cg_ratio_median": 1.054,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-09",
+    "2022-05"
+   ]
+  },
+  "enhanced_crossings_placebo_same_sites_citywide": {
+   "treated_in_range": 166,
+   "excluded_neighbour_treatment": 22,
+   "pedestrian": {
+    "theta": 1.164,
+    "ci95": [
+     0.527,
+     2.779
+    ],
+    "change_pct": 16.4,
+    "sites": 93,
+    "after": 15,
+    "before": 13,
+    "expected_after": 12.9,
+    "cg_ratio_median": 0.971,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 1.197,
+    "ci95": [
+     0.815,
+     1.837
+    ],
+    "change_pct": 19.7,
+    "sites": 93,
+    "after": 62,
+    "before": 48,
+    "expected_after": 51.8,
+    "cg_ratio_median": 1.03,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 1.082,
+    "ci95": [
+     0.677,
+     1.891
+    ],
+    "change_pct": 8.2,
+    "sites": 93,
+    "after": 37,
+    "before": 31,
+    "expected_after": 34.2,
+    "cg_ratio_median": 1.044,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-09",
+    "2022-05"
+   ]
+  },
+  "speed_humps_not_yet_treated": {
+   "treated_in_range": 1668,
+   "excluded_neighbour_treatment": 594,
+   "pedestrian": {
+    "theta": 0.814,
+    "ci95": [
+     0.67,
+     0.954
+    ],
+    "change_pct": -18.6,
+    "sites": 1008,
+    "after": 388,
+    "before": 454,
+    "expected_after": 476.7,
+    "cg_ratio_median": 1.091,
+    "dropped_no_comparison": 66,
+    "cg_sites_min": 0,
+    "cg_sites_median": 872
+   },
+   "injury": {
+    "theta": 0.996,
+    "ci95": [
+     0.909,
+     1.085
+    ],
+    "change_pct": -0.4,
+    "sites": 1008,
+    "after": 1775,
+    "before": 1721,
+    "expected_after": 1782.6,
+    "cg_ratio_median": 1.042,
+    "dropped_no_comparison": 66,
+    "cg_sites_min": 0,
+    "cg_sites_median": 872
+   },
+   "motorist_only": {
+    "theta": 1.059,
+    "ci95": [
+     0.941,
+     1.185
+    ],
+    "change_pct": 5.9,
+    "sites": 1008,
+    "after": 1149,
+    "before": 1058,
+    "expected_after": 1084.6,
+    "cg_ratio_median": 0.978,
+    "dropped_no_comparison": 66,
+    "cg_sites_min": 0,
+    "cg_sites_median": 872
+   },
+   "install_months": [
+    "2015-07",
+    "2023-10"
+   ]
+  },
+  "speed_humps_placebo_not_yet_treated": {
+   "treated_in_range": 1652,
+   "excluded_neighbour_treatment": 273,
+   "pedestrian": {
+    "theta": 0.993,
+    "ci95": [
+     0.854,
+     1.139
+    ],
+    "change_pct": -0.7,
+    "sites": 1379,
+    "after": 342,
+    "before": 356,
+    "expected_after": 344.4,
+    "cg_ratio_median": 0.994,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1190
+   },
+   "injury": {
+    "theta": 0.971,
+    "ci95": [
+     0.892,
+     1.05
+    ],
+    "change_pct": -2.9,
+    "sites": 1379,
+    "after": 1295,
+    "before": 1334,
+    "expected_after": 1333.2,
+    "cg_ratio_median": 1.037,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1190
+   },
+   "motorist_only": {
+    "theta": 0.949,
+    "ci95": [
+     0.85,
+     1.055
+    ],
+    "change_pct": -5.1,
+    "sites": 1379,
+    "after": 783,
+    "before": 808,
+    "expected_after": 825.2,
+    "cg_ratio_median": 1.052,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1190
+   },
+   "install_months": [
+    "2015-08",
+    "2023-10"
+   ]
+  },
+  "speed_humps_placebo_same_sites_not_yet_treated": {
+   "treated_in_range": 1652,
+   "excluded_neighbour_treatment": 273,
+   "pedestrian": {
+    "theta": 0.925,
+    "ci95": [
+     0.766,
+     1.092
+    ],
+    "change_pct": -7.5,
+    "sites": 1063,
+    "after": 223,
+    "before": 249,
+    "expected_after": 241.2,
+    "cg_ratio_median": 0.991,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1195
+   },
+   "injury": {
+    "theta": 0.961,
+    "ci95": [
+     0.869,
+     1.055
+    ],
+    "change_pct": -3.9,
+    "sites": 1063,
+    "after": 906,
+    "before": 943,
+    "expected_after": 943.0,
+    "cg_ratio_median": 1.034,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1195
+   },
+   "motorist_only": {
+    "theta": 0.949,
+    "ci95": [
+     0.832,
+     1.076
+    ],
+    "change_pct": -5.1,
+    "sites": 1063,
+    "after": 566,
+    "before": 582,
+    "expected_after": 596.4,
+    "cg_ratio_median": 1.048,
+    "dropped_no_comparison": 0,
+    "cg_sites_min": 561,
+    "cg_sites_median": 1195
+   },
+   "install_months": [
+    "2015-08",
+    "2023-10"
+   ]
+  },
+  "speed_humps_citywide": {
+   "treated_in_range": 1668,
+   "excluded_neighbour_treatment": 594,
+   "pedestrian": {
+    "theta": 0.801,
+    "ci95": [
+     0.696,
+     0.923
+    ],
+    "change_pct": -19.9,
+    "sites": 1074,
+    "after": 424,
+    "before": 480,
+    "expected_after": 529.2,
+    "cg_ratio_median": 1.126,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.914,
+    "ci95": [
+     0.845,
+     0.985
+    ],
+    "change_pct": -8.6,
+    "sites": 1074,
+    "after": 1901,
+    "before": 1873,
+    "expected_after": 2078.8,
+    "cg_ratio_median": 1.043,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.962,
+    "ci95": [
+     0.874,
+     1.057
+    ],
+    "change_pct": -3.8,
+    "sites": 1074,
+    "after": 1224,
+    "before": 1157,
+    "expected_after": 1272.8,
+    "cg_ratio_median": 1.018,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-07",
+    "2023-10"
+   ]
+  },
+  "speed_humps_placebo_citywide": {
+   "treated_in_range": 1652,
+   "excluded_neighbour_treatment": 273,
+   "pedestrian": {
+    "theta": 0.954,
+    "ci95": [
+     0.83,
+     1.093
+    ],
+    "change_pct": -4.6,
+    "sites": 1379,
+    "after": 342,
+    "before": 356,
+    "expected_after": 358.6,
+    "cg_ratio_median": 0.979,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.917,
+    "ci95": [
+     0.842,
+     0.996
+    ],
+    "change_pct": -8.3,
+    "sites": 1379,
+    "after": 1295,
+    "before": 1334,
+    "expected_after": 1412.1,
+    "cg_ratio_median": 1.013,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.897,
+    "ci95": [
+     0.808,
+     0.995
+    ],
+    "change_pct": -10.3,
+    "sites": 1379,
+    "after": 783,
+    "before": 808,
+    "expected_after": 872.5,
+    "cg_ratio_median": 1.024,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-08",
+    "2023-10"
+   ]
+  },
+  "speed_humps_placebo_same_sites_citywide": {
+   "treated_in_range": 1652,
+   "excluded_neighbour_treatment": 273,
+   "pedestrian": {
+    "theta": 0.886,
+    "ci95": [
+     0.753,
+     1.058
+    ],
+    "change_pct": -11.4,
+    "sites": 1063,
+    "after": 223,
+    "before": 249,
+    "expected_after": 251.7,
+    "cg_ratio_median": 0.971,
+    "dropped_no_comparison": 0
+   },
+   "injury": {
+    "theta": 0.902,
+    "ci95": [
+     0.817,
+     0.996
+    ],
+    "change_pct": -9.8,
+    "sites": 1063,
+    "after": 906,
+    "before": 943,
+    "expected_after": 1004.4,
+    "cg_ratio_median": 1.014,
+    "dropped_no_comparison": 0
+   },
+   "motorist_only": {
+    "theta": 0.893,
+    "ci95": [
+     0.785,
+     1.014
+    ],
+    "change_pct": -10.7,
+    "sites": 1063,
+    "after": 566,
+    "before": 582,
+    "expected_after": 633.6,
+    "cg_ratio_median": 1.026,
+    "dropped_no_comparison": 0
+   },
+   "install_months": [
+    "2015-08",
+    "2023-10"
+   ]
+  }
+ },
+ "gates": {
+  "enhanced_crossings": {
+   "countermeasure": "Crosswalk Visibility Enhancements",
+   "treatment": "enhanced crossings",
+   "outcome": "pedestrian",
+   "primary": "enhanced_crossings_citywide",
+   "placebos": [
+    "enhanced_crossings_placebo_citywide",
+    "enhanced_crossings_placebo_same_sites_citywide"
+   ],
+   "rule_met": false,
+   "placebo_ok": true,
+   "passed": false,
+   "reason": "the effect's interval includes no change",
+   "brief_cmf": []
+  },
+  "speed_humps": {
+   "countermeasure": null,
+   "treatment": "speed humps",
+   "outcome": "injury",
+   "primary": "speed_humps_not_yet_treated",
+   "placebos": [
+    "speed_humps_placebo_not_yet_treated",
+    "speed_humps_placebo_same_sites_not_yet_treated"
+   ],
+   "rule_met": false,
+   "placebo_ok": true,
+   "passed": false,
+   "reason": "the effect's interval includes no change"
+  }
+ },
+ "naive": {
+  "enhanced_crossings": {
+   "pedestrian": {
+    "theta": 0.796,
+    "change_pct": -20.4,
+    "sites": 169,
+    "after": 78,
+    "before": 98,
+    "ci95": [
+     0.582,
+     1.104
+    ]
+   },
+   "injury": {
+    "theta": 1.093,
+    "change_pct": 9.3,
+    "sites": 169,
+    "after": 270,
+    "before": 247,
+    "ci95": [
+     0.901,
+     1.324
+    ]
+   },
+   "motorist_only": {
+    "theta": 1.232,
+    "change_pct": 23.2,
+    "sites": 169,
+    "after": 154,
+    "before": 125,
+    "ci95": [
+     0.954,
+     1.575
+    ]
+   }
+  },
+  "speed_humps": {
+   "pedestrian": {
+    "theta": 0.835,
+    "change_pct": -16.5,
+    "sites": 1668,
+    "after": 834,
+    "before": 999,
+    "ci95": [
+     0.756,
+     0.917
+    ]
+   },
+   "injury": {
+    "theta": 0.95,
+    "change_pct": -5.0,
+    "sites": 1668,
+    "after": 3431,
+    "before": 3613,
+    "ci95": [
+     0.89,
+     1.009
+    ]
+   },
+   "motorist_only": {
+    "theta": 0.994,
+    "change_pct": -0.6,
+    "sites": 1668,
+    "after": 2115,
+    "before": 2128,
+    "ci95": [
+     0.914,
+     1.076
+    ]
+   }
+  }
+ },
+ "run_date": "2026-10-31"
+}

@@ -5,7 +5,7 @@ with the microphone, plays it back and lets you redo it. Takes are saved as runs
 text they were recorded for; `nml demo --copilot` uses a take whenever its text still matches the script, and the
 local synthetic voice otherwise. Local only (127.0.0.1).
 
-    uv run nml voice      # then open http://127.0.0.1:8792"""
+    uv run nml voice-studio      # then open http://127.0.0.1:8792"""
 from __future__ import annotations
 
 import hashlib

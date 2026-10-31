@@ -1,6 +1,6 @@
 # Falsification gates: how NearMissLens keeps its agents honest
 
-NearMissLens is a street-safety copilot built from agents on Meta's models. Each agent can propose anything; nothing it proposes reaches a city engineer or a resident until a gate has tried to disprove it with public data. This note describes the gates, the evidence that they work, and where they fall short. Every number here comes from `validation/BENCH.md`, and every test was registered in `validation/BENCH_PREREG.md` before it ran.
+NearMissLens is a street-safety copilot built from agents on Meta's models. Each agent can propose anything; nothing it proposes reaches a city engineer or a resident until a gate has tried to disprove it with public data. This note describes the gates, the evidence that they work, and where they fall short. Every number here comes from `validation/BENCH.md`. The rules of every test were written in `validation/BENCH_PREREG.md` before it ran; that file is our own record, not an external registry, and changes made after a run are listed in it.
 
 ## The idea
 
@@ -34,6 +34,8 @@ Studies are JSON files (`validation/studies/`), so a city, a program, a radius o
 
 **The LPI result replicates in Seattle.** The same design, unchanged, on Seattle's 371 usable LPI intersections: pedestrian injury crashes fell 33% (θ 0.675, 0.476–0.875) compared with intersections treated later; both placebos include 1. Seattle's crash records count pedestrians involved rather than pedestrians injured, so the outcome there is injury crashes with a pedestrian involved.
 
+**The loop runs without hand wiring.** Given only the city, the program agent found Seattle's LPI layer in the public catalog, chose the install-date field and an 'Existing' status filter, and its validator accepted the mapping on the first try; it turned down 39 other layers. The gate on that agent-found program: −33.0% on 366 intersections (θ 0.670, 0.480–0.872), passed. Its validator refused Seattle's bike facilities because 60% or more of their install dates fall on 1 January or 31 December (year precision).
+
 **The gate rarely credits programs that do not exist.** 200 fake programs were built from New York's injury-crash hotspots, each with 300 sites more than 150 m from any recorded treatment and a random install month. Nothing was installed, so every claimed reduction is false:
 
 | Analysis | Fake programs credited with a reduction |
@@ -43,6 +45,25 @@ Studies are JSON files (`validation/studies/`), so a city, a program, a radius o
 | Full causal gate | 11 of 200 (5.5%, 3.1–9.6%) |
 
 The registered rule (the gate below the naive rate, with an upper bound of at most 10%) was met. The gate's rate is still higher than the 2.5% a one-sided 95% interval promises, so a passed gate is strong evidence, not proof. On random dates, crash trends partly cancel out, which is why the naive rate is not higher; on the real programs above, where sites were chosen by the city, the naive analysis overstated the LPI effect and credited turn calming.
+
+## How this compares with published LPI evaluations
+
+| Study | Design | Result |
+|---|---|---|
+| This work, New York (T11) | Comparison group (sites treated later) with a placebo, 1,651 intersections, 2015–2021 installs | Pedestrian injury crashes −17% (−22% to −11%) |
+| NYC DOT, Safety Treatment Evaluation 2005–2018 (2022) | Naive before/after, 1,446 LPIs | Pedestrian injuries −18.1% |
+| FHWA-HRT-18-044 (2018) | Empirical Bayes, 105 sites in Chicago, New York and Charlotte | Vehicle–pedestrian crashes CMF 0.87 (−13%); New York's 42 sites alone 0.91, not significant |
+| Columbia, Nature Cities (2025) | Spatial panel, 2,869 NYC LPI intersections, reported as an association | Pedestrian injuries −33% |
+| This work, Seattle (T13) | Same design as T11, 371 intersections | Pedestrian-involved injury crashes −33% (−52% to −12%) |
+| Seattle DOT (2023) | City summary, method not stated | Pedestrian killed or seriously injured −34% |
+
+Our New York estimate sits between the federal CMF and the city's own naive figure. The same NYC DOT report credits turn calming with −17.5% pedestrian injuries using a naive design; our gate does not credit it, because the decline began before the work.
+
+## Related work
+
+Agents that test their own hypotheses already exist. POPPER (Huang et al., 2025, arXiv 2502.09858) has an agent design falsification experiments for free-form hypotheses, with sequential error control; DiscoPER (Zhao et al., 2026, arXiv 2607.01131) keeps only claims that pass statistical tests. Studies of AI analysts show why the verdict should not be left to the model: they report opposite conclusions on the same data depending on framing (Miao et al., 2026, arXiv 2607.01507; Alizadeh et al., 2026, arXiv 2606.11456). Placebo and refutation tests are standard tools (DoWhy's refuters; the pre-period comparability check in Hauer's comparison-group method, FHWA-HRT-17-082), and later-treated sites are a common comparison group in staggered roll-outs.
+
+What NearMissLens does differently is narrower: one fixed, registered quasi-experimental design lives inside the tool, the agent cannot change it, the agent never sees the half of the data the gate decides on, and a claim the gate breaks never reaches a brief or a letter. We also measure the gate's false-pass rate on 200 fake programs instead of assuming it. Commercial tools that offer before/after comparisons (StreetLight, Miovision's Mateo agent, Replica) do not document a comparison group, a significance test or a placebo on their public pages.
 
 ## Limits
 

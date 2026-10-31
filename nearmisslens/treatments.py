@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -479,3 +480,22 @@ def local_evidence(city: str | None, countermeasure: str) -> dict | None:
                             f"{main['sites']:,} intersections after the city installed it, against sites that got "
                             "it later; a placebo date before the install shows no drop."}
     return None
+
+
+def auto_spec(city: str, found_by: tuple[str, ...] = ("program agent",)) -> dict:
+    """T13's registered design applied to every dated program the program agent found for a city (exploratory: the
+    programs were not known when T13 was registered)."""
+    progs = [a for a in opendata.adapters_of(city, "project")
+             if a.get("date_field") and (a.get("provenance") or {}).get("found_by") in found_by]
+    if not progs:
+        raise ValueError(f"no agent-found programs for {city}; run nml programs {city}")
+    t13 = {"merge_m": 30, "radius_m": 50, "neighbour_m": 100, "window_months": 36,
+           "placebo": {"shift_months": 19, "window_months": 18}}
+    return {"id": f"auto_{city}", "city": city, "title": f"Programs found by the agent in {opendata.city(city)['name']}",
+            "registered": "exploratory: T13's registered design, applied to programs the program agent found",
+            **t13, "exclude_near": [a["id"] for a in progs],
+            "programs": [{"key": re.sub(r"[^a-z0-9]+", "_", a["label"].lower()).strip("_") + f"_{i}",
+                          "adapter": a["id"], "label": a["label"], "countermeasure": a.get("countermeasure"),
+                          "treated": "auto", "comparisons": ["not_yet_treated", "citywide"], "primary": "auto",
+                          "outcome": "pedestrian", "placebo_same_sites": ["not_yet_treated", "citywide"]}
+                         for i, a in enumerate(progs)]}

@@ -149,3 +149,30 @@ def test_letter_checker_rejects_an_invented_number_and_adds_sources(tmp_path, mo
     assert res["rejected_drafts"] == 1 and res["letter"].startswith("To: Council Member, District 17")
     assert "FHWA CMF Clearinghouse, CMF 8799" in res["letter"] and "sends nothing" in res["letter"]
     assert "140" not in res["letter"]
+
+
+def test_every_cli_command_parses_and_has_a_handler():
+    from nearmisslens import cli
+    for cmd in ("voice-studio", "programs", "gate", "treatments", "brief", "citywide", "voice"):
+        with pytest.raises(SystemExit) as e:
+            cli.main([cmd, "--help"])
+        assert e.value.code == 0
+
+
+def test_program_validator_refuses_year_precision_and_outside_records(monkeypatch):
+    import datetime as dt
+    from nearmisslens import programscout as P
+    city = {"id": "test", "name": "Test City", "bbox": [40.0, -74.0, 41.0, -73.0]}
+    P._COVERAGE["test"] = (2012 * 12, 2026 * 12)
+    yearly = [dt.date(2016 + k % 5, 12, 31) for k in range(150)]
+    rows = [{"_lat": 40.5, "_lon": -73.5} for _ in range(150)]
+    monkeypatch.setattr(P, "_dates", lambda a: (yearly, rows))
+    v = P.validate({"date_field": "d"}, city)
+    assert not v["ok"] and any("year-precision" in p for p in v["problems"])
+    monthly = [dt.date(2016 + k % 5, 1 + k % 12, 15) for k in range(150)]
+    outside = [{"_lat": 10.0, "_lon": 10.0} for _ in range(150)]
+    monkeypatch.setattr(P, "_dates", lambda a: (monthly, outside))
+    v = P.validate({"date_field": "d", "countermeasure": "Magic Paint"}, city)
+    assert not v["ok"] and len(v["problems"]) == 2
+    monkeypatch.setattr(P, "_dates", lambda a: (monthly, rows))
+    assert P.validate({"date_field": "d", "countermeasure": "Leading Pedestrian Interval"}, city)["ok"]

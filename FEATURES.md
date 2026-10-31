@@ -28,7 +28,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **What has worked here** panel and **receipts** on every brief (which gate verified which claim).
 - [x] **Letters** (`letter.py`, `nml brief --letter`, the app's "Draft a letter"): addressed to the council district and community board from the city's district maps; every number checked; sources added by code. Verified by `tests/test_treatments.py` (an invented number is refused).
 - [ ] **Hosted copilot on Modal** (`nearmisslens/modal_web.py`): public mode with daily and per-address caps and no new drawings. Built; deployment waits for Modal to be reachable and for the go-ahead to make it public.
-- [x] **Voice studio** (`nml voice`): the narrator records each demo line in the browser; `nml demo --copilot` uses the takes.
+- [x] **Voice studio** (`nml voice-studio`): the narrator records each demo line in the browser; `nml demo --copilot` uses the takes.
 - [x] **Open-weights tier:** the same agents on Muse Spark Open (Baseten) and Muse Glimmer (Modal GPU). Complaint accuracy 78% and 87.5%; memos 0 of 34 ungrounded on both.
 - [x] **Near-miss and crash fusion** (`fusion.py`): negative binomial + Empirical Bayes with near-miss counts; tested on held-out DC blocks and future years (T10, negative result for residents' reports).
 

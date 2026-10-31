@@ -84,6 +84,28 @@ def cmd_export(args) -> int:
     return 0
 
 
+def cmd_programs(args) -> int:
+    from . import programscout
+    res = programscout.discover(_memo_client(not args.meta), args.city, save=not args.dry_run,
+                                skip_known=not args.all)
+    for a in res["found"]:
+        print(f"found: {a['source']} | date {a['date_field']} | filter {a.get('where')} | {a['label']} | "
+              f"{a.get('countermeasure')} | {a['provenance']['validation']['usable_dated']} usable dated records")
+    print(f"{len(res['tried'])} other layers turned down")
+    return 0
+
+
+def cmd_gate(args) -> int:
+    from . import bench, treatments
+    out = treatments.run_suite(treatments.auto_spec(args.city))
+    for k, g in out["gates"].items():
+        m = out["runs"][g["primary"]][g["outcome"]] or {}
+        print(f"{g['treatment']}: {'passed' if g['passed'] else 'not shown (' + str(g['reason']) + ')'}; "
+              f"{m.get('change_pct')}% {m.get('ci95')} on {m.get('sites')} sites")
+    bench.write_bench_md()
+    return 0
+
+
 def cmd_voice(args) -> int:
     from .runner import run_voice
     out = run_voice(args.split, args.source, args.audio)
@@ -281,7 +303,29 @@ def cmd_discover(args) -> int:
     return 0 if a else 1
 
 
-def cmd_voice(args) -> int:
+def cmd_programs(args) -> int:
+    from . import programscout
+    res = programscout.discover(_memo_client(not args.meta), args.city, save=not args.dry_run,
+                                skip_known=not args.all)
+    for a in res["found"]:
+        print(f"found: {a['source']} | date {a['date_field']} | filter {a.get('where')} | {a['label']} | "
+              f"{a.get('countermeasure')} | {a['provenance']['validation']['usable_dated']} usable dated records")
+    print(f"{len(res['tried'])} other layers turned down")
+    return 0
+
+
+def cmd_gate(args) -> int:
+    from . import bench, treatments
+    out = treatments.run_suite(treatments.auto_spec(args.city))
+    for k, g in out["gates"].items():
+        m = out["runs"][g["primary"]][g["outcome"]] or {}
+        print(f"{g['treatment']}: {'passed' if g['passed'] else 'not shown (' + str(g['reason']) + ')'}; "
+              f"{m.get('change_pct')}% {m.get('ci95')} on {m.get('sites')} sites")
+    bench.write_bench_md()
+    return 0
+
+
+def cmd_voice_studio(args) -> int:
     from . import voicestudio
     return voicestudio.serve(args.port)
 
@@ -389,7 +433,14 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("--meta", action="store_true")
     cw = sub.add_parser("citywide", help="plan-gap screen of every priority intersection a city lists (open data)")
     cw.add_argument("--city", help="registry city id (default: the first city with a priority-intersection list)")
-    vs = sub.add_parser("voice", help="voice studio: record the demo narration line by line in the browser")
+    pg = sub.add_parser("programs", help="program agent: find a city's dated safety programs for the causal gate")
+    pg.add_argument("city")
+    pg.add_argument("--dry-run", action="store_true")
+    pg.add_argument("--all", action="store_true", help="also re-map layers already in the registry")
+    pg.add_argument("--meta", action="store_true")
+    ga = sub.add_parser("gate", help="run the causal gate on every program the program agent found for a city")
+    ga.add_argument("city")
+    vs = sub.add_parser("voice-studio", help="voice studio: record the demo narration line by line in the browser")
     vs.add_argument("--port", type=int, default=8792)
     tm = sub.add_parser("treatments", help="city treatment studies with the causal gate (validation/studies/*.json)")
     tm.add_argument("study", nargs="*", help="study ids (default: all registered studies)")
@@ -420,7 +471,8 @@ def run_command(args) -> int:
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
-            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments, "voice": cmd_voice,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
+            "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
             "app": cmd_app}[args.cmd](args)
 
 

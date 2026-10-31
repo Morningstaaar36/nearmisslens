@@ -748,6 +748,42 @@
    "provenance": {
     "found_by": "research R15 (agent), adapter written by hand"
    }
+  },
+  {
+   "id": "auto-seattle-leading-pedestrian-intervals-a6e028e2f8c4",
+   "kind": "project",
+   "city": "seattle",
+   "place": "Seattle",
+   "bbox": [
+    47.38512220625224,
+    -122.66621381718583,
+    47.83427779374775,
+    -121.99998618281417
+   ],
+   "platform": "arcgis",
+   "endpoint": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Vision_Zero_-_Leading_Pedestrian_Intervals_ACTIVE/FeatureServer/8",
+   "date_field": "LPI_Install_Date",
+   "label": "leading pedestrian intervals",
+   "radius_m": 60,
+   "source": "Leading Pedestrian Intervals (ACTIVE) / Signals with LPI and NTOR (arcgis a6e028e2f8c4455d953b138b65bd22de)",
+   "where": "LPI_Status = 'Existing'",
+   "countermeasure": "Leading Pedestrian Interval",
+   "provenance": {
+    "found_by": "program agent",
+    "catalog_id": "a6e028e2f8c4455d953b138b65bd22de",
+    "model": "muse-spark-1.3-contributor",
+    "mapping_reason": "Dataset is a per-signal record of LPI installations. Sample shows status field distinguishing installed (Existing) vs not feasible, and install date field LPI_Install_Date holds actual install dates (ms epoch). Need to filter to Existing to keep only installed treatments.",
+    "validation": {
+     "ok": true,
+     "problems": [],
+     "records": 926,
+     "dated": 926,
+     "usable_dated": 658,
+     "first": "2004-06-09",
+     "last": "2026-07-18"
+    },
+    "attempts": 1
+   }
   }
  ],
  "cities": [

@@ -114,10 +114,10 @@ def script() -> list[Scene]:
                      f"drawn and that no real car moved. Refuge islands here would prevent about "
                      f"{top['expected_crashes_avoided_per_year']} pedestrian injury crashes a year.", "image",
               target=h["fix_image"], caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
-        Scene("gates", "But why trust an AI's numbers? Our agents have to prove what they say. Every claim meets a gate "
+        Scene("gates", "But why trust an AI's numbers? Here, every claim meets a gate "
                        "that tries to disprove it with public data. A number must be in the record. A drawing must pass "
                        "SAM. And 'this fix works here' must survive the city's own history.", "card",
-              "Agents that have to prove it",
+              "Every claim meets a gate",
               "Every claim meets a gate that tries to disprove it: numbers against the record, drawings against SAM 3.1, "
               "'this fix works' against the city's own past installs and a placebo date."),
         Scene("measured", f"So we tested New York's own installs. Leading pedestrian intervals passed: pedestrian injury "
@@ -159,8 +159,8 @@ def script() -> list[Scene]:
         Scene("open", "Meta's open weights run the analyst, the briefs and the letters: Muse Spark Open on Baseten, and "
                       "Muse Glimmer on a Modal GPU.", "card", "Meta models throughout",
               "SAM 3.1 · Muse Spark · Muse Wonder · Muse Image · Voice Transcribe · Muse Spark Open · Muse Glimmer"),
-        Scene("end", "NearMissLens. Agents that have to prove it. Built during the hackathon; engineers decide.", "card",
-              "NearMissLens", "Agents that have to prove it. Open source, built during the hackathon."),
+        Scene("end", "NearMissLens. Every claim tested before it is shown. Built during the hackathon; engineers decide.",
+              "card", "NearMissLens", "Every claim tested before it is shown. Open source, built during the hackathon."),
     ]
     return scenes
 
