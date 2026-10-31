@@ -727,7 +727,17 @@
    "placebo_ok": false,
    "passed": false,
    "reason": "the effect's interval includes no change",
-   "brief_cmf": [],
+   "brief_cmf": [
+    {
+     "cmf_id": "2697",
+     "cmf": 0.63,
+     "stars": "4\u2605",
+     "crash_type": "Vehicle/pedestrian",
+     "severity": "All",
+     "control": "unknown",
+     "chosen_by": "the only eligible record"
+    }
+   ],
    "fake_rank": {
     "rank": null,
     "cells": 50,
@@ -747,7 +757,17 @@
    "placebo_ok": true,
    "passed": false,
    "reason": "the effect's interval includes no change",
-   "brief_cmf": [],
+   "brief_cmf": [
+    {
+     "cmf_id": "2697",
+     "cmf": 0.63,
+     "stars": "4\u2605",
+     "crash_type": "Vehicle/pedestrian",
+     "severity": "All",
+     "control": "unknown",
+     "chosen_by": "the only eligible record"
+    }
+   ],
    "fake_rank": {
     "rank": null,
     "cells": 50,

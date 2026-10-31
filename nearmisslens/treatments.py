@@ -421,16 +421,20 @@ def run_suite(spec: dict) -> dict:
 
 
 def brief_cmf(countermeasure: str, outcome: str) -> list[dict]:
-    """The CMF Clearinghouse records the brief ranks this countermeasure with for the outcome's crash group."""
+    """The CMF Clearinghouse record the brief estimates this countermeasure with for the outcome's crash population,
+    at the site control its curated records are for."""
     from . import countermeasures
     item = next((i for i in countermeasures.psc_items() if i["name"] == countermeasure), {})
-    pair = ("vehicle", "pedestrian") if outcome == "pedestrian" else ("vehicle", "vehicle")
-    control = item.get("site_control") if item.get("site_control") not in (None, "any") else None
-    cands, _ = countermeasures.candidates(countermeasures.load_cmf(), pair, "crossing", control=control,
-                                          conditions=frozenset(i["condition"] for i in countermeasures.psc_items()
-                                                               if i.get("condition")))
-    return [{"cmf_id": c.crfid, "cmf": round(c.cmf, 3), "stars": c.stars, "crash_type": c.crash_type,
-             "severity": c.severity} for c in cands if c.psc == countermeasure]
+    pop = "pedestrian" if outcome == "pedestrian" else "all"
+    controls = {c for e in item.get("cmf_allow", []) for c in e["control"]} - {"any"} or {"unknown"}
+    out = []
+    for control in sorted(controls):
+        sel = countermeasures.select(item, control, {pop: 1}, countermeasures.load_cmf())
+        if sel["quantified"]:
+            out.append({"cmf_id": sel["cmf_id"], "cmf": sel["cmf"], "stars": sel["stars"],
+                        "crash_type": sel["cmf_crash_type"], "severity": sel["cmf_severity"], "control": control,
+                        "chosen_by": sel["chosen_by"]})
+    return out
 
 
 def projection(spec: dict, out: dict, cr: pd.DataFrame, points: dict, org) -> dict:

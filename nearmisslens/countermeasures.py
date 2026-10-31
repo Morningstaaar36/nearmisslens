@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import json
 from dataclasses import dataclass
 from importlib import resources
@@ -21,7 +22,17 @@ CONFLICT_CRASH_TYPES = {"rear_end": ["Rear end"], "crossing": ["Angle", "Left tu
                         "lane_change": ["Sideswipe"]}
 
 
-def load_cmf(path: Path = CMF_PATH) -> pd.DataFrame:
+ALLOWED_PATH = Path(__file__).resolve().parent / "data" / "cmf_allow.csv"  # the curated records, shipped with the code
+POP_CONDITION = {"night": "nighttime", "wet": "wet or low-friction pavement",  # populations that are conditions
+                 "walking_along": "pedestrians walking along the roadway"}
+POPULATIONS = {  # crash populations a CMF record can cover, as the brief names them
+    "pedestrian": "pedestrian injury crashes", "all": "injury crashes", "rear_end": "rear-end crashes",
+    "angle": "angle crashes", "wet": "injury crashes on wet roads", "night": "injury crashes in darkness",
+    "walking_along": "crashes with pedestrians walking along the road"}
+
+
+@functools.lru_cache(maxsize=4)
+def _load(path: str) -> pd.DataFrame:
     raw = pd.read_csv(path, encoding="latin-1", dtype=str, keep_default_na=False)
     df = pd.DataFrame({
         "crfid": raw["crfid"], "name": raw["cmName"], "category": raw["catname"], "subcategory": raw["subcatname"],
@@ -34,12 +45,80 @@ def load_cmf(path: Path = CMF_PATH) -> pd.DataFrame:
     return df
 
 
+def load_cmf(path: Path = CMF_PATH) -> pd.DataFrame:
+    """The CMF Clearinghouse file (nml fetch), or the curated subset shipped with the code when it is absent."""
+    return _load(str(path if Path(path).exists() else ALLOWED_PATH)).copy()
+
+
+def export_allowed(path: Path = CMF_PATH, out: Path = ALLOWED_PATH) -> int:
+    """Write the curated records (every cmf_allow id) from the full Clearinghouse file to the shipped subset."""
+    ids = {e["crfid"] for i in psc_items() for e in i.get("cmf_allow", [])}
+    raw = pd.read_csv(path, encoding="latin-1", dtype=str, keep_default_na=False)
+    raw[raw["crfid"].isin(ids)].to_csv(out, index=False, encoding="latin-1")
+    return int(raw["crfid"].isin(ids).sum())
+
+
+def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame) -> dict:
+    """The CMF estimate for one countermeasure at one site, from its curated records only. A record is eligible if
+    it is for this site's control (an 'uncontrolled' record never serves a signal), has at least 3 stars, and the
+    crash record shows the population it covers (wet-road, darkness and walking-along records need those shares).
+    The pick is the record FHWA's fact sheet cites, else the median of the eligible ones; never the largest effect."""
+    allow = item.get("cmf_allow") or []
+    if not allow:
+        return {"quantified": False, "reason": item.get("no_cmf_reason", "no CMF Clearinghouse record fits")}
+    rows = cmf.drop_duplicates("crfid").set_index("crfid")
+    eligible, why = [], []
+    for e in allow:
+        if e["crfid"] not in rows.index:
+            why.append(f"CMF {e['crfid']} is not in the Clearinghouse file")
+            continue
+        r = rows.loc[e["crfid"]]
+        if "any" not in e["control"] and control not in e["control"]:
+            why.append(f"its CMF Clearinghouse records are for {' or '.join(e['control']).lower()} sites"
+                       + (f", and this site's control is {control.lower()}" if control != "unknown" else
+                          ", and this site's control is not known"))
+            continue
+        if not (r["stars"] >= 3):
+            why.append(f"CMF {e['crfid']} is rated below 3 stars")
+            continue
+        n = populations.get(e["population"])
+        if n is None:
+            why.append(f"the crash record does not show {POPULATIONS[e['population']]}")
+            continue
+        if n <= 0:
+            why.append(f"the record has no {POPULATIONS[e['population']]}")
+            continue
+        eligible.append((e, r))
+    if not eligible:
+        return {"quantified": False, "reason": "; ".join(dict.fromkeys(why))}
+    cited = [x for x in eligible if x[0].get("fhwa_cited")]
+    pops = [x[0]["population"] for x in eligible]
+    pop = cited[0][0]["population"] if cited else ("all" if "all" in pops else pops[0])
+    same = sorted((x for x in eligible if x[0]["population"] == pop), key=lambda x: float(x[1]["cmf"]))
+    if cited:
+        e, r = cited[0]
+        how = "the record FHWA's fact sheet cites"
+    else:
+        e, r = same[(len(same) - 1) // 2]
+        how = f"the median of {len(same)} eligible records" if len(same) > 1 else "the only eligible record"
+    cmfs = [float(x[1]["cmf"]) for x in same]
+    return {"quantified": True, "cmf_id": e["crfid"], "cmf": round(float(r["cmf"]), 3), "stars": stars_label(r["stars"]),
+            "cmf_name": r["name"], "cmf_crash_type": r["crash_type"], "cmf_severity": r["severity"],
+            "population": pop, "targets": POPULATIONS[pop], "target_crashes_5y": populations[pop],
+            "chosen_by": how, "cmf_range": [round(min(cmfs), 3), round(max(cmfs), 3)]}
+
+
 def stars_label(stars: float) -> str:
     return f"{int(stars)}★" if stars == stars and stars >= 1 else "not rated"
 
 
+@functools.lru_cache(maxsize=1)
+def _psc() -> str:
+    return resources.files("nearmisslens").joinpath("data/fhwa_psc.json").read_text()
+
+
 def psc_items() -> list[dict]:
-    return json.loads(resources.files("nearmisslens").joinpath("data/fhwa_psc.json").read_text())["items"]
+    return json.loads(_psc())["items"]
 
 
 def crash_types_for(pair: tuple[str, str], conflict_type: str) -> tuple[list[str], str]:
@@ -74,9 +153,8 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
     types, note = crash_types_for(pair, conflict_type)
     out: list[Candidate] = []
     rejected: list[dict] = []
-    names = cmf["name"].str.lower()
     for item in psc_items():
-        if not item["cmf_keywords"]:
+        if not item.get("cmf_allow"):
             continue
         if control and item.get("site_control", "any") not in ("any", control):
             rejected.append({"psc": item["name"], "reason": f"applies to {item['site_control']} sites, not {control}"})
@@ -87,19 +165,23 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
         if item.get("condition") and item["condition"] not in conditions:
             rejected.append({"psc": item["name"], "reason": f"requires {item['condition']}, which the observed conflicts do not show"})
             continue
-        hit = np.zeros(len(cmf), dtype=bool)
-        for kw in item["cmf_keywords"]:
-            hit |= names.str.contains(kw, regex=False).to_numpy()
-        rows = cmf[hit]
+        allowed = {e["crfid"]: e for e in item["cmf_allow"]
+                   if (not control or "any" in e["control"] or control in e["control"])
+                   and (e["population"] not in POP_CONDITION or POP_CONDITION[e["population"]] in conditions)}
+        if not allowed:
+            need = {POP_CONDITION[e["population"]] for e in item["cmf_allow"] if e["population"] in POP_CONDITION}
+            rejected.append({"psc": item["name"], "reason": f"requires {' or '.join(sorted(need))}, which the observed "
+                                                            "conflicts do not show" if need else
+                             f"its CMF records are for other site controls than {control}"})
+            continue
+        rows = cmf[cmf["crfid"].isin(allowed)]  # the curated records only
         if rows.empty:
             continue
-        typed = rows[rows["crash_type"].apply(lambda c: any(t in c.split(",") or t == c for t in types))]
+        # a record for all crash types covers this conflict's type too
+        typed = rows[rows["crash_type"].apply(lambda c: c == "All" or any(t in c.split(",") or t == c for t in types))]
         if typed.empty:
             rejected.append({"psc": item["name"], "reason": f"no CMF for crash type {types}"})
             continue
-        if control:
-            matched = typed[typed["control"].str.contains(control, case=False)]
-            typed = matched if not matched.empty else typed
         worse = typed[typed["cmf"] >= 1]
         for r in worse.itertuples():
             rejected.append({"psc": item["name"], "crfid": r.crfid, "reason": f"CMF {r.cmf:.3f} >= 1 (no reduction) for {r.crash_type}"})
@@ -108,11 +190,12 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
         reducing = typed[(typed["cmf"] > 0) & (typed["cmf"] < 1)]
         good = reducing[reducing["stars"] >= min_stars]
         if good.empty:
-            good = reducing[reducing["stars"].isna() | (reducing["stars"] < 1)]
-        if good.empty:
-            rejected.append({"psc": item["name"], "reason": f"no reducing CMF rated >= {min_stars} stars or unrated"})
+            rejected.append({"psc": item["name"], "reason": f"no reducing CMF rated >= {min_stars} stars"})
             continue
-        best = good.sort_values(["stars", "crf_pct"], ascending=False).iloc[0]
+        # the record FHWA's fact sheet cites, else the median, never the largest effect
+        cited = good[good["crfid"].map(lambda c: allowed[c].get("fhwa_cited", False))]
+        ordered = good.sort_values("cmf")
+        best = cited.iloc[0] if not cited.empty else ordered.iloc[(len(ordered) - 1) // 2]
         out.append(Candidate(item["name"], best["crfid"], best["name"], stars_label(best["stars"]), float(best["crf_pct"]),
                              float(best["cmf"]), best["crash_type"], best["severity"], best["control"] or "not specified",
                              note))

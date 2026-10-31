@@ -29,7 +29,8 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
     d, fx = brief["dossier"], brief.get("fixes") or {}
     cr, pl = d.get("crashes") or {}, d.get("plans") or {}
     killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
-    supported = [o for o in fx.get("options", []) if not o.get("verify_on_site")][:2]
+    # the two leading estimated low-cost fixes (reconstructions need a design study first), with their site checks
+    supported = [o for o in fx.get("options", []) if o.get("scale", "low-cost") == "low-cost"][:2]
     measured = next((o for o in fx.get("options", []) if o.get("local_evidence")), None)
     h = fx.get("harm") or {}
     projects = sorted((p for p in pl.get("projects", []) if isinstance(p.get("year"), int)), key=lambda p: p["year"])
@@ -55,7 +56,8 @@ def facts(brief: dict, offices_: list[dict]) -> dict:
                    "cmf_id": o["cmf_id"],
                    "crashes_avoided_per_year": o["expected_crashes_avoided_per_year"],
                    "targets": o["targets"], "harm_avoided_usd_per_year": o["harm_avoided_usd_per_year"],
-                   "pays_for_itself_under_million_usd": round(o["break_even_cost_usd"] / 1e6, 1)} for o in supported],
+                   "pays_for_itself_under_million_usd": round(o["break_even_cost_usd"] / 1e6, 1),
+                   "needs_site_check_for": o.get("verify_on_site")} for o in supported],
         "measured_in_this_city": {
             "fix": _plain(measured["countermeasure"]),
             "result": (f"where the city installed it at {ev['sites']:,} intersections, pedestrian injury crashes fell "
@@ -73,7 +75,7 @@ INSTRUCTIONS = (
     "addressed_to, asking them to request a safety study at the junction from the agency and to ask for the fixes "
     "listed. Start with the salutation given. Say what the official record shows over the period (crashes, who was "
     "hurt, the yearly cost of the harm in the U.S. DOT's official values, whether the city recorded any recent safety "
-    "work) and what each fix is expected to prevent, using its plain name. If measured_in_this_city is given, also ask "
+    "work) and what each fix is expected to prevent, using its plain name and saying what must be checked on site first. If measured_in_this_city is given, also ask "
     "them to consider that fix (after a site check of needs_site_check_for, if given) and quote its result. Use only "
     "numbers in the facts; write dollar amounts as the facts give them. Do not invent names, personal stories or "
     "details about the sender: end with the placeholders [Your name] and [Your address]. Do not add a list of "

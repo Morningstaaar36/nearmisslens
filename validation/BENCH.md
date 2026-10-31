@@ -171,7 +171,7 @@ Registered: validation/BENCH_PREREG.md, T11 (2026-10-31, before any crash data w
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut. Rank among 200 fake programs (T14): 0.130.
+- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -16.7% (theta 0.833, [0.781, 0.887]) on the not yet treated comparison, 3,128 of 4,779 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9918 = 0.87, a 13% cut. Rank among 200 fake programs (T14): 0.130.
 - **turn traffic calming**: failed (a placebo date before the install shows a change too). Pedestrian injury crashes -16.1% (theta 0.839, [0.748, 0.937]) on the citywide comparison, 359 of 586 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.100.
 - Naive before/after for Leading Pedestrian Interval signals (no comparison group, 4,779 sites): -23.8% (theta 0.762, [0.739, 0.786]).
 - Naive before/after for turn traffic calming (no comparison group, 586 sites): -26.2% (theta 0.738, [0.690, 0.791]).
@@ -209,7 +209,7 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's cras
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **Leading Pedestrian Interval signals**: failed (the effect's interval includes no change). Pedestrian injury crashes -18.8% (theta 0.812, [0.651, 1.008]) on the not yet treated comparison, 206 of 1,073 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- **Leading Pedestrian Interval signals**: failed (the effect's interval includes no change). Pedestrian injury crashes -18.8% (theta 0.812, [0.651, 1.008]) on the not yet treated comparison, 206 of 1,073 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9918 = 0.87, a 13% cut.
 - Naive before/after for Leading Pedestrian Interval signals (no comparison group, 1,073 sites): -31.0% (theta 0.690, [0.616, 0.763]).
 
 Note: The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical.
@@ -261,7 +261,7 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's prog
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **enhanced crossings**: failed (the effect's interval includes no change). Pedestrian injury crashes -7.2% (theta 0.928, [0.500, 1.686]) on the citywide comparison, 73 of 169 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.305.
+- **enhanced crossings**: failed (the effect's interval includes no change). Pedestrian injury crashes -7.2% (theta 0.928, [0.500, 1.686]) on the citywide comparison, 73 of 169 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 2697 = 0.63, a 37% cut. Rank among 200 fake programs (T14): 0.305.
 - **speed humps**: failed (the effect's interval includes no change). All injury crashes -0.4% (theta 0.996, [0.909, 1.085]) on the not yet treated comparison, 594 of 1,668 sites excluded for another treatment within 100 m in their windows. Rank among 200 fake programs (T14): 0.540.
 - Naive before/after for enhanced crossings (no comparison group, 169 sites): -20.4% (theta 0.796, [0.582, 1.104]).
 - Naive before/after for speed humps (no comparison group, 1,668 sites): -5.0% (theta 0.950, [0.890, 1.009]).
@@ -296,7 +296,7 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's cras
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -32.5% (theta 0.675, [0.476, 0.875]) on the not yet treated comparison, 226 of 616 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- **Leading Pedestrian Interval signals**: passed. Pedestrian injury crashes -32.5% (theta 0.675, [0.476, 0.875]) on the not yet treated comparison, 226 of 616 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9918 = 0.87, a 13% cut.
 - Naive before/after for Leading Pedestrian Interval signals (no comparison group, 616 sites): -25.2% (theta 0.748, [0.648, 0.859]).
 
 Note: The coverage rule (a city's record runs from the first to the last month with at least a tenth of the median monthly crash count) was added after the first DC run, because DC's crash table has stray dates back to 1825. That first run gave theta 0.822 [0.657, 1.010] on the not-yet-treated comparison (failed); with the rule, 0.812 [0.651, 1.008] (failed). New York's record is unchanged by the rule; Seattle's results are identical.
@@ -348,8 +348,8 @@ Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's prog
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **painted safety zones**: failed (the effect's interval includes no change). Pedestrian injury crashes 2.1% (theta 1.021, [0.803, 1.339]) on the citywide comparison, 146 of 242 sites excluded for another treatment within 100 m in their windows.
-- **continental crosswalks**: failed (the effect's interval includes no change). Pedestrian injury crashes 4.0% (theta 1.040, [0.746, 1.326]) on the not yet treated comparison, 1,307 of 2,433 sites excluded for another treatment within 100 m in their windows.
+- **painted safety zones**: failed (the effect's interval includes no change). Pedestrian injury crashes 2.1% (theta 1.021, [0.803, 1.339]) on the citywide comparison, 146 of 242 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 2697 = 0.63, a 37% cut.
+- **continental crosswalks**: failed (the effect's interval includes no change). Pedestrian injury crashes 4.0% (theta 1.040, [0.746, 1.326]) on the not yet treated comparison, 1,307 of 2,433 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 2697 = 0.63, a 37% cut.
 - Naive before/after for painted safety zones (no comparison group, 242 sites): -3.1% (theta 0.969, [0.843, 1.124]).
 - Naive before/after for continental crosswalks (no comparison group, 2,433 sites): -5.7% (theta 0.943, [0.875, 1.014]).
 
@@ -383,7 +383,7 @@ Registered: exploratory: T13's registered design, applied to programs the progra
 
 Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
 
-- **leading pedestrian intervals**: passed. Pedestrian injury crashes -33.0% (theta 0.670, [0.480, 0.872]) on the not yet treated comparison, 224 of 609 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9903 = 0.81, a 19% cut.
+- **leading pedestrian intervals**: passed. Pedestrian injury crashes -33.0% (theta 0.670, [0.480, 0.872]) on the not yet treated comparison, 224 of 609 sites excluded for another treatment within 100 m in their windows. the brief ranks it with CMF 9918 = 0.87, a 13% cut.
 - Naive before/after for leading pedestrian intervals (no comparison group, 609 sites): -25.7% (theta 0.743, [0.644, 0.857]).
 
 

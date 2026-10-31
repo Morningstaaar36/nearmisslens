@@ -33,6 +33,11 @@ class Scene:
     q: dict | None = None  # the app request (address and coordinates) for "app" and "letter" scenes
 
 
+def _plain(name: str) -> str:
+    from . import letter
+    return letter._plain(name)
+
+
 def _bench(name: str) -> dict:
     p = RESULTS_DIR / "bench" / name
     return json.loads(p.read_text()) if p.exists() else {}
@@ -55,7 +60,7 @@ def hero() -> dict:
                 continue
             d = f["dossier"]
             fx = brief.fix_options(d, load_cmf())
-            top = next(o for o in fx["options"] if not o.get("verify_on_site"))
+            top = fx["options"][0] if fx["options"] else None
             area = next((o["area"] for o in letter.offices(d["lat"], d["lon"]) if o.get("area")), None)
             return {"name": r["name"], "spoken": r["name"].replace("&", "and") + (f", {area}" if area else ""),
                     "rank": rank, "of": len(everyone), "city": city, "city_name": opendata.city(city)["name"],
@@ -149,9 +154,9 @@ def script() -> list[Scene]:
         Scene("brief", "Ask about any corner. Agents on Meta's models pull the police record and the city's past "
                        "projects, and rank federal safety fixes by crashes prevented and dollars saved.", "app", target=h["q"]["address"], q=h["q"],
               caption="Official record, ranked fixes with their dollar value, a checked brief"),
-        Scene("fix", f"Muse Image draws the top fix on the aerial photo, and SAM 3.1 checks it was really drawn. Refuge "
-                     f"islands here would prevent about {top['expected_crashes_avoided_per_year']} pedestrian injury "
-                     f"crashes a year.", "image",
+        Scene("fix", f"Muse Image draws a proposed fix on the aerial photo, and SAM 3.1 checks it was really drawn. The "
+                     f"top estimated fix here, {_plain(top['countermeasure'])}, would prevent about "
+                     f"{top['expected_crashes_avoided_per_year']} {top['targets']} a year.", "image",
               target=h["fix_image"], caption="Muse Image + SAM 3.1: the fix on the real junction (AI illustration, not a design)"),
         Scene("gates", "But why trust an AI? Here every claim meets a gate that tries to disprove it with public data: "
                        "numbers against the record, drawings against SAM, and 'this fix works' against the city's own "

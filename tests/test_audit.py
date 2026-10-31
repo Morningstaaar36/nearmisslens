@@ -24,9 +24,9 @@ def junction(n_pairs=3):
 
 
 def fake_cmf():
-    rows = [("1", "Install left-turn lane", "Angle", "Signalized", 0.70, 4, 30.0),
-            ("2", "Install backplates with retroreflective borders", "Angle", "Signalized", 0.50, 4, 50.0),
-            ("3", "Install left-turn lane", "Angle", "Signalized", 1.20, 4, -20.0)]
+    rows = [("275", "Provide a left-turn lane on both major-road approaches", "Angle", "Signalized", 0.70, 4, 30.0),
+            ("1410", "Add 3-inch yellow retroreflective sheeting to signal backplates", "Angle", "Signalized", 0.50, 4, 50.0),
+            ("8002", "Install left-turn lane at signalized intersection", "Angle", "Signalized", 1.20, 4, -20.0)]
     return pd.DataFrame([{"crfid": i, "name": n.lower(), "crash_type": c, "control": ctl, "cmf": v, "stars": s,
                           "crf_pct": r, "severity": "All", "category": "", "subcategory": "", "area": "", "country": "",
                           "citation": ""} for i, n, c, ctl, v, s, r in rows])
@@ -46,7 +46,7 @@ def test_audit_finds_hotspot_and_checks_countermeasures_against_evidence():
     reasons = {r["psc"]: r["reason"] for r in f["rejected"]}
     assert "yellow or red" in reasons["Backplates with Retroreflective Borders"]
     md = audit.memo(facts, "synthetic", "test")
-    assert "Hotspot 1" in md and "CMF ≥ 1; IDs 3" in md
+    assert "Hotspot 1" in md and "CMF ≥ 1; IDs 8002" in md
 
 
 def test_red_entry_enables_signal_countermeasures():

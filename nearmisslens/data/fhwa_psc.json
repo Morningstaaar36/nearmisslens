@@ -16,7 +16,20 @@
     "prompt": "Repaint every pedestrian crossing at this junction as a high-visibility continental (ladder) crosswalk in bright white paint, with a solid white advance stop line before each crossing.",
     "check": "crosswalk"
    },
-   "plain": "high-visibility crosswalks"
+   "plain": "high-visibility crosswalks",
+   "cmf_allow": [
+    {
+     "crfid": "2697",
+     "control": [
+      "any"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": false,
+     "note": "high-visibility continental crosswalks (school zones, urban)"
+    }
+   ],
+   "site_check": "the crossings are not already high-visibility",
+   "scale": "low-cost"
   },
   {
    "name": "Leading Pedestrian Interval",
@@ -27,7 +40,28 @@
    "site_control": "Signalized",
    "requires_user": "pedestrian",
    "condition": "a turning movement",
-   "plain": "a leading pedestrian interval (a walk signal a few seconds before the green)"
+   "plain": "a leading pedestrian interval (a walk signal a few seconds before the green)",
+   "cmf_allow": [
+    {
+     "crfid": "9918",
+     "control": [
+      "Signalized"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": true,
+     "note": "FHWA-HRT-18-044, all three cities"
+    },
+    {
+     "crfid": "9903",
+     "control": [
+      "Signalized"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": false,
+     "note": "FHWA-HRT-18-044, minor-road volume range recorded"
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
@@ -42,7 +76,19 @@
     "prompt": "Add a raised concrete pedestrian refuge island with kerbs and bollards in the middle of the pedestrian crossing nearest the centre of the image, splitting the crossing into two halves.",
     "check": "traffic island"
    },
-   "plain": "pedestrian refuge islands"
+   "plain": "pedestrian refuge islands",
+   "cmf_allow": [
+    {
+     "crfid": "8799",
+     "control": [
+      "Uncontrolled"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": false,
+     "note": "uncontrolled crossings only"
+    }
+   ],
+   "scale": "reconstruction"
   },
   {
    "name": "Pedestrian Hybrid Beacons",
@@ -52,7 +98,18 @@
    ],
    "site_control": "Uncontrolled",
    "requires_user": "pedestrian",
-   "plain": "a pedestrian hybrid beacon"
+   "plain": "a pedestrian hybrid beacon",
+   "cmf_allow": [
+    {
+     "crfid": "10608",
+     "control": [
+      "Uncontrolled"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": true
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Rectangular Rapid Flashing Beacons",
@@ -62,7 +119,26 @@
    ],
    "site_control": "Uncontrolled",
    "requires_user": "pedestrian",
-   "plain": "flashing beacons at the crosswalk"
+   "plain": "flashing beacons at the crosswalk",
+   "cmf_allow": [
+    {
+     "crfid": "9024",
+     "control": [
+      "Uncontrolled"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": true
+    },
+    {
+     "crfid": "11158",
+     "control": [
+      "Uncontrolled"
+     ],
+     "population": "pedestrian",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Walkways",
@@ -73,12 +149,22 @@
    ],
    "site_control": "any",
    "requires_user": "pedestrian",
-   "condition": "pedestrians walking along the roadway",
    "render": {
     "prompt": "Add a continuous raised concrete sidewalk with a kerb along the road edge nearest the centre of the image.",
     "check": "sidewalk"
    },
-   "plain": "a continuous sidewalk"
+   "plain": "a continuous sidewalk",
+   "cmf_allow": [
+    {
+     "crfid": "11246",
+     "control": [
+      "any"
+     ],
+     "population": "walking_along",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "reconstruction"
   },
   {
    "name": "Backplates with Retroreflective Borders",
@@ -88,7 +174,26 @@
    ],
    "site_control": "Signalized",
    "condition": "an entry on yellow or red",
-   "plain": "reflective backplates on the traffic signals"
+   "plain": "reflective backplates on the traffic signals",
+   "cmf_allow": [
+    {
+     "crfid": "1410",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": true
+    },
+    {
+     "crfid": "12087",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Corridor Access Management",
@@ -98,8 +203,10 @@
     "driveway"
    ],
    "site_control": "any",
-   "condition": "driveway or access-point conflicts",
-   "plain": "fewer driveways and access points"
+   "plain": "fewer driveways and access points",
+   "cmf_allow": [],
+   "no_cmf_reason": "the Clearinghouse's driveway records measure adding a driveway, not removing one",
+   "scale": "reconstruction"
   },
   {
    "name": "Dedicated Left- and Right-Turn Lanes at Intersections",
@@ -114,7 +221,51 @@
     "prompt": "Paint a dedicated turn lane through the area at the centre of the image: a bold solid white lane line separating it from the through lanes, and two large white turn-arrow pavement markings inside it, clearly visible from above.",
     "check": "arrow road marking"
    },
-   "plain": "dedicated turn lanes"
+   "plain": "dedicated turn lanes",
+   "cmf_allow": [
+    {
+     "crfid": "275",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "8002",
+     "control": [
+      "Signalized"
+     ],
+     "population": "rear_end",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "8004",
+     "control": [
+      "Signalized"
+     ],
+     "population": "rear_end",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "273",
+     "control": [
+      "Stop-controlled"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "269",
+     "control": [
+      "Stop-controlled"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    }
+   ],
+   "site_check": "room for a turn lane on the approach",
+   "scale": "reconstruction"
   },
   {
    "name": "Reduced Left-Turn Conflict Intersections",
@@ -127,7 +278,19 @@
    ],
    "site_control": "any",
    "condition": "a left-turn movement",
-   "plain": "a redesign that removes risky left turns"
+   "plain": "a redesign that removes risky left turns",
+   "cmf_allow": [
+    {
+     "crfid": "10851",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    }
+   ],
+   "site_check": "room for median U-turns",
+   "scale": "reconstruction"
   },
   {
    "name": "Roundabouts",
@@ -140,7 +303,27 @@
     "prompt": "Convert this junction into a single-lane modern roundabout with a raised circular central island and splitter islands on each approach.",
     "check": "roundabout"
    },
-   "plain": "a roundabout"
+   "plain": "a roundabout",
+   "cmf_allow": [
+    {
+     "crfid": "4255",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "206",
+     "control": [
+      "Stop-controlled"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    }
+   ],
+   "site_check": "space for a roundabout",
+   "scale": "reconstruction"
   },
   {
    "name": "Systemic Application of Multiple Low-Cost Countermeasures at Stop-Controlled Intersections",
@@ -150,7 +333,10 @@
     "low-cost countermeasures"
    ],
    "site_control": "Stop-controlled",
-   "plain": "low-cost upgrades to the stop-controlled approaches"
+   "plain": "low-cost upgrades to the stop-controlled approaches",
+   "cmf_allow": [],
+   "no_cmf_reason": "the Clearinghouse records for this package are from rural intersections",
+   "scale": "low-cost"
   },
   {
    "name": "Yellow Change Intervals",
@@ -161,7 +347,42 @@
    ],
    "site_control": "Signalized",
    "condition": "an entry on yellow or red",
-   "plain": "longer yellow signal times"
+   "plain": "longer yellow signal times",
+   "cmf_allow": [
+    {
+     "crfid": "4216",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "4215",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "4219",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "4220",
+     "control": [
+      "Signalized"
+     ],
+     "population": "all",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Lighting",
@@ -171,15 +392,36 @@
     "illumination"
    ],
    "site_control": "any",
-   "condition": "nighttime",
-   "plain": "better street lighting"
+   "plain": "better street lighting",
+   "cmf_allow": [
+    {
+     "crfid": "7774",
+     "control": [
+      "any"
+     ],
+     "population": "night",
+     "fhwa_cited": false
+    },
+    {
+     "crfid": "11027",
+     "control": [
+      "any"
+     ],
+     "population": "night",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Local Road Safety Plans",
    "group": "Crosscutting",
    "cmf_keywords": [],
    "site_control": "any",
-   "plain": "a local road safety plan"
+   "plain": "a local road safety plan",
+   "cmf_allow": [],
+   "site_fix": false,
+   "scale": "low-cost"
   },
   {
    "name": "Pavement Friction Management",
@@ -189,8 +431,18 @@
     "high friction surface"
    ],
    "site_control": "any",
-   "condition": "wet or low-friction pavement",
-   "plain": "high-friction pavement"
+   "plain": "high-friction pavement",
+   "cmf_allow": [
+    {
+     "crfid": "195",
+     "control": [
+      "any"
+     ],
+     "population": "wet",
+     "fhwa_cited": false
+    }
+   ],
+   "scale": "low-cost"
   },
   {
    "name": "Road Safety Audit",
@@ -199,8 +451,11 @@
     "road safety audit"
    ],
    "site_control": "any",
-   "plain": "a road safety audit"
+   "plain": "a road safety audit",
+   "cmf_allow": [],
+   "site_fix": false,
+   "scale": "low-cost"
   }
  ],
- "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: what the observed conflicts must show for the countermeasure to address them (movements and signal entry are derived from the tracks; nighttime, pavement and driveway conditions are not observable from the conflicts alone); plain: how a resident would name the countermeasure in a letter"
+ "fields": "site_control: traffic control the countermeasure is used at (FHWA PSC fact sheets); requires_user: road user class that must be in the conflict; condition: what the observed conflicts must show for the countermeasure to address them (movements and signal entry are derived from the tracks; nighttime, pavement and driveway conditions are not observable from the conflicts alone); plain: how a resident would name the countermeasure in a letter; cmf_allow: the CMF Clearinghouse records this countermeasure may be estimated with (curated from the Clearinghouse file and the FHWA fact sheets): the site control each applies to, the crash population it covers (pedestrian, all injury, rear_end, angle, wet, night, walking_along) and whether FHWA's fact sheet cites it; site_check: what must be confirmed on site; no_cmf_reason: why no estimate is given; site_fix false: a process, not a fix at a junction; scale: low-cost (signal timing, markings, beacons, lighting, surface) or reconstruction (needs a design study)"
 }

@@ -92,81 +92,77 @@ def _conditions(d: dict, min_share: float = 0.05) -> frozenset[str]:
             conds.add(c)
     if "a turning movement" in conds:
         conds.add("a left-turn movement")
-    # conditions some cities record per crash (opendata light and surface fields)
-    if (cr.get("dark_share") or 0) >= 0.25:
-        conds.add("nighttime")
-    if (cr.get("wet_share") or 0) >= 0.15:
-        conds.add("wet or low-friction pavement")
     return frozenset(conds)
 
 
-def fix_options(d: dict, cmf) -> dict:
-    """Countermeasures for the crash groups in the record, ranked by expected crashes avoided per year."""
-    cr = d.get("crashes") or {}
-    if not cr or "error" in cr:
-        return {"options": [], "rejected": [], "note": "no crash record available for this location"}
-    g = cr.get("crash_groups", {})
-    injury = cr.get("injury_crashes", 0)
-    if cr.get("crash_type_recorded"):
-        groups = [("pedestrian-involved crashes", ("vehicle", "pedestrian"), "crossing", g.get("pedestrian", 0)),
-                  ("rear-end crashes", ("vehicle", "vehicle"), "rear_end", g.get("rear_end", 0)),
-                  ("angle and turning crashes", ("vehicle", "vehicle"), "crossing", g.get("angle_turning", 0))]
-    else:
-        # crash type not recorded (NYC, DC): every injury crash not involving a pedestrian stands in for the
-        # angle/turning group, so its estimate is an upper bound
-        groups = [("pedestrian-involved injury crashes", ("vehicle", "pedestrian"), "crossing", g.get("pedestrian", 0)),
-                  ("rear-end crashes (from contributing factors)", ("vehicle", "vehicle"), "rear_end", g.get("rear_end", 0)),
-                  ("other injury crashes (crash type not recorded; upper bound)", ("vehicle", "vehicle"), "crossing",
-                   max(injury - g.get("pedestrian", 0), 0))]
+def site_control(d: dict) -> str:
+    """The junction's traffic control from the street layout (OpenStreetMap), or 'unknown'."""
     street = d.get("street") or {}
     if street.get("signals", 0) > 0:
-        control = "Signalized"
-    elif "error" not in street and street.get("stop_signs", 0) > 0:
-        control = "Stop-controlled"
-    else:  # unknown: only countermeasures that apply to any intersection
-        control = "unknown"
+        return "Signalized"
+    if "error" not in street and street.get("stop_signs", 0) > 0:
+        return "Stop-controlled"
+    if "error" not in street and street.get("roads") and not street.get("signals"):
+        return "Uncontrolled"
+    return "unknown"
+
+
+def populations(cr: dict) -> dict:
+    """Crash counts over the period for each population a CMF can cover; None where the record cannot show it."""
+    g = cr.get("crash_groups", {})
+    injury = cr.get("injury_crashes", 0)
+    typed = bool(cr.get("crash_type_recorded"))
+    return {"pedestrian": g.get("pedestrian", 0), "all": injury,
+            # rear-end crashes come from crash types where recorded, otherwise from contributing factors
+            "rear_end": g.get("rear_end", 0) if (typed or cr.get("factor_counts")) else None,
+            "angle": g.get("angle_turning", 0) if typed else None,
+            "wet": round(injury * cr["wet_share"], 1) if cr.get("wet_share") is not None else None,
+            "night": round(injury * cr["dark_share"], 1) if cr.get("dark_share") is not None else None,
+            "walking_along": cr.get("walking_along")}
+
+
+def fix_options(d: dict, cmf) -> dict:
+    """Every FHWA Proven Safety Countermeasure for the junction. A fix is estimated (crashes avoided per year,
+    dollars) only when one of its curated CMF records applies to this site's control and to a crash population the
+    record shows; otherwise it is listed with the reason and no number. Order: estimated fixes the record supports,
+    estimated fixes that need a site check, then fixes with no estimate."""
+    cr = d.get("crashes") or {}
+    if not cr or "error" in cr:
+        return {"options": [], "not_estimated": [], "note": "no crash record available for this location"}
+    control = site_control(d)
     conds = _conditions(d)
-    # every precondition is let through; options whose precondition the record does not show are kept and flagged
-    # for a site check instead of being dropped
-    every = frozenset(i["condition"] for i in countermeasures.psc_items() if i.get("condition"))
-    need = {i["name"]: i.get("condition") for i in countermeasures.psc_items()}
-    best: dict[str, dict] = {}
-    rejected = []
-    for label, pair, ctype, n in groups:
-        if n <= 0:
-            continue
-        cands, rej = countermeasures.candidates(cmf, pair, ctype, control=control, conditions=every)
-        rejected += [{**r, "for": label} for r in rej]
-        for c in cands:
-            # a countermeasure that only works in a condition (darkness, wet roads) only acts on that share of
-            # the crashes, when the record gives it; otherwise the estimate stays an upper bound
-            cond = need.get(c.psc)
-            share = {"nighttime": cr.get("dark_share"), "wet or low-friction pavement": cr.get("wet_share")}.get(cond)
-            per_year = n / YEARS * (share if share is not None else 1.0)
-            avoided = per_year * (1 - c.cmf)
-            o = {"countermeasure": c.psc, "cmf_id": c.crfid, "cmf": round(c.cmf, 3), "crf_pct": round(c.crf_pct, 1),
-                 "stars": c.stars, "cmf_crash_type": c.crash_type, "cmf_severity": c.severity, "targets": label,
-                 "target_crashes_5y": n, "target_crashes_per_year": round(per_year, 1),
-                 "condition_share": share if share is not None and cond else None,
-                 "expected_crashes_avoided_per_year": round(avoided, 1), **harm.option(avoided, label, cr),
-                 "verify_on_site": need.get(c.psc) if need.get(c.psc) and need.get(c.psc) not in conds else None}
-            if c.psc not in best or o["expected_crashes_avoided_per_year"] > best[c.psc]["expected_crashes_avoided_per_year"]:
-                best[c.psc] = o
-    # options whose precondition the record shows (or that have none) first, then those needing a site check
-    # a fix the city has already installed here is not proposed again; it is listed as in place
+    pops = populations(cr)
     have = in_place(d)
-    opts = sorted((o for o in best.values() if o["countermeasure"] not in have),
-                  key=lambda o: (o["verify_on_site"] is not None, -o["expected_crashes_avoided_per_year"]))
     from . import treatments
-    for o in opts:  # what the city's own past installs of this fix measured (NML-Bench T11), where it was tested
-        ev = treatments.local_evidence(d.get("city"), o["countermeasure"])
+    estimated, not_estimated = [], []
+    for item in countermeasures.psc_items():
+        name = item["name"]
+        if item.get("site_fix") is False or name in have:
+            continue
+        sel = countermeasures.select(item, control, pops, cmf)
+        checks = [c for c in (item.get("condition") if item.get("condition") not in conds else None,
+                              item.get("site_check")) if c]
+        if not sel["quantified"]:
+            not_estimated.append({"countermeasure": name, "quantified": False, "reason": sel["reason"],
+                                  "verify_on_site": "; ".join(checks) or None})
+            continue
+        per_year = sel["target_crashes_5y"] / YEARS
+        avoided = per_year * (1 - sel["cmf"])
+        o = {"countermeasure": name, "scale": item.get("scale", "low-cost"), **sel, "crf_pct": round(100 * (1 - sel["cmf"]), 1),
+             "target_crashes_per_year": round(per_year, 1), "expected_crashes_avoided_per_year": round(avoided, 1),
+             **harm.option(avoided, sel["targets"], cr), "verify_on_site": "; ".join(checks) or None}
+        ev = treatments.local_evidence(d.get("city"), name)  # this city's own past installs, where tested
         if ev:
             o["local_evidence"] = ev
-    return {"options": opts, "in_place": list(have.values()), "rejected": rejected, "control": control,
-            "harm": harm.junction(cr, YEARS),
-            "conditions_from_record": sorted(conds),
+        estimated.append(o)
+    # low-cost fixes before reconstructions (which need a design study), then those the record supports, then size
+    opts = sorted(estimated, key=lambda o: (o["scale"] == "reconstruction", o["verify_on_site"] is not None,
+                                            -o["expected_crashes_avoided_per_year"]))
+    return {"options": opts, "not_estimated": not_estimated, "in_place": list(have.values()), "control": control,
+            "harm": harm.junction(cr, YEARS), "conditions_from_record": sorted(conds),
             "method": "expected crashes avoided per year = target crashes per year x (1 - CMF), Highway Safety Manual "
-                      "simple method (not Empirical Bayes); dollars use the U.S. DOT's injury-crash value (BCA "
+                      "simple method (not Empirical Bayes), with the CMF FHWA's fact sheet cites or else the median of "
+                      "the curated records that fit the site; dollars use the U.S. DOT's injury-crash value (BCA "
                       "Guidance 2026 Update, Table A-1, 2024 $), break-even cost over 10 years at 7%"}
 
 
@@ -257,10 +253,10 @@ def fixes_table(opts: dict, n: int = 8) -> str:
             "|---|---|---|---|---|---|---|---|"]
     notes = []
     for k, o in enumerate(opts.get("options", [])[:n], 1):
-        share = f", {o['condition_share']:.0%} of them in the condition" if o.get("condition_share") else ""
-        rows.append(f"| {k} | {o['countermeasure']} | CMF {o['cmf_id']}: {o['cmf']} ({o['stars']}) | {o['targets']}, "
-                    f"{o['target_crashes_per_year']}/yr{share} | {o['expected_crashes_avoided_per_year']} | "
+        rows.append(f"| {k} | {o['countermeasure']} | CMF {o['cmf_id']}: {o['cmf']} ({o['stars']}; {o['chosen_by']}) | "
+                    f"{o['targets']}, {o['target_crashes_per_year']}/yr | {o['expected_crashes_avoided_per_year']} | "
                     f"${o['harm_avoided_usd_per_year']:,.0f} | ${o['break_even_cost_usd']:,.0f} | "
+                    f"{'reconstruction, needs a design study; ' if o.get('scale') == 'reconstruction' else ''}"
                     f"{('verify: ' + o['verify_on_site']) if o.get('verify_on_site') else 'supported by the record'} |")
         if o.get("local_evidence"):
             notes.append(f"_{o['countermeasure']}, tested on this city's own installs: {o['local_evidence']['text']}_")
@@ -270,7 +266,10 @@ def fixes_table(opts: dict, n: int = 8) -> str:
             f"{'; deaths are not valued separately' if h['deaths_in_record'] else ''}).\n\n") if h else ""
     have = "".join(f"\n\nAlready in place (city records): {x['countermeasure']}"
                    f"{' since ' + str(x['year']) if x.get('year') else ''}; not proposed again." for x in opts.get("in_place", []))
-    return head + "\n".join(rows) + "".join(f"\n\n{x}" for x in notes) + have + \
+    skipped = opts.get("not_estimated") or []
+    none = ("\n\nNot estimated here: " + "; ".join(f"{x['countermeasure']} ({x['reason']})" for x in skipped) + ".") \
+        if skipped else ""
+    return head + "\n".join(rows) + "".join(f"\n\n{x}" for x in notes) + have + none + \
         f"\n\n_Method: {opts.get('method', '')}. Do not add fixes together._"
 
 

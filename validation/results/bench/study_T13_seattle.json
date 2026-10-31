@@ -391,11 +391,13 @@
    "reason": null,
    "brief_cmf": [
     {
-     "cmf_id": "9903",
-     "cmf": 0.81,
+     "cmf_id": "9918",
+     "cmf": 0.87,
      "stars": "5\u2605",
      "crash_type": "Vehicle/pedestrian",
-     "severity": "All"
+     "severity": "All",
+     "control": "Signalized",
+     "chosen_by": "the record FHWA's fact sheet cites"
     }
    ],
    "fake_rank": {
