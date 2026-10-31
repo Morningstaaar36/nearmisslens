@@ -20,7 +20,7 @@ from scipy.spatial import cKDTree
 
 from . import opendata
 from . import treatments as T
-from .config import ROOT
+from .config import ROOT, portable
 from .evaluate import RESULTS_DIR
 
 EXPERIMENTS = ROOT / "validation" / "experiments"
@@ -184,7 +184,7 @@ def run(name: str = "T12", programs: int | None = None) -> dict:
            "summary": summary, "fake": rows, "real": real,
            "rule_met_part_c": bool(summary["gate"]["rate"] < summary["naive"]["rate"]
                                    and summary["gate"]["wilson95"][1] <= 0.10)}
-    (RESULTS_DIR / "bench" / f"experiment_{exp['id']}.json").write_text(json.dumps(out, indent=1, default=float))
+    (RESULTS_DIR / "bench" / f"experiment_{exp['id']}.json").write_text(portable(json.dumps(out, indent=1, default=float)))
     return out
 
 
@@ -228,7 +228,7 @@ def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", 
         res.update(program_key=key, fake=key.startswith("fake_"))
         with lock:
             done["runs"].append(res)
-            path.write_text(json.dumps(done, indent=1, default=float))
+            path.write_text(portable(json.dumps(done, indent=1, default=float)))
         c = res.get("claim") or {}
         print(f"{blind[key]} ({key}) {'gated' if gated else 'ungated'}: {c.get('claim')} {c.get('effect_pct')} "
               f"[{res['stopped']}, {res['turns']} turns, {res['code_runs']} code runs, ${res['usd']}]", flush=True)
@@ -279,7 +279,7 @@ def run_agents_real(client, items: list[tuple[str, str]], name: str = "T12", mod
         res.update(program_key=pkey, fake=False)
         with lock:
             done["runs"].append(res)
-            path.write_text(json.dumps(done, indent=1, default=float))
+            path.write_text(portable(json.dumps(done, indent=1, default=float)))
         c = res.get("claim") or {}
         print(f"{pid} ({pkey}) {'gated' if gated else 'ungated'}: {c.get('claim')} {c.get('effect_pct')} "
               f"[{res['stopped']}, {res['turns']} turns, ${res['usd']}]", flush=True)
@@ -369,7 +369,7 @@ def run_t14a(name: str = "T12", seeds: range = range(1000, 1100), designs: dict 
                                  "old_false_passes": old_k, "calibrated_false_passes": cal_k, "programs": n,
                                  "old_wilson95": wilson(old_k, n), "calibrated_wilson95": wilson(cal_k, n), "rows": rows}
         print(dname, "old", old_k, "calibrated", cal_k, "of", n, flush=True)
-    (RESULTS_DIR / "bench" / "experiment_T14a.json").write_text(json.dumps(out, indent=1, default=float))
+    (RESULTS_DIR / "bench" / "experiment_T14a.json").write_text(portable(json.dumps(out, indent=1, default=float)))
     return out
 
 
@@ -404,7 +404,7 @@ def run_t14b(name: str = "T12", m: int = 200) -> dict:
                                     "old": g["verdict"], "calibrated": cal["verdict"], "cells": int(len(cells)), **cal})
             print(study, part, g["sites"], g["effect_pct"], g["interval_pct"], "old", g["verdict"], "calibrated",
                   cal["verdict"], "null 2.5%", cal["null_p2_5"], "rank", cal["null_rank"], "cells", len(cells), flush=True)
-    (RESULTS_DIR / "bench" / "experiment_T14b.json").write_text(json.dumps(out, indent=1, default=float))
+    (RESULTS_DIR / "bench" / "experiment_T14b.json").write_text(portable(json.dumps(out, indent=1, default=float)))
     return out
 
 
@@ -433,7 +433,7 @@ def run_t14c(name: str = "T12", m: int = 200) -> dict:
     fk = [x for x in out["runs"] if x["fake"]]
     out["summary"] = {"fake_programs": len(fk), "old_false": sum(x["old"] != "no_evidence" for x in fk),
                       "calibrated_false": sum(x["verdict"] != "no_evidence" for x in fk)}
-    (RESULTS_DIR / "bench" / "experiment_T14c.json").write_text(json.dumps(out, indent=1, default=float))
+    (RESULTS_DIR / "bench" / "experiment_T14c.json").write_text(portable(json.dumps(out, indent=1, default=float)))
     return out
 
 
@@ -466,5 +466,5 @@ def rank_studies(m: int = 200, min_cells: int = 200, name: str = "T12") -> list[
                                   "null_p2_5": round(float(np.percentile(null, 2.5)), 3), "cells": int(len(cells))}
             done.append({"study": res["id"], "program": key, **g["fake_rank"]})
             print(res["id"], key, g["fake_rank"], flush=True)
-        path.write_text(json.dumps(res, indent=1, default=float))
+        path.write_text(portable(json.dumps(res, indent=1, default=float)))
     return done

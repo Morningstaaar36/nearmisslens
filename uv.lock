@@ -961,19 +961,19 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
-    { name = "kokoro" },
     { name = "meta-sam-parser" },
-    { name = "modal" },
     { name = "numpy" },
     { name = "opencv-python-headless" },
     { name = "pandas" },
     { name = "scipy" },
-    { name = "soundfile" },
 ]
 
 [package.optional-dependencies]
 demo = [
     { name = "playwright" },
+]
+hosting = [
+    { name = "modal" },
 ]
 local = [
     { name = "decord", marker = "platform_machine == 'x86_64'" },
@@ -982,6 +982,10 @@ local = [
     { name = "setuptools" },
     { name = "torch" },
     { name = "torchvision" },
+]
+narration = [
+    { name = "kokoro" },
+    { name = "soundfile" },
 ]
 voice = [
     { name = "transformers" },
@@ -997,9 +1001,9 @@ requires-dist = [
     { name = "decord", marker = "platform_machine == 'x86_64' and extra == 'local'" },
     { name = "einops", marker = "extra == 'local'" },
     { name = "httpx", specifier = ">=0.28" },
-    { name = "kokoro", specifier = ">=0.9.4" },
+    { name = "kokoro", marker = "extra == 'narration'", specifier = ">=0.9.4" },
     { name = "meta-sam-parser", specifier = ">=0.1.0" },
-    { name = "modal", specifier = ">=1.6.3" },
+    { name = "modal", marker = "extra == 'hosting'", specifier = ">=1.6.3" },
     { name = "numpy", specifier = ">=1.26,<2" },
     { name = "opencv-python-headless", specifier = ">=4.10" },
     { name = "pandas", specifier = ">=2.2" },
@@ -1007,12 +1011,12 @@ requires-dist = [
     { name = "pycocotools", marker = "extra == 'local'" },
     { name = "scipy", specifier = ">=1.14" },
     { name = "setuptools", marker = "extra == 'local'", specifier = "<81" },
-    { name = "soundfile", specifier = ">=0.14.0" },
+    { name = "soundfile", marker = "extra == 'narration'", specifier = ">=0.14.0" },
     { name = "torch", marker = "extra == 'local'", specifier = "==2.11.0", index = "https://download.pytorch.org/whl/cu128" },
     { name = "torchvision", marker = "extra == 'local'", specifier = "==0.26.0", index = "https://download.pytorch.org/whl/cu128" },
     { name = "transformers", marker = "extra == 'voice'", specifier = ">=4.45" },
 ]
-provides-extras = ["local", "voice", "demo"]
+provides-extras = ["local", "voice", "demo", "narration", "hosting"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8.3" }]

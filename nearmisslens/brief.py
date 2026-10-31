@@ -22,7 +22,7 @@ import numpy as np
 
 from . import context, countermeasures, harm, panel, sam_api
 from .agent import Tool, run_agent
-from .config import SETTINGS
+from .config import SETTINGS, portable, resolve
 
 YEARS = context.YEARS
 OVERPASS_SERVERS = (context.OVERPASS, "https://overpass.private.coffee/api/interpreter",
@@ -183,6 +183,8 @@ def aerial(lat: float, lon: float, city: str | None, out: Path, size: int = 768,
     from . import opendata
     if out.exists():
         return out
+    if SETTINGS.replay:  # replay never calls a network service
+        return None
     out.parent.mkdir(parents=True, exist_ok=True)
     mx, my = _mercator(lat, lon)
     params = {"bbox": f"{mx - radius_m},{my - radius_m},{mx + radius_m},{my + radius_m}", "bboxSR": 3857,
@@ -213,7 +215,9 @@ def street_photo(lat: float, lon: float, out: Path, radius_m: float = 35.0) -> d
         return None
     meta = out.with_suffix(".json")
     if out.exists() and meta.exists():
-        return json.loads(meta.read_text())
+        return {**json.loads(meta.read_text()), "image": portable(str(out))}
+    if SETTINGS.replay:  # replay never calls a network service
+        return None
     d = radius_m / 111_320
     bbox = f"{lon - d / math.cos(math.radians(lat))},{lat - d},{lon + d / math.cos(math.radians(lat))},{lat + d}"
     js, _ = context.fetch("https://graph.mapillary.com/images",
@@ -230,10 +234,10 @@ def street_photo(lat: float, lon: float, out: Path, radius_m: float = 35.0) -> d
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(r.content)
     import datetime as _dt
-    info = {"image": str(out), "mapillary_id": pick["id"], "url": f"https://www.mapillary.com/app/?pKey={pick['id']}",
+    info = {"image": portable(str(out)), "mapillary_id": pick["id"], "url": f"https://www.mapillary.com/app/?pKey={pick['id']}",
             "captured": _dt.datetime.utcfromtimestamp((pick.get("captured_at") or 0) / 1000).date().isoformat(),
             "licence": "CC BY-SA 4.0, Mapillary contributors"}
-    meta.write_text(json.dumps(info))
+    meta.write_text(portable(json.dumps(info)))
     return info
 
 
@@ -307,22 +311,22 @@ def build(address: str | None = None, lat: float | None = None, lon: float | Non
     out_dir.mkdir(parents=True, exist_ok=True)
     facts = {"junction": name, "dossier": d, "fixes": opts}
     photo = aerial(lat, lon, d.get("city"), out_dir / "aerial.jpg")
-    facts["aerial_photo"] = str(photo) if photo else None
+    facts["aerial_photo"] = portable(str(photo)) if photo else None
     try:  # optional: Mapillary is a free public API and fails now and then
         facts["street_photo"] = street_photo(lat, lon, out_dir / "street.jpg")
     except (RuntimeError, httpx.HTTPError) as e:
         facts["street_photo"] = None
         facts["street_photo_error"] = str(e)[:200]
     if illustrate and photo and opts["options"] and client is not None:
-        facts["illustration"] = illustrate_fix(client, photo, opts["options"], out_dir, slug)
+        facts["illustration"] = illustrate_fix(client, resolve(photo), opts["options"], out_dir, slug)
     if memo and client is not None:
         facts["brief"] = write_brief(client, {k: v for k, v in facts.items() if k not in ("aerial_photo", "street_photo")},
                                      f"brief {slug}")
     prev = out_dir / "brief.json"
     if "illustration" not in facts and prev.exists() and (out_dir / "fix.jpg").exists():  # keep an earlier drawing
         kept = json.loads(prev.read_text()).get("illustration")
-        facts["illustration"] = {**kept, "image": str(out_dir / "fix.jpg")} if kept else None  # paths move with the runs dir
-    prev.write_text(json.dumps(facts, indent=1, default=str))
+        facts["illustration"] = {**kept, "image": portable(str(out_dir / "fix.jpg"))} if kept else None  # paths move with the runs dir
+    prev.write_text(portable(json.dumps(facts, indent=1, default=str)))
     if facts.get("brief", {}).get("brief"):
         (out_dir / "brief.md").write_text(facts["brief"]["brief"])
     return facts
@@ -354,5 +358,5 @@ def illustrate_fix(client, photo: Path, options: list[dict], out_dir: Path, slug
     side = np.hstack([before, render.label(after)])
     path = out_dir / "fix.jpg"
     cv2.imwrite(str(path), side)
-    return {"countermeasure": pick["countermeasure"], "cmf_id": pick["cmf_id"], "image": str(path),
+    return {"countermeasure": pick["countermeasure"], "cmf_id": pick["cmf_id"], "image": portable(str(path)),
             "check_concept": spec["check"], "area_before": a0, "area_after": a1, "check_passed": bool(a1 > a0)}

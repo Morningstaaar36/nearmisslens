@@ -11,7 +11,7 @@ import pandas as pd
 from scipy.stats import kendalltau
 
 from . import audit, conflicts, fluid, movements, pipeline, risk
-from .config import SETTINGS
+from .config import SETTINGS, portable
 from .evaluate import RESULTS_DIR
 
 BENCH_DIR = RESULTS_DIR / "bench"
@@ -180,7 +180,7 @@ def fix_test(flights=fluid.FLIGHTS, draws: int = 200) -> dict:
 
 def _write(name: str, obj: dict) -> None:
     BENCH_DIR.mkdir(parents=True, exist_ok=True)
-    (BENCH_DIR / name).write_text(json.dumps(obj, indent=1, default=float))
+    (BENCH_DIR / name).write_text(portable(json.dumps(obj, indent=1, default=float)))
 
 
 def fresh_estimate() -> float:

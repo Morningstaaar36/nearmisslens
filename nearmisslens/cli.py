@@ -4,7 +4,7 @@ import argparse
 import json
 import sys
 
-from .config import SETTINGS
+from .config import SETTINGS, portable, resolve
 from .cost import CostMeter
 from .runlog import metrics_markdown, read_metrics
 
@@ -267,10 +267,10 @@ def cmd_brief(args) -> int:
     f = brief.build(**target, client=_memo_client(not args.meta), memo=not args.no_memo)
     if args.illustrate and f.get("aerial_photo") and f["fixes"]["options"]:
         from pathlib import Path
-        out = Path(f["aerial_photo"]).parent
-        f["illustration"] = brief.illustrate_fix(MetaClient(SETTINGS), Path(f["aerial_photo"]), f["fixes"]["options"],
+        out = resolve(f["aerial_photo"]).parent
+        f["illustration"] = brief.illustrate_fix(MetaClient(SETTINGS), resolve(f["aerial_photo"]), f["fixes"]["options"],
                                                  out, out.name)
-        (out / "brief.json").write_text(json.dumps(f, indent=1, default=str))
+        (out / "brief.json").write_text(portable(json.dumps(f, indent=1, default=str)))
     cr = f["dossier"].get("crashes") or {}
     print(f"{f['junction']}\n  {cr.get('crashes')} crashes, {cr.get('injury_crashes')} injury crashes in "
           f"{f['dossier']['years']} years ({cr.get('source', cr.get('error'))}); plan gap: {f['dossier'].get('plan_gap')}")
@@ -288,7 +288,7 @@ def cmd_brief(args) -> int:
                            tag=f"letter {f['junction'][:40]}")
         print("\n" + (res["letter"] or f"no letter: {res['checker_errors']}"))
         if res["letter"] and f.get("aerial_photo"):
-            (Path(f["aerial_photo"]).parent / "letter.md").write_text(res["letter"])
+            (resolve(f["aerial_photo"]).parent / "letter.md").write_text(res["letter"])
     return 0
 
 

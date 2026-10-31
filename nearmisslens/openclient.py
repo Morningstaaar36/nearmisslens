@@ -140,13 +140,19 @@ class OpenWeightsClient:
             return hit
         result = run()
         u = result.get("usage") or {}
-        usd = (u.get("input_tokens", 0) * self.price["input"] + u.get("output_tokens", 0) * self.price["output"]) / 1e6 \
-            if self.price else 0.0
+        usd = self.usd(u)
         self.spent += usd
         with open(self.ledger, "a") as f:
             f.write(json.dumps({"t": time.time(), "model": self.model, "usd": round(usd, 6), "what": what, **u}) + "\n")
         self.cache.put(f"open_{namespace}", k, result)
         return result
+
+    def usd(self, usage: dict) -> float:
+        """What a call costs at this server's token prices (0 for GPU-time billing, which is not measured here)."""
+        if not self.price:
+            return 0.0
+        return (usage.get("input_tokens", 0) * self.price["input"]
+                + usage.get("output_tokens", 0) * self.price["output"]) / 1e6
 
     def check_budget(self, estimate_usd: float, what: str) -> None:
         return None

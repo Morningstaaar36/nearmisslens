@@ -1,20 +1,17 @@
 [project]
 name = "nearmisslens"
 version = "0.1.0"
-description = "NearMissLens: an AI road-safety audit agent"
+description = "NearMissLens: an agentic street-safety engineer whose claims are tested on the city's own records"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "httpx>=0.28",
-    "kokoro>=0.9.4",
     "meta-sam-parser>=0.1.0",
-    "modal>=1.6.3",
     "numpy>=1.26,<2",
     "opencv-python-headless>=4.10",
     "pandas>=2.2",
     "scipy>=1.14",
-    "soundfile>=0.14.0",
 ]
 
 [project.optional-dependencies]
@@ -31,6 +28,15 @@ voice = [
 ]
 demo = [
     "playwright>=1.64.1",
+]
+# a guide voice for timing draft demo cuts (the submitted video is narrated by a person); pulls in torch
+narration = [
+    "kokoro>=0.9.4",
+    "soundfile>=0.14.0",
+]
+# deploying the hosted copilot, Muse Glimmer and the analyst's sandboxes on Modal
+hosting = [
+    "modal>=1.6.3",
 ]
 
 [tool.uv.sources]

@@ -12,6 +12,7 @@ import pandas as pd
 
 from . import panel
 from .agent import MEDIA_KEY, Tool, run_agent
+from .config import resolve
 from .meta_client import MetaClient
 from .voice import USERS
 
@@ -65,8 +66,8 @@ def tools(facts: dict, memo_md: str, cmf: pd.DataFrame, frames_dir: Path, checke
             if frame:
                 images.append(frame)
         ill = f.get("illustration") or {}
-        if ill.get("image") and Path(ill["image"]).exists():
-            images.append(Path(ill["image"]))
+        if ill.get("image") and resolve(ill["image"]).exists():
+            images.append(resolve(ill["image"]))
         g.add(review or {})
         return {"rank": rank, "worst_reviewed_conflict": review, "illustration": ill.get("countermeasure"),
                 "illustration_check_passed": ill.get("check_passed"), MEDIA_KEY: [str(p) for p in images]}

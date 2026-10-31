@@ -1,7 +1,7 @@
 [
  {
   "name": "Bruckner Boulevard & Hunts Point Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/bruckner_boulevard___hunts_point_avenue",
+  "dir": "$RUNS/briefs/bruckner_boulevard___hunts_point_avenue",
   "injury_crashes": 129,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -9,7 +9,7 @@
  },
  {
   "name": "Bruckner Boulevard & East 138 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/bruckner_boulevard___east_138_street",
+  "dir": "$RUNS/briefs/bruckner_boulevard___east_138_street",
   "injury_crashes": 126,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -17,7 +17,7 @@
  },
  {
   "name": "Springfield Boulevard & Horace Harding Expressway",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/springfield_boulevard___horace_harding_expressway",
+  "dir": "$RUNS/briefs/springfield_boulevard___horace_harding_expressway",
   "injury_crashes": 108,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -25,7 +25,7 @@
  },
  {
   "name": "Delancey Street & Essex Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/delancey_street___essex_street",
+  "dir": "$RUNS/briefs/delancey_street___essex_street",
   "injury_crashes": 104,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -33,7 +33,7 @@
  },
  {
   "name": "Lenox Avenue & West 125 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/lenox_avenue___west_125_street",
+  "dir": "$RUNS/briefs/lenox_avenue___west_125_street",
   "injury_crashes": 104,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -41,7 +41,7 @@
  },
  {
   "name": "2 Avenue & East 58 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/2_avenue___east_58_street",
+  "dir": "$RUNS/briefs/2_avenue___east_58_street",
   "injury_crashes": 100,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -49,7 +49,7 @@
  },
  {
   "name": "2 Avenue & East 57 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/2_avenue___east_57_street",
+  "dir": "$RUNS/briefs/2_avenue___east_57_street",
   "injury_crashes": 99,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -57,7 +57,7 @@
  },
  {
   "name": "2 Avenue & East 125 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/2_avenue___east_125_street",
+  "dir": "$RUNS/briefs/2_avenue___east_125_street",
   "injury_crashes": 92,
   "top_fix": "Backplates with Retroreflective Borders",
   "memo_ok": true,
@@ -65,7 +65,7 @@
  },
  {
   "name": "East 149 Street & Melrose Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/east_149_street___melrose_avenue",
+  "dir": "$RUNS/briefs/east_149_street___melrose_avenue",
   "injury_crashes": 88,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -73,7 +73,7 @@
  },
  {
   "name": "Atlantic Avenue & Utica Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/atlantic_avenue___utica_avenue",
+  "dir": "$RUNS/briefs/atlantic_avenue___utica_avenue",
   "injury_crashes": 87,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -81,7 +81,7 @@
  },
  {
   "name": "Utica Avenue & Empire Boulevard",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/utica_avenue___empire_boulevard",
+  "dir": "$RUNS/briefs/utica_avenue___empire_boulevard",
   "injury_crashes": 87,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -89,7 +89,7 @@
  },
  {
   "name": "Atlantic Avenue & Bedford Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/atlantic_avenue___bedford_avenue",
+  "dir": "$RUNS/briefs/atlantic_avenue___bedford_avenue",
   "injury_crashes": 86,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -97,7 +97,7 @@
  },
  {
   "name": "Atlantic Avenue & Milford Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/atlantic_avenue___milford_street",
+  "dir": "$RUNS/briefs/atlantic_avenue___milford_street",
   "injury_crashes": 85,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -105,7 +105,7 @@
  },
  {
   "name": "Grand Concourse & East 149 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/grand_concourse___east_149_street",
+  "dir": "$RUNS/briefs/grand_concourse___east_149_street",
   "injury_crashes": 85,
   "top_fix": "Backplates with Retroreflective Borders",
   "memo_ok": true,
@@ -113,7 +113,7 @@
  },
  {
   "name": "Frederick Douglass Boulevard & West 145 Street",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/frederick_douglass_boulevard___west_145_street",
+  "dir": "$RUNS/briefs/frederick_douglass_boulevard___west_145_street",
   "injury_crashes": 84,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -121,7 +121,7 @@
  },
  {
   "name": "Parkside Avenue & East Drive",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/parkside_avenue___east_drive",
+  "dir": "$RUNS/briefs/parkside_avenue___east_drive",
   "injury_crashes": 82,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -129,7 +129,7 @@
  },
  {
   "name": "West 125 Street & Amsterdam Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/west_125_street___amsterdam_avenue",
+  "dir": "$RUNS/briefs/west_125_street___amsterdam_avenue",
   "injury_crashes": 80,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -137,7 +137,7 @@
  },
  {
   "name": "East New York Avenue & Remsen Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/east_new_york_avenue___remsen_avenue",
+  "dir": "$RUNS/briefs/east_new_york_avenue___remsen_avenue",
   "injury_crashes": 77,
   "top_fix": "Reduced Left-Turn Conflict Intersections",
   "memo_ok": true,
@@ -145,7 +145,7 @@
  },
  {
   "name": "Astoria Boulevard North & Hoyt Avenue North",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/astoria_boulevard_north___hoyt_avenue_north",
+  "dir": "$RUNS/briefs/astoria_boulevard_north___hoyt_avenue_north",
   "injury_crashes": 77,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,
@@ -153,7 +153,7 @@
  },
  {
   "name": "Utica Avenue & Church Avenue",
-  "dir": "/home/lucifer/BUET/meta/nearmisslens/runs/briefs/utica_avenue___church_avenue",
+  "dir": "$RUNS/briefs/utica_avenue___church_avenue",
   "injury_crashes": 76,
   "top_fix": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
   "memo_ok": true,

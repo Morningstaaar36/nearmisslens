@@ -220,13 +220,13 @@ def _stage(client: MetaClient, model: str, instructions: str, task: str, tools: 
     attempts: list[dict] = []
     inner = finish.fn
 
-    def checked(**kwargs):
+    def record_attempt(**kwargs):
         result = inner(**kwargs)
         attempts.append({"arguments": kwargs, "errors": result.get("errors", [])})
         return result
 
     run = run_agent(client, model, instructions, task, tools + [Tool(finish.name, finish.description, finish.parameters,
-                                                                     checked)],
+                                                                     record_attempt)],
                     MAX_TURNS, BUDGET_USD[role], effort="medium", tag=f"{tag} {role}", max_output_tokens=MAX_OUTPUT_TOKENS)
     passed = [a for a in attempts if not a["errors"]]
     if not checked:  # ablation: the first submission stands; its checker errors are only recorded

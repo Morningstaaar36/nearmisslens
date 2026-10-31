@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from . import audit, calibrate, fluid, movements, runner
-from .config import ROOT, SETTINGS
+from .config import ROOT, SETTINGS, portable, resolve
 from .meta_client import MetaClient
 
 DOCS = ROOT / "docs"
@@ -98,10 +98,11 @@ def panel_view(p: dict | None) -> dict | None:
 
 def _media(src: str | None, out_dir: Path) -> str | None:
     """Copy an image for the viewer, as a JPEG at the original size."""
-    if not src or not Path(src).exists():
+    src = resolve(src) if src else None
+    if not src or not src.exists():
         return None
     out_dir.mkdir(parents=True, exist_ok=True)
-    name = f"{Path(src).stem}.jpg"
+    name = f"{src.stem}.jpg"
     cv2.imwrite(str(out_dir / name), cv2.imread(str(src)), [cv2.IMWRITE_JPEG_QUALITY, 85])
     return f"media/{name}"
 
@@ -157,7 +158,7 @@ def export(split: str, source: str, docs: Path = DOCS, client: MetaClient | None
             if len(conflicts) else {}, "signal_entry": signal_entry(states, signals, facts.get("signal_evidence_classes", audit.SIGNAL_CLASSES)),
             "voice": current(run / "voice.json", fid), "office": office_view(run / "office.json")}
     data.mkdir(parents=True, exist_ok=True)
-    (data / f"{key}.json").write_text(json.dumps(view, separators=(",", ":"), default=float))
+    (data / f"{key}.json").write_text(portable(json.dumps(view, separators=(",", ":"), default=float)))
     index_path = data / "index.json"
     index = json.loads(index_path.read_text()) if index_path.exists() else {"audits": []}
     index["audits"] = sorted([a for a in index["audits"] if a["key"] != key]

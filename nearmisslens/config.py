@@ -33,3 +33,23 @@ class Settings:
 
 
 SETTINGS = Settings()
+
+
+_TOKENS = (("$RUNS", lambda: SETTINGS.runs_dir), ("$DATA", lambda: SETTINGS.data_dir), ("$ROOT", lambda: ROOT))
+
+
+def portable(text: str) -> str:
+    """Written results hold no machine paths: the runs, data and repository folders become $RUNS, $DATA and $ROOT,
+    and the home folder becomes ~."""
+    for token, base in _TOKENS:
+        text = text.replace(str(Path(base()).resolve()), token).replace(str(Path(base())), token)
+    return text.replace(str(Path.home()), "~")
+
+
+def resolve(p) -> Path:
+    """The local path for a portable one (and plain paths unchanged)."""
+    s = str(p)
+    for token, base in _TOKENS:
+        if s == token or s.startswith(token + "/"):
+            return Path(base()) / s[len(token) + 1:]
+    return Path(s).expanduser()

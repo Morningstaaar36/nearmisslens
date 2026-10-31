@@ -9,7 +9,7 @@ import pandas as pd
 
 from . import audit, complaints, countermeasures, evaluate, fluid, pipeline, render, verifier, video, voice
 from .cache import file_sha256
-from .config import ROOT, SETTINGS
+from .config import ROOT, SETTINGS, portable
 from .cost import IMAGE_USD, SAM_IMAGE_USD, voice_usd
 from .meta_client import MetaClient
 
@@ -116,8 +116,9 @@ def run_verifier(split: str, client: MetaClient | None = None, arm: str = "full"
     dest = ROOT / "validation" / "results" / split
     dest.mkdir(parents=True, exist_ok=True)
     suffix = "" if arm == "full" else f"_{arm}"
-    cand.assign(**{k: [v[k] for v in verdicts] for k in verdicts[0]} if verdicts else {}).to_csv(
-        dest / f"verifier_events{suffix}.csv", index=False)
+    events = dest / f"verifier_events{suffix}.csv"
+    cand.assign(**{k: [v[k] for v in verdicts] for k in verdicts[0]} if verdicts else {}).to_csv(events, index=False)
+    events.write_text(portable(events.read_text()))
     (dest / f"verifier{suffix}.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 

@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 from . import demo, democharts
-from .config import ROOT, SETTINGS
+from .config import ROOT, SETTINGS, resolve
 from .evaluate import RESULTS_DIR
 
 VOICE = "af_heart"
@@ -59,7 +59,7 @@ def hero() -> dict:
             area = next((o["area"] for o in letter.offices(d["lat"], d["lon"]) if o.get("area")), None)
             return {"name": r["name"], "spoken": r["name"].replace("&", "and") + (f", {area}" if area else ""),
                     "rank": rank, "of": len(everyone), "city": city, "city_name": opendata.city(city)["name"],
-                    "area": area, "slug": slug, "fix_image": (f.get("illustration") or {}).get("image"),
+                    "area": area, "slug": slug, "fix_image": str(resolve((f.get("illustration") or {}).get("image"))),
                     "q": {"address": f["junction"], "lat": d["lat"], "lon": d["lon"]},
                     "injury": d["crashes"]["injury_crashes"], "peds": d["crashes"].get("pedestrian_injured", 0),
                     "harm_m": fx["harm"]["usd_per_year"] / 1e6, "top": top,

@@ -11,7 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from . import ask
-from .config import SETTINGS
+from .config import SETTINGS, resolve
 from .countermeasures import load_cmf
 from .meta_client import MetaClient
 from .runner import as_wav
@@ -88,7 +88,7 @@ def serve(audit_name: str, port: int = 8765, model: str = "muse-wonder-1.0") -> 
         def do_GET(self):
             if self.path.startswith("/media?p="):
                 from urllib.parse import unquote
-                p = Path(unquote(self.path.split("=", 1)[1])).resolve()
+                p = resolve(unquote(self.path.split("=", 1)[1])).resolve()
                 if p.exists() and any(str(p).startswith(str(r)) for r in allowed_roots):
                     return self._send(200, p.read_bytes(), mimetypes.guess_type(p.name)[0] or "image/jpeg")
                 return self._send(404, b"not found", "text/plain")
@@ -103,7 +103,11 @@ def serve(audit_name: str, port: int = 8765, model: str = "muse-wonder-1.0") -> 
                     with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as f:
                         f.write(body)
                     wav = as_wav(Path(f.name), SETTINGS.data_dir / "work" / "voice")
-                    text = transcribe(client, wav, f"live {audit_name}")["transcript"]
+                    try:
+                        text = transcribe(client, wav, f"live {audit_name}")["transcript"]
+                    finally:  # the recording is not kept, only the transcript
+                        Path(f.name).unlink(missing_ok=True)
+                        Path(wav).unlink(missing_ok=True)
                     res = answer(text, text)
                 self._send(200, json.dumps(res, default=str).encode(), "application/json")
             except Exception as e:  # shown on the page, not hidden

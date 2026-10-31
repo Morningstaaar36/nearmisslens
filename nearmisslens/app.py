@@ -12,7 +12,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from . import brief, letter
-from .config import SETTINGS
+from .config import SETTINGS, resolve
 from .evaluate import RESULTS_DIR
 
 PAGE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Junction Safety Copilot</title>
@@ -174,7 +174,7 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             if u.path == "/evidence":
                 return self._send(200, evidence_json, "application/json")
             if u.path == "/media":
-                p = Path(unquote(parse_qs(u.query).get("p", [""])[0])).resolve()
+                p = resolve(unquote(parse_qs(u.query).get("p", [""])[0])).resolve()
                 if p.exists() and any(str(p).startswith(str(r)) for r in roots):
                     return self._send(200, p.read_bytes(), mimetypes.guess_type(p.name)[0] or "image/jpeg")
                 return self._send(404, b"not found", "text/plain")
@@ -205,8 +205,8 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                 t = time.time()
                 f = brief.build(q.get("address") or q.get("name"), q.get("lat"), q.get("lon"), client=memo_client, memo=True)
                 if illustrate and not f.get("illustration") and f.get("aerial_photo") and f["fixes"]["options"]:
-                    out = Path(f["aerial_photo"]).parent
-                    f["illustration"] = brief.illustrate_fix(image_client, Path(f["aerial_photo"]), f["fixes"]["options"],
+                    out = resolve(f["aerial_photo"]).parent
+                    f["illustration"] = brief.illustrate_fix(image_client, resolve(f["aerial_photo"]), f["fixes"]["options"],
                                                              out, out.name)
                 f["seconds"] = round(time.time() - t, 1)
                 done[key] = json.dumps(f, default=str).encode()

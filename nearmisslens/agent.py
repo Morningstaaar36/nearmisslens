@@ -131,7 +131,10 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
         def cost(resp):
             u = resp.get("usage") or {}
             cached = (u.get("input_tokens_details") or {}).get("cached_tokens", 0)
-            return token_usd(model, u.get("input_tokens", 0), u.get("output_tokens", 0), cached), model, {
+            # a client that serves the model itself (open weights on Baseten or Modal) prices its own tokens
+            usd = client.usd(u) if hasattr(client, "usd") else \
+                token_usd(model, u.get("input_tokens", 0), u.get("output_tokens", 0), cached)
+            return usd, model, {
                 "input_tokens": u.get("input_tokens", 0), "output_tokens": u.get("output_tokens", 0)}
 
         remaining = budget_usd - run.usd
