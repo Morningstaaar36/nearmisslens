@@ -488,6 +488,7 @@ NOT_SUPPORTED = ("earlier trend", "not shown", "worse")
 
 def pct(x: float) -> int:
     """Percent rounded half away from zero (Python's round() sends -32.5 to -32)."""
+    x = round(float(x), 6)  # 100 * (0.675 - 1) is -32.49999... in floating point
     return int(np.sign(x) * np.floor(abs(x) + 0.5))
 
 

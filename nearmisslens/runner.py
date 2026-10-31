@@ -200,6 +200,9 @@ def run_voice(split: str, source: str, audio: Path | None = None, client: MetaCl
                   "expected": sorted(want), "correct": (r["match"]["rank"] in want) if want else r["match"]["rank"] is None,
                   "word_error_rate": round(voice.word_error_rate(c["text"], r["transcript"]), 3)}
         results.append(r)
+    if audio:  # a person's recording: keep the transcript, not the converted audio
+        for w in wavs:
+            Path(w).unlink(missing_ok=True)
     summary = {"recordings": len(results)}
     if tests:
         summary |= {"correct": sum(r["correct"] for r in results),

@@ -1,6 +1,27 @@
 # Privacy
 
-NearMissLens measures how road users move, not who they are.
+NearMissLens works from public records and measures how road users move, not who they are. This page lists what it
+stores, where, and about whom.
+
+## The engineer and the copilot
+
+- **Addresses you search** are sent to OpenStreetMap's Nominatim to find the corner, unless the corner is already in
+  the shipped gazetteer (`nearmisslens/data/geocodes.json`). A new result is added to the local gazetteer; nothing ties
+  it to who searched.
+- **Crash records** are the cities' published police-report datasets. The engineer reads counts, dates, injury fields,
+  vehicle types and recorded factors. It never reads or shows names, plates or report numbers, and the pages show only
+  totals for a 100 m circle.
+- **Road owners and offices** come from published inventories and district maps. No person is named: a letter is
+  addressed to an office ("Council Member, District 17"), so nothing goes stale and no individual is singled out.
+- **Street photos** come from Mapillary, which blurs faces and plates before publishing. A brief keeps a local copy
+  under `runs/briefs/`, and the static site does not publish them; it links to Mapillary instead.
+- **The static site** (GitHub Pages) has no server code and stores nothing. The page remembers nothing between visits.
+- **The live endpoint** (Modal) keeps no request log and no IP addresses. Its caps are global daily counters (a date,
+  a request count and a dollar amount), so there is nothing per visitor to keep. Searched addresses are sent to
+  Nominatim and the cities' open-data APIs to answer the request.
+- **Letters** are drafted for you to review and send yourself. NearMissLens sends nothing.
+
+## The drone-video pipeline
 
 - **Anonymous tracks:**
   - road users are track IDs that exist only within one clip;
@@ -17,5 +38,7 @@ NearMissLens measures how road users move, not who they are.
 - **Illustrations:** Muse Image edits are labelled as AI-generated. Real road users inside the edited area are kept from the original frame and are not regenerated.
 - **Complaints:**
   - the test complaints are synthetic;
-  - for a real recording, only the transcript and the extracted road users, movement and approach are stored;
+  - a recorded complaint is transcribed by Muse Voice Transcribe, and the temporary audio files are deleted right after;
+  - only the transcript and the extracted road users, movement and approach are kept;
   - the extraction is instructed to use only what the speaker says.
+- **Voice-over:** the demo narration is the author's own voice, recorded locally with `nml voice-studio`.

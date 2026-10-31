@@ -27,4 +27,4 @@ def test_status_labels_and_repeat_risk(monkeypatch):
 
 
 def test_pct_rounds_half_away_from_zero():
-    assert T.pct(-32.5) == -33 and T.pct(32.5) == 33 and T.pct(-0.4) == 0
+    assert T.pct(100 * (0.675 - 1)) == -33 and T.pct(-32.5) == -33 and T.pct(32.5) == 33 and T.pct(-0.4) == 0

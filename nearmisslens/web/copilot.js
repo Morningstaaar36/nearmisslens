@@ -6,7 +6,8 @@ const MODE = meta("nml-mode") === "live" ? "live" : "static";
 const LIVE = MODE === "live" ? "" : (meta("nml-live").startsWith("https://") ? meta("nml-live").replace(/\/?$/, "/") : null);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const usd = v => v == null ? "n/a" : v >= 1e6 ? `$${(v / 1e6).toFixed(1)} million` : `$${Math.round(v).toLocaleString("en-US")}`;
+const usd = v => v == null ? "n/a" : v >= 1e8 ? `$${Math.round(v / 1e6)} million` : v >= 1e6 ? `$${(v / 1e6).toFixed(1)} million` : `$${Math.round(v).toLocaleString("en-US")}`;
+const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
 const pct = v => `${Math.round(100 * v)}%`;
 const date = s => s ? new Date(s + "T12:00:00").toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) : "";
 let INDEX = null, map = null, layer = null, pin = null;
@@ -97,7 +98,7 @@ function show(r, corner) {
   const lede = cr.injury_crashes != null ?
     `${cr.injury_crashes} injury crashes since ${date(cr.since)}${killed ? `, ${killed} ${killed === 1 ? "death" : "deaths"}` : ""}` +
     `${fx.harm ? `, about ${usd(fx.harm.usd_per_year)} a year in harm` : ""}. ` +
-    (owners ? `${owners === 1 ? "One road owner" : `${owners} road owners`} must act.` : "") : "No crash record is registered for this place.";
+    (owners ? `${WORDS[owners] || owners} road ${owners === 1 ? "owner" : "owners"} must act.` : "") : "No crash record is registered for this place.";
 
   // what the crashes have in common
   const pats = (rc.patterns || []).filter(p => p.city_share != null).slice(0, 8);
@@ -144,7 +145,7 @@ function show(r, corner) {
     <p class="where">${corner ? `Corner ${corner.rank} of ${INDEX.corners.length} by injury crashes` : "Searched corner"}</p>
     <h2 class="corner">${esc(j.name.split(",")[0])}</h2>
     <p class="lede">${esc(lede)}</p>
-    <p class="meta">Built in ${r.seconds} s from records as of ${date(r.asof)}. ${r.claim_errors.length ? `${r.claim_errors.length} claims refused by the checker.` : "Every claim passed the checker."}</p>
+    <p class="meta">Built in ${r.seconds < 1 ? "under a second" : `${Math.round(r.seconds)} s`} from records as of ${date(r.asof)}. ${r.claim_errors.length ? `${r.claim_errors.length} claims refused by the checker.` : "Every claim passed the checker."}</p>
     ${media}
     <section class="step"><h3><span class="no">1</span>The case</h3>
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>

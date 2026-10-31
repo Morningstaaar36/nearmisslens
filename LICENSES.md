@@ -10,20 +10,23 @@
 | Muse Spark, Muse Wonder, Muse Image, Muse Voice Transcribe | Meta Model API terms | Called through the API |
 | MMS-TTS (`facebook/mms-tts-eng`, `-spa`, `-fra`) | CC BY-NC 4.0 | Generates synthetic test complaints locally. The audio is not published; only transcripts appear |
 | Muse Spark Open (`meta-models/muse-spark-open-1026`) | Meta open-weights licence | Served by Baseten (partner inference) for the open-weights agent tier |
-| Muse Glimmer 30B GGUF (`meta-models/Muse-Glimmer-30B-GGUF`) | Apache-2.0 | Served on a Modal GPU with llama.cpp (MIT) for the open-weights agent tier; weights are not redistributed |
-| Kokoro-82M (`hexgrad/Kokoro-82M`) | Apache-2.0 | Guide voice for timing draft demo cuts only; the submitted video is narrated by a person (`nml voice-studio`) |
+| Muse Glimmer 30B GGUF (`meta-models/Muse-Glimmer-30B-GGUF`) | Apache-2.0 | Compared on complaint checking (NML-Bench T4), served on a Modal GPU with llama.cpp (MIT); weights are not redistributed |
+| Kokoro-82M (`hexgrad/Kokoro-82M`) | Apache-2.0 | Optional `narration` extra only: a guide voice for timing draft demo cuts. The submitted video is narrated by a person (`nml voice-studio`). Its dependency chain includes `phonemizer-fork` and the espeak-ng binary (GPL-3.0); neither is distributed with this repository or installed by default |
 | pandas, NumPy, SciPy, statsmodels | BSD-3-Clause | The AI analyst's sandbox environment |
 | NYC, Washington DC, Chicago, Los Angeles, Seattle and San Francisco open data (crashes, Vision Zero / High Injury Network lists, street projects, dated treatments such as LPIs, crossings, speed humps and crosswalks, council and community district boundaries) | Each portal's open-data terms | Queried live by `nml brief`, `nml citywide`, the data and program agents and the treatment studies; responses and crash tables cached locally, not redistributed; cited by dataset id in every brief, letter and study |
 | U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update | US government work | Crash cost values in `nearmisslens/data/usdot_bca.json` |
+| NYSDOT Roadway Inventory (RoadwayData FeatureServer, NYS GIS Program Office) | New York State open data | Road owner and region for `who_must_act`; queried live, cached locally, cited in every receipt |
+| meta-sam-parser 0.1.0 | SAM License (Meta) | Parses SAM 3.1 API responses; installed from PyPI, not redistributed |
+| CMF Clearinghouse subset (`nearmisslens/data/cmf_allow.csv`, 25 records) | US government work | The curated records the engineer may price with, shipped so briefs work without `nml fetch` |
 | New York State orthoimagery (NYS GIS Program Office), DC orthophoto 2023 (OCTO) | Public open data | City aerial photos in briefs |
 | USGS The National Map imagery | US public domain | Aerial photos where no city orthophoto is registered |
 | Mapillary street-level images | CC BY-SA 4.0 | Shown in briefs with a link to the image and the licence |
-| OpenStreetMap (Overpass, Nominatim) and map tiles | ODbL 1.0 | Street layout in briefs; the web app's base map, credited on the map |
-| Leaflet 1.9.4 | BSD-2-Clause | Web app map (CDN) |
+| OpenStreetMap (Overpass, Nominatim) and map tiles | ODbL 1.0 | Street layout and route tags in briefs and the engineer; geocoding; the copilot's base map, credited on the map as "© OpenStreetMap contributors". Contact e-mail tags are removed from the published replay cache |
+| Leaflet 1.9.4 | BSD-2-Clause | Copilot map (CDN) |
 | three.js 0.160.0 | MIT | Viewer 3D replay (CDN) |
 | marked 12.0.2 | MIT | Viewer memo rendering (CDN) |
 | DOMPurify 3.1.6 | Apache-2.0 or MPL-2.0 | Sanitises rendered markdown in the viewer (CDN) |
-| Overpass typeface | SIL Open Font License 1.1 | Viewer (Google Fonts) |
+| Overpass typeface | SIL Open Font License 1.1 | Copilot and viewer (Google Fonts) |
 
 Credit line used on screen: "FLUID dataset (Scientific Data, 2026), CC BY 4.0."
 
