@@ -143,7 +143,7 @@ def crashes(city: str, org: tuple[float, float] | None = None) -> pd.DataFrame:
         ped = ((total(a["pedestrian_involved"]) > 0) & injury).astype(int)
         cyc = ((total(a.get("cyclist_involved", [])) > 0) & injury).astype(int)
     elif "pedestrian" not in inj:  # injuries not split by mode: the crash type says who was involved
-        kind = df[[c for c in a.get("crash_type_fields", []) if c in df]].astype(str).agg(" ".join, axis=1).str.lower()
+        kind = df[[c for c in a.get("crash_type_fields", []) if c in df]].fillna("").astype(str).agg(" ".join, axis=1).str.lower()
         ped = (kind.str.contains("pedestrian") & injury).astype(int)
         cyc = ((kind.str.contains("cycl") | kind.str.contains("bicycl")) & injury).astype(int)
     when = df[a["date_field"]]

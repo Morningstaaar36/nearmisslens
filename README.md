@@ -42,7 +42,7 @@ The causal gate is the new part. [`docs/METHOD.md`](docs/METHOD.md) explains it 
 | 200 fake programs in New York (random sites and dates, nothing installed) | credits 8.0% of them | credits 5.5% of them (95% interval 3.1–9.6%) |
 | An AI analyst (Muse Spark Open) writing its own code, without and with the gate | *running* | *running* |
 
-San Francisco crossings and two more New York programs (enhanced crossings, speed humps) are registered for the same test (T13) and run as their data comes in.
+The same design also ran, unchanged, on four more programs. None passed, and the reasons differ. New York's enhanced crossings and San Francisco's painted safety zones had fewer than 100 usable sites, so their intervals are too wide to show anything (not shown). New York's speed humps (1,008 sites, all injury crashes: θ 0.996, 0.909–1.085) and San Francisco's continental crosswalks (780 sites: θ 1.04, 0.75–1.33) show no measurable change. In total: 7 programs in 4 cities, 2 passed, both of them leading pedestrian intervals.
 
 Two of these results changed the product. The brief now shows a city's own measured effect next to the national CMF when a program passed the gate, and it never recommends a fix the city's records show is already installed. A screen of all 304 New York priority intersections found 119 with no leading pedestrian interval; at New York's measured effect, adding them would prevent about 43 pedestrian injury crashes a year (29–56). That last figure is a projection, not a test, and each site needs an engineer's check.
 

@@ -303,6 +303,59 @@ Note: The coverage rule (a city's record runs from the first to the last month w
 
 Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
 
+## T13_sf Replication: San Francisco crossings (comparison-group before/after)
+
+Registered: validation/BENCH_PREREG.md, T13 (2026-10-31, before this city's program data was downloaded for it). 66,178 police-reported crashes (2005-01 to 2026-08), crashes within 50 m, 36 months before and after the install month. Programs: painted_safety_zones (sf-painted-safety-zones: 286 records, 278 sites); continental_crosswalks (sf-continental-crosswalks: 2,490 records, 2,433 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
+
+| run | sites | outcome | after | expected | theta | 95% interval |
+|---|---|---|---|---|---|---|
+| painted safety zones not yet treated | 85 | pedestrian injury crashes | 137 | 152 | 0.899 | [0.634, 1.280] |
+| painted safety zones not yet treated | 85 | all injury crashes | 440 | 475 | 0.926 | [0.763, 1.133] |
+| painted safety zones not yet treated | 81 | injury crashes, no pedestrian or cyclist hurt | 224 | 241 | 0.929 | [0.672, 1.265] |
+| painted safety zones placebo not yet treated | 177 | pedestrian injury crashes | 140 | 165 | 0.848 | [0.648, 1.085] |
+| painted safety zones placebo not yet treated | 177 | all injury crashes | 442 | 494 | 0.895 | [0.758, 1.045] |
+| painted safety zones placebo not yet treated | 177 | injury crashes, no pedestrian or cyclist hurt | 220 | 236 | 0.931 | [0.727, 1.181] |
+| painted safety zones placebo same sites not yet treated | 95 | pedestrian injury crashes | 71 | 72 | 0.993 | [0.688, 1.387] |
+| painted safety zones placebo same sites not yet treated | 95 | all injury crashes | 237 | 228 | 1.038 | [0.824, 1.294] |
+| painted safety zones placebo same sites not yet treated | 95 | injury crashes, no pedestrian or cyclist hurt | 132 | 121 | 1.088 | [0.769, 1.473] |
+| painted safety zones citywide | 96 | pedestrian injury crashes | 144 | 141 | 1.021 | [0.803, 1.339] |
+| painted safety zones citywide | 96 | all injury crashes | 469 | 486 | 0.965 | [0.839, 1.116] |
+| painted safety zones citywide | 96 | injury crashes, no pedestrian or cyclist hurt | 252 | 266 | 0.948 | [0.773, 1.148] |
+| painted safety zones placebo citywide | 177 | pedestrian injury crashes | 140 | 177 | 0.789 | [0.615, 0.998] |
+| painted safety zones placebo citywide | 177 | all injury crashes | 442 | 510 | 0.866 | [0.745, 1.010] |
+| painted safety zones placebo citywide | 177 | injury crashes, no pedestrian or cyclist hurt | 220 | 238 | 0.926 | [0.746, 1.163] |
+| painted safety zones placebo same sites citywide | 95 | pedestrian injury crashes | 71 | 77 | 0.921 | [0.662, 1.287] |
+| painted safety zones placebo same sites citywide | 95 | all injury crashes | 237 | 231 | 1.027 | [0.815, 1.279] |
+| painted safety zones placebo same sites citywide | 95 | injury crashes, no pedestrian or cyclist hurt | 132 | 116 | 1.143 | [0.820, 1.573] |
+| continental crosswalks not yet treated | 780 | pedestrian injury crashes | 512 | 492 | 1.040 | [0.746, 1.326] |
+| continental crosswalks not yet treated | 780 | all injury crashes | 1,987 | 1,919 | 1.035 | [0.893, 1.150] |
+| continental crosswalks not yet treated | 780 | injury crashes, no pedestrian or cyclist hurt | 1,154 | 1,051 | 1.098 | [0.868, 1.281] |
+| continental crosswalks placebo not yet treated | 1,988 | pedestrian injury crashes | 606 | 621 | 0.976 | [0.858, 1.091] |
+| continental crosswalks placebo not yet treated | 1,988 | all injury crashes | 2,229 | 2,391 | 0.932 | [0.869, 1.001] |
+| continental crosswalks placebo not yet treated | 1,985 | injury crashes, no pedestrian or cyclist hurt | 1,258 | 1,351 | 0.931 | [0.845, 1.019] |
+| continental crosswalks placebo same sites not yet treated | 1,121 | pedestrian injury crashes | 339 | 356 | 0.954 | [0.798, 1.122] |
+| continental crosswalks placebo same sites not yet treated | 1,121 | all injury crashes | 1,277 | 1,404 | 0.909 | [0.827, 0.989] |
+| continental crosswalks placebo same sites not yet treated | 1,118 | injury crashes, no pedestrian or cyclist hurt | 730 | 814 | 0.896 | [0.783, 1.012] |
+| continental crosswalks citywide | 1,126 | pedestrian injury crashes | 668 | 661 | 1.011 | [0.905, 1.127] |
+| continental crosswalks citywide | 1,126 | all injury crashes | 2,584 | 2,630 | 0.983 | [0.928, 1.044] |
+| continental crosswalks citywide | 1,126 | injury crashes, no pedestrian or cyclist hurt | 1,510 | 1,547 | 0.976 | [0.905, 1.057] |
+| continental crosswalks placebo citywide | 1,988 | pedestrian injury crashes | 606 | 660 | 0.918 | [0.821, 1.030] |
+| continental crosswalks placebo citywide | 1,988 | all injury crashes | 2,229 | 2,467 | 0.904 | [0.849, 0.960] |
+| continental crosswalks placebo citywide | 1,988 | injury crashes, no pedestrian or cyclist hurt | 1,258 | 1,397 | 0.900 | [0.826, 0.979] |
+| continental crosswalks placebo same sites citywide | 1,121 | pedestrian injury crashes | 339 | 382 | 0.888 | [0.766, 1.032] |
+| continental crosswalks placebo same sites citywide | 1,121 | all injury crashes | 1,277 | 1,453 | 0.879 | [0.809, 0.954] |
+| continental crosswalks placebo same sites citywide | 1,121 | injury crashes, no pedestrian or cyclist hurt | 730 | 838 | 0.871 | [0.779, 0.975] |
+
+Causal gate (registered rule on the primary comparison, and every placebo of it shows no change):
+
+- **painted safety zones**: failed (the effect's interval includes no change). Pedestrian injury crashes 2.1% (theta 1.021, [0.803, 1.339]) on the citywide comparison, 146 of 242 sites excluded for another treatment within 100 m in their windows.
+- **continental crosswalks**: failed (the effect's interval includes no change). Pedestrian injury crashes 4.0% (theta 1.040, [0.746, 1.326]) on the not yet treated comparison, 1,307 of 2,433 sites excluded for another treatment within 100 m in their windows.
+- Naive before/after for painted safety zones (no comparison group, 242 sites): -3.1% (theta 0.969, [0.843, 1.124]).
+- Naive before/after for continental crosswalks (no comparison group, 2,433 sites): -5.7% (theta 0.943, [0.875, 1.014]).
+
+
+Limits: sites were chosen by the city, so regression to the mean can remain; no Empirical Bayes model was fitted; other work at a site recorded outside these datasets is not seen.
+
 ## auto_seattle Programs found by the agent in Seattle (comparison-group before/after)
 
 Registered: exploratory: T13's registered design, applied to programs the program agent found. 254,732 police-reported crashes (2004-01 to 2026-09), crashes within 50 m, 36 months before and after the install month. Programs: leading_pedestrian_intervals_0 (auto-seattle-leading-pedestrian-intervals-a6e028e2f8c4: 926 records, 862 sites). theta = crashes after ÷ crashes expected from the comparison group's change; below 1 means fewer crashes than expected. 95% bootstrap intervals over sites.
@@ -357,8 +410,8 @@ Agentic arms (muse-spark-open, programs blinded; code run in isolated Modal sand
 
 | arm | fake programs analysed | claimed a reduction | real programs: claims | cost |
 |---|---|---|---|---|
-| ungated | 5 | 0 | — | $0.016 |
-| gated | 4 | 0 | — | $0.017 |
+| ungated | 6 | 0 | — | $0.020 |
+| gated | 7 | 1 | — | $0.026 |
 
 ## Data agent: adapters found and validated without hand-written code
 
