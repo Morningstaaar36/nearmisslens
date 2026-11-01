@@ -25,7 +25,8 @@
      ],
      "population": "pedestrian",
      "fhwa_cited": false,
-     "note": "high-visibility continental crosswalks (school zones, urban)"
+     "note": "yellow continental crosswalks at school crossings, San Francisco (Feldman et al. 2010); the record notes a citywide downward trend the study did not remove",
+     "only_for": "school crossings"
     }
    ],
    "site_check": "the crossings are not already high-visibility",
@@ -355,7 +356,8 @@
       "Signalized"
      ],
      "population": "all",
-     "fhwa_cited": false
+     "fhwa_cited": false,
+     "site_condition": "the current yellow plus all-red time is below the ITE recommended practice"
     },
     {
      "crfid": "4215",
@@ -363,7 +365,8 @@
       "Signalized"
      ],
      "population": "all",
-     "fhwa_cited": false
+     "fhwa_cited": false,
+     "site_condition": "the current yellow plus all-red time is below the ITE recommended practice"
     },
     {
      "crfid": "4219",
@@ -371,7 +374,8 @@
       "Signalized"
      ],
      "population": "all",
-     "fhwa_cited": false
+     "fhwa_cited": false,
+     "site_condition": "the current yellow plus all-red time is below the ITE recommended practice"
     },
     {
      "crfid": "4220",
@@ -379,7 +383,8 @@
       "Signalized"
      ],
      "population": "all",
-     "fhwa_cited": false
+     "fhwa_cited": false,
+     "site_condition": "the current yellow plus all-red time is below the ITE recommended practice"
     }
    ],
    "scale": "low-cost"

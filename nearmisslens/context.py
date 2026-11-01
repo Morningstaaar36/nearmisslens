@@ -284,6 +284,12 @@ class FactCheck:
                 vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
             self.by_label[name] = vals or [0.0]  # an absent count is zero (the record lists only non-zero counts)
         self.known |= {round(v, 1) for v in self.by_label["dollars"]} | {0.0}  # "$8.8 million"; absent counts are 0
+        # a percentage must be a share (0.28 -> 28%), a ratio's change (theta 0.833 -> 17%) or a field that is itself a
+        # percentage or change; not any number that happens to be in the record ("129%" where 129 is a count)
+        shares = [v for v in panel.numbers_in(facts) if 0 <= abs(v) <= 2]
+        self.percents = ({100 * abs(v) for v in shares if abs(v) <= 1} | {100 * abs(1 - v) for v in shares if v > 0}
+                         | {abs(v) for k, vs in fields.items() if re.search(r"pct|percent|share|rate|change|crf", k)
+                            for v in vs})
 
     def text(self, text: str) -> list[str]:
         a, b = self._text(text), self._text(panel.normalise_decimals(text))
@@ -296,13 +302,17 @@ class FactCheck:
             v, tol = panel._value(t), 0.5 * 10 ** -panel._decimals(t) + 1e-9
             tail = text[m.end():m.end() + 45]
             percent = tail.lstrip().startswith("%")
-            # "32%" may also be a share the record holds as 0.318
-            if not any(abs(k - v) <= tol or (percent and 0 <= k <= 1 and abs(100 * k - v) <= tol)
-                       for k in self.known):
+            if percent and re.match(r"\s*%\s*(confidence|interval|CI\b)", tail, re.I):
+                continue  # "95% interval" names a confidence level, not a claim about the record
+            if percent:  # "32%" is a share the record holds as 0.318, a change from a ratio, or a percentage field
+                if not any(abs(k - abs(v)) <= tol for k in self.percents):
+                    bad.append(f"{t}% is not a share or change in the record")
+                continue
+            if not any(abs(k - v) <= tol for k in self.known):
                 bad.append(f"number {t} is not in the dossier")
                 continue
-            if percent or (len(t) == 4 and t[:2] in ("19", "20")):
-                continue  # percentages and years carry no label
+            if len(t) == 4 and t[:2] in ("19", "20"):
+                continue  # years carry no label
             head = text[max(0, m.start() - 30):m.start()]
             for name, before, after, _ in LABELS:
                 if (before and re.search(before, head, re.I)) or (after and re.search(after, tail, re.I)):

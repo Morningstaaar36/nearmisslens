@@ -14,6 +14,7 @@ from pathlib import Path
 BCA = json.loads((Path(__file__).resolve().parent / "data" / "usdot_bca.json").read_text())
 INJURY_CRASH_USD = BCA["per_crash"]["injury_crash"]
 RATE = BCA["real_discount_rate"]
+SHORT = f"{BCA['short']} ({BCA['dollar_year']} dollars)"  # how receipts and letters name the source
 LIFE_YEARS = BCA["analysis_life_years"]
 
 

@@ -26,7 +26,7 @@ let CITY = null;
 function route() {
   // "#city/corner", "#corner" (the default city) or "#city"
   const h = decodeURIComponent(location.hash.slice(1)), q = new URLSearchParams(location.search);
-  const [a, b] = h.includes("/") ? h.split("/", 2) : [null, h];
+  const [a, b] = h.includes("/") ? h.split("/", 2) : [null, h];  // "#city/plan" opens the city's action plan
   return {city: q.get("city") || a, corner: q.get("c") || b};
 }
 
@@ -48,9 +48,11 @@ async function boot() {
   const s = INDEX.summary || {};
   const kind = INDEX.screen === "crash clusters" ? "corners with the most injury crashes (found from the crash records)" : "priority corners";
   $("citynote").innerHTML = `<b>${INDEX.corners.length}</b> ${esc(INDEX.city_name)} ${kind}, worst first. ` +
-    (s.plan_gap != null ? `<span class="gapdot"></span><b>${s.plan_gap}</b> had at least 10 injury crashes and no recorded safety work in five years. ` : "") +
+    (s.plan_gap != null ? `<span class="gapdot"></span><b>${s.plan_gap}</b> had at least ${INDEX.gap_min_injury_crashes} injury crashes and no recorded safety work in ${INDEX.years} years. ` : "") +
     (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
-    `Records as of ${date(INDEX.asof)}.`;
+    `Records as of ${date(INDEX.asof)}.` +
+    (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "");
+  if (INDEX.plan) $("planlink").onclick = () => showPlan();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -65,11 +67,65 @@ async function boot() {
   listCorners(INDEX.corners);
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
   if (hit) openCorner(hit);
+  else if (INDEX.plan) showPlan();  // a city opens on its action plan
+}
+
+const TIER = {"measured here": "measured in this city", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
+
+async function showPlan() {
+  for (const b of $("corners").querySelectorAll("button")) b.setAttribute("aria-current", "false");
+  history.replaceState(null, "", `#${CITY}/plan`);
+  busy("Opening the city's action plan…");
+  let p;
+  try { p = await getJSON(`data/${encodeURIComponent(CITY)}/plan.json`); } catch (err) { failed(err, "the plan"); return; }
+  const s = p.summary, r = p.regression_to_mean || {}, q = p.requests;
+  const n = v => Number(v).toLocaleString("en-US");
+  const tiers = Object.entries(s.supported_by_tier || {}).map(([k, v]) => `${v} ${esc(TIER[k] || k)}`).join(", ");
+  const repeat = Object.entries(s.repeat_risk_corners || {}).sort((a, b) => b[1] - a[1])[0];
+  const tile = (v, label) => `<div class="tile"><b>${v}</b><span>${label}</span></div>`;
+  const byName = Object.fromEntries(INDEX.corners.map(c => [c.name, c]));
+  const link = name => byName[name] ? `<button class="linkish" data-slug="${esc(byName[name].slug)}">${esc(name)}</button>` : esc(name);
+  const rows = [...p.corners].filter(c => c.best).sort((a, b) => b.best.crashes_avoided_per_year - a.best.crashes_avoided_per_year);
+  $("out").innerHTML = `<p class="where">${esc(p.city_name)} · records as of ${date(p.asof)}</p>` +
+    `<h2 class="corner">Where the evidence says to act first</h2>` +
+    `<p class="lede">A textbook estimate says low-cost fixes at these ${s.corners} corners would avoid about ` +
+    `<b>${s.textbook_crashes_avoided_per_year}</b> crashes a year. The evidence supports <b>${s.crashes_avoided_per_year_total}</b> of them ` +
+    `without a site visit` + (r.factor != null && r.factor < 1 ? `, about <b>${s.crashes_avoided_per_year_after_rtm}</b> after the drop the worst corners show on their own` : "") +
+    `. The rest rest on studies of other kinds of sites, or need a check of the signal timing first.</p>` +
+    `<div class="tiles">` +
+    tile(usd(s.harm_usd_per_year || s.harm_usd_per_year_summed), "a year in injury crashes at these corners (U.S. DOT values)") +
+    tile(`${s.corners_with_supported_fix}`, `corners with a fix the evidence supports now (${tiers || "none"})`) +
+    tile(`${s.corners_with_another_road_owner}`, "corners where the city's transportation department is not the only road owner") +
+    (repeat ? tile(`${repeat[1]}`, `corners that already got ${esc(repeat[0])}, whose drop the city's own record cannot separate from an earlier trend`) : "") +
+    (q ? tile(`${q.rerequests.length}`, "corners where a fix was asked for, turned down, is still missing, and pedestrians are still hurt") : "") +
+    `</div>` +
+    (q && q.rerequests.length ? `<section class="step"><h3>Asked for and turned down</h3><p class="legend">From ${esc(q.source)}, matched by street names (${q.corners_matched} of ${q.corners} corners matched).</p>` +
+      `<ul class="claims">${q.rerequests.map(x => `<li><b>${link(x.corner)}</b>: ${esc(x.text)} <span class="legend">request ${esc(x.reference)}</span></li>`).join("")}</ul></section>` : "") +
+    `<section class="step"><h3>Who must act</h3>` + p.agencies.map(g =>
+      `<details class="agency"><summary><b>${esc(g.party)}</b>${g.presumed ? ' <span class="status">presumed</span>' : ""}: ${g.intersections} corners` +
+      (g.intersections_with_supported_fix ? `, ${g.crashes_avoided_per_year_total} crashes a year avoidable at ${g.intersections_with_supported_fix}` : "") + `</summary>` +
+      (g.letter.body ? `<p class="letter">${esc(g.letter.body)}</p><button class="quiet copy" data-t="${esc(g.letter.body)}">Copy the letter</button>`
+                     : `<p class="legend">Letter refused by the number checker: ${esc(g.letter.refused.join("; "))}</p>`) +
+      `<table class="plan"><thead><tr><th>Corner</th><th>Injury crashes</th><th>Fix</th><th>Evidence</th></tr></thead><tbody>` +
+      g.letter.table.slice(0, 40).map(t => `<tr><td>${link(t.intersection)}</td><td>${t.injury_crashes ?? ""}</td><td>${esc(t.fix || "")}</td>` +
+        `<td>${t.fix ? `${esc(t.evidence)}, about ${t.crashes_avoided_per_year} a year` : esc(t.check_first ? "check first: " + t.check_first : t.evidence)}</td></tr>`).join("") +
+      `</tbody></table>${g.letter.table.length > 40 ? `<p class="legend">${g.letter.table.length - 40} more in the CSV.</p>` : ""}</details>`).join("") + `</section>` +
+    `<section class="step"><h3>Fixes the evidence supports now</h3><table class="plan"><thead><tr><th>Corner</th><th>Fix</th><th>Evidence</th><th>Crashes a year</th><th>Pays for itself under</th></tr></thead><tbody>` +
+    rows.slice(0, 30).map(c => `<tr><td>${link(c.name)}</td><td>${esc(c.best.countermeasure)} <span class="legend">CMF ${esc(c.best.cmf_id)}</span></td>` +
+      `<td>${esc(TIER[c.best.evidence] || c.best.evidence)}</td><td>${c.best.crashes_avoided_per_year}</td><td>${usd(c.best.pays_for_itself_under_usd)}</td></tr>`).join("") +
+    `</tbody></table><p><a href="data/${encodeURIComponent(CITY)}/plan.csv" download>Download the whole plan (CSV)</a></p></section>` +
+    `<section class="step"><h3>How to read this</h3><ul class="legend">${p.caveats.map(c => `<li>${esc(c)}</li>`).join("")}` +
+    (r.factor != null ? `<li>Regression to the mean: at the worst quarter of ${r.corners} corners with no recorded project, crashes in ${r.years_after.join("–")} were ${pct(r.top_ratio)} of ${r.years_before.join("–")}, against ${pct(r.all_ratio)} at all of them, so ${pct(r.factor)} of a worst corner's count is expected to persist.</li>` : "") +
+    `</ul></section>`;
+  for (const b of $("out").querySelectorAll("button.linkish")) b.onclick = () => openCorner(INDEX.corners.find(c => c.slug === b.dataset.slug));
+  for (const b of $("out").querySelectorAll("button.copy")) b.onclick = async () => {
+    try { await navigator.clipboard.writeText(b.dataset.t); b.textContent = "Copied"; } catch (e) { b.textContent = "Select the text to copy"; }
+  };
 }
 
 function listCorners(rows) {
   $("corners").innerHTML = rows.map(c => `<li><button data-slug="${esc(c.slug)}"><span class="rank">${c.rank}</span>` +
-    `<span>${c.plan_gap ? '<span class="gapdot" title="no recorded safety work in five years"></span>' : ""}${esc(c.name)}</span>` +
+    `<span>${c.plan_gap ? '<span class="gapdot" title="no recorded safety work in ${INDEX.years} years"></span>' : ""}${esc(c.name)}</span>` +
     `<span class="n">${c.injury_crashes}</span></button></li>`).join("");
   for (const b of $("corners").querySelectorAll("button"))
     b.onclick = () => openCorner(INDEX.corners.find(c => c.slug === b.dataset.slug));
@@ -108,6 +164,21 @@ function askHTML(a) {
     `<ul class="claims">${(a.claims || []).map(c => `<li>${esc(c.text)}${tag(c.receipt)}</li>`).join("")}</ul>` +
     ((a.refused || []).length ? `<ul class="claims refused">${a.refused.map(x => `<li><s>${esc(x.text)}</s> <span class="legend">refused: ${esc((x.errors || []).join("; "))}</span></li>`).join("")}</ul>` : "") +
     `</div>`;
+}
+
+function agentHTML(a) {
+  // the case as Muse Spark Open wrote it: it chose the tools and the sentences; the gate refused what the record
+  // does not show, and those attempts are kept, struck through, with the reason
+  if (!a) return "";
+  const tool = id => (a.receipts || {})[id] || id;
+  return `<section class="step"><h3>The agent's own case</h3>` +
+    `<p class="why">Muse Spark Open chose the tools and wrote these sentences (${a.turns} turns, $${Number(a.usd || 0).toFixed(2)}). ` +
+    `The same checker refused ${a.refused.length ? `${a.refused.length} earlier ${a.refused.length === 1 ? "attempt" : "attempts"}, struck through below` : "nothing"}.</p>` +
+    (a.summary ? `<p>${esc(a.summary)}</p>` : "") +
+    `<ul class="claims">${(a.claims || []).map(c => `<li>${esc(c.text)} <span class="legend">${esc(tool(c.receipt))}</span></li>`).join("")}</ul>` +
+    a.refused.map(x => `<ul class="claims refused">${(x.claims || []).filter(c => x.errors.some(e => e.startsWith(`claim ${x.claims.indexOf(c) + 1}:`)))
+      .map(c => `<li><s>${esc(c.text)}</s></li>`).join("")}${x.summary && x.errors.some(e => e.startsWith("summary")) ? `<li><s>${esc(x.summary)}</s></li>` : ""}</ul>` +
+      `<p class="legend">Refused: ${esc(x.errors.join("; "))}</p>`).join("") + `</section>`;
 }
 
 function busy(text) { $("out").innerHTML = `<p class="busy">${text}</p>`; }
@@ -223,6 +294,7 @@ function show(r, corner) {
       <p class="why">Road owners from the road inventory; streets it does not list are marked as inferred. Offices from the city's district maps.</p>
       <div class="owners">${ownerCards || '<p class="legend">No road owner found in the registered datasets.</p>'}</div>${reqs}</section>
     <section class="step"><h3><span class="no">6</span>The request</h3>${letter}</section>
+    ${agentHTML(r.agent)}
     <section class="step"><h3>Ask the engineer</h3>
       <p class="why">Muse Spark Open answers from this corner's receipts. Every sentence names its receipt; sentences the checker refuses are shown struck through with the reason.</p>
       ${LIVE !== null ? `<form id="askform" class="search ask"><input id="askq" maxlength="300" placeholder="e.g. Why are trucks over-represented here, and who can fix it?"><button>Ask</button></form><div id="askout"></div>` : ""}

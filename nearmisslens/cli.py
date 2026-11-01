@@ -280,6 +280,15 @@ def cmd_engineer(args) -> int:
     return 0 if not rep["claim_errors"] else 1
 
 
+def cmd_agent_cases(args) -> int:
+    from . import engineer
+    reps = engineer.agent_cases(args.city, _memo_client(True), top=args.top)
+    usd = sum(r.get("usd") or 0 for r in reps)
+    print(f"{len(reps)} agent cases, {sum(bool(r.get('finished')) for r in reps)} finished, "
+          f"{sum(len(r.get('refused_attempts') or []) for r in reps)} refused attempts, ${usd:.2f}")
+    return 0
+
+
 def cmd_pack_cache(args) -> int:
     from pathlib import Path
     from . import packcache
@@ -299,6 +308,24 @@ def cmd_ask_engineer(args) -> int:
         print(f"  refused: {r['text']}  ({'; '.join(r['errors'])})")
     print(f"{out['turns']} turns, ${out['usd']}, {out['seconds']} s")
     return 0 if out["answer"] else 1
+
+
+def cmd_plan(args) -> int:
+    from . import plan
+    out = plan.build(args.city)
+    path = plan.write(out)
+    path.with_suffix(".csv").write_text(plan.to_csv(out))
+    s, r = out["summary"], out["regression_to_mean"]
+    print(f"{out['city_name']}: {s['corners']} corners, {s['injury_crashes_total']:,} injury crashes "
+          f"(harm ${(s['harm_usd_per_year'] or s['harm_usd_per_year_summed']) / 1e6:,.0f}M a year)")
+    print(f"  supported low-cost fix at {s['corners_with_supported_fix']} corners {s['supported_by_tier']}: "
+          f"{s['crashes_avoided_per_year_total']} crashes a year, {s['crashes_avoided_per_year_after_rtm']} after "
+          f"regression to the mean (factor {r.get('factor')}); textbook estimate {s['textbook_crashes_avoided_per_year']}")
+    for g in out["agencies"]:
+        print(f"  {g['party']}: {g['intersections']} corners, letter "
+              f"{'checked' if g['letter']['body'] else 'refused: ' + '; '.join(g['letter']['refused'])}")
+    print(f"written {path} and {path.with_suffix('.csv').name}")
+    return 0 if all(g["letter"]["body"] for g in out["agencies"]) else 1
 
 
 def cmd_pages(args) -> int:
@@ -483,6 +510,11 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
+    ag = sub.add_parser("agent-cases", help="Muse Spark Open writes its own case for a city's top corners (paid; saved cases are reused)")
+    ag.add_argument("city")
+    ag.add_argument("--top", type=int, default=20)
+    pl = sub.add_parser("plan", help="the city's action plan from its saved cases: evidence-tiered fixes, totals, one checked letter per agency")
+    pl.add_argument("city")
     cw = sub.add_parser("citywide", help="plan-gap screen of every priority intersection a city lists (open data)")
     cw.add_argument("--city", help="registry city id (default: the first city with a priority-intersection list)")
     pg = sub.add_parser("programs", help="program agent: find a city's dated safety programs for the causal gate")
@@ -545,7 +577,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

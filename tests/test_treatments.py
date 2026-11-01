@@ -153,7 +153,7 @@ def test_letter_checker_rejects_an_invented_number_and_adds_sources(tmp_path, mo
 
 def test_every_cli_command_parses_and_has_a_handler():
     from nearmisslens import cli
-    for cmd in ("voice-studio", "programs", "gate", "treatments", "brief", "citywide", "voice", "engineer", "pages", "ask-engineer"):
+    for cmd in ("voice-studio", "programs", "gate", "treatments", "brief", "citywide", "voice", "engineer", "pages", "ask-engineer", "plan"):
         with pytest.raises(SystemExit) as e:
             cli.main([cmd, "--help"])
         assert e.value.code == 0
@@ -176,3 +176,16 @@ def test_program_validator_refuses_year_precision_and_outside_records(monkeypatc
     assert not v["ok"] and len(v["problems"]) == 2
     monkeypatch.setattr(P, "_dates", lambda a: (monthly, rows))
     assert P.validate({"date_field": "d", "countermeasure": "Leading Pedestrian Interval"}, city)["ok"]
+
+
+def test_rerunning_a_study_keeps_its_fake_program_rank_only_if_the_result_is_unchanged():
+    from nearmisslens.treatments import keep_fake_rank
+    run = {"p_cg": {"pedestrian": {"theta": 0.833, "ci95": [0.78, 0.89]}}}
+    old = {"gates": {"lpi": {"primary": "p_cg", "outcome": "pedestrian", "fake_rank": {"rank": 0.13}}}, "runs": run}
+    same = {"gates": {"lpi": {"primary": "p_cg", "outcome": "pedestrian"}}, "runs": run}
+    keep_fake_rank(same, old)
+    assert same["gates"]["lpi"]["fake_rank"] == {"rank": 0.13}
+    moved = {"gates": {"lpi": {"primary": "p_cg", "outcome": "pedestrian"}},
+             "runs": {"p_cg": {"pedestrian": {"theta": 0.9, "ci95": [0.8, 1.0]}}}}
+    keep_fake_rank(moved, old)
+    assert "fake_rank" not in moved["gates"]["lpi"]

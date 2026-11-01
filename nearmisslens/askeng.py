@@ -73,7 +73,8 @@ def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05, g
         row = _extra("experiment_T15.json", "runs", slug)
         if not row:
             return {"error": "the miner has not run at this corner"}
-        data = {"confirmed": row["confirmed"], "proposed": row.get("proposals"), "split": "2024-05-01"}
+        from .miner import SPEC
+        data = {"confirmed": row["confirmed"], "proposed": row.get("proposals"), "split": SPEC["split"]}
         rid = desk.record("mechanisms", data, ["NML-Bench T15 (validation/BENCH.md)"],
                           ["explored before the split, confirmed once on later years, Holm over every proposal"],
                           time.perf_counter(), f"{len(row['confirmed'])} mechanisms confirmed on later years")

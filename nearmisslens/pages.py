@@ -16,7 +16,7 @@ import re
 import shutil
 from pathlib import Path
 
-from . import citywide, engineer, opendata
+from . import citywide, context, engineer, opendata
 from .config import ROOT, SETTINGS, asof
 
 WEB = Path(__file__).resolve().parent / "web"
@@ -86,12 +86,21 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
         if (data / sub).exists():
             shutil.rmtree(data / sub)
     (data / "j").mkdir(parents=True)
+    refreshed = []
     for k, row in enumerate(index):
         path = src / f"{row['slug']}.json"
         full = engineer.refresh(json.loads(path.read_text()))
         path.write_text(json.dumps(full, indent=0, default=str))  # the saved report matches what the site shows
+        refreshed.append({**full, "_slug": row["slug"]})
         rep = compact(full)
         rep["asks"] = asks.get(row["slug"], [])
+        ag = src.parent / "agent" / city / f"{row['slug']}.json"  # the agent's own case (nml agent-cases), if run
+        if ag.exists():
+            a = json.loads(ag.read_text())
+            if a.get("finished"):
+                rep["agent"] = {"summary": a.get("summary"), "claims": a.get("claims") or [], "turns": a.get("turns"),
+                                "usd": a.get("usd"), "refused": a.get("refused_attempts") or [],
+                                "receipts": {r["id"]: r["tool"] for r in a.get("receipts") or []}}
         row["claim_errors"] = len(rep["claim_errors"])
         photo = _brief_dir(row["name"]) / "aerial.jpg"
         if not photo.exists():
@@ -102,11 +111,19 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
             shutil.copyfile(photo, dst)
             rep["media"] = {"aerial": f"data/{city}/media/{row['slug']}/aerial.jpg"}
         (data / "j" / f"{row['slug']}.json").write_text(json.dumps(rep, separators=(",", ":"), default=str))
+    # the city's action plan from the same refreshed cases: every number on the plan view and in its letters
+    from . import plan as plan_
+    pl = plan_.build(city, reports=refreshed)
+    plan_.write(pl)
+    (data / "plan.json").write_text(json.dumps(pl, separators=(",", ":"), default=str))
+    (data / "plan.csv").write_text(plan_.to_csv(pl))
     screen = dict(citywide.screened()).get(city, {})
     c = opendata.city(city) or {}
     (data / "index.json").write_text(json.dumps({"city": city, "city_name": c.get("name", city), "bbox": c.get("bbox"),
                                                  "asof": asof().isoformat(), "summary": screen.get("summary", {}),
                                                  "screen": "priority list" if citywide.junction_adapters(city) else "crash clusters",
+                                                 "plan": True, "years": context.YEARS,
+                                                 "gap_min_injury_crashes": context.GAP_MIN_INJURY_CRASHES,
                                                  "corners": index}, indent=0))
     # the list of built cities (every docs/data/<city>/index.json); the first registry city with a list is the default
     built = []

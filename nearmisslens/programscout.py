@@ -133,7 +133,8 @@ def validate(a: dict, city: dict) -> dict:
             _COVERAGE[city["id"]] = (int(cr["month"].min()), int(cr["month"].max()))
         lo, hi = _COVERAGE[city["id"]][0] + 36, _COVERAGE[city["id"]][1] - 36
     except Exception:
-        lo, hi = 2012 * 12, (dt.date.today().year - 3) * 12
+        from .config import asof
+        lo, hi = 2012 * 12, (asof().year - 3) * 12
     usable = [d for d in dates if lo <= d.year * 12 + d.month - 1 <= hi]
     if len(usable) < MIN_DATED:
         problems.append(f"only {len(usable)} records have an install date inside the usable period "

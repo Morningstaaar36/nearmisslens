@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import kendalltau
 
-from . import audit, conflicts, fluid, movements, pipeline, risk
+from . import audit, conflicts, fluid, harm, movements, pipeline, risk
 from .config import SETTINGS, portable
 from .evaluate import RESULTS_DIR
 
@@ -562,7 +562,7 @@ def write_bench_md() -> str:
                 L += [f"The totals above add each intersection's count, so a crash within 100 m of two priority "
                       f"intersections is counted twice. Counted once each (records since {s_['since']}): "
                       f"{s_['injury_crashes_distinct']:,} injury crashes and {s_['killed_distinct']} deaths. At the U.S. "
-                      f"DOT's injury-crash value (BCA Guidance 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths "
+                      f"DOT's injury-crash value ({harm.BCA['short']}: ${harm.INJURY_CRASH_USD:,.0f} in {harm.BCA['dollar_year']} dollars; deaths "
                       f"not valued separately) they cost about ${s_['harm_usd_per_year'] / 1e6:,.0f} million a year.", ""]
     fu = _load("fusion_dc.json")
     if fu:

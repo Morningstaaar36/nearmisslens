@@ -75,3 +75,29 @@ def test_number_checker_binds_numbers_to_their_labels():
     assert c.text("29 pedestrians were injured and 129 injury crashes were recorded.") == []
     assert c.text("Longer yellow times would prevent about 7.0 injury crashes a year, worth $2,403,000.") == []
     assert c.text("The harm costs about $8.8 million a year; no one was killed (0 deaths).") == []
+
+
+def test_school_crosswalk_record_is_used_only_at_school_crossings():
+    db = cm.load_cmf()
+    plain = brief.fix_options(_dossier(), db)
+    skipped = {x["countermeasure"]: x["reason"] for x in plain["not_estimated"]}
+    assert "school crossings" in skipped["Crosswalk Visibility Enhancements"]
+    assert "2697" not in {x["cmf_id"] for x in plain["options"]}
+    school = brief.fix_options({**_dossier(), "site_kinds": ["school crossings"]}, db)
+    assert "2697" in {x["cmf_id"] for x in school["options"]}
+
+
+def test_a_precondition_the_data_cannot_show_puts_the_fix_behind_a_site_check():
+    o = {x["countermeasure"]: x for x in brief.fix_options(_dossier(), cm.load_cmf())["options"]}
+    y = o["Yellow Change Intervals"]
+    assert y["evidence"] == "needs a site check" and "ITE" in y["verify_on_site"]
+
+
+def test_a_fix_the_city_measured_ranks_first_and_says_so():
+    o = brief.fix_options(_dossier(), cm.load_cmf())["options"]
+    lpi = next(x for x in o if x["countermeasure"] == "Leading Pedestrian Interval")
+    assert lpi["evidence"] == "measured here" and lpi["local_evidence"]["sites"] > 1000
+    low = [x for x in o if x["scale"] == "low-cost"]
+    assert low[0]["countermeasure"] == "Leading Pedestrian Interval"
+    tiers = [brief.EVIDENCE.index(x["evidence"]) for x in low]
+    assert tiers == sorted(tiers)

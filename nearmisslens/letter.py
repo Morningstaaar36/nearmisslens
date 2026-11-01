@@ -14,7 +14,7 @@ import datetime as dt
 import json
 import re
 
-from . import context, countermeasures, opendata, panel, treatments
+from . import context, countermeasures, harm, opendata, panel, treatments
 from .config import asof
 from .agent import Tool, run_agent
 
@@ -87,10 +87,11 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
                    "crashes_avoided_per_year": o["expected_crashes_avoided_per_year"],
                    "targets": o["targets"], "harm_avoided_usd_per_year": o["harm_avoided_usd_per_year"],
                    "pays_for_itself_under_million_usd": round(o["break_even_cost_usd"] / 1e6, 1),
+                   "evidence": o.get("evidence"),
                    "needs_site_check_for": o.get("verify_on_site")} for o in supported],
         "measured_in_this_city": {
             "fix": _plain(measured["countermeasure"]),
-            "result": (f"where the city installed it at {ev['sites']:,} intersections, pedestrian injury crashes fell "
+            "result": (f"where the city installed it at {ev['sites']:,} intersections, {ev.get('outcome_words', 'injury crashes')} fell "
                        f"{treatments.pct(100 * (1 - ev['theta']))}% (95% interval "
                        f"{treatments.pct(100 * (1 - ev['ci95'][1]))}% to {treatments.pct(100 * (1 - ev['ci95'][0]))}%) "
                        "compared with intersections that got it later"
@@ -98,7 +99,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
             "needs_site_check_for": measured.get("verify_on_site")} if measured else None,
         "already_in_place": fx.get("in_place", []),
         "tried_here_before": [x["text"] for x in fx.get("repeat_risk") or []],
-        "dollar_values": "the U.S. DOT's official values for the cost of crashes (2024 dollars)",
+        "dollar_values": f"the U.S. DOT's official values for the cost of crashes ({harm.BCA['dollar_year']} dollars)",
     }
 
 
@@ -132,7 +133,7 @@ def sources(brief: dict, f: dict) -> list[str]:
     d = brief["dossier"]
     out = [s for s in ((d.get("crashes") or {}).get("source"), (d.get("plans") or {}).get("source")) if s]
     out += [f"FHWA CMF Clearinghouse, CMF {x['cmf_id']} ({x['name']})" for x in f["fixes"]]
-    out.append("U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)")
+    out.append(harm.SHORT)
     if f.get("measured_in_this_city"):
         out.append("NearMissLens NML-Bench T11: before/after study of the city's own installs (validation/BENCH.md)")
     out += [o["source"] for o in f["addressed_to"] if o.get("source")]

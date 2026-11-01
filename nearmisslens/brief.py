@@ -167,11 +167,30 @@ def populations(cr: dict) -> dict:
             "walking_along": cr.get("walking_along")}
 
 
+# How strongly the evidence backs an estimated fix here, strongest first. "measured here": this city's own past installs
+# passed the causal gate. "FHWA-cited": the record FHWA's fact sheet cites, no unverified precondition. "national
+# studies": the median of eligible records. "needs a site check": the estimate holds only if something the public data
+# cannot show is true (the record's study sites, or the fix's own precondition). "contradicted here": the city's own
+# record rules out the national effect.
+EVIDENCE = ("measured here", "FHWA-cited", "national studies", "needs a site check", "contradicted here")
+SUPPORTED = EVIDENCE[:3]  # the tiers a plan may total without a site visit
+
+
+def evidence_tier(o: dict) -> str:
+    if (o.get("local_program") or {}).get("contradicts_cmf"):
+        return "contradicted here"
+    if o.get("verify_on_site"):
+        return "needs a site check"
+    if o.get("local_evidence"):
+        return "measured here"
+    return "FHWA-cited" if o.get("fhwa_cited") else "national studies"
+
+
 def fix_options(d: dict, cmf) -> dict:
     """Every FHWA Proven Safety Countermeasure for the junction. A fix is estimated (crashes avoided per year,
-    dollars) only when one of its curated CMF records applies to this site's control and to a crash population the
-    record shows; otherwise it is listed with the reason and no number. Order: estimated fixes the record supports,
-    estimated fixes that need a site check, then fixes with no estimate."""
+    dollars) only when one of its curated CMF records applies to this site's control, kind and a crash population
+    the record shows; otherwise it is listed with the reason and no number. Each estimate carries its evidence tier
+    (EVIDENCE). Order: low-cost before reconstruction, then by tier, then by crashes avoided."""
     cr = d.get("crashes") or {}
     if not cr or "error" in cr:
         return {"options": [], "not_estimated": [], "note": "no crash record available for this location"}
@@ -185,9 +204,9 @@ def fix_options(d: dict, cmf) -> dict:
         name = item["name"]
         if item.get("site_fix") is False or name in have:
             continue
-        sel = countermeasures.select(item, control, pops, cmf)
+        sel = countermeasures.select(item, control, pops, cmf, frozenset(d.get("site_kinds") or ()))
         checks = [c for c in (item.get("condition") if item.get("condition") not in conds else None,
-                              item.get("site_check")) if c]
+                              item.get("site_check"), sel.get("site_condition")) if c]
         if not sel["quantified"]:
             not_estimated.append({"countermeasure": name, "quantified": False, "reason": sel["reason"],
                                   "verify_on_site": "; ".join(checks) or None})
@@ -206,20 +225,19 @@ def fix_options(d: dict, cmf) -> dict:
             # rose); a wide interval from a few sites is shown but carries no weight
             o["local_program"] = {**{k: st[k] for k in ("status", "label", "text", "source", "study", "ci95")},
                                   "contradicts_cmf": st["status"] == "worse" or st["ci95"][0] > sel["cmf"]}
+        o["evidence"] = evidence_tier(o)
         estimated.append(o)
-    # low-cost fixes before reconstructions (which need a design study), then fixes the city's own record does not
-    # contradict, then those the crash record supports, then size
-    opts = sorted(estimated, key=lambda o: (o["scale"] == "reconstruction",
-                                            (o.get("local_program") or {}).get("contradicts_cmf", False),
-                                            o["verify_on_site"] is not None, -o["expected_crashes_avoided_per_year"]))
+    # low-cost fixes before reconstructions (which need a design study), then the strength of the evidence, then size
+    opts = sorted(estimated, key=lambda o: (o["scale"] == "reconstruction", EVIDENCE.index(o["evidence"]),
+                                            -o["expected_crashes_avoided_per_year"]))
     projects = (d.get("plans") or {}).get("projects", [])
     return {"options": opts, "not_estimated": not_estimated, "in_place": list(have.values()), "control": control,
             "repeat_risk": treatments.repeat_risk(d.get("city"), projects),
             "harm": harm.junction(cr, YEARS), "conditions_from_record": sorted(conds),
             "method": "expected crashes avoided per year = target crashes per year x (1 - CMF), Highway Safety Manual "
                       "simple method (not Empirical Bayes), with the CMF FHWA's fact sheet cites or else the median of "
-                      "the curated records that fit the site; dollars use the U.S. DOT's injury-crash value (BCA "
-                      "Guidance 2026 Update, Table A-1, 2024 $), break-even cost over 10 years at 7%"}
+                      "the curated records that fit the site; dollars use the U.S. DOT's injury-crash value "
+                      f"({harm.SHORT}), break-even cost over {harm.LIFE_YEARS} years at {harm.RATE:.0%}"}
 
 
 def _mercator(lat: float, lon: float) -> tuple[float, float]:
@@ -327,7 +345,7 @@ def fixes_table(opts: dict, n: int = 8) -> str:
                             if o["local_program"]["contradicts_cmf"] else "too uncertain to change the ranking._"))
     h = opts.get("harm")
     head = (f"Injury crashes here cost about ${h['usd_per_year']:,.0f} a year in the U.S. DOT's official values "
-            f"({h['injury_crashes_per_year']} a year at ${h['value_per_injury_crash_usd']:,.0f} each, 2024 dollars"
+            f"({h['injury_crashes_per_year']} a year at ${h['value_per_injury_crash_usd']:,.0f} each, {h['dollar_year']} dollars"
             f"{'; deaths are not valued separately' if h['deaths_in_record'] else ''}).\n\n") if h else ""
     have = "".join(f"\n\nAlready in place (city records): {x['countermeasure']}"
                    f"{' since ' + str(x['year']) if x.get('year') else ''}; not proposed again." for x in opts.get("in_place", []))

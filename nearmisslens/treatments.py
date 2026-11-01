@@ -417,8 +417,23 @@ def run_suite(spec: dict) -> dict:
     out["run_date"] = dt.date.today().isoformat()
     dest = RESULTS_DIR / "bench"
     dest.mkdir(parents=True, exist_ok=True)
-    (dest / f"study_{spec['id']}.json").write_text(json.dumps(out, indent=1, default=float))
+    path = dest / f"study_{spec['id']}.json"
+    keep_fake_rank(out, json.loads(path.read_text()) if path.exists() else {})
+    path.write_text(json.dumps(out, indent=1, default=float))
     return out
+
+
+def keep_fake_rank(new: dict, old: dict) -> None:
+    """The rank among fake programs (written by a separate, slower run: falsify.rank_studies) survives a rerun of the
+    study when the program's result is unchanged; a changed result drops it, so a stale rank is never shown."""
+    for key, g in new.get("gates", {}).items():
+        og = (old.get("gates") or {}).get(key) or {}
+        if "fake_rank" not in og:
+            continue
+        cur = (new["runs"].get(g.get("primary")) or {}).get(g.get("outcome")) or {}
+        prev = ((old.get("runs") or {}).get(og.get("primary")) or {}).get(og.get("outcome")) or {}
+        if cur.get("theta") == prev.get("theta") and cur.get("ci95") == prev.get("ci95"):
+            g["fake_rank"] = og["fake_rank"]
 
 
 def brief_cmf(countermeasure: str, outcome: str) -> list[dict]:
@@ -466,7 +481,7 @@ def projection(spec: dict, out: dict, cr: pd.DataFrame, points: dict, org) -> di
             "per_year": round(per_year, 1), "avoided_per_year": round(avoided[0], 1),
             "avoided_per_year_interval": [round(avoided[1], 1), round(avoided[2], 1)],
             "harm_avoided_usd_per_year": round(avoided[0] * harm.INJURY_CRASH_USD, -5),
-            "names": rows.loc[none, "name"].tolist()}
+            "names": sorted(rows.loc[none, "name"].tolist())}
 
 
 def results() -> list[dict]:
@@ -568,13 +583,15 @@ def repeat_risk(city: str | None, projects: list[dict]) -> list[dict]:
     again here is not backed by evidence. One flag per program, with the year it arrived."""
     flags = {}
     for pr in projects:
+        pr = {**pr, "year": opendata.known_year(pr.get("year"))}  # reports saved before placeholder dates were dropped
         st = program_status(city, adapter=pr.get("dataset"))
         if st["status"] not in NOT_SUPPORTED:
             continue
         key = st["adapter"]
         if key not in flags or (pr.get("year") or 9999) < (flags[key].get("year") or 9999):
             flags[key] = {"program": st["label"], "year": pr.get("year"), "status": st["status"], "dataset": key,
-                          "study": st["study"], "source": st["source"],
+                          "study": st["study"], "source": st["source"], "theta": st.get("theta"),
+                          "ci95": st.get("ci95"), "sites": st.get("sites"),
                           "text": f"This corner got {st['label']}{' in ' + str(pr['year']) if pr.get('year') else ''}. "
                                   f"Across the city: {st['text']}. Repeating it here is not supported by the city's "
                                   "own record."}
@@ -594,7 +611,8 @@ def local_evidence(city: str | None, countermeasure: str) -> dict | None:
             placebo = res["runs"][g["placebos"][-1]][g["outcome"]] if g["placebos"] else None
             lo, hi = (pct(100 * (1 - v)) for v in reversed(main["ci95"]))
             outcome = OUTCOME_WORDS.get(g["outcome"], g["outcome"])
-            return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"],
+            return {"theta": main["theta"], "ci95": main["ci95"], "sites": main["sites"], "outcome": g["outcome"],
+                    "outcome_words": outcome.lower(),
                     "placebo_theta": placebo and placebo["theta"], "placebo_ci95": placebo and placebo["ci95"],
                     "study": res["id"], "source": f"NML-Bench {res['id']} (validation/BENCH.md)",
                     "fake_rank": (g.get("fake_rank") or {}).get("rank"),

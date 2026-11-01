@@ -80,3 +80,59 @@ def test_street_numbers_in_the_corner_name_are_not_counts(monkeypatch):
     assert E.recheck(r)["claim_errors"] == []
     bad = {**r, "claims": [{**r["claims"][0], "text": "East 138 Street had 999 injury crashes."}]}
     assert E.recheck(bad)["claim_errors"]
+
+
+def test_receipt_ids_are_never_reused_after_a_receipt_is_removed():
+    from nearmisslens.engineer import _next_rid
+    assert _next_rid([{"id": "R1"}, {"id": "R2"}, {"id": "R7"}]) == "R8"
+    assert _next_rid([]) == "R1"
+
+
+def test_a_percentage_must_be_a_share_or_change_not_any_number_in_the_record():
+    from nearmisslens.context import FactCheck
+    fc = FactCheck({"injury_crashes": 129, "pedestrian_share": 0.277, "theta": 0.833, "ci95": [0.781, 0.887]})
+    assert fc.text("28% of crashes had a pedestrian hurt.") == []
+    assert fc.text("Crashes fell 17% (95% interval 11% to 22%).") == []
+    assert fc.text("Crashes rose 129%.")  # 129 is a count, not a share
+    assert fc.text("Crashes fell 40%.")
+
+
+def test_causal_wording_beyond_caused_is_refused():
+    for s in ("the trucks led to the crashes", "crashes due to speeding", "this fix will prevent all of them",
+              "the program is proven"):
+        assert E.wording(s), s
+    assert not E.wording("NYSDOT is responsible for the expressway; the program worked.")
+
+
+def test_placeholder_install_dates_are_not_years():
+    from nearmisslens.opendata import known_year
+    assert known_year(1899) is None and known_year(None) is None and known_year(2015) == 2015
+
+
+def test_agent_mode_keeps_each_refused_attempt_with_its_reasons(monkeypatch):
+    from tests.test_agent import FakeClient, call, usage
+    _fake(monkeypatch)
+    loc = {"lat": 1.0, "lon": 2.0}
+    script = [call("locate", {"address": "Main St & Oak Ave"}, "c1"), call("root_cause", loc, "c2"),
+              call("test_programs", loc, "c3"), call("choose_fixes", loc, "c4"),
+              call("who_must_act", {**loc, "name": "Main St & Oak Ave"}, "c5")]
+    bad = call("finish", {"summary": "6 pedestrians were killed here.", "claims": [
+        {"text": "Main St & Oak Ave had 6 pedestrians killed.", "receipt": "R3"}]}, "c6")
+    good = call("finish", {"summary": "6 pedestrians were injured here.", "claims": [
+        {"text": "Main St & Oak Ave had 20 injury crashes, with 6 pedestrians injured.", "receipt": "R3"},
+        {"text": "30% of crashes involved a truck.", "receipt": "R1"},
+        {"text": "The city's speed humps: not shown.", "receipt": "R2"},
+        {"text": "The state DOT is responsible for Main Expressway (I 95).", "receipt": "R4"}]}, "c7")
+    fc = FakeClient([{"id": f"r{k}", "output": [c], "usage": usage()} for k, c in enumerate(script + [bad, good])])
+    rep = E.run("Investigate Main St & Oak Ave", fc, budget_usd=5.0)
+    assert len(rep["refused_attempts"]) == 1
+    assert any("killed" in e or "deaths" in e for e in rep["refused_attempts"][0]["errors"])
+    assert rep["claims"] and not rep["claim_errors"]
+
+
+def test_a_fix_that_needs_a_site_check_cannot_be_stated_as_supported_outright():
+    data = {"options": [{"countermeasure": "Yellow Change Intervals", "evidence": "needs a site check",
+                         "verify_on_site": "the current yellow plus all-red time is below the ITE recommended practice"}]}
+    assert E.conditional_fix_errors("Fixes the record supports include Yellow Change Intervals.", data)
+    assert not E.conditional_fix_errors("Yellow Change Intervals, if a timing check confirms it.", data)
+    assert not E.conditional_fix_errors("Backplates with Retroreflective Borders.", data)

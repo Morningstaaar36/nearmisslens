@@ -940,6 +940,37 @@
    ],
    "source": "OpenStreetMap crossing:markings (ODbL)",
    "note": "untagged crossings give no answer; any variant of zebra or ladder (e.g. ladder:skewed) counts as yes"
+  },
+  {
+   "id": "nyc-study-requests",
+   "kind": "study_requests",
+   "city": "nyc",
+   "place": "New York City",
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/w76s-c5u4.json",
+   "label": "Traffic Signal and All-Way Stop Study Requests",
+   "source": "NYC Open Data, Traffic Signal and All-Way Stop Study Requests (w76s-c5u4)",
+   "fields": {
+    "main": "mainstreet",
+    "cross": [
+     "crossstreet1",
+     "crossstreet2"
+    ],
+    "type": "requesttype",
+    "status": "statusdescription",
+    "requested": "daterequested",
+    "status_date": "statusdate",
+    "id": "referencenumber"
+   },
+   "denied_when_status_has": "Denial",
+   "fix_requests": {
+    "Leading Pedestrian Interval": "Leading Pedestrian Interval",
+    "Left Turn Arrow/Signal": null
+   },
+   "note": "Requests name streets, not coordinates; they are matched to a corner by its two street names.",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
   }
  ],
  "cities": [

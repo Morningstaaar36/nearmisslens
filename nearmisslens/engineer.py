@@ -21,7 +21,7 @@ import re
 import time
 from dataclasses import dataclass, field
 
-from . import brief, citywide, context, jurisdiction, opendata, rootcause, treatments
+from . import brief, citywide, context, harm, jurisdiction, opendata, rootcause, treatments
 from .config import asof
 
 SCALE_ORDER = ("low-cost", "reconstruction")
@@ -111,7 +111,7 @@ def choose_fixes(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     fx = brief.fix_options(d, load_cmf())
     data = {"crashes": d.get("crashes"), **fx}
     srcs = [(d.get("crashes") or {}).get("source"), "CMF Clearinghouse (curated, data/cmf_allow.csv)",
-            "FHWA Proven Safety Countermeasures", "U.S. DOT BCA Guidance 2026, Table A-1"]
+            "FHWA Proven Safety Countermeasures", harm.SHORT]
     top = fx["options"][0]["countermeasure"] if fx.get("options") else "none"
     rid = desk.record("choose_fixes", data, srcs,
                       [f"CMF must match the site's control ({fx.get('control')}) and a crash population the record shows",
@@ -156,7 +156,10 @@ def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
     data = {"answers": {a: {"answer": v["gated"], "reliable": used.get(a, False),
                             "fix_if_present": sitecheck.CATALOG.get(a, {}).get("fix_present")}
                         for a, v in row["answers"].items()}}
-    rid = desk.record("site_check", data, ["state orthophoto (NYS GIS Program Office)", "Muse Spark (Meta API)", "SAM 3.1"],
+    from .config import SETTINGS
+    src = SETTINGS.runs_dir / "site" / slug / "aerial.txt"  # the imagery the photo came from (brief.aerial writes it)
+    photo = src.read_text().strip() if src.exists() else "aerial photo"
+    rid = desk.record("site_check", data, [photo, "Muse Spark (Meta API)", "SAM 3.1"],
                       ["present only when SAM 3.1 finds it within 15 m of Muse Spark's point",
                        "an attribute changes a recommendation only if its accuracy against city map layers met the "
                        "registered rule and beat always giving the more common answer (NML-Bench T16, change 1)"], t0,
@@ -215,7 +218,9 @@ def draft_request(desk: Desk, lat: float, lon: float, name: str, who: dict, clie
 # ------------------------------------------------------------------------------------------------- the finish gate
 
 # words the record cannot support: police factors are not proven causes, and an effect not shown is not shown absent
-OVERCLAIM = re.compile(r"\b(caused|causes|cause of|failed|fails|failure|proves?|proved|doesn't work|does not work)\b", re.I)
+OVERCLAIM = re.compile(r"\b(caused|causes|cause of|failed|fails|failure|proves?|proved|proven|doesn't work|does not work|"
+                       r"led to|leads to|resulted in|results in|because of|due to|to blame|blamed|guarantee[sd]?|"
+                       r"eliminates?|will prevent)\b", re.I)
 
 
 QUOTED = re.compile(r"\u201c[^\u201d]*\u201d|\"[^\"]*\"")  # the record's own words, e.g. "failure to yield"
@@ -240,6 +245,27 @@ def check_summary(summary: str, desk: Desk) -> list[str]:
     return [f"summary: {e}" for e in context.FactCheck(desk.data).text(s) + wording(s)]
 
 
+def refreshed_fixes(report: dict) -> dict | None:
+    """choose_fixes recomputed by the current rules from the corner's dossier (served from the cache when it was
+    fetched before), or None when the dossier cannot be had, in which case the saved options are kept."""
+    from .countermeasures import load_cmf
+    j = report.get("junction") or {}
+    if j.get("lat") is None or j.get("lon") is None:
+        return None
+    try:
+        d = context.dossier(j["lat"], j["lon"])
+    except Exception:  # no cache and no network: keep what was saved
+        return None
+    if not d.get("crashes") or "error" in (d.get("crashes") or {}):
+        return None
+    return {"crashes": d.get("crashes"), **brief.fix_options(d, load_cmf())}
+
+
+def _next_rid(receipts: list[dict]) -> str:
+    """A receipt id not yet used: one past the largest (counting would reuse an id after a receipt is removed)."""
+    return f"R{max((int(r['id'][1:]) for r in receipts if str(r.get('id', '')).startswith('R')), default=0) + 1}"
+
+
 def refresh(report: dict) -> dict:
     """A saved report's claims rewritten from its stored findings by the current code, then checked again; no request
     is made, so wording fixes reach every saved report."""
@@ -255,6 +281,9 @@ def refresh(report: dict) -> dict:
     tp["programs"] = treatments.distinct_programs(tp.get("city"))
     tp["repeat_risk"] = treatments.repeat_risk(tp.get("city"), tp.get("projects_here") or [])
     findings["test_programs"] = tp
+    fx = refreshed_fixes(report)  # the fix options from the current rules (evidence tiers, record limits)
+    if fx is not None:
+        findings["choose_fixes"] = fx
     report = {**report, "findings": findings}
     rec = {t: (report["findings"][t], by_tool[t]) for t in REQUIRED + ("draft_request",)}
     desk = Desk()
@@ -262,7 +291,7 @@ def refresh(report: dict) -> dict:
     receipts = [r for r in report["receipts"] if r["tool"] != "mechanisms"]
     findings = {k: v for k, v in report["findings"].items() if k != "mechanisms"}
     if mk:
-        rid = f"R{len(receipts) + 1}"
+        rid = _next_rid(receipts)
         receipts.append({**desk.receipts[0], "id": rid})
         findings["mechanisms"] = mk[0]
         rec["mechanisms"] = (mk[0], rid)
@@ -272,7 +301,7 @@ def refresh(report: dict) -> dict:
     if sc:
         sdesk = Desk()
         sc = site_check(sdesk, slug(report["junction"]["name"]))
-        rid = f"R{len(receipts) + 1}"
+        rid = _next_rid(receipts)
         receipts.append({**sdesk.receipts[0], "id": rid})
         findings["site_check"] = sc[0]
         rec["site_check"] = (sc[0], rid)
@@ -294,6 +323,22 @@ def recheck(report: dict) -> dict:
     return {**report, "claim_errors": errors}
 
 
+CHECK_WORDS = re.compile(r"\b(check|checks|checked|confirm|confirmed|verify|verified|if|only if|provided|subject to|"
+                         r"site visit|needs? a)\b", re.I)
+
+
+def conditional_fix_errors(text: str, data: dict) -> list[str]:
+    """A fix whose estimate holds only after a site check must not be stated as supported outright: a sentence that
+    names it must also say it needs a check."""
+    out = []
+    for o in (data or {}).get("options") or []:
+        if o.get("evidence") == "needs a site check" and o.get("countermeasure") and \
+                o["countermeasure"].lower() in (text or "").lower() and not CHECK_WORDS.search(text):
+            out.append(f"{o['countermeasure']} holds only if a site check confirms it ({o.get('verify_on_site')}); "
+                       "say so")
+    return out
+
+
 def check_claims(claims: list[dict], desk: Desk, required: tuple[str, ...] = ()) -> list[str]:
     """Every claim cites a receipt and its numbers are that receipt's values for their labels; every required tool
     has at least one claim citing it; no claim overstates what the record can show."""
@@ -307,6 +352,7 @@ def check_claims(claims: list[dict], desk: Desk, required: tuple[str, ...] = ())
             continue
         cited.add(next(r["tool"] for r in desk.receipts if r["id"] == rid))
         errors += [f"claim {k}: {e}" for e in context.FactCheck(desk.data[rid]).text(c.get("text", ""))]
+        errors += [f"claim {k}: {e}" for e in conditional_fix_errors(c.get("text", ""), desk.data[rid])]
     errors += [f"no claim cites {t}" for t in required if t not in cited]
     return errors
 
@@ -391,8 +437,13 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
                             + (f"; a second run of the same design on {agree[0]['sites']:,} sites agrees" if agree else "")
                             + ".", "receipt": rp})
     for o in [o for o in fx.get("options", []) if o.get("scale") == "low-cost"][:2]:
+        tier = o.get("evidence") or brief.evidence_tier(o)
+        why = {"measured here": "the city's own past installs passed the causal gate",
+               "FHWA-cited": "the record FHWA cites", "national studies": "national studies only",
+               "needs a site check": "only if a site check confirms it",
+               "contradicted here": "the city's own record contradicts the national figure"}[tier]
         out.append({"text": f"{o['countermeasure']} would avoid about {o['expected_crashes_avoided_per_year']} "
-                            f"crashes a year (CMF {o['cmf_id']}, {o['chosen_by']}), worth "
+                            f"crashes a year (CMF {o['cmf_id']}, {o['chosen_by']}; evidence: {why}), worth "
                             f"{_usd(o['harm_avoided_usd_per_year'])} a year"
                             + (f"; check on site: {o['verify_on_site']}" if o.get("verify_on_site") else "") + ".",
                     "receipt": rf})
@@ -541,6 +592,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
     if hasattr(client, "force_finish_after"):  # seven tools come before finish here
         client.force_finish_after = max(client.force_finish_after, 12)
     final: dict = {}
+    refused: list[dict] = []  # every finish the gate turned down: the sentences and why, shown struck through
     names: dict[tuple, str] = {}
     num, txt = {"type": "number"}, {"type": "string"}
 
@@ -563,6 +615,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
     def finish(summary: str, claims: list[dict]):
         errors = check_claims(claims, desk, REQUIRED) + check_summary(summary, desk)
         if errors:
+            refused.append({"summary": summary, "claims": claims, "errors": errors[:12]})
             return {"error": "refused by the claim checker", "errors": errors[:12]}
         final.update(summary=summary, claims=claims)
         return {"ok": True}
@@ -600,7 +653,30 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
                   {"summary": final.get("summary"), "stopped": r.stopped, "usd": round(r.usd, 5), "turns": r.turns,
                    "tool_calls": [s.tool for s in r.steps] if hasattr(r, "steps") else None})
     rep["finished"] = bool(final) and j is not None
+    rep["refused_attempts"] = refused
     return rep
+
+
+def agent_cases(city: str, client, top: int = 20, out_dir=None, budget_usd: float = 0.15) -> list[dict]:
+    """The agent's own case for the city's top corners (worst first), each saved next to the fixed-order case; a
+    saved agent case is reused, so a rerun only pays for corners not yet done."""
+    from .config import SETTINGS
+    out_dir = out_dir or SETTINGS.runs_dir / "engineer" / "agent" / city
+    out_dir.mkdir(parents=True, exist_ok=True)
+    rows = precompute(city, saved_only=True)[:top]
+    name = (opendata.city(city) or {}).get("name", city)
+    done = []
+    for row in rows:
+        path = out_dir / f"{row['slug']}.json"
+        if path.exists():
+            done.append(json.loads(path.read_text()))
+            continue
+        rep = run(f"Investigate {row['name']}, {name}", client, budget_usd=budget_usd)
+        path.write_text(json.dumps(rep, indent=0, default=str))
+        print(f"  {row['name']}: {rep.get('turns')} turns, ${rep.get('usd')}, finished {rep.get('finished')}, "
+              f"refused {len(rep['refused_attempts'])}", flush=True)
+        done.append(rep)
+    return done
 
 
 def text(report: dict) -> str:

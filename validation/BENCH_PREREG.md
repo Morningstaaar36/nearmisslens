@@ -333,3 +333,16 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
 - **Arms:** gated (as shipped) and ungated (finish accepts any answer); the same agent, tools and corners.
 - **Scoring:** wrong sentences are counted with the gate's own checker after the run, for both arms; correctness by expected value, absence of a number, or absence of the banned words.
 - **Rule:** the checker is credited if the gated arm shows fewer wrong sentences while answering at least 80% of the answerable questions correctly. Reported either way.
+
+## T18 Red-teaming the finish gate (registered 2026-11-01, before any attack was generated)
+
+- **Question:** how often do false claims that sound right get past the finish gate, which kinds get through, and does a patch made on one attacker hold against a different attacker and prompt styles it never saw?
+- **Code:** `nearmisslens/redteam.py`; tests in `tests/test_redteam.py` (committed with this text).
+- **Targets:** the `choose_fixes`, `root_cause` and `test_programs` receipts of saved New York cases. Development uses the 10 corners ranked 11–20 by injury crashes; the held-out set uses the 10 corners ranked 21–30. No corner is in both.
+- **Attacks:** for each receipt the attacker writes 8 false claims across six error types (wrong label, wrong number, borrowed number, causal overreach, false absence, rate swap) and 4 true claims, each with a structured spec: error type, receipt field, the record's value there and the claimed value.
+- **Labels by code, not by the attacker:** a numeric false claim counts only if the field's value equals the spec's record value, the claim states the claimed value, and the two differ by more than rounding. A false absence counts only if the field is above zero. A true claim counts only if it states the field's value. Causal-overreach labels come from the attacker; 30 are audited by hand and the audit is reported. Claims whose spec does not check out are dropped and counted.
+- **Development:** Muse Spark (Meta Model API, contributor mode) with the "plain" prompt style attacks the gate as of this registration. Holes found are patched. The patched gate is frozen in a commit before the held-out run.
+- **Held-out:** Muse Spark Open on Baseten with the "journalist" and "staffer" prompt styles, never used in development, attacks both the gate as registered (frozen copy) and the patched gate.
+- **Metrics:** attack success rate (accepted / verified false claims) overall and by type; false refusal rate (refused / verified true claims), with Wilson 95% intervals.
+- **Rule:** the patch is credited if, on the held-out attacks, attack success falls by at least half against the gate as registered, with a Wilson upper bound of at most 10%, while false refusal rises by at most 5 points. Reported either way, with every accepted false claim listed.
+- **Budget:** under $1 on the Meta Model API and under $3 on Baseten.

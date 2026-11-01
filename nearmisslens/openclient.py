@@ -17,7 +17,8 @@ from .meta_client import IncompleteResponse
 
 BASE_URL = "https://inference.baseten.co/v1"
 MODEL = "meta-models/muse-spark-open-1026"
-PRICE = {"input": 1.25, "output": 4.25}
+from .cost import TOKEN_USD_PER_M
+PRICE = dict(zip(("input", "output"), TOKEN_USD_PER_M["muse-spark-open"][:2]))  # one price table: cost.py
 FORCE_FINISH_AFTER = 6
 
 

@@ -312,13 +312,21 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             "factor_counts": dict(factors.most_common(15))}
 
 
+FIRST_PLAUSIBLE_YEAR = 1950  # earlier install dates are placeholders (1899-12-30 is the spreadsheet zero date)
+
+
+def known_year(y) -> int | None:
+    """A project year, or None for a missing or placeholder date."""
+    return y if isinstance(y, int) and y >= FIRST_PLAUSIBLE_YEAR else None
+
+
 def projects_near(a: dict, lat: float, lon: float, radius_m: float | None = None) -> list[dict]:
     rows = rows_near(a, lat, lon, radius_m or a.get("radius_m", 150))
     out = []
     for r in rows:
         d = _date(r.get(a.get("date_field"))) if a.get("date_field") else None
         y = r.get(a.get("year_field")) if a.get("year_field") else None
-        year = int(y) if str(y or "").isdigit() else (d.year if d else None)
+        year = known_year(int(y) if str(y or "").isdigit() else (d.year if d else None))
         from .config import asof
         out.append({"name": str(r.get(a.get("name_field")) or a.get("label") or a["id"]), "year": year,
                     "dataset": a["id"], **({"planned": True} if year and year > asof().year else {})})

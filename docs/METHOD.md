@@ -97,6 +97,35 @@ Result (100 real and 100 null corners per arm): false finds per null corner were
 
 **Ask the engineer.** Muse Spark Open answers a free question from the receipts already saved for a corner, plus the miner's and the site check's results. The answer must pass the engineer's finish gate. Over 40 questions (20 answerable, 10 the record cannot answer, 10 baiting a causal claim), no wrong sentence reached the reader with the gate, against 31 without it. With the gate, 62.5% of questions got an answer that passed, against 90% without it.
 
+## The city plan: evidence tiers, regression to the mean, requests already denied
+
+**Evidence tiers.** Every estimated fix carries the strength of the evidence behind it (`brief.EVIDENCE`):
+- **measured here:** the city's own past installs passed the causal gate;
+- **FHWA-cited:** the CMF FHWA's fact sheet cites, with no unverified precondition;
+- **national studies:** the median of eligible CMF records;
+- **needs a site check:** the estimate holds only if something the public data cannot show is true;
+- **contradicted here:** the city's own record rules out the national effect.
+
+Two record limits drive most of the "site check" tier. The four yellow-change-interval CMFs (4215, 4216, 4219, 4220) were measured at signals whose existing change interval was below ITE practice, which the public data cannot show for a given corner. The one crosswalk-visibility CMF in the curated set (2697) was measured at school crossings in San Francisco, with a trend bias noted in the record, so it is used only at a site known to be a school crossing. Both limits live in `data/fhwa_psc.json` (`site_condition`, `only_for`), not in code. The finish gate refuses a sentence that names a "needs a site check" fix without saying it needs a check.
+
+**The plan** (`nml plan CITY`, `nearmisslens/plan.py`) takes, for each corner, the best low-cost fix in the three supported tiers, one per corner, never stacked. It keeps the largest low-cost estimate of any tier apart as the "textbook" figure. The gap between the two is the headline: how much of the usual estimate rests on studies of other kinds of sites or on a check nobody has made.
+
+**Regression to the mean, measured on the cases.** The method:
+1. Take the corners with no recorded project in 2022–2025.
+2. Find the top quarter by crashes in 2022–2023.
+3. Compare their 2024–2025 / 2022–2023 ratio with that of all such corners.
+4. The quotient is the share of a worst corner's count expected to persist. The supported totals are shown with and without it.
+
+It is measured within the listed corners. Where those corners were themselves picked by the same five years of records (the crash-cluster cities), it understates the effect.
+
+**Requests already denied** (`nearmisslens/studyrequests.py`). New York publishes its signal study requests (w76s-c5u4, 77,067 rows) with street names but no coordinates. They are matched to a corner by its two street names after normalising suffixes, directions and ordinals, and unmatched corners are left out, not guessed. A corner goes on the re-request list only if all of these hold:
+- a request for a fix was denied;
+- the fix is still not recorded there;
+- the denial came before the case's five-year window;
+- pedestrians were injured in that window.
+
+The sentence says what the record shows since the denial, and the number checker checks it.
+
 ## Related work
 
 Agents that test their own hypotheses already exist. POPPER (Huang et al., 2025, arXiv 2502.09858) has an agent design falsification experiments for free-form hypotheses, with sequential error control; DiscoPER (Zhao et al., 2026, arXiv 2607.01131) keeps only claims that pass statistical tests. Studies of AI analysts show why the verdict should not be left to the model: they report opposite conclusions on the same data depending on framing (Miao et al., 2026, arXiv 2607.01507; Alizadeh et al., 2026, arXiv 2606.11456). Placebo and refutation tests are standard tools (DoWhy's refuters; the pre-period comparability check in Hauer's comparison-group method, FHWA-HRT-17-082), and later-treated sites are a common comparison group in staggered roll-outs.

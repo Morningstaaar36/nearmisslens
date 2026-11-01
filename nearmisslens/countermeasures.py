@@ -58,11 +58,15 @@ def export_allowed(path: Path = CMF_PATH, out: Path = ALLOWED_PATH) -> int:
     return int(raw["crfid"].isin(ids).sum())
 
 
-def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame) -> dict:
+def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame,
+           site_kinds: frozenset[str] = frozenset()) -> dict:
     """The CMF estimate for one countermeasure at one site, from its curated records only. A record is eligible if
-    it is for this site's control (an 'uncontrolled' record never serves a signal), has at least 3 stars, and the
-    crash record shows the population it covers (wet-road, darkness and walking-along records need those shares).
-    The pick is the record FHWA's fact sheet cites, else the median of the eligible ones; never the largest effect."""
+    it is for this site's control (an 'uncontrolled' record never serves a signal), has at least 3 stars, the crash
+    record shows the population it covers (wet-road, darkness and walking-along records need those shares), and a
+    record studied only at one kind of site ("only_for", e.g. school crossings) is used only where the site is known
+    to be that kind. The pick is the record FHWA's fact sheet cites, else the median of the eligible ones; never the
+    largest effect. A precondition of the chosen record's study sites that the public data cannot show
+    ("site_condition", e.g. a change interval below ITE practice) is returned, so the fix is marked for a check."""
     allow = item.get("cmf_allow") or []
     if not allow:
         return {"quantified": False, "reason": item.get("no_cmf_reason", "no CMF Clearinghouse record fits")}
@@ -71,6 +75,9 @@ def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame) -> di
     for e in allow:
         if e["crfid"] not in rows.index:
             why.append(f"CMF {e['crfid']} is not in the Clearinghouse file")
+            continue
+        if e.get("only_for") and e["only_for"] not in site_kinds:
+            why.append(f"CMF {e['crfid']} was measured only at {e['only_for']}, and this site is not known to be one")
             continue
         r = rows.loc[e["crfid"]]
         if "any" not in e["control"] and control not in e["control"]:
@@ -105,7 +112,8 @@ def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame) -> di
     return {"quantified": True, "cmf_id": e["crfid"], "cmf": round(float(r["cmf"]), 3), "stars": stars_label(r["stars"]),
             "cmf_name": r["name"], "cmf_crash_type": r["crash_type"], "cmf_severity": r["severity"],
             "population": pop, "targets": POPULATIONS[pop], "target_crashes_5y": populations[pop],
-            "chosen_by": how, "cmf_range": [round(min(cmfs), 3), round(max(cmfs), 3)]}
+            "chosen_by": how, "fhwa_cited": bool(e.get("fhwa_cited")), "site_condition": e.get("site_condition"),
+            "cmf_range": [round(min(cmfs), 3), round(max(cmfs), 3)]}
 
 
 def stars_label(stars: float) -> str:
