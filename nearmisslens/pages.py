@@ -98,7 +98,8 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
         if ag.exists():
             a = json.loads(ag.read_text())
             if a.get("finished"):
-                rep["agent"] = {"summary": a.get("summary"), "claims": a.get("claims") or [], "turns": a.get("turns"),
+                keep, gone = engineer.recheck_agent(a, full)  # against today's receipts, not the ones it saw
+                rep["agent"] = {"summary": a.get("summary"), "claims": keep, "superseded": gone, "turns": a.get("turns"),
                                 "usd": a.get("usd"), "refused": a.get("refused_attempts") or [],
                                 "receipts": {r["id"]: r["tool"] for r in a.get("receipts") or []}}
         row["claim_errors"] = len(rep["claim_errors"])

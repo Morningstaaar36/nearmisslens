@@ -834,6 +834,9 @@
     "11-State Parks": "the New York State Office of Parks",
     "12-Local Parks": "the city's parks department"
    },
+   "operators_by_name": {
+    "MTA": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)"
+   },
    "source": "NYSDOT Roadway Inventory (RoadwayData FeatureServer layer 0)",
    "provenance": {
     "found_by": "seed (written by hand); owner codes read from the layer's distinct values"
@@ -960,7 +963,8 @@
     "status": "statusdescription",
     "requested": "daterequested",
     "status_date": "statusdate",
-    "id": "referencenumber"
+    "id": "referencenumber",
+    "borough": "borough"
    },
    "denied_when_status_has": "Denial",
    "fix_requests": {

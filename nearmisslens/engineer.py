@@ -262,6 +262,25 @@ def refreshed_fixes(report: dict) -> dict | None:
     return {"crashes": d.get("crashes"), **brief.fix_options(d, load_cmf())}
 
 
+def recheck_agent(agent: dict, current: dict) -> tuple[list[dict], list[dict]]:
+    """An agent's saved claims checked again against the corner's current receipts, tool by tool: a claim that no
+    longer passes (the record or a rule changed after it was written) is set apart with the reason."""
+    tool_of = {r["id"]: r["tool"] for r in agent.get("receipts") or []}
+    desk = Desk()
+    desk.places.add(current["junction"]["name"].split(",")[0])
+    keep, gone = [], []
+    for c in agent.get("claims") or []:
+        tool = tool_of.get(c.get("receipt"))
+        data = current["findings"].get(tool) if tool else None
+        text = strip_places(c.get("text", ""), desk)
+        if data is None:  # a receipt the code's case does not have (e.g. the city screen): kept, not rechecked
+            keep.append({**c, "tool": tool, "rechecked": False})
+            continue
+        errors = context.FactCheck(data).text(text) + conditional_fix_errors(text, data) + wording(text)
+        (gone if errors else keep).append({**c, "tool": tool, **({"errors": errors} if errors else {})})
+    return keep, gone
+
+
 def _next_rid(receipts: list[dict]) -> str:
     """A receipt id not yet used: one past the largest (counting would reuse an id after a receipt is removed)."""
     return f"R{max((int(r['id'][1:]) for r in receipts if str(r.get('id', '')).startswith('R')), default=0) + 1}"
@@ -275,7 +294,7 @@ def refresh(report: dict) -> dict:
         return recheck(report)
     findings = dict(report["findings"])
     who = dict(findings["who_must_act"])
-    who["owners"] = jurisdiction.merge_parties(who["owners"])  # reports saved before owners were merged per agency
+    who["owners"] = jurisdiction.merge_parties([jurisdiction.relabel(o) for o in who["owners"]])  # merged per agency
     who["summary"] = "; ".join(f"{r['party']} ({', '.join(r['roads'])})" for r in who["owners"]) or "no road owner found"
     findings["who_must_act"] = who
     tp = dict(findings["test_programs"])  # the program verdicts and their wording, from the current study results

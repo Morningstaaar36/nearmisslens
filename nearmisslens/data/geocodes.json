@@ -467,6 +467,12 @@
 "name": "86 Street & Stillwell Avenue",
 "city": "nyc"
 },
+"8th street & mission street": {
+"lat": 37.7774549,
+"lon": -122.4131749,
+"name": "8th Street & Mission Street",
+"city": "sf"
+},
 "9 avenue & west 47 street": {
 "lat": 40.761606315494,
 "lon": -73.990315176745,
@@ -1319,6 +1325,12 @@
 "name": "Eastern Parkway & Washington Avenue",
 "city": "nyc"
 },
+"eddy street & polk street": {
+"lat": 37.7831061,
+"lon": -122.4191918,
+"name": "Polk Street & Eddy Street",
+"city": "sf"
+},
 "edgecombe avenue & west 145 street": {
 "lat": 40.823647800726,
 "lon": -73.9438427568398,
@@ -1504,6 +1516,12 @@
 "lon": -73.9834019715814,
 "name": "Myrtle Avenue & Gold Street",
 "city": "nyc"
+},
+"gough street & market street": {
+"lat": 37.7730339,
+"lon": -122.4218724,
+"name": "Market Street & Gough Street",
+"city": "sf"
 },
 "graham avenue & metropolitan avenue": {
 "lat": 40.7145316012505,

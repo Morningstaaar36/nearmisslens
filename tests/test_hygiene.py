@@ -98,3 +98,12 @@ def test_readme_corner_geocodes_offline(monkeypatch):
     monkeypatch.setattr(config.SETTINGS, "replay", True)
     lat, lon, name = brief.geocode("Bruckner Boulevard & Hunts Point Avenue, Bronx, NY")
     assert abs(lat - 40.8202) < 0.002 and abs(lon + 73.8906) < 0.002
+
+
+def test_replay_street_layout_falls_back_to_the_map_cache_whatever_the_clock(monkeypatch):
+    from nearmisslens import context
+    calls = []
+    monkeypatch.setattr(context, "overpass", lambda q, timeout=120: (_ for _ in ()).throw(FileNotFoundError("not cached")))
+    monkeypatch.setattr(context, "_osm_from_map", lambda lat, lon: calls.append(1) or ([{"highway": "traffic_signals"}], [], 0.0))
+    out = context.osm(40.0, -73.0)
+    assert calls and out.get("signals", 0) >= 1

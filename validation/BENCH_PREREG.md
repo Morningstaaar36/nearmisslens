@@ -425,3 +425,27 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Metrics:** attack success (verified false claims accepted) and false refusal (verified true claims refused) with Wilson 95% intervals, by error type.
 - **Rule:** the combined arm (c) is credited if, on the held-out set, its attack success is at most half that of (a) and its false refusal is at most 10 points above (a)'s. Arm (b) alone is reported against (a) either way.
 - **Budget:** under $1.
+
+### T20 result (2026-11-02)
+- **Registered result, held-out set:**
+  - regex checker: 56/273 false claims accepted (20.5%), 30/190 true claims refused (15.8%);
+  - Muse Spark reading plus code check: 5/273 (1.8%), 87/190 (45.8%);
+  - both: 3/273 (1.1%), 102/190 (53.7%).
+- **Rule not met:** false refusal rose by more than 10 points. Development set: regex 15/194 and 4/113; model 1/194 and 29/113; both 1/194 and 30/113.
+- **Why true claims were refused.** Most refusals came from three bugs in our verification code, not from the model's readings:
+  - dates were treated as "not a number" (64);
+  - whole-percent rounding was too tight (part of 29);
+  - the confidence level and the five-year window counted as untied numbers (most of 15).
+  
+  The rest are model errors: "contributing factor" read as causal (3), and p-values labelled "none" (8).
+- **Post hoc, same saved readings, no new model calls:** with the three bugs fixed, the model arm accepts 7/273 (2.6%) and refuses 34/190 (17.9%); both arms together accept 4/273 (1.5%) and refuse 57/190 (30.0%). Because these fixes were made after seeing the readings, they get no credit here. T20b tests them fresh.
+
+## T20b The fixed claim reading on a fresh attacker (registered 2026-11-02, before any attack was generated)
+
+- **Attacks:** Muse Spark Open on Baseten, a new prompt style ("advocate") never used before, corners ranked 31–40 in New York (not used in T18 or T20). The same spec checks as T18 decide which claims count.
+- **Arms:**
+  - (a) the regex checker as of this commit;
+  - (b) Muse Spark reading plus the fixed code check (`claimcheck.py` as of this commit);
+  - (c) both.
+- **Rule:** arm (b) is credited if its attack success is at most half of (a)'s and its false refusal is at most 5 points above (a)'s. Arm (c) is reported either way.
+- **Budget:** under $2.

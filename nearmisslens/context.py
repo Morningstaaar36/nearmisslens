@@ -150,7 +150,7 @@ def osm(lat: float, lon: float) -> dict:
         el = js.get("elements", [])
         nodes = [e.get("tags", {}) for e in el if e["type"] == "node"]
         ways = [e.get("tags", {}) for e in el if e["type"] == "way"]
-    except RuntimeError:
+    except (RuntimeError, FileNotFoundError):  # Overpass down, or (replay) not cached: the OSM API's cached map
         nodes, ways, secs = _osm_from_map(lat, lon)
     roads = {}
     for w in ways:
@@ -240,13 +240,13 @@ INSTRUCTIONS = (
 
 # a number written next to one of these words must be the record's value for it (the field names it maps to)
 LABELS = [  # (name, words before the number, words after it, field-name pattern); the first match decides
+    ("pedestrians killed", None, r"^\s*pedestrians?\b[^.;,\d]{0,20}\b(killed|died|dead)\b", r"pedestrian.*kill"),
+    ("cyclists killed", None, r"^\s*(cyclists?|bicyclists?)\b[^.;,\d]{0,20}\b(killed|died|dead)\b", r"cyclist.*kill"),
+    ("deaths", None, r"^[^.;,\d]{0,30}\b(killed|deaths?|died|dead|fatal|fatalities)\b", r"killed|death|fatal"),
     ("crashes avoided", r"\b(prevent|prevents|avoid|avoids|avoided|cut|cuts|save|saves)\b[^.;]{0,25}$", None,
      r"avoided"),
-    ("pedestrians killed", None, r"^\s*pedestrians?\b[^.;\d]{0,20}\b(killed|died|dead)\b", r"pedestrian.*kill"),
-    ("cyclists killed", None, r"^\s*(cyclists?|bicyclists?)\b[^.;\d]{0,20}\b(killed|died|dead)\b", r"cyclist.*kill"),
-    ("deaths", None, r"^[^.;\d]{0,30}\b(killed|deaths?|died|dead|fatal|fatalities)\b", r"killed|death|fatal"),
-    ("pedestrians injured", None, r"^\s*pedestrians?\b[^.;\d]{0,20}\b(injured|hurt)\b", r"pedestrian.*injur"),
-    ("cyclists injured", None, r"^\s*(cyclists?|bicyclists?)\b[^.;\d]{0,20}\b(injured|hurt)\b", r"cyclist.*injur"),
+    ("pedestrians injured", None, r"^\s*pedestrians?\b[^.;,\d]{0,20}\b(injured|hurt)\b", r"pedestrian.*injur"),
+    ("cyclists injured", None, r"^\s*(cyclists?|bicyclists?)\b[^.;,\d]{0,20}\b(injured|hurt)\b", r"cyclist.*injur"),
     ("injury crashes", None, r"^\s*(\w+\s){0,2}(injury crashes|crashes with injur)", r"injury_crash"),
     ("sites", None, r"^\s*(\w+\s)?(sites|intersections|locations)\b", r"(^|_)sites$"),
     ("crashes", None, r"^\s*(\w+\s){0,2}crash(es)?\b", None),  # any count, bound below to its subject and year
@@ -254,6 +254,9 @@ LABELS = [  # (name, words before the number, words after it, field-name pattern
 ]
 NAME_KEYS = ("label", "phrase", "countermeasure", "factor", "words", "party", "program", "pattern")  # what a
 # sentence can name; a pattern such as "time: night" is also named by its value ("night")
+GENERIC = {"crashes", "crash", "street", "streets", "signal", "signals", "pedestrian", "pedestrians", "recorded",
+           "vehicle", "vehicles", "people", "injury", "injured", "dedicated", "reduced", "medians", "improve",
+           "leading", "contributing", "factor", "other", "night"}
 NAIVE = re.compile(r"simple|naive|before/after|before-after|uncontrolled|without a comparison", re.I)
 COMPARE = re.compile(r"\b(city|citywide|city-wide|priority|other|across|screened|compared|against|vs|versus)\b", re.I)
 BASELINE = re.compile(r"baseline|citywide|^city$|screen", re.I)
@@ -306,6 +309,11 @@ def _named(facts) -> list[tuple[str, tuple]]:
                             val = re.split(r"[:=]", part, 1)[-1].strip().lower()
                             if len(val) >= 5:
                                 out.append((val, path))
+                            out.extend((w, path) for w in re.findall(r"[a-z]{5,}", val) if w not in GENERIC)
+                    if k == "countermeasure":  # "Backplates with Retroreflective Borders" is also "backplates"
+                        head = v.split()[0].lower()
+                        if len(head) >= 6 and head not in GENERIC:
+                            out.append((head, path))
             for k, v in o.items():
                 walk(v, path + (str(k),))
         elif isinstance(o, (list, tuple)):
@@ -359,8 +367,11 @@ class FactCheck:
         rows = [r for r in self.paths if any(r[0][:len(b)] == b for b in bound)] if bound else []
         rows = rows or self.paths
         naive = bool(NAIVE.search(sentence))
+        compare = bool(COMPARE.search(sentence))
         out = set()
         for p, k, v in rows:
+            if not compare and ("city" in k or any(isinstance(x, str) and BASELINE.search(x) for x in p)):
+                continue  # the city-wide share is not this corner's
             if "naive" in k and not naive:
                 continue
             if 0 <= abs(v) <= 1:
@@ -417,7 +428,9 @@ class FactCheck:
                     if not any(abs(v) < 1e-9 for v in self.by_label[name]):
                         bad.append(f"says no {name}, but the record has {max(self.by_label[name]):g}")
                     break
-        if NEG.search(sentence) and COUNT_WORDS.search(sentence) and bound:
+        local = re.search(r"\b(here|this corner|the corner|at this|recorded at)\b", sentence, re.I)
+        if NEG.search(sentence) and COUNT_WORDS.search(sentence) and bound and not (local and not re.search(
+                r"\bcrash", sentence[NEG.search(sentence).start():], re.I)):
             counts = [(p, k, v) for p, k, v in self.paths if any(p[:len(b)] == b for b in bound)
                       and re.fullmatch(r"crashes|sites|k|n|count|injury_crashes", k) and v > 0]
             if counts:
@@ -426,7 +439,9 @@ class FactCheck:
 
     def _text(self, text: str) -> list[str]:
         bad = []
-        sentences = [(m.start(), m.end()) for m in re.finditer(r"[^.;!?]+(?:[.;!?]|$)", text)] or [(0, len(text))]
+        # a sentence ends at . ; ! ? followed by a space and a capital (or the end), never at a decimal point ("3.9")
+        sentences = [(m.start(), m.end()) for m in re.finditer(r".+?(?:[.;!?](?=\s+[A-Z\u201c\"(])|$)", text, re.S)] \
+            or [(0, len(text))]
         sentence_of = lambda i: next((text[a:b] for a, b in sentences if a <= i < b), text)
         for a, b in sentences:
             sent = text[a:b]
@@ -452,6 +467,7 @@ class FactCheck:
                 continue  # years carry no label
             head = text[max(0, m.start() - 30):m.start()]
             sent = sentence_of(m.start())
+            tail = re.split(r"[,;]", tail, 1)[0]  # the number's own clause: "129 injury crashes, about 26 a year"
             for name, before, after, pattern in LABELS:
                 if (before and re.search(before, head, re.I)) or (after and re.search(after, tail, re.I)):
                     if name in ("crashes", "injury crashes") and panel._decimals(t) and not PER_YEAR.search(tail):

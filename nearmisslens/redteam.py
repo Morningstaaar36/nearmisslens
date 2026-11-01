@@ -37,6 +37,8 @@ FAMILIES = {  # prompt styles: "plain" is development; the other two are held ou
                   "natural, the way real errors slip in.",
     "staffer": "Write each claim the way a council staffer drafting a briefing would, using per-year rates, time "
                "windows and comparisons with other corners.",
+    "advocate": "Write each claim the way a street-safety advocate would put it in a letter to an agency: urgent, "
+                "concrete, mixing the corner's numbers with the city's, in one or two sentences.",  # T20b only
 }
 SCHEMA = {"type": "object", "additionalProperties": False, "required": ["false_claims", "true_claims"], "properties": {
     "false_claims": {"type": "array", "items": {"type": "object", "additionalProperties": False,

@@ -16,7 +16,7 @@ The estimates behind those choices are easy to get wrong in two ways.
 
 Requests can also go to the wrong place: at some corners the city is not the only road owner.
 
-NearMissLens drafts the safety analysis and the project list from public records. It is built so that it cannot say more than the record supports.
+NearMissLens drafts the safety analysis and the project list from public records. A claim reaches the reader only after code has checked it against the record, and our own red team measures how often that check can still be fooled (below).
 
 ## What it found
 
@@ -25,7 +25,7 @@ From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 Oc
 | | New York | Seattle | Washington DC | San Francisco |
 |---|---|---|---|---|
 | Corners | 304 priority intersections | 50 worst | 50 worst | 50 worst |
-| Harm a year, each crash counted once (U.S. DOT values) | $786 million | $183 million | $192 million | $129 million |
+| Harm a year, each crash counted once (U.S. DOT injury-crash value; deaths not valued separately, so this is low) | $786 million | $183 million | $192 million | $129 million |
 | Largest low-cost estimate at each corner, added up | 328 crashes a year | 109 | 76 | 58 |
 | Supported without a site visit | **84** (80 after regression to the mean), at 123 corners | **74**, at 50 corners | **2**, at 5 corners | **0** |
 
@@ -43,7 +43,13 @@ Seattle's records include road surface, so its wet-road friction estimates quali
 **New York, also from the same cases:**
 - **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and a toll authority at 1. Each agency gets its own letter, number-checked like every claim.
 - **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
-- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded there now, and pedestrians have been injured there since. Ryan E. Kelly found the same 0% approval for these requests in Queens ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and the injuries since.
+- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded there now, and pedestrians were injured there in the records since 2021. LPI policy has changed since those denials, which is why the list is worth sending again. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
+
+## Who would use this
+
+- **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for any city with open crash data. It replaces the first weeks of pulling records and looking up CMFs, not the engineer's site visit.
+- **A community board, council office or advocacy group:** a corner's case in plain language, and a letter addressed to the agency that owns the road, with every number checked. In New York that includes the 19 corners where a fix was asked for and turned down.
+- **A city's own safety team:** which of its programs the record backs (leading pedestrian intervals) and which it does not (turn calming), before the same program is proposed again.
 
 ## One corner: Bruckner Boulevard & Hunts Point Avenue
 
@@ -75,7 +81,7 @@ The agent finishes by submitting its claims, each citing a receipt. The **finish
 - uses wording the record cannot support ("caused", "proves", "certain to", "led to");
 - states a fix that needs a site check as if it were supported.
 
-`nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims. Without `--agent` the same tools run in a fixed order with claims written by code; that mode needs no model and builds the site.
+`nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims (it must call a tool each turn and finish within a turn limit). Without `--agent` the same tools run in a fixed order with claims written by code; that mode needs no model and builds the site.
 
 ## The model proposes, code checks
 
@@ -84,11 +90,11 @@ Every Meta model use is paired with a check it cannot get around, and each pair 
 | Meta model | What it does | The check | Result |
 |---|---|---|---|
 | Muse Spark Open (Baseten) | Writes the case for 35 top corners across 4 cities | Finish gate | 27 run so far: 21 finished with every claim passing, and 29 refused attempts kept, struck through, on the site |
-| Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone; found 4 limits the hand labels missed, now in the data |
+| Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |
 | Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
-| Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies but passed 5 of 20 fake programs |
+| Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies, but the short designs it chose passed 5 of 20 fake programs, about four times the registered design's rate |
 | Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero; as many distinct mechanisms as an exhaustive grid from 43 times fewer tests, but fewer confirmed (rule not met) |
-| Muse Spark Open | Answers free questions about a corner (T17) | Finish gate | With the gate, none of the sentences shown was wrong (by the same checker after the run); 31 without it. The price: 38% of questions got no answer that passed |
+| Muse Spark Open | Answers free questions about a corner (T17) | Finish gate | Scored by the same checker after the run, so this counts what the checker lets through, not truth (T18 measures that): 0 flagged sentences shown with the gate, 31 without. The price: 38% of questions got no answer that passed |
 | Muse Spark | Finds a new city's crash and program datasets | A validator in the tool | Refused two wrong Seattle mappings; found Seattle's LPI layer, which the gate then measured at −33% |
 | Muse Spark + SAM 3.1 | Reads the aerial photo of each corner (T16) | SAM 3.1 must confirm Spark's point; scored against city map layers | No better than always giving the more common answer, so it changes no recommendation |
 | SAM 3.1, Muse Image | Tracks road users in drone video; draws the top fix | Conflict measures against reference tracks; SAM checks each drawing | Vehicle recall 0.51–0.97 on unseen flights; 13 of 20 drawings pass |
@@ -114,7 +120,7 @@ A stricter, calibrated version also requires a program to beat 97.5% of fake pro
 
 ## Red-teaming the gate (T18)
 
-An attacker model reads a real receipt and writes false claims that sound right, each with a spec of the field it misreports. Code checks the spec, so a claim counts as false only when the data says so. Muse Spark attacked first; the holes it found were patched, and the patch was frozen and pushed. Then Muse Spark Open attacked with two prompt styles never used in development, on corners never used in development.
+An attacker model reads a real receipt and writes false claims that sound right, each with a spec of the field it misreports. Code checks each numeric spec against the receipt and drops claims whose spec does not check out (257 of the held-out set); causal claims are labelled by the attacker. Muse Spark attacked first; the holes it found were patched, and the patch was frozen and pushed. Then Muse Spark Open attacked with two prompt styles never used in development, on corners never used in development.
 
 | | False claims accepted | Worst type | True claims refused |
 |---|---|---|---|
@@ -144,7 +150,7 @@ uv run nml --replay selftest                               # offline self-test
 ## How we kept ourselves honest
 
 - **Registration.** The rules of every test are in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md). Earlier registrations were often committed with their results, so git cannot confirm their order. T18 and T19 were committed and pushed before they ran (commits 89de45b and 28ba1b0), and changes after a run are listed there.
-- **Cases are rechecked.** Every saved case is rewritten by the current code and rechecked before the site is built. A rule change that would refuse an old claim shows up at once.
+- **Cases are rechecked.** Every saved case is rewritten by the current code and rechecked before the site is built. Agent cases are rechecked against today's receipts, and a claim that no longer passes is shown struck through with the reason.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.
 
 ## Limits

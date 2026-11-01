@@ -94,7 +94,15 @@ def regression_to_mean(rows: list[dict]) -> dict:
     top = sorted(ok, key=lambda r: b[id(r)], reverse=True)[:max(2, int(TOP_SHARE * len(ok)))]
     ratio = lambda rs: sum(a[id(r)] for r in rs) / max(sum(b[id(r)] for r in rs), 1)
     factor = min(1.0, ratio(top) / max(ratio(ok), 1e-9))
-    return {"factor": round(factor, 3), "corners": len(ok), "top": len(top), "years_before": list(BEFORE),
+    import random
+    rng, boots = random.Random(7), []
+    for _ in range(1000):  # bootstrap over corners: the selection of the worst quarter is redone in each resample
+        s = [rng.choice(ok) for _ in ok]
+        t = sorted(s, key=lambda r: b[id(r)], reverse=True)[:max(2, int(TOP_SHARE * len(s)))]
+        boots.append(min(1.0, ratio(t) / max(ratio(s), 1e-9)))
+    boots.sort()
+    return {"factor": round(factor, 3), "factor_ci95": [round(boots[24], 3), round(boots[974], 3)],
+            "corners": len(ok), "top": len(top), "years_before": list(BEFORE),
             "years_after": list(AFTER), "top_ratio": round(ratio(top), 3), "all_ratio": round(ratio(ok), 3)}
 
 
@@ -103,7 +111,10 @@ def summarize(rows: list[dict], rtm: dict, distinct: dict | None) -> dict:
     avoided = sum(r["best"]["crashes_avoided_per_year"] for r in sup)
     usd = sum(r["best"]["harm_avoided_usd_per_year"] for r in sup)
     text = sum(r["textbook"]["crashes_avoided_per_year"] for r in rows if r["textbook"])
-    f = rtm.get("factor") or 1.0
+    f = rtm.get("factor") or 1.0  # no measurable factor (too few corners without a project): shown uncorrected
+    # totals add corners, so a crash near two corners counts twice; scale by the city's distinct share of crashes
+    once = ((distinct or {}).get("injury_crashes_distinct") or 0) / max(sum(r["injury_crashes"] or 0 for r in rows), 1)
+    once = min(once, 1.0) if once else 1.0
     by_tier: dict[str, int] = {}
     for r in sup:
         by_tier[r["best"]["evidence"]] = by_tier.get(r["best"]["evidence"], 0) + 1
@@ -122,6 +133,9 @@ def summarize(rows: list[dict], rtm: dict, distinct: dict | None) -> dict:
             "corners_with_supported_fix": len(sup), "supported_by_tier": by_tier,
             "crashes_avoided_per_year_total": round(avoided, 1),
             "crashes_avoided_per_year_after_rtm": round(avoided * f, 1),
+            "distinct_share": round(once, 3),
+            "crashes_avoided_per_year_counted_once": round(avoided * once, 1),
+            "crashes_avoided_per_year_counted_once_after_rtm": round(avoided * once * f, 1),
             "harm_avoided_usd_per_year_total": round(usd, -5),
             "harm_avoided_usd_per_year_after_rtm": round(usd * f, -5),
             "textbook_crashes_avoided_per_year": round(text, 1),
@@ -135,15 +149,16 @@ def by_agency(rows: list[dict]) -> list[dict]:
     groups: dict[str, dict] = {}
     for r in rows:
         for o in r["owners"]:
-            g = groups.setdefault(o["party"], {"party": o["party"], "presumed": True, "corners": []})
+            g = groups.setdefault(o["party"], {"party": o["party"], "presumed": True, "corners": [], "recorded": 0})
             g["presumed"] = g["presumed"] and (o["presumed"] or o["confidence"] != "recorded")
+            g["recorded"] += o["confidence"] == "recorded"
             g["corners"].append(r)
     out = []
     for g in groups.values():
         cs = sorted(g["corners"], key=lambda r: -(r["best"] or {}).get("crashes_avoided_per_year", 0))
         sup = [r for r in cs if r["best"]]
         out.append({"party": g["party"], "presumed": g["presumed"], "corners": [r["slug"] for r in cs],
-                    "intersections": len(cs), "injury_crashes_total": int(sum(r["injury_crashes"] or 0 for r in cs)),
+                    "intersections": len(cs), "intersections_owner_recorded": g["recorded"], "injury_crashes_total": int(sum(r["injury_crashes"] or 0 for r in cs)),
                     "intersections_with_supported_fix": len(sup),
                     "intersections_needing_site_check": sum(1 for r in cs if not r["best"] and r["textbook"]
                                                             and r["textbook"]["evidence"] == "needs a site check"),
@@ -160,14 +175,20 @@ def agency_letter(city: str, g: dict, rows: dict[str, dict], records_to: str | N
     """A request to one agency for its corners, written by code from the plan's own totals and checked by the number
     checker; the per-corner lines are a table built from the rows."""
     c = opendata.city(city) or {}
-    facts = {k: g[k] for k in ("intersections", "injury_crashes_total", "intersections_with_supported_fix",
+    facts = {k: g[k] for k in ("intersections", "intersections_owner_recorded", "injury_crashes_total",
+                               "intersections_with_supported_fix",
                                "intersections_needing_site_check", "crashes_avoided_per_year_total",
                                "harm_avoided_usd_per_year_total")}
     facts["years"] = context.YEARS
     facts["records_to"] = records_to or asof().isoformat()
+    n, rec = g["intersections"], g["intersections_owner_recorded"]
+    whose = ("the road-owner records list you for at least one of the roads" if rec == n else
+             "we take you to be responsible for at least one of the roads, because the state's road inventory does not "
+             "list them" if rec == 0 else
+             f"you are responsible for at least one of the roads (listed in the road-owner records at {rec} of them, "
+             "and taken to be yours at the rest because the state's road inventory does not list them)")
     body = (f"In the {facts['years']} years of public police crash records up to {facts['records_to']}, the "
-            f"{g['intersections']} high-crash intersections in {c.get('name', city)} where "
-            f"{'we presume' if g['presumed'] else 'the records show'} you are responsible for at least one of the roads "
+            f"{n} high-crash {'intersection' if n == 1 else 'intersections'} in {c.get('name', city)} where {whose} "
             f"had {g['injury_crashes_total']:,} injury crashes. "
             + (f"At {g['intersections_with_supported_fix']} of them, a low-cost fix the evidence supports would avoid "
                f"about {g['crashes_avoided_per_year_total']} crashes a year, worth about "
@@ -192,7 +213,7 @@ def agency_letter(city: str, g: dict, rows: dict[str, dict], records_to: str | N
                       "crashes_avoided_per_year": b["crashes_avoided_per_year"] if b else None,
                       "check_first": (r["textbook"] or {}).get("verify_on_site") if not b else None,
                       "copy_to": "; ".join(r["requesters"])})
-    return {"to": g["party"], "subject": f"{g['intersections']} high-crash intersections on your roads",
+    return {"to": g["party"], "subject": f"{g['intersections']} high-crash {'intersection' if g['intersections'] == 1 else 'intersections'} on your roads",
             "body": body if not errors else None, "refused": errors, "facts": facts, "table": table}
 
 
@@ -206,6 +227,13 @@ def distinct_totals(city: str) -> dict | None:
 
 def build(city: str, runs_dir: Path | None = None, reports: list[dict] | None = None) -> dict:
     reports = reports if reports is not None else cases(city, runs_dir)
+    seen, unique = set(), []
+    for r in reports:  # a list can name the same point twice (two screened rows, one place): count it once
+        key = (round(r["junction"].get("lat") or 0, 5), round(r["junction"].get("lon") or 0, 5))
+        if key not in seen:
+            seen.add(key)
+            unique.append(r)
+    reports = unique
     rows = [corner(r) for r in reports]
     rtm = regression_to_mean(rows)
     dates = sorted({r.get("asof") for r in reports if r.get("asof")})

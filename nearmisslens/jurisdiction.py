@@ -31,6 +31,20 @@ def _agency(label: str, city: dict | None, fields: dict) -> str:
     return label.format(**fields)
 
 
+def operator(a: dict, road: str) -> str | None:
+    """The operator a road's own name gives (registry "operators_by_name", e.g. "MTA-Queens-Midtown Tunnel")."""
+    return next((v for k, v in (a.get("operators_by_name") or {}).items() if k.lower() in (road or "").lower()), None)
+
+
+def relabel(owner: dict) -> dict:
+    """A saved owner named by the current registry: a generic toll-authority label becomes the operator its road names."""
+    from . import opendata
+    a = next((x for x in opendata.load_registry() if x.get("source") == (owner.get("basis") or {}).get("dataset")
+              and x.get("operators_by_name")), None)
+    name = operator(a, " ".join(owner.get("roads") or [owner.get("road") or ""])) if a else None
+    return {**owner, "party": name} if name and owner.get("confidence") == "recorded" else owner
+
+
 def owners(lat: float, lon: float, streets: list[str]) -> dict:
     """Road owners near the point from the jurisdiction adapters, and the junction's streets they do not list."""
     city = opendata.city(context.city_of(lat, lon))
@@ -49,7 +63,7 @@ def owners(lat: float, lon: float, streets: list[str]) -> dict:
             route = " ".join(str(r.get(k) or "") for k in a.get("route_fields", [])).strip()
             name = r.get(a["name_field"])
             road = f"{name} ({route})" if name and route else (name or route or "an unnamed segment")
-            label = a.get("owners", {}).get(code, code)
+            label = operator(a, name or road) or a.get("owners", {}).get(code, code)
             party = _agency(label, city, {"region": r.get(a.get("region_field", ""), "")})
             found.append({"party": party, "role": "owner", "road": road, "route": route or None,
                           "basis": {"dataset": a["source"], "field": a["owner_field"], "value": code},

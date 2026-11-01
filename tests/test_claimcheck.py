@@ -30,3 +30,13 @@ def test_scalings_for_shares_changes_and_money():
     assert C.verify("Turn calming fell 16%.", R, a("fell 16%", "programs.0.theta", 16, "change")) == []
     assert C.verify("worth $1.3 million", R, a("$1.3 million", "options.0.harm_avoided_usd_per_year", 1.3, "money")) == []
     assert C.verify("Turn calming was tested at 1,651 sites.", R, a("1,651 sites", "programs.0.sites", 1651, "count"))
+
+
+def test_dates_rounded_percentages_and_frame_numbers():
+    rec = {"crashes": {"since": "2021-10-31", "crashes": 172}, "patterns": [{"city_share": 0.062}]}
+    a = lambda q, f, v, k: {"assertions": [{"quote": q, "field": f, "value": v, "kind": k}], "causal_or_certain": False,
+                            "untied": ["five", "95%"]}
+    assert C.verify("172 crashes since October 31, 2021, in the five-year window", rec,
+                    a("since October 31, 2021", "crashes.since", 2021, "year")) == []
+    assert C.verify("about 6% at priority junctions", rec, a("6% at priority junctions", "patterns.0.city_share", 6, "share")) == []
+    assert C.verify("about 8% at priority junctions", rec, a("8% at priority junctions", "patterns.0.city_share", 8, "share"))

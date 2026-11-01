@@ -45,16 +45,20 @@ INSTRUCTIONS = (
 
 
 def _close(stated: float, rv: float, kind: str) -> bool:
-    """Whether the stated value is the record's value, allowing rounding and the usual scalings."""
-    cands = [rv]
-    if kind in ("share", "change"):
-        cands += [100 * rv, 100 * abs(1 - rv)] if abs(rv) <= 2 else []
-        cands += [abs(rv)]
-    if kind == "money":
-        cands += [rv / 1e6, rv / 1e3]
+    """Whether the stated value is the record's value, allowing rounding and the usual scalings: a percentage may be
+    rounded to a whole number (6.2% written as 6%), a count to its nearest whole, money to one decimal in millions."""
     s = abs(stated)
+    if kind in ("share", "change"):
+        cands = [100 * rv, 100 * abs(1 - rv)] if abs(rv) <= 2 else []
+        return any(abs(s - abs(c)) <= 0.5 for c in cands + [abs(rv)])
+    cands = [rv] + ([rv / 1e6, rv / 1e3] if kind == "money" else [])
     return any(abs(s - abs(c)) <= max(0.5, 0.01 * abs(c)) if abs(c) >= 10 else abs(s - abs(c)) <= 0.051 + 0.006 * abs(c)
                for c in cands)
+
+
+# numbers every case states about itself rather than about the record: the confidence level, the five-year window,
+# the 100 m radius; a reading that leaves them untied is not an error
+FRAME = re.compile(r"^\W*(95\s*%?|five|5|100|100 ?m(eters|etres)?)\W*$", re.I)
 
 
 def verify(claim: str, receipt: dict, parsed: dict) -> list[str]:
@@ -64,7 +68,8 @@ def verify(claim: str, receipt: dict, parsed: dict) -> list[str]:
     if parsed.get("causal_or_certain"):
         bad.append("states a cause or a certainty")
     for u in parsed.get("untied") or []:
-        bad.append(f"number not tied to the record: {u}")
+        if not FRAME.match(str(u)):
+            bad.append(f"number not tied to the record: {u}")
     if not parsed.get("assertions") and re.search(r"\d", claim):
         bad.append("numbers but no assertion")
     for a in parsed.get("assertions") or []:
@@ -72,6 +77,10 @@ def verify(claim: str, receipt: dict, parsed: dict) -> list[str]:
             bad.append(f"quote not in the claim: {a.get('quote')!r}")
             continue
         rv = get_path(receipt, a.get("field") or "")
+        if isinstance(rv, str) and (a.get("kind") == "year" or re.match(r"\d{4}-\d\d", rv)):
+            if a.get("value") is not None and str(int(a["value"])) not in rv:
+                bad.append(f"{a.get('field')} is {rv}; the claim says {a.get('value')}")
+            continue  # a date: its year must match
         if isinstance(rv, bool) or (rv is not None and not isinstance(rv, (int, float))):
             bad.append(f"{a.get('field')} is not a number")
             continue

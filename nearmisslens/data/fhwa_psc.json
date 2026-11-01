@@ -465,7 +465,9 @@
       "any"
      ],
      "population": "wet",
-     "fhwa_cited": false
+     "fhwa_cited": false,
+     "site_condition": "the pavement's friction is low now (wet-road crashes alone do not show it)",
+     "limit_source": "added after review (the study treated sites chosen for low friction)"
     }
    ],
    "scale": "low-cost"

@@ -163,3 +163,24 @@ def test_t18_holes_stay_closed():
     assert rc.text("The corner had 6 crashes in 2024.") and not rc.text("The corner had 34 crashes in 2024.")
     assert rc.text("No pedestrians were killed here.")
     assert not rc.text("Cyclists: no cyclists were killed here.")
+
+
+def test_post_hoc_probes_from_the_technical_review():
+    from nearmisslens.context import FactCheck
+    fx = FactCheck({"crashes": {"injury_crashes": 129, "pedestrian_injured": 29},
+                    "options": [{"countermeasure": "Backplates with Retroreflective Borders",
+                                 "expected_crashes_avoided_per_year": 3.9},
+                                {"countermeasure": "Reduced Left-Turn Conflict Intersections",
+                                 "expected_crashes_avoided_per_year": 9.5}],
+                    "harm": {"injury_crashes_per_year": 25.8}})
+    assert fx.text("Signal backplates could prevent 3.9 deaths a year.")
+    assert fx.text("Backplates would avoid 9 crashes a year.")
+    assert not fx.text("29 pedestrians injured, none killed.")
+    assert not fx.text("Over five years there were 129 injury crashes, about 25.8 a year.")
+    rc = FactCheck({"crashes": 310, "patterns": [{"pattern": "vehicle: truck or bus", "phrase": "involved a truck or bus",
+                                                  "crashes": 86, "share": 0.277, "city_share": 0.163}]})
+    assert rc.text("16% of crashes here involved a truck or bus.")
+    assert not rc.text("28% of crashes here involved a truck or bus, against 16% at the city's priority corners.")
+    assert rc.text("No crash here involved a truck.")
+    tp = FactCheck({"programs": [{"label": "Leading Pedestrian Interval signals", "sites": 1651}]})
+    assert not tp.text("No Leading Pedestrian Interval signals are recorded here.")
