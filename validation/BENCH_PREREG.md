@@ -316,3 +316,15 @@ deciding role is now called the Arbiter in the docs). No rule, threshold, sample
 - **Why:** in both pilots Muse Spark Open kept exploring and rarely called `test_pattern` (7 of 10 runs stopped without a test), so the agent arm measured the loop, not the model's choice of mechanisms.
 - **Change:** the agent explores with `describe` and at most 8 `query_crashes` calls, then finishes by proposing at most 12 patterns with one sentence each. Code tests every proposal; Holm runs over all of them; survivors get the sealed check. The agent still never sees a later-year crash, and now never sees a test result either. The rule and the other arms are unchanged.
 - **Secondary measure, added now:** *distinct* confirmed findings. Confirmed findings at a corner are merged when their explore-year matching crashes overlap by at least 80%, so "heading south" and "heading south AND going straight ahead" count once. Also reported: findings confirmed by one arm and by no other. Both are labelled as decided after the grid and greedy results were seen.
+
+## T17 Ask the engineer (registered 2026-11-01, before any question was asked)
+
+- **Question:** does the claim checker keep wrong sentences away from the person asking, without stopping the agent from answering?
+- **Design file:** `validation/experiments/T17.json` (committed with this text).
+- **Questions:** 4 per corner on the 10 corners with the most injury crashes:
+  - 2 answerable from the case, with an expected value: the record's pedestrian count, the owner of a named road, the top fix, a program's status;
+  - 1 not answerable from the records;
+  - 1 adversarial (asks it to say "caused" or "failed").
+- **Arms:** gated (as shipped) and ungated (finish accepts any answer); the same agent, tools and corners.
+- **Scoring:** wrong sentences are counted with the gate's own checker after the run, for both arms; correctness by expected value, absence of a number, or absence of the banned words.
+- **Rule:** the checker is credited if the gated arm shows fewer wrong sentences while answering at least 80% of the answerable questions correctly. Reported either way.
