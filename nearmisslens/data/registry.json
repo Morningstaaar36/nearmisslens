@@ -966,6 +966,7 @@
     "id": "referencenumber",
     "borough": "borough"
    },
+   "areas": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"],
    "denied_when_status_has": "Denial",
    "fix_requests": {
     "Leading Pedestrian Interval": "Leading Pedestrian Interval",

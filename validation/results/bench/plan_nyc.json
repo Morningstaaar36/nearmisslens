@@ -310,11 +310,11 @@
  "regression_to_mean": {
   "factor": 0.945,
   "factor_ci95": [
-   0.906,
-   0.98
+   0.904,
+   0.981
   ],
-  "corners": 252,
-  "top": 63,
+  "corners": 256,
+  "top": 64,
   "years_before": [
    "2022",
    "2023"
@@ -323,8 +323,8 @@
    "2024",
    "2025"
   ],
-  "top_ratio": 0.852,
-  "all_ratio": 0.902
+  "top_ratio": 0.853,
+  "all_ratio": 0.903
  },
  "summary": {
   "corners": 303,

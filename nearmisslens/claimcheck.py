@@ -62,7 +62,9 @@ def _close(stated: float, rv: float, kind: str, field: str = "") -> bool:
 
 # numbers every case states about itself rather than about the record: the confidence level, the five-year window,
 # the 100 m radius; a reading that leaves them untied is not an error
-FRAME = re.compile(r"^\W*(95\s*%?|five|5|100|100 ?m(eters|etres)?)\W*$", re.I)
+from .context import CRASH_RADIUS_M, YEARS
+_WORDS = {3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 10: "ten"}
+FRAME = re.compile(rf"^\W*(95\s*%?|{_WORDS.get(YEARS, YEARS)}|{YEARS}|{CRASH_RADIUS_M}|{CRASH_RADIUS_M} ?m(eters|etres)?)\W*$", re.I)
 
 
 def verify(claim: str, receipt: dict, parsed: dict, places: tuple[str, ...] = ()) -> list[str]:

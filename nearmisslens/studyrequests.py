@@ -21,7 +21,6 @@ ABBREV = {"AVENUE": "AV", "AVE": "AV", "STREET": "ST", "BOULEVARD": "BLVD", "ROA
           "DRIVE": "DR", "LANE": "LN", "TURNPIKE": "TPKE", "HIGHWAY": "HWY", "SQUARE": "SQ", "CONCOURSE": "CONC",
           "BRIDGE": "BR", "TERRACE": "TER", "COURT": "CT", "PLAZA": "PLZ", "SAINT": "ST"}
 PAGE = 50_000
-BOROUGHS = ("Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island")
 
 
 def norm(name: str | None) -> str:
@@ -86,7 +85,7 @@ def corner(a: dict, idx: dict, case: dict) -> dict | None:
     # street names repeat across boroughs (there is a Broadway in four): keep requests in the corner's own borough,
     # which its community board or council office names
     offices = " ".join(q.get("party", "") for q in case["findings"].get("who_must_act", {}).get("requesters", []))
-    boro = next((b for b in BOROUGHS if b.lower() in offices.lower()), None)
+    boro = next((b for b in a.get("areas") or [] if b.lower() in offices.lower()), None)
     if boro and a["fields"].get("borough"):
         found = [r for r in found if str(r.get(a["fields"]["borough"]) or "").lower() in ("", boro.lower())]
     if not found:

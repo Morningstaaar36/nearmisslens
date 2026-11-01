@@ -22,7 +22,12 @@ from . import brief, context, harm, opendata
 from .config import SETTINGS, asof, portable
 from .evaluate import RESULTS_DIR
 
-BEFORE, AFTER = ("2022", "2023"), ("2024", "2025")  # full calendar years inside every case's five-year window
+def window_years(rows: list[dict]) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """The full calendar years every case's window holds (the first and last years are partial), split into the
+    first two and the last two: the selection years and the later years for the regression-to-the-mean measure."""
+    years = sorted(set().union(*[set(r["by_year"]) for r in rows])) if rows else []
+    full = years[1:-1]  # a year with no crash at a corner has no key there, so take the union, then drop the ends
+    return (tuple(full[:2]), tuple(full[-2:])) if len(full) >= 4 else ((), ())
 TOP_SHARE = 0.25  # "the worst corners" for the regression-to-the-mean measurement
 TIER_WORDS = {"measured here": "this city's own past installs, which passed the causal gate (a stricter calibrated "
                                 "check is less sure); the estimate uses the national CMF, the smaller effect",
@@ -83,15 +88,18 @@ def engineer_slug(name: str) -> str:
 
 def regression_to_mean(rows: list[dict]) -> dict:
     """How much the worst corners' crash counts fall on their own: corners with no recorded project in the four years,
-    the top TOP_SHARE by crashes in BEFORE, their AFTER / BEFORE ratio over that of all such corners. A factor below 1
+    the top TOP_SHARE by crashes in the first two full years, their later / first ratio over that of all such corners. A factor below 1
     is the share of a worst corner's count expected to persist."""
+    BEFORE, AFTER = window_years([r for r in rows if r["by_year"]])
+    if not BEFORE or not AFTER:
+        return {"factor": None, "corners": 0, "note": "the cases' window holds fewer than four full years"}
     lo, hi = int(BEFORE[0]), int(AFTER[-1])
     ok = [r for r in rows if not any(lo <= y <= hi for y in r["project_years"])
-          and all(y in r["by_year"] for y in BEFORE + AFTER)]
+          and r["by_year"]]
     if len(ok) < 8:
         return {"factor": None, "corners": len(ok), "note": "too few corners without a project to measure"}
-    b = {id(r): sum(r["by_year"][y] for y in BEFORE) for r in ok}
-    a = {id(r): sum(r["by_year"][y] for y in AFTER) for r in ok}
+    b = {id(r): sum(r["by_year"].get(y, 0) for y in BEFORE) for r in ok}
+    a = {id(r): sum(r["by_year"].get(y, 0) for y in AFTER) for r in ok}
     top = sorted(ok, key=lambda r: b[id(r)], reverse=True)[:max(2, int(TOP_SHARE * len(ok)))]
     ratio = lambda rs: sum(a[id(r)] for r in rs) / max(sum(b[id(r)] for r in rs), 1)
     factor = min(1.0, ratio(top) / max(ratio(ok), 1e-9))

@@ -64,7 +64,7 @@ def test_agency_letter_is_number_checked_and_a_wrong_total_is_refused():
 
 
 def test_regression_to_the_mean_is_measured_only_on_corners_without_a_project():
-    by = lambda b, a: {"2022": b, "2023": b, "2024": a, "2025": a}
+    by = lambda b, a: {"2021": 1, "2022": b, "2023": b, "2024": a, "2025": a, "2026": 1}  # partial first and last years
     rows = [plan.corner(_case(f"c{k}", [], by_year=by(10, 10))) for k in range(6)]
     rows += [plan.corner(_case("hot1", [], by_year=by(40, 30))), plan.corner(_case("hot2", [], by_year=by(40, 30))),
              plan.corner(_case("built", [], by_year=by(80, 10), projects=(2023,)))]

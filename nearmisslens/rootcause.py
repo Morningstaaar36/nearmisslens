@@ -20,6 +20,8 @@ from scipy.stats import binomtest
 
 from . import opendata
 from .config import since
+
+ALPHA = 0.05  # the family-wise error rate the Holm correction holds, as in the miner (validation/experiments/T15.json)
 from .evaluate import RESULTS_DIR
 
 MIN_CRASHES = 10
@@ -166,11 +168,11 @@ def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100) -> di
         p = binomtest(k, n, p0, alternative="greater").pvalue if p0 and 0 < p0 < 1 and n >= MIN_CRASHES else None
         tested.append({"pattern": name, "phrase": phrase(name), "crashes": k, "share": round(share, 3),
                        "city_share": round(p0, 3) if p0 is not None else None, "p": p})
-    # Holm: the i-th smallest p-value must be below 0.05 / (m - i); stop at the first that is not
+    # Holm: the i-th smallest p-value must be below ALPHA / (m - i); stop at the first that is not
     ps = sorted((t for t in tested if t["p"] is not None), key=lambda t: t["p"])
     m, holding = len(ps), True
     for i, t in enumerate(ps):
-        holding = holding and bool(t["p"] < 0.05 / (m - i))
+        holding = holding and bool(t["p"] < ALPHA / (m - i))
         t["over_represented"] = holding  # a plain bool: numpy's would be saved as the string "False"
     for t in tested:
         t.setdefault("over_represented", False)
