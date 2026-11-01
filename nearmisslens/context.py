@@ -239,47 +239,101 @@ INSTRUCTIONS = (
 
 
 # a number written next to one of these words must be the record's value for it (the field names it maps to)
-LABELS = [  # (name, words before the number, words after it, field-name pattern)
+LABELS = [  # (name, words before the number, words after it, field-name pattern); the first match decides
     ("crashes avoided", r"\b(prevent|prevents|avoid|avoids|avoided|cut|cuts|save|saves)\b[^.;]{0,25}$", None,
      r"avoided"),
+    ("pedestrians killed", None, r"^\s*pedestrians?\b[^.;\d]{0,20}\b(killed|died|dead)\b", r"pedestrian.*kill"),
+    ("cyclists killed", None, r"^\s*(cyclists?|bicyclists?)\b[^.;\d]{0,20}\b(killed|died|dead)\b", r"cyclist.*kill"),
     ("deaths", None, r"^[^.;\d]{0,30}\b(killed|deaths?|died|dead|fatal|fatalities)\b", r"killed|death|fatal"),
     ("pedestrians injured", None, r"^\s*pedestrians?\b[^.;\d]{0,20}\b(injured|hurt)\b", r"pedestrian.*injur"),
     ("cyclists injured", None, r"^\s*(cyclists?|bicyclists?)\b[^.;\d]{0,20}\b(injured|hurt)\b", r"cyclist.*injur"),
     ("injury crashes", None, r"^\s*(\w+\s){0,2}(injury crashes|crashes with injur)", r"injury_crash"),
+    ("sites", None, r"^\s*(\w+\s)?(sites|intersections|locations)\b", r"(^|_)sites$"),
+    ("crashes", None, r"^\s*(\w+\s){0,2}crash(es)?\b", None),  # any count, bound below to its subject and year
     ("dollars", r"\$\s*$", None, r"usd|harm|cost|dollar|million"),
 ]
+NAME_KEYS = ("label", "phrase", "countermeasure", "factor", "words", "party", "program", "pattern")  # what a
+# sentence can name; a pattern such as "time: night" is also named by its value ("night")
+NAIVE = re.compile(r"simple|naive|before/after|before-after|uncontrolled|without a comparison", re.I)
+COMPARE = re.compile(r"\b(city|citywide|city-wide|priority|other|across|screened|compared|against|vs|versus)\b", re.I)
+BASELINE = re.compile(r"baseline|citywide|^city$|screen", re.I)
+PER_YEAR = re.compile(r"\b(a|per|each)\s+year\b|\bannual(ly)?\b|\byearly\b", re.I)
+TOTAL = re.compile(r"\bin total\b|\btotal\b|\bfive-year\b|\b5-year\b|\bover (the )?(five|5) years\b", re.I)
+# "no", "zero", "never" used as a count; "could be zero" and "no change" are not counts
+NEG = re.compile(r"\bnot\b[^.;]{0,25}\bany\b|\b(no|none|never|not a single|not any|without any)\b(?!\s+(measurable\s+|significant\s+|clear\s+)?"
+                 r"(change|effect|drop|difference|reduction|evidence|recorded safety))|(?<!be )\bzero\b", re.I)
+COUNT_WORDS = re.compile(r"crash|\bsites?\b|evaluat|studied|killed|death|died|injur|hurt", re.I)
+
+
+def _paths(facts) -> list[tuple[tuple, str, float]]:
+    """Every numeric value in the facts with its path and the name of the field holding it."""
+    out = []
+
+    def walk(o, path):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, path + (str(k),))
+        elif isinstance(o, (list, tuple)):
+            for i, v in enumerate(o):
+                walk(v, path + (i,))
+        elif isinstance(o, (int, float)) and not isinstance(o, bool):
+            key = next((str(p) for p in reversed(path) if isinstance(p, str)), "")
+            out.append((path, key.lower(), float(o)))
+    walk(facts, ())
+    return out
 
 
 def _labelled(facts) -> dict[str, list[float]]:
     """Every numeric value in the facts by the name of the field holding it."""
     out: dict[str, list[float]] = {}
+    for _, k, v in _paths(facts):
+        out.setdefault(k, []).append(v)
+    return out
 
-    def walk(o, key=""):
+
+def _named(facts) -> list[tuple[str, tuple]]:
+    """(name, path) of every item the facts name: a program's label, a pattern's phrase, a fix, a factor."""
+    out = []
+
+    def walk(o, path):
         if isinstance(o, dict):
+            for k in NAME_KEYS:
+                v = o.get(k)
+                if isinstance(v, str) and len(v.strip(" “”\"")) >= 5:
+                    out.append((v.strip(" “”\"").lower(), path))
+                    if k == "pattern":  # "time: night", "factor=following too closely AND vehicle=truck"
+                        for part in re.split(r"\s+AND\s+", v):
+                            val = re.split(r"[:=]", part, 1)[-1].strip().lower()
+                            if len(val) >= 5:
+                                out.append((val, path))
             for k, v in o.items():
-                walk(v, str(k))
+                walk(v, path + (str(k),))
         elif isinstance(o, (list, tuple)):
-            for v in o:
-                walk(v, key)
-        elif isinstance(o, (int, float)) and not isinstance(o, bool):
-            out.setdefault(key.lower(), []).append(float(o))
-    walk(facts)
+            for i, v in enumerate(o):
+                walk(v, path + (i,))
+    walk(facts, ())
     return out
 
 
 class FactCheck:
     """Numbers a memo may use: those in the dossier. A number written next to a label (deaths, pedestrians injured,
-    injury crashes, crashes avoided, dollars) must also be the record's value for that label, so "29 pedestrians were
-    killed" is refused where the record has 29 pedestrians injured and no deaths."""
+    injury crashes, crashes, sites, crashes avoided, dollars) must also be the record's value for that label, so "29
+    pedestrians were killed" is refused where the record has 29 pedestrians injured and no deaths. A count is bound to
+    what its sentence names: a program's sites must be that program's, a pattern's crashes that pattern's, "in 2024"
+    that year's count; a city-wide comparison figure is allowed only in a sentence that compares; a per-year figure
+    must be a per-year value and a total a total; and "no", "zero" or "never" is a count of zero, refused where the
+    record holds more (NML-Bench T18 found these holes)."""
 
     def __init__(self, facts: dict):
         # numbers in values and in field names (schools_400m, by_year keys such as 2022) are both in the dossier
         self.known = set(panel.numbers_in(facts)) | {panel._value(t) for t in panel.NUMBER.findall(
             json.dumps(facts, default=str))}
+        self.paths = _paths(facts)
+        self.named = _named(facts)
         fields = _labelled(facts)
         self.by_label = {}
         for name, before, after, pattern in LABELS:
-            vals = [v for k, vs in fields.items() if re.search(pattern, k) for v in vs]
+            vals = [v for k, vs in fields.items() if pattern and re.search(pattern, k) for v in vs]
             if name == "dollars":  # "$8.8 million" and "$561,000" both name a dollar field
                 vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
             self.by_label[name] = vals or [0.0]  # an absent count is zero (the record lists only non-zero counts)
@@ -295,8 +349,88 @@ class FactCheck:
         a, b = self._text(text), self._text(panel.normalise_decimals(text))
         return a if len(a) <= len(b) else b
 
+    def _bound(self, sentence: str) -> list[tuple]:
+        low = sentence.lower()
+        return [path for name, path in self.named if re.search(r"(?<![a-z])" + re.escape(name) + r"(?![a-z])", low)]
+
+    def _percents(self, sentence: str, bound: list[tuple]) -> set[float]:
+        """The percentages a sentence may state: shares, changes from ratios and percentage fields, of what it names
+        when it names something; a simple before/after change only in a sentence that says it is one."""
+        rows = [r for r in self.paths if any(r[0][:len(b)] == b for b in bound)] if bound else []
+        rows = rows or self.paths
+        naive = bool(NAIVE.search(sentence))
+        out = set()
+        for p, k, v in rows:
+            if "naive" in k and not naive:
+                continue
+            if 0 <= abs(v) <= 1:
+                out.add(100 * abs(v))
+            if 0 < v <= 2 and not re.search(r"share|pct", k):
+                out.add(100 * abs(1 - v))
+            if re.search(r"pct|percent|share|rate|change|crf", k):
+                out.add(abs(v))
+        return out or self.percents
+
+    def _values(self, name: str, pattern, sentence: str, tail: str, bound: list[tuple]) -> list[float] | None:
+        """The values a labelled number may take in this sentence (None: the record has no such field to bind to)."""
+        if pattern and not any(re.search(pattern, k) for _, k, _ in self.paths):
+            return None if name == "sites" else ([0.0] if name != "dollars" else [])  # an absent count is zero
+        compare = bool(COMPARE.search(sentence))
+        rows = [(p, k, v) for p, k, v in self.paths
+                if (compare or not any(isinstance(x, str) and BASELINE.search(x) for x in p))]
+        if name == "crashes":  # a count of crashes: not a site count, a year, a share or a dollar figure
+            rows = [r for r in rows if not re.search(r"sites|usd|harm|cost|share|pct|theta|ci95|cmf|year$|radius|^m$",
+                                                    r[1]) or re.fullmatch(r"(19|20)\d\d", r[1])]
+            words = re.match(r"\s*([a-z\- ]{3,30}?)\s*crash", tail, re.I)  # "37 rear-end crashes": that group's count
+            if words:
+                key = re.sub(r"[\s\-]+", "_", words.group(1).strip().lower())
+                mine = [r for r in rows if r[1] == key or r[1].startswith(key + "_")]
+                rows = mine or rows
+        elif pattern:
+            rows = [r for r in rows if re.search(pattern, r[1])]
+        if bound:  # a sentence that names an item: its counts are that item's, when the item has such a field
+            mine = [r for r in rows if any(r[0][:len(b)] == b for b in bound)]
+            rows = mine or rows
+        yr = re.search(r"\bin\s+((?:19|20)\d\d)\b", tail)
+        if yr and name in ("crashes", "injury crashes"):
+            mine = [r for r in rows if r[1] == yr.group(1)]
+            rows = mine or rows
+        if PER_YEAR.search(tail):
+            mine = [r for r in rows if re.search(r"per_year|_year$|annual|avoided", r[1])]
+            rows = mine or rows
+        elif TOTAL.search(sentence):
+            rows = [r for r in rows if not re.search(r"per_year|_year$|annual", r[1])]
+        vals = [v for _, _, v in rows]
+        if name == "dollars":
+            vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
+        return vals
+
+    def _absences(self, sentence: str, bound: list[tuple]) -> list[str]:
+        """"No pedestrians were killed", "zero evaluation sites", "never studied": a count of zero."""
+        bad = []
+        for name, _ in self.named:  # an item's own words ("... and no one hurt") are a description, not a count
+            sentence = re.sub(re.escape(name), " ", sentence, flags=re.I)
+        for m in NEG.finditer(sentence):
+            after = sentence[m.end():m.end() + 45]
+            for name, before, pat_after, pattern in LABELS:
+                if pat_after and name not in ("crashes", "sites") and re.search(pat_after, after, re.I):
+                    if not any(abs(v) < 1e-9 for v in self.by_label[name]):
+                        bad.append(f"says no {name}, but the record has {max(self.by_label[name]):g}")
+                    break
+        if NEG.search(sentence) and COUNT_WORDS.search(sentence) and bound:
+            counts = [(p, k, v) for p, k, v in self.paths if any(p[:len(b)] == b for b in bound)
+                      and re.fullmatch(r"crashes|sites|k|n|count|injury_crashes", k) and v > 0]
+            if counts:
+                bad.append(f"says none, but the record has {counts[0][2]:g} {counts[0][1]} for what it names")
+        return bad
+
     def _text(self, text: str) -> list[str]:
         bad = []
+        sentences = [(m.start(), m.end()) for m in re.finditer(r"[^.;!?]+(?:[.;!?]|$)", text)] or [(0, len(text))]
+        sentence_of = lambda i: next((text[a:b] for a, b in sentences if a <= i < b), text)
+        for a, b in sentences:
+            sent = text[a:b]
+            bad += self._absences(sent, self._bound(sent))
         for m in panel.NUMBER.finditer(text):
             t = m.group(0)
             v, tol = panel._value(t), 0.5 * 10 ** -panel._decimals(t) + 1e-9
@@ -305,8 +439,11 @@ class FactCheck:
             if percent and re.match(r"\s*%\s*(confidence|interval|CI\b)", tail, re.I):
                 continue  # "95% interval" names a confidence level, not a claim about the record
             if percent:  # "32%" is a share the record holds as 0.318, a change from a ratio, or a percentage field
+                sent = sentence_of(m.start())
                 if not any(abs(k - abs(v)) <= tol for k in self.percents):
                     bad.append(f"{t}% is not a share or change in the record")
+                elif not any(abs(k - abs(v)) <= tol for k in self._percents(sent, self._bound(sent))):
+                    bad.append(f"{t}% is not a share or change of what this sentence names")
                 continue
             if not any(abs(k - v) <= tol for k in self.known):
                 bad.append(f"number {t} is not in the dossier")
@@ -314,10 +451,15 @@ class FactCheck:
             if len(t) == 4 and t[:2] in ("19", "20"):
                 continue  # years carry no label
             head = text[max(0, m.start() - 30):m.start()]
-            for name, before, after, _ in LABELS:
+            sent = sentence_of(m.start())
+            for name, before, after, pattern in LABELS:
                 if (before and re.search(before, head, re.I)) or (after and re.search(after, tail, re.I)):
-                    if not any(abs(k - v) <= tol for k in self.by_label[name]):
-                        bad.append(f"{t} is not the record's number of {name}")
+                    if name in ("crashes", "injury crashes") and panel._decimals(t) and not PER_YEAR.search(tail):
+                        bad.append(f"{t} is a rate or share written as a count of crashes")
+                        break
+                    vals = self._values(name, pattern, sent, tail, self._bound(sent))
+                    if vals is not None and not any(abs(k - v) <= tol for k in vals):
+                        bad.append(f"{t} is not the record's number of {name} for what this sentence names")
                     break
         return list(dict.fromkeys(bad))
 

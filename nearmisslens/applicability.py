@@ -97,7 +97,7 @@ def structured(r: pd.Series) -> dict:
 
 def ask(client, crfid: str, text: str) -> dict:
     request = {"model": MODEL, "instructions": INSTRUCTIONS, "schema": SCHEMA, "record": text}
-    payload = {"model": MODEL, "reasoning": {"effort": "low"}, "max_output_tokens": 2000, "instructions": INSTRUCTIONS,
+    payload = {"model": MODEL, "reasoning": {"effort": "low"}, "max_output_tokens": 8000, "instructions": INSTRUCTIONS,
                "text": {"format": {"type": "json_schema", "name": "applicability", "schema": SCHEMA, "strict": True}},
                "input": [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": text}]}]}
 

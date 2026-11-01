@@ -220,7 +220,7 @@ def draft_request(desk: Desk, lat: float, lon: float, name: str, who: dict, clie
 # words the record cannot support: police factors are not proven causes, and an effect not shown is not shown absent
 OVERCLAIM = re.compile(r"\b(caused|causes|cause of|failed|fails|failure|proves?|proved|proven|doesn't work|does not work|"
                        r"led to|leads to|resulted in|results in|because of|due to|to blame|blamed|guarantee[sd]?|"
-                       r"eliminates?|will prevent)\b", re.I)
+                       r"eliminates?|will prevent|certain(ly)?|is sure to|will (cut|reduce|lower|stop|save))\b", re.I)
 
 
 QUOTED = re.compile(r"\u201c[^\u201d]*\u201d|\"[^\"]*\"")  # the record's own words, e.g. "failure to yield"

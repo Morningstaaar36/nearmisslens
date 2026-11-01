@@ -143,3 +143,23 @@ def test_the_summary_is_held_to_the_site_check_rule_too():
         {"countermeasure": "Yellow Change Intervals", "evidence": "needs a site check", "verify_on_site": "timing"}]}})
     assert E.check_summary("Fix the record supports: Yellow Change Intervals.", desk)
     assert not E.check_summary("Yellow Change Intervals only if a timing check confirms it.", desk)
+
+
+def test_t18_holes_stay_closed():
+    from nearmisslens.context import FactCheck
+    tp = FactCheck({"programs": [{"label": "turn traffic calming", "sites": 227, "theta": 0.839, "naive_change_pct": -26.2},
+                                 {"label": "Leading Pedestrian Interval signals", "sites": 1651, "theta": 0.833,
+                                  "naive_change_pct": -23.8}]})
+    assert tp.text("Turn traffic calming was evaluated at 1,651 sites.")           # another program's sites
+    assert not tp.text("Turn traffic calming was evaluated at 227 sites.")
+    assert tp.text("Leading Pedestrian Interval signals showed a simple before-after drop of 26.2%.")  # borrowed %
+    assert tp.text("The city has not evaluated turn traffic calming at any site.")  # false absence
+    rc = FactCheck({"crashes": 189, "baseline": {"crashes": 25985},
+                    "patterns": [{"pattern": "time: night", "phrase": "happened at night (7 pm to 6 am)", "crashes": 67}],
+                    "crash_groups": {"rear_end": 6}, "by_year": {"2024": 34}, "pedestrian_killed": 1})
+    assert rc.text("No crashes at this corner happened at night.")
+    assert rc.text("There were 25985 crashes within 100 m of this corner.")       # the city-wide figure as local
+    assert not rc.text("Across the city's priority corners there were 25985 crashes.")
+    assert rc.text("The corner had 6 crashes in 2024.") and not rc.text("The corner had 34 crashes in 2024.")
+    assert rc.text("No pedestrians were killed here.")
+    assert not rc.text("Cyclists: no cyclists were killed here.")

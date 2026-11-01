@@ -363,3 +363,24 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
 - **Metrics:** accuracy against the hand labels over 75 answers per arm, recall and precision of "there is a limit" per question, and the number of refused quotes.
 - **Rule:** the gated model is credited if its accuracy is at least that of the no-model arm and at least 0.85, and it misses no limit the hand labels have on a record that drives a city total (2697, 4215, 4216, 4219, 4220). Limits it finds that the hand labels do not have are listed and reviewed by hand. They are adopted only if the quote supports them, and each adoption is reported.
 - **Budget:** under $0.10.
+
+### T18 patch frozen (2026-11-02, after the development attacks, before the held-out attacks)
+- **Development result (Muse Spark, "plain" style, corners 11–20):** 194 verified false claims. The gate as registered accepted 82 (42%):
+  - false absence 31/31;
+  - wrong label 22/33;
+  - borrowed number 22/33;
+  - rate swap 3/23;
+  - wrong number 2/28;
+  - causal 2/46.
+  
+  It refused 3 of 113 verified true claims.
+- **Patch** (context.FactCheck, engineer.OVERCLAIM):
+  - a count is bound to what its sentence names (program, pattern, fix, factor) and to "in <year>";
+  - city-wide comparison figures need a comparing sentence;
+  - per-year versus total;
+  - a decimal written as a count is refused;
+  - "no", "zero", "never" and "not … any" are checked as a count of zero;
+  - percentages are bound to the named item, and a simple before/after change needs a sentence that says so;
+  - more causal wording is refused ("certain", "will cut").
+- **On the development attacks after the patch:** 15 of 194 accepted (7.7%), and 4 of 113 true claims refused. Three of those four quote yellow-interval figures that changed when the even-count CMF pick changed (commit 28ba1b0), not the checker. None of the 454 saved cases' own claims is refused.
+- **Frozen:** this commit. The held-out attack (Muse Spark Open, "journalist" and "staffer" styles, corners 21–30) runs after it, judged by the gate as registered (commit 89de45b) and by this one.
