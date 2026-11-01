@@ -98,9 +98,10 @@ def _details(a: dict, ids: list[str]) -> dict[str, list[dict]]:
     return out
 
 
-def build(city: str = "nyc", top: int | None = None) -> dict:
+def build(city: str | None = None, top: int | None = None) -> dict:
     """Every crash within the registered radius of the city's screened corners over the 5 years to the as-of date,
     with its features, and each corner's crash ids. Cached under the data directory."""
+    city = city or SPEC["city"]
     path = SETTINGS.data_dir / "miner" / f"{city}_{since(5).isoformat()}.json.gz"
     if path.exists():
         return json.loads(gzip.decompress(path.read_bytes()))

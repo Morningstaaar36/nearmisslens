@@ -105,14 +105,19 @@ def _forest_rows() -> list[dict]:
         for key, g in res.get("gates", {}).items():
             m = res["runs"][g["primary"]][g["outcome"]] or {}
             nv = (res.get("naive") or {}).get(key, {}).get(g["outcome"]) or {}
-            city = (opendata.city(res["city"]) or {}).get("name", res["city"])
+            c = opendata.city(res["city"]) or {}
+            city = c.get("short_name") or c.get("name") or res["city"]
             verdict = "worked" if g["passed"] else ("earlier trend" if g["rule_met"] else "not shown")
-            name = g["treatment"].replace("Leading Pedestrian Interval signals", "leading pedestrian intervals")
-            city = {"New York City": "New York", "Washington DC": "Washington"}.get(city, city)
+            name = _lower(g["treatment"])
             rows.append({"label": f"{city}: {name}", "passed": g["passed"], "verdict": verdict,
                          "effect": m.get("change_pct"), "ci": [round(100 * (v - 1), 1) for v in m["ci95"]] if m.get("ci95") else None,
                          "naive": nv.get("change_pct")})
     return sorted(rows, key=lambda r: (not r["passed"], r["verdict"]))
+
+
+def _lower(label: str) -> str:
+    """'Leading Pedestrian Interval signals' -> 'leading pedestrian interval signals'; acronyms (LPI) stay."""
+    return " ".join(w if w.isupper() and len(w) > 1 else w.lower() for w in label.split())
 
 
 def _analyst_real() -> list[dict]:
@@ -125,11 +130,15 @@ def _analyst_real() -> list[dict]:
         c = r["claim"]
         out.setdefault(r["program_key"], {})["gated" if r["gated"] else "ungated"] = \
             f"{c['claim'].replace('_', ' ')} ({c['effect_pct']:+.0f}%)" if c["claim"] != "no_evidence" else "no evidence"
-    labels = {"lpi": "New York pedestrian intervals", "turn_calming": "New York turn calming",
-              "T13_seattle:lpi": "Seattle pedestrian intervals", "T13_dc:lpi": "Washington pedestrian intervals",
-              "T13_nyc:speed_humps": "New York speed humps", "T13_nyc:enhanced_crossings": "New York enhanced crossings",
-              "T13_sf:continental_crosswalks": "San Francisco crosswalks"}
-    return [{"label": labels.get(k, k.replace("T13_", "").replace(":", " ").replace("_", " ")),
+    from . import opendata, treatments
+    labels = {}
+    for p in treatments.programs():  # "STUDY:program" for studies after T11; the bare key for T11 (the analyst's runs)
+        c = opendata.city(p["city"]) or {}
+        lab = f"{c.get('short_name') or c.get('name') or p['city']} {_lower(p['label'])}"
+        labels.setdefault(f"{p['study']}:{p['program']}", lab)
+        if p["study"] == "T11":
+            labels.setdefault(p["program"], lab)
+    return [{"label": labels.get(k, k.replace(":", " ").replace("_", " ")),
              "ungated": v.get("ungated", "?"), "gated": v.get("gated", "?")} for k, v in out.items()]
 
 

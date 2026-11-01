@@ -52,8 +52,11 @@ def _brief_dir(name: str) -> Path:
     return SETTINGS.runs_dir / "briefs" / "".join(ch if ch.isalnum() else "_" for ch in name.split(",")[0].lower())[:60]
 
 
-def build(city: str = "nyc", live: str = "", docs: Path = DOCS, media_top: int = 25, letters: int = 0,
+def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top: int = 25, letters: int = 0,
           letter_client=None, workers: int = 3, saved_only: bool = False) -> dict:
+    city = city or next(iter(citywide.cities()), None)  # the first city with a saved screen
+    if not city:
+        raise ValueError("no city has a saved screen yet; run nml citywide --city CITY")
     src = SETTINGS.runs_dir / "engineer" / city
     # reuses saved reports and builds any that are missing (saved_only: a preview from what is already built)
     index = engineer.precompute(city, letters=letters, letter_client=letter_client, out_dir=src, workers=workers,

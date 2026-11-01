@@ -496,7 +496,7 @@ def main(argv: list[str] | None = None) -> int:
     pk = sub.add_parser("pack-cache", help="the replay cache for the GitHub release, contact details removed, refused if a key is found")
     pk.add_argument("--out", default="runs/release/nearmisslens_replay_cache.tar.gz")
     pg2 = sub.add_parser("pages", help="the static copilot for GitHub Pages: one engineer report per screened corner (docs/)")
-    pg2.add_argument("--city", default="nyc")
+    pg2.add_argument("--city", help="a registry city id (default: the first city with a saved screen)")
     pg2.add_argument("--live", help="https URL of the live endpoint for addresses outside the precomputed corners")
     pg2.add_argument("--letters", type=int, default=0, help="draft checked letters for the worst N corners (Muse Spark Open)")
     pg2.add_argument("--meta", action="store_true", help="draft letters on the Meta API instead")

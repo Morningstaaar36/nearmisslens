@@ -89,7 +89,9 @@ def summary(df: pd.DataFrame) -> dict:
             "never_a_project": int((ok["projects_ever"] == 0).sum())}
 
 
-def write(df: pd.DataFrame, memos: list[dict] | None = None, city: str = "nyc") -> dict:
+def write(df: pd.DataFrame, memos: list[dict] | None = None, city: str | None = None) -> dict:
+    if not city:
+        raise ValueError("write() needs the registry city id the screen belongs to")
     rows = json.loads(df.to_json(orient="records"))  # NaN becomes null, which browsers can parse
     since = df["since"].dropna()
     out = {"summary": {**summary(df), **(costed(distinct(df, since.iloc[0])) if len(since) else {})}, "rows": rows,

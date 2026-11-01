@@ -951,7 +951,8 @@
     40.92,
     -73.68
    ],
-   "agency": "the NYC Department of Transportation (NYC DOT)"
+   "agency": "the NYC Department of Transportation (NYC DOT)",
+   "short_name": "New York"
   },
   {
    "id": "dc",
@@ -962,7 +963,8 @@
     38.996,
     -76.9
    ],
-   "agency": "the District Department of Transportation (DDOT)"
+   "agency": "the District Department of Transportation (DDOT)",
+   "short_name": "Washington"
   },
   {
    "id": "chicago",
@@ -973,7 +975,8 @@
     42.03,
     -87.52
    ],
-   "agency": "the Chicago Department of Transportation (CDOT)"
+   "agency": "the Chicago Department of Transportation (CDOT)",
+   "short_name": "Chicago"
   },
   {
    "id": "la",
@@ -984,7 +987,8 @@
     34.34,
     -118.15
    ],
-   "agency": "the Los Angeles Department of Transportation (LADOT)"
+   "agency": "the Los Angeles Department of Transportation (LADOT)",
+   "short_name": "Los Angeles"
   },
   {
    "id": "seattle",
@@ -995,7 +999,8 @@
     47.83427779374775,
     -121.99998618281417
    ],
-   "agency": "the Seattle Department of Transportation (SDOT)"
+   "agency": "the Seattle Department of Transportation (SDOT)",
+   "short_name": "Seattle"
   },
   {
    "id": "sf",
@@ -1006,7 +1011,8 @@
     37.84,
     -122.35
    ],
-   "agency": "the San Francisco Municipal Transportation Agency (SFMTA)"
+   "agency": "the San Francisco Municipal Transportation Agency (SFMTA)",
+   "short_name": "San Francisco"
   }
  ],
  "geocoder": {
