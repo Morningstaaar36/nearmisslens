@@ -203,6 +203,12 @@
 "name": "Queens Plaza & 27 Street",
 "city": "nyc"
 },
+"2nd avenue & cherry street": {
+"lat": 47.6030293,
+"lon": -122.3331773,
+"name": "2nd Avenue & Cherry Street",
+"city": "seattle"
+},
 "3 avenue & 60 street": {
 "lat": 40.6420572375485,
 "lon": -74.0204219981359,
@@ -347,6 +353,30 @@
 "name": "92 Street & 59 Avenue",
 "city": "nyc"
 },
+"5th avenue & james street": {
+"lat": 47.6036923,
+"lon": -122.3291997,
+"name": "5th Avenue & James Street",
+"city": "seattle"
+},
+"5th avenue & pine street": {
+"lat": 47.6116831,
+"lon": -122.336471,
+"name": "5th Avenue & Pine Street",
+"city": "seattle"
+},
+"5th avenue & spring street": {
+"lat": 47.6072664,
+"lon": -122.332474,
+"name": "5th Avenue & Spring Street",
+"city": "seattle"
+},
+"5th avenue & stewart street": {
+"lat": 47.6129981,
+"lon": -122.3378418,
+"name": "Stewart Street & 5th Avenue",
+"city": "seattle"
+},
 "60 street & 8 avenue": {
 "lat": 40.6354929632736,
 "lon": -74.0095570842337,
@@ -377,6 +407,12 @@
 "name": "69 Street & Metropolitan Avenue",
 "city": "nyc"
 },
+"6th street & mission street": {
+"lat": 37.7809779,
+"lon": -122.4087215,
+"name": "6th Street & Mission Street",
+"city": "sf"
+},
 "7 avenue & west 42 street": {
 "lat": 40.7560359025947,
 "lon": -73.9869487385455,
@@ -388,6 +424,12 @@
 "lon": -73.8905012926299,
 "name": "75 Street & Roosevelt Avenue",
 "city": "nyc"
+},
+"7th street northwest & florida avenue northwest": {
+"lat": 38.916278,
+"lon": -77.0219109,
+"name": "Florida Avenue Northwest & 7th Street Northwest",
+"city": "dc"
 },
 "8 avenue & west 34 street": {
 "lat": 40.7521900556092,
@@ -941,6 +983,12 @@
 "name": "Coney Island Avenue & Ocean View Avenue",
 "city": "nyc"
 },
+"constitution avenue northeast & delaware avenue northeast": {
+"lat": 38.892025,
+"lon": -77.0081045,
+"name": "Constitution Avenue Northeast & Delaware Avenue Northeast",
+"city": "dc"
+},
 "court street & hamilton avenue": {
 "lat": 40.6739319717765,
 "lon": -73.999947592199,
@@ -1234,6 +1282,12 @@
 "lon": -73.8446198474663,
 "name": "Eastchester Road & Waters Place",
 "city": "nyc"
+},
+"eastern avenue northeast & southern avenue northeast": {
+"lat": 38.892676,
+"lon": -76.9096313,
+"name": "Eastern Avenue Northeast & Southern Avenue Northeast",
+"city": "dc"
 },
 "eastern parkway & new york avenue": {
 "lat": 40.6697134423065,
@@ -1565,6 +1619,12 @@
 "name": "Knickerbocker Avenue & Troutman Street",
 "city": "nyc"
 },
+"l'enfant square southeast & pennsylvania avenue southeast": {
+"lat": 38.8739324,
+"lon": -76.971409,
+"name": "Pennsylvania Avenue Southeast & L'Enfant Square Southeast",
+"city": "dc"
+},
 "lefferts boulevard & metropolitan avenue": {
 "lat": 40.7061416775935,
 "lon": -73.8317640107341,
@@ -1708,6 +1768,12 @@
 "lon": -73.8647402485638,
 "name": "Pelham Parkway North & Wallace Avenue",
 "city": "nyc"
+},
+"pennsylvania avenue southeast & prout street southeast": {
+"lat": 38.874329,
+"lon": -76.9727817,
+"name": "Pennsylvania Avenue Southeast & Prout Street Southeast",
+"city": "dc"
 },
 "reservoir avenue & west kingsbridge road": {
 "lat": 40.8680173014926,

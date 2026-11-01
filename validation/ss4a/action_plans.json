@@ -1,0 +1,31 @@
+{
+ "FY22": {
+  "grants": 450,
+  "median_total_cost_usd": 313750,
+  "mean_total_cost_usd": 535203
+ },
+ "FY23": {
+  "grants": 344,
+  "median_total_cost_usd": 250000,
+  "mean_total_cost_usd": 331124
+ },
+ "FY24": {
+  "grants": 293,
+  "median_total_cost_usd": 250000,
+  "mean_total_cost_usd": 318568
+ },
+ "FY25": {
+  "grants": 185,
+  "median_total_cost_usd": 250000,
+  "mean_total_cost_usd": 326243
+ },
+ "all": {
+  "grants": 1272,
+  "median_total_cost_usd": 250061,
+  "quartiles_total_cost_usd": [
+   200000,
+   250061,
+   400289
+  ]
+ }
+}

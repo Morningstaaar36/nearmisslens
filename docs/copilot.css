@@ -92,3 +92,16 @@ table{table-layout:auto}
 .cityswitch{padding:0 18px 10px;font-size:14px}.cityswitch select{font:inherit;padding:6px 8px;border-radius:6px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink)}
 .askcard{border-left:4px solid var(--guide);padding:8px 14px;margin:12px 0;max-width:780px;background:var(--sheet);border-radius:0 6px 6px 0}.askcard .q{font-weight:700;margin:0 0 6px}
 .refused s{color:var(--mut)}form.ask{padding:0;max-width:780px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0 6px}
+.tile{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+.tile b{display:block;font-size:26px;line-height:1.1;font-weight:800}
+.tile span{display:block;font-size:13px;color:var(--mut);line-height:1.4;margin-top:4px}
+table.plan{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0;display:block;overflow-x:auto}
+table.plan th,table.plan td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.plan th{font-size:12px;color:var(--mut);font-weight:700}
+details.agency{border:1px solid var(--rule);border-radius:6px;padding:10px 14px;margin:10px 0;background:var(--sheet)}
+details.agency summary{cursor:pointer}
+p.letter{max-width:70ch;white-space:pre-wrap}
+button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:underline}
+button.linkish:focus-visible{outline:3px solid var(--warn)}
+button.planlink{margin-top:8px;font-size:14px;padding:6px 10px}

@@ -1,10 +1,10 @@
 # Falsification gates: how NearMissLens keeps its agents honest
 
-NearMissLens is a street-safety copilot built from agents on Meta's models. Each agent can propose anything; nothing it proposes reaches a city engineer or a resident until a gate has tried to disprove it with public data. This note describes the gates, the evidence that they work, and where they fall short. Every number here comes from `validation/BENCH.md`. The rules of every test were written in `validation/BENCH_PREREG.md` before it ran; that file is our own record, not an external registry, and changes made after a run are listed in it.
+NearMissLens is a street-safety copilot built from agents on Meta's models. Each agent can propose anything; nothing it proposes reaches a city engineer or a resident until a gate has tried to disprove it with public data. This note describes the gates, the evidence that they work, and where they fall short. Our own results come from `validation/BENCH.md`; published studies are cited by name. The rules of each test are in `validation/BENCH_PREREG.md`, our own record rather than an external registry. Earlier registrations were sometimes committed with their results, so git cannot confirm their order; T18 and T19 were pushed before they ran, and changes made after a run are listed there.
 
 ## The idea
 
-Meta's verifiable-agent pattern (the Agents 102 workshop, `meta-models/legal-agent-workshop`) puts the checks inside the tools, so an agent cannot finish until its work passes them. Those checks compare an agent's claims with documents it was given. Road safety needs one more kind of check: a claim about the world, such as "a leading pedestrian interval will cut pedestrian crashes here", cannot be verified by reading a document. It can only be tested against what happened when the city did it before.
+Meta's verifiable-agent pattern (`meta-models/legal-agent-workshop`, from the hackathon's verifiable-agents session) puts the checks inside the tools, outside the agent's control, so an agent cannot finish until its work passes them. Those checks compare an agent's claims with the case's documents and ground truth. Road safety needs one more kind of check: a claim about the world, such as "a leading pedestrian interval will cut pedestrian crashes here", cannot be verified by reading a document. It can only be tested against what happened when the city did it before.
 
 A falsification gate is a deterministic test, inside the tool an agent uses to finish, that tries to show a claim is wrong. The claim goes through only if the test fails to break it. NearMissLens has these gates:
 
@@ -61,9 +61,9 @@ The registered rule (the gate below the naive rate, with an upper bound of at mo
 | Seattle LPIs | "reduced", −17% | "reduced", −47% (held-out half) |
 | SF crosswalks, NYC enhanced crossings | "no evidence" | "no evidence" |
 
-The gate fixed every disagreement on a real program. On fake programs it did worse: all five false passes came from short designs the analyst chose (a 30 m radius and 12- or 24-month windows) on half the sites, where the gate's bootstrap interval is too narrow.
+With the gate, its verdicts on the real programs matched the registered studies. On fake programs it did worse: all five false passes came from short designs the analyst chose (a 30 m radius and 12- or 24-month windows) on half the sites, where the gate's bootstrap interval is too narrow.
 
-**Testing the tester (T14).** We then registered a calibrated gate. It keeps the original checks and adds one: the program must beat 97.5% of 200 fake programs of the same size, run through the same design in the same city. On 100 fresh fake programs, it passed 3 (T11's design) and 2 (the short design), against 6 and 3 for the original gate. It also failed the registered power check, because it does not pass New York's or Seattle's LPIs: New York's effect ranks at the 7th to 13th percentile of fake programs, depending on the run. Under the rule written beforehand, the original gate stays. The copilot now shows every program's rank among fake programs next to the gate's verdict, wherever the city has enough untreated hotspots (200 or more) to build one. The reading is that fake programs at untreated hotspots vary more than a program's own bootstrap interval suggests. The original gate's intervals are optimistic, and the LPI result should be read as consistent evidence across two cities and three published studies, not as proof.
+**Testing the tester (T14).** We then registered a calibrated gate. It keeps the original checks and adds one: the program must beat 97.5% of 200 fake programs of the same size, run through the same design in the same city. On 100 fresh fake programs, it passed 3 (T11's design) and 2 (the short design), against 6 and 3 for the original gate. It also failed the registered power check, because it does not pass New York's or Seattle's LPIs: New York's effect ranks at the 7th to 15th percentile of fake programs, depending on the run. Under the rule written beforehand, the original gate stays. The copilot now shows every program's rank among fake programs next to the gate's verdict, wherever the city has enough untreated hotspots (200 or more) to build one. The reading is that fake programs at untreated hotspots vary more than a program's own bootstrap interval suggests. The original gate's intervals are optimistic, and the LPI result should be read as consistent evidence across two cities and three published studies, not as proof.
 
 ## How this compares with published LPI evaluations
 
@@ -71,10 +71,11 @@ The gate fixed every disagreement on a real program. On fake programs it did wor
 |---|---|---|
 | This work, New York (T11) | Comparison group (sites treated later) with a placebo, 1,651 intersections, 2015–2021 installs | Pedestrian injury crashes −17% (−22% to −11%) |
 | NYC DOT, Safety Treatment Evaluation 2005–2018 (2022) | Naive before/after, 1,446 LPIs | Pedestrian injuries −18.1% |
-| FHWA-HRT-18-044 (2018) | Empirical Bayes, 105 sites in Chicago, New York and Charlotte | Vehicle–pedestrian crashes CMF 0.87 (−13%); New York's 42 sites alone 0.91, not significant |
-| Columbia, Nature Cities (2025) | Spatial panel, 2,869 NYC LPI intersections, reported as an association | Pedestrian injuries −33% |
+| Goughnour et al., FHWA-HRT-18-044 (2018) | Empirical Bayes, 105 sites in Chicago, New York and Charlotte | Vehicle–pedestrian crashes of all severities, CMF 0.87 (−13%); New York's 42 sites alone 0.91, not significant |
+| Zadey et al., Nature Cities (2025) | Spatial ecological panel, 6,003 NYC intersections (2,869 with LPIs), an association | Pedestrian injuries about −33% |
+| Fayish & Gross, TRR 2198 (2010) | Comparison group before/after, 10 sites in Pennsylvania | Pedestrian–vehicle crashes −58.7% |
 | This work, Seattle (T13) | Same design as T11, 371 intersections | Pedestrian-involved injury crashes −33% (−52% to −13%) |
-| Seattle DOT (2023) | City summary, method not stated | Pedestrian killed or seriously injured −34% |
+| SDOT blog, 31 Aug 2023 | City summary of 2009–2018 installs, method not stated | Pedestrian killed or seriously injured −34% |
 
 Our New York estimate sits between the federal CMF and the city's own naive figure. The same NYC DOT report credits turn calming with −17.5% pedestrian injuries using a naive design; our gate does not credit it, because the decline began before the work.
 
@@ -126,11 +127,37 @@ It is measured within the listed corners. Where those corners were themselves pi
 
 The sentence says what the record shows since the denial, and the number checker checks it.
 
+## Red-teaming the claim checker (T18)
+
+**Setup.** An attacker model reads a real receipt and writes false claims across six error types, each with a spec: the field it misreports, the record's value and the claimed value. Code accepts a claim as false only if the spec checks out against the receipt, so the labels do not depend on trusting the attacker. True paraphrases are checked the same way.
+
+**Development.** Muse Spark attacked the gate as registered and found it accepted 42% of verified false claims. Every one of 31 "none" claims passed (for example "no pedestrians were killed" where one was), as did two thirds of numbers borrowed from another field.
+
+**The patch** binds each number to what its sentence names (a program, a pattern, a fix, a year) and checks "no", "zero" and "never" as counts. It allows city-wide figures only in comparing sentences, separates per-year figures from totals, and refuses more causal wording. It was frozen in a pushed commit.
+
+**Held out.** Muse Spark Open, with prompt styles and corners never used in development, then got 38% of its false claims past the gate as registered and 21% past the patched gate. That is a 46% cut, short of the registered halving, with false refusals up 4.2 points. Most of what still passes are claims that something is absent.
+
+## Reading the CMF records (T19)
+
+**Setup.** Muse Spark reads each of the 25 curated CMF records: the name, prior condition, area, comments, bias note and abstract. It says whether the study sites were a narrower kind of place, shared a precondition public data cannot show, or carried a trend the study did not remove. Each answer must come with a verbatim quote, and code checks the quote.
+
+**Result.** Against hand labels written before the run, it scored 0.92 accuracy, against 0.87 for the structured fields alone. It recalled every precondition and trend note, including the limits behind the New York totals, and refused no quotes.
+
+**What changed in the data.** It also flagged four kind-of-site limits the hand labels missed: beacons studied on higher-speed Arizona roads, mid-block crossings, and two segment-level studies. After review against their quotes, these went into `data/fhwa_psc.json` with their source marked.
+
+**FHWA's yellow-interval page.** It cites CMFs 380 and 384 (8% fewer crashes, 12% fewer injury crashes), which are rated two stars. The code's three-star rule leaves them out and uses the four NCHRP Report 705 records, all measured where the change interval was below ITE practice. That is why the fix needs a timing check.
+
 ## Related work
 
-Agents that test their own hypotheses already exist. POPPER (Huang et al., 2025, arXiv 2502.09858) has an agent design falsification experiments for free-form hypotheses, with sequential error control; DiscoPER (Zhao et al., 2026, arXiv 2607.01131) keeps only claims that pass statistical tests. Studies of AI analysts show why the verdict should not be left to the model: they report opposite conclusions on the same data depending on framing (Miao et al., 2026, arXiv 2607.01507; Alizadeh et al., 2026, arXiv 2606.11456). Placebo and refutation tests are standard tools (DoWhy's refuters; the pre-period comparability check in Hauer's comparison-group method, FHWA-HRT-17-082), and later-treated sites are a common comparison group in staggered roll-outs.
+**Road-safety evaluation.** The causal gate uses the comparison-group before/after design (Hauer, 1997), not the Empirical Bayes design behind most CMFs (Hauer, Harwood, Council & Griffith, 2002; AASHTO Highway Safety Manual, 2010, ch. 9; Persaud & Lyon, 2007). Sites picked after a bad spell improve on their own (Hauer, 1980). Empirical Bayes corrects for this with safety performance functions; we fit none, so the placebo date and the measured persistence factor only partly substitute. The placebo plays the part of the pre-period comparability test in comparison-group designs (Gross, Persaud & Lyon, 2010, FHWA-SA-10-032).
 
-What NearMissLens does differently is narrower: one fixed, registered quasi-experimental design lives inside the tool, the agent cannot change it, the agent never sees the half of the data the gate decides on, and a claim the gate breaks never reaches a brief or a letter. We also measure the gate's false-pass rate on 200 fake programs instead of assuming it. Commercial tools that offer before/after comparisons (StreetLight, Miovision's Mateo agent, Replica) do not document a comparison group, a significance test or a placebo on their public pages.
+**Staggered roll-outs and falsification.** Sites treated later serve as the comparison, as in the not-yet-treated control of Callaway & Sant'Anna (2021). The two-way fixed-effects regressions the AI analyst usually wrote can be biased when installs are staggered and effects vary (Goodman-Bacon, 2021; Sun & Abraham, 2021). The placebo date is a negative control (Lipsitch, Tchetgen Tchetgen & Cohen, 2010), and passing it does not prove parallel trends (Roth, 2022). Counting false passes on fake programs follows the placebo-law test of Bertrand, Duflo & Mullainathan (2004) and empirical calibration (Schuemie et al., 2014). The held-out half is sample splitting (Fafchamps & Labonne, 2017).
+
+**Agents and verification.** POPPER (Huang et al., ICML 2025) and DiscoPER (Zhao, Beery & Mac Aodha, 2026) test agents' claims statistically. Defensible analyses of the same data disagree (Breznau et al., 2022). AI agents given different personas reproduce this (Miao, Pritchard & Zou, 2026), and a confirmatory prompt flips an agent's verdicts while its estimates stay put (Alizadeh et al., 2026). The number checker resembles checking text against relational data (Jo et al., 2019). Attacking it with a model follows Perez et al. (2022), and the held-out attacker follows the builder/breaker setup of FEVER 2.0 (Thorne et al., 2019). Mining NYC's denied signal-study requests builds on Kelly (2026, "All Study And No Play"). The registration file follows preregistration practice (Nosek et al., 2018) but is not an external registry.
+
+**Products.** Johns Hopkins' SafeRoads AI (2026, not yet released) turns crash data into hotspot briefs with agentic AI. Transoft's BriskLUMINA filters CMFs by site conditions. Derq and Miovision's Mateo offer recommendation and before/after features. On their public pages, checked in October 2026, we found no comparison group, significance test or placebo documented.
+
+NearMissLens differs narrowly. One registered design sits inside the tool, and the agent cannot change it or see the half the gate decides on. The gate's false-pass rate is measured, not assumed. And the claim checker is attacked by a model and scored on a held-out attacker.
 
 ## Limits
 

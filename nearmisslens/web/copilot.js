@@ -88,10 +88,10 @@ async function showPlan() {
   const rows = [...p.corners].filter(c => c.best).sort((a, b) => b.best.crashes_avoided_per_year - a.best.crashes_avoided_per_year);
   $("out").innerHTML = `<p class="where">${esc(p.city_name)} · records as of ${date(p.asof)}</p>` +
     `<h2 class="corner">Where the evidence says to act first</h2>` +
-    `<p class="lede">A textbook estimate says low-cost fixes at these ${s.corners} corners would avoid about ` +
-    `<b>${s.textbook_crashes_avoided_per_year}</b> crashes a year. The evidence supports <b>${s.crashes_avoided_per_year_total}</b> of them ` +
-    `without a site visit` + (r.factor != null && r.factor < 1 ? `, about <b>${s.crashes_avoided_per_year_after_rtm}</b> after the drop the worst corners show on their own` : "") +
-    `. The rest rest on studies of other kinds of sites, or need a check of the signal timing first.</p>` +
+    `<p class="lede">Add up the largest low-cost estimate at each of these ${s.corners} corners and you get about ` +
+    `<b>${Math.round(s.textbook_crashes_avoided_per_year)}</b> fewer crashes a year. The evidence supports <b>${Math.round(s.crashes_avoided_per_year_total)}</b> ` +
+    `without a site visit` + (r.factor != null && r.factor < 1 ? ` (about <b>${Math.round(s.crashes_avoided_per_year_after_rtm)}</b> after the drop the worst corners show on their own)` : "") +
+    `. The difference rests on studies of other kinds of sites, or on a check nobody has made yet, such as the signal timing.</p>` +
     `<div class="tiles">` +
     tile(usd(s.harm_usd_per_year || s.harm_usd_per_year_summed), "a year in injury crashes at these corners (U.S. DOT values)") +
     tile(`${s.corners_with_supported_fix}`, `corners with a fix the evidence supports now (${tiers || "none"})`) +
@@ -221,7 +221,7 @@ function show(r, corner) {
   const bars = pats.map(p => `<div class="lab ${p.over_represented ? "over" : ""}">${esc(p.phrase || p.pattern)}</div>` +
     `<div class="bar ${p.over_represented ? "over" : ""}" role="img" aria-label="${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}">` +
     `<i style="width:${Math.min(100, 100 * p.share)}%"></i><b class="city" style="left:${Math.min(100, 100 * p.city_share)}%"></b>` +
-    `<span>${pct(p.share)} here, ${pct(p.city_share)} citywide</span></div>`).join("");
+    `<span>${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}</span></div>`).join("");
 
   // what the city tried
   const cls = {worked: "s-worked", "not shown": "s-not", "earlier trend": "s-trend", worse: "s-worse"};

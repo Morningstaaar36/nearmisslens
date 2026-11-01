@@ -118,13 +118,13 @@ PET ≤ 1.5 s F1 difference, 95% interval over flights: [-0.024, 0.117]: registe
 
 304 intersections, 11984 injury crashes and 60 deaths within 100 m in 5 years. Plan gap (≥ 10 injury crashes, no recorded treatment in the period): 225 (74.0%). No recorded treatment ever: 87.
 
-The totals above add each intersection's count, so a crash within 100 m of two priority intersections is counted twice. Counted once each (records since 2021-10-31): 11,477 injury crashes and 56 deaths. At the U.S. DOT's injury-crash value (BCA Guidance 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths not valued separately) they cost about $786 million a year.
+The totals above add each intersection's count, so a crash within 100 m of two priority intersections is counted twice. Counted once each (records since 2021-10-31): 11,477 injury crashes and 56 deaths. At the U.S. DOT's injury-crash value (U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths not valued separately) they cost about $786 million a year.
 
 ## T9 Citywide plan-gap screen, NYC Vision Zero priority intersections: street projects only (first run)
 
 304 intersections, 11981 injury crashes and 60 deaths within 100 m in 5 years. Plan gap (≥ 10 injury crashes, no recorded treatment in the period): 267 (87.8%). No recorded treatment ever: 252.
 
-The totals above add each intersection's count, so a crash within 100 m of two priority intersections is counted twice. Counted once each (records since 2021-10-30): 11,474 injury crashes and 56 deaths. At the U.S. DOT's injury-crash value (BCA Guidance 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths not valued separately) they cost about $786 million a year.
+The totals above add each intersection's count, so a crash within 100 m of two priority intersections is counted twice. Counted once each (records since 2021-10-30): 11,474 injury crashes and 56 deaths. At the U.S. DOT's injury-crash value (U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1: $342,400 in 2024 dollars; deaths not valued separately) they cost about $786 million a year.
 
 ## T10 Near-miss and crash fusion, Washington DC (unseen 30% of 1 km blocks, future years)
 
@@ -488,6 +488,31 @@ Registered in BENCH_PREREG.md (T17). 40 questions generated from the 10 worst co
 | without it | 31 | 13 | 0.900 | 0.900 | 0.900 | 0.100 | $1.575 |
 
 Registered rule (fewer wrong sentences with the checker, at least 80% of answerable questions right): met. The price: with the checker the agent gave no checked answer to 38% of the questions, against 10% without it.
+
+## T18 Red-teaming the finish gate
+
+Registered in BENCH_PREREG.md (T18) and pushed before any attack. An attacker model writes false claims from real receipts, each with a spec code checks against the receipt (claims whose spec does not check out are dropped), plus true claims. Development: Muse Spark, corners ranked 11-20. Held out: Muse Spark Open on Baseten with two prompt styles never used in development, corners 21-30, scored by the gate as registered and by the patched gate frozen before the held-out run.
+
+| gate | false claims accepted | false absence | borrowed number | wrong label | wrong number | rate swap | causal overreach | true claims refused |
+|---|---|---|---|---|---|---|---|---|
+| development attacks, gate as registered | 82/194 (0.423) | 31/31 | 22/33 | 22/33 | 2/28 | 3/23 | 2/46 | 3/113 (0.027) |
+| development attacks, patched gate | 15/194 (0.077) | 5/31 | 1/33 | 8/33 | 1/28 | 0/23 | 0/46 | 4/113 (0.035) |
+| held-out attacks, gate as registered | 104/273 (0.381) | 52/56 | 27/41 | 7/29 | 10/46 | 4/14 | 4/87 | 22/190 (0.116) |
+| held-out attacks, patched gate | 56/273 (0.205) | 27/56 | 17/41 | 4/29 | 4/46 | 2/14 | 2/87 | 30/190 (0.158) |
+
+Registered rule (held-out attack success at least halved, Wilson upper bound at most 10%, false refusals up at most 5 points): not met. The patch cut held-out attack success by 46% and false refusals rose 4.2 points.
+
+## T19 Where a crash-reduction factor applies: Muse Spark reads the record
+
+Registered in BENCH_PREREG.md (T19) with hand labels, before any model call. 25 curated CMF records; three questions each (narrower kind of site, a precondition public data cannot show, a trend or bias note); the model must quote the record and code checks the quote.
+
+| arm | all (accuracy) | kind of site (acc / recall / precision) | precondition | trend or bias |
+|---|---|---|---|---|
+| Muse Spark, quote checked | 0.920 | 0.760 / 0.800 / 0.444 | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 |
+| Muse Spark, before the quote check | 0.920 | 0.760 / 0.800 / 0.444 | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 |
+| structured fields only (no model) | 0.867 | 0.760 / 0.400 / 0.400 | 0.840 / 0.833 / 0.625 | 1.000 / 1.000 / 1.000 |
+
+Quotes refused by the check: 0. The limits adopted into data/fhwa_psc.json, including four the model found and the hand labels did not have, are listed in BENCH_PREREG.md (T19 result).
 
 ## Data agent: adapters found and validated without hand-written code
 

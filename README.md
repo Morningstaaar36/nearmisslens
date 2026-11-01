@@ -1,28 +1,60 @@
 # NearMissLens
 
-**A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It finds the worst corners, works out what their crashes have in common, checks what the city already tried, picks the fix the record supports and prices it, finds who has to act, and drafts the request. Every sentence it writes cites the receipt behind it, and a sentence whose numbers do not match its receipt is refused before anyone sees it.
+**A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It ranks the worst corners, works out what their crashes have in common, tests what the city already tried against the city's own crash history, ranks fixes by the strength of the evidence behind them, finds which agencies own the roads, and drafts one request per agency. Each claim cites the receipt behind it, and a claim whose numbers do not match that receipt is refused before it is shown.
 
-**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) has the case for each of New York's 304 Vision Zero priority intersections, and for the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
+**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) opens on each city's action plan. It covers New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
 ![The copilot open on Bruckner Boulevard & Hunts Point Avenue: the city's priority corners on a map and a ranked list on the left; on the right the case, each sentence followed by the receipt it rests on](docs/img/copilot_bruckner.png)
 
-## One corner, start to finish
+## The problem
 
-`nml engineer nyc` screens New York's 304 priority intersections and opens the worst one: **Bruckner Boulevard & Hunts Point Avenue** in the Bronx. Its case, as the engineer wrote it:
+US cities are spending federal safety money on plans like this one. The Safe Streets and Roads for All program has $5 billion for 2022–2026 and has already awarded "$3.9 billion in Federal funding to over 2,000 communities" ([USDOT](https://web.archive.org/web/20261021072608/https://www.transportation.gov/grants/SS4A)). Its 1,272 action-plan grants for FY22–FY25 had a median budget of about $250,000 (our count from USDOT's award lists, [`validation/ss4a/`](validation/ss4a/)). Every eligible plan must map high-risk locations and explain how projects are prioritized: questions 3 and 6 of the self-certification worksheet.
 
-- **The record.** 129 injury crashes in five years of police reports (29 pedestrians and 3 cyclists injured), the most of the 304. At the U.S. DOT's crash values, that is about $8.8 million a year. The last recorded safety work there is a 2015 street project.
-- **What the crashes have in common.** 28% involved a truck or bus, against 16% at the city's other priority corners. 12% had "following too closely" recorded, against 6%. Both hold up after a correction for testing many patterns. Hunts Point is home to the city's food distribution market, and the crash record shows it.
-- **What the city already tried.** New York's own leading pedestrian intervals cut pedestrian injury crashes 17% at 1,651 intersections, measured against intersections that got them later, and a fake earlier install date shows nothing. Its turn calming looks like −26% in a simple before/after, but crashes were already falling before the work, so the engineer does not credit it.
-- **The fix and its price.** Longer yellow signal times: about 7 fewer crashes a year, worth $2.4 million a year (CMF 4215, the median of four studies that fit a signalized corner). Reflective signal backplates: 3.9 a year, $1.3 million (CMF 1410, the one FHWA cites).
-- **Who must act.** Two owners. The New York State DOT, Region 11, owns the Bruckner Expressway (I-278), which runs overhead, and the Sheridan Boulevard (NY 895), according to the state's road inventory. The surface streets are not in that inventory, so they are the city DOT's. Council District 17 and Bronx Community Board 2 can push for the work.
-- **The request.** A letter to both owners, copying the council member and the board, with each number checked against the record.
+The estimates behind those choices are easy to get wrong in two ways.
+- **A fix is credited with an effect measured somewhere else.** FHWA's CMF Clearinghouse warns that "the characteristics associated with the CMF should closely match the characteristics of the scenario at hand" ([FAQ](https://cmfclearinghouse.fhwa.dot.gov/faqs.php)).
+- **A program is credited with a drop that was coming anyway.** Before/after comparisons at high-crash sites are "likely to result in an overestimation of the treatment's effect" ([FHWA-RD-94-082](https://www.fhwa.dot.gov/publications/research/safety/humanfac/94082.cfm)).
 
-The first run takes about 40 seconds of public-data requests (median 36 s across the 304 corners). After that, a case rebuilds in under a second.
+Requests can also go to the wrong place: at some corners the city is not the only road owner.
 
-**Across all 304 corners**, the same run found:
-- the city DOT is not the only road owner at 12 of them (the state DOT at 11, a toll authority at 1);
-- 54 already got turn calming, the program whose drop the city's own record cannot separate from an earlier trend, so the engineer flags them before the same thing is proposed again;
-- at 144, at least one crash pattern is more common than at the city's other priority corners. The owner split matters for anyone asking for a fix here: a letter only to the city DOT would miss the state agency that owns the expressway above the junction.
+NearMissLens drafts the safety analysis and the project list from public records. It is built so that it cannot say more than the record supports.
+
+## What it found
+
+From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 October 2026:
+
+| | New York | Seattle | Washington DC | San Francisco |
+|---|---|---|---|---|
+| Corners | 304 priority intersections | 50 worst | 50 worst | 50 worst |
+| Harm a year, each crash counted once (U.S. DOT values) | $786 million | $183 million | $192 million | $129 million |
+| Largest low-cost estimate at each corner, added up | 328 crashes a year | 109 | 76 | 58 |
+| Supported without a site visit | **84** (80 after regression to the mean), at 123 corners | **74**, at 50 corners | **2**, at 5 corners | **0** |
+
+The gap between the last two rows is the point. In New York the largest estimates mostly need a check nobody has made:
+- signal backplates where the record does not show red-light entries;
+- yellow timing where nobody knows whether the current interval is short;
+- crosswalk studies done at school crossings.
+
+What the evidence supports now is mostly two things:
+- **leading pedestrian intervals at 78 corners**, a fix the city's own past installs show working;
+- **backplates at 45 corners**, where FHWA's cited study fits.
+
+Seattle's records include road surface, so its wet-road friction estimates qualify. San Francisco's records do not support any low-cost estimate without a site visit.
+
+**New York, also from the same cases:**
+- **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and a toll authority at 1. Each agency gets its own letter, number-checked like every claim.
+- **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
+- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded there now, and pedestrians have been injured there since. Ryan E. Kelly found the same 0% approval for these requests in Queens ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and the injuries since.
+
+## One corner: Bruckner Boulevard & Hunts Point Avenue
+
+The worst of the 304:
+- **The record.** 129 injury crashes in five years: 29 pedestrians and 3 cyclists injured. That is about $8.8 million a year at the U.S. DOT's values.
+- **What the crashes have in common.** A truck or bus was involved in 28% of its 310 police-reported crashes, against 16% at the other priority corners. "Following too closely" was recorded in 12%, against 6%. Both survive a correction for testing many patterns, and the truck share held up on later years the analysis never saw. The corner sits beside the Hunts Point Food Distribution Center; police records cannot say why the share is high.
+- **The fix, by evidence.**
+  - Reflective signal backplates: about 3.9 fewer injury crashes a year, $1.3 million (CMF 1410, the study FHWA's fact sheet cites).
+  - Longer yellow plus all-red time: about 2.0 a year, but only if a timing check shows the current interval is below ITE practice. All four eligible records come from one study (NCHRP Report 705) at signals with short intervals. FHWA's own page cites lower-rated records (380/384, 8–14% fewer crashes), which the code's three-star rule leaves out.
+- **Who must act.** The state DOT (Region 11) owns the Bruckner Expressway (I-278) and the Sheridan Boulevard (NY 895), according to the state road inventory. The surface streets are not in that inventory, so they are presumed the city's. Council District 17 and Bronx Community Board 2 can push for the work.
+- **What the city's data does not show.** The city's open datasets record no safety work here since a 2015 street project. But New York State's Hunts Point access project improved this intersection in its first phase, completed in 2022 ([announcement](https://www.governor.ny.gov/news/governor-hochul-announces-completion-phase-one-17-billion-hunts-point-access-improvement)). A request to the state should start from that project.
 
 ## How it works
 
@@ -30,119 +62,106 @@ The engineer is a Meta model with six tools. Each tool is plain code over public
 
 | Tool | What it reads | The check inside it |
 |---|---|---|
-| `screen_city` | The city's priority intersections and its police crash records | Each crash counted once where junction circles overlap |
-| `root_cause` | Crashes within 100 m: who was hurt, vehicle types, recorded factors, time of day | A pattern is "over-represented" only if a one-sided binomial test against the city's priority corners passes after a Holm correction, with at least 10 crashes. The wording is "have in common", never "caused" |
-| `test_programs` | Every program a registered study tested in this city, and the projects recorded at this corner | The causal gate (below). A corner that already got a program whose effect was not shown is flagged before it gets the same again |
-| `choose_fixes` | FHWA Proven Safety Countermeasures and a curated set of 25 CMF Clearinghouse records | A crash-reduction factor applies only if it matches the corner's control and a crash group the record shows. The FHWA-cited record wins, else the median, never the largest |
-| `who_must_act` | The state road inventory, council and community-board maps | No party without the dataset row behind it. An owner the inventory implies but does not list is marked "inferred" |
+| `screen_city` | The city's priority intersections and police crash records | Each crash counted once where junction circles overlap |
+| `root_cause` | Crashes within 100 m | A pattern is "over-represented" only after a one-sided binomial test with a Holm correction, at least 10 crashes; the wording is "have in common", never "caused" |
+| `test_programs` | Every program a registered study tested in this city, and the projects recorded here | The causal gate (below); a corner that already got a program whose effect was not shown is flagged |
+| `choose_fixes` | FHWA Proven Safety Countermeasures and 25 curated CMF Clearinghouse records | A CMF counts only where its study sites match: control, crash group, kind of site, and preconditions; each fix gets an evidence tier (measured here, FHWA-cited, national studies, needs a site check, contradicted here) |
+| `who_must_act` | The state road inventory, council and community-board maps | No party without the dataset row behind it; inferred owners are marked |
 | `draft_request` | The facts above | Every number in the letter must be the record's value for the words next to it |
 
-The agent finishes by calling `finish` with a summary and a list of claims, each citing a receipt. The **finish gate** refuses:
-- a claim without a receipt;
-- a number that is not the receipt's value for its label ("29 pedestrians were killed" when the record says 29 injured);
-- a summary that says "caused", "failed" or "proves".
+The agent finishes by submitting its claims, each citing a receipt. The **finish gate** refuses a claim that:
+- cites no receipt;
+- uses a number that is not the receipt's value for what the sentence names. For example, "29 pedestrians were killed" when 29 were injured, a program's site count borrowed from another program, or "no crashes at night" when the record has 67;
+- uses wording the record cannot support ("caused", "proves", "certain to", "led to");
+- states a fix that needs a site check as if it were supported.
 
-In our first agent run, Muse Spark Open's summary said a program had "failed". The record only says its effect was not shown, so that word is now refused, and the next run passed. That run took 7 turns and cost $0.07 on Baseten.
+`nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims. Without `--agent` the same tools run in a fixed order with claims written by code; that mode needs no model and builds the site.
 
-It runs two ways. `nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims. `nml engineer "ADDRESS"` runs the same tools in a fixed order, with claims written by code; that mode needs no model and builds the static site.
+## The model proposes, code checks
 
-## Falsification-gated agents
+Every Meta model use is paired with a check it cannot get around, and each pair is measured:
 
-The method is the gates. An agent can say what it likes, but a claim only reaches the reader after a deterministic test inside the tool has tried to break it with public data. This builds on Meta's verifiable-agent pattern from the Agents 102 workshop, which puts checks inside the tools so an agent cannot finish until its work passes them. It is close in spirit to POPPER (Huang et al., 2025), which has agents design falsification experiments for hypotheses. Meta's checks compare claims with documents. These gates check claims about the world: a number against the record, a crash-reduction factor against the site, a drawing against SAM 3.1, and "this fix works here" against the city's own history.
+| Meta model | What it does | The check | Result |
+|---|---|---|---|
+| Muse Spark Open (Baseten) | Writes the case for 35 top corners across 4 cities | Finish gate | 27 run so far: 21 finished with every claim passing, and 29 refused attempts kept, struck through, on the site |
+| Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone; found 4 limits the hand labels missed, now in the data |
+| Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
+| Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies but passed 5 of 20 fake programs |
+| Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero; as many distinct mechanisms as an exhaustive grid from 43 times fewer tests, but fewer confirmed (rule not met) |
+| Muse Spark Open | Answers free questions about a corner (T17) | Finish gate | With the gate, none of the sentences shown was wrong (by the same checker after the run); 31 without it. The price: 38% of questions got no answer that passed |
+| Muse Spark | Finds a new city's crash and program datasets | A validator in the tool | Refused two wrong Seattle mappings; found Seattle's LPI layer, which the gate then measured at −33% |
+| Muse Spark + SAM 3.1 | Reads the aerial photo of each corner (T16) | SAM 3.1 must confirm Spark's point; scored against city map layers | No better than always giving the more common answer, so it changes no recommendation |
+| SAM 3.1, Muse Image | Tracks road users in drone video; draws the top fix | Conflict measures against reference tracks; SAM checks each drawing | Vehicle recall 0.51–0.97 on unseen flights; 13 of 20 drawings pass |
 
-That last one is the **causal gate**. The statistics are standard road-safety evaluation: a comparison-group before/after (Hauer, 1997) with a placebo install date 19 months early. What is new here is that it sits inside the tool, so neither the engineer nor an AI analyst can tell a reader a program worked unless the city's own crash history agrees. [`docs/METHOD.md`](docs/METHOD.md) has the details. The rules for every test are in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md). Registration and results were often committed together, so git cannot confirm the order. Each new registration is now pushed on its own before it runs.
+Results that lost to a simpler method are in [`validation/BENCH.md`](validation/BENCH.md), with the rest.
 
-## What the gate found
+## The causal gate
+
+The gate decides whether a city program reduced crashes, and neither the engineer nor an AI analyst can override it. The design is the comparison-group before/after (Hauer, 1997). The comparison sites are ones the city treated later, as in staggered difference-in-differences (Callaway & Sant'Anna, 2021). A placebo install date 19 months early must show no drop. Measuring its false-pass rate on fake programs follows the placebo-law test of Bertrand et al. (2004). It does not fit the Empirical Bayes model usually used for regression to the mean (Hauer et al., 2002), so the plan measures that separately.
 
 ![Each program's effect on pedestrian injury crashes as the causal gate measured it (dot and 95% interval, green when it passed) next to a simple before/after (orange ring)](docs/img/gates_forest.png)
 
-| Program | Simple before/after | The causal gate |
+| Program | Simple before/after (all treated sites) | The causal gate |
 |---|---|---|
-| New York leading pedestrian intervals, 1,651 intersections | pedestrian injury crashes −24% | **Worked: −17%** (95% interval −22% to −11%); the placebo date shows no change. FHWA's cited figure is −13% |
+| New York leading pedestrian intervals, 1,651 intersections | −24% | **Passed: −17%** (95% interval −22% to −11%); the placebo shows no change. FHWA's Empirical Bayes estimate is −13% for vehicle–pedestrian crashes (Goughnour et al., 2018); NYC DOT's simple before/after says −18% (2022) |
 | New York turn traffic calming, 227 sites | −26% | **Earlier trend:** in the 18 months before the work, crashes were already 22% below what the comparison predicted |
-| Seattle leading pedestrian intervals, 371 intersections | −25% | **Worked: −33%** (−52% to −13%), the same design run unchanged in a second city; both placebos show no change (pedestrian outcome) |
-| Washington DC leading pedestrian intervals, 267 intersections | −31% | **Inconclusive: −19%** (−35% to +1%); 600 of DC's sites had no later-treated comparison |
-| New York speed humps (1,008 sites) and San Francisco continental crosswalks (780) | | **No measurable change** (−0.4% and +4%) |
-| New York enhanced crossings and San Francisco painted safety zones | | **Not shown:** fewer than 100 usable sites each |
-| 200 fake programs (random sites and dates, nothing installed) | credits 8.0% | credits 5.5% (3.1–9.6%), above the 2.5% it nominally allows |
+| Seattle leading pedestrian intervals, 371 intersections | −25% | **Passed: −33%** (−52% to −13%), the same design unchanged in a second city |
+| Washington DC leading pedestrian intervals, 267 intersections | −31% | **Inconclusive: −19%** (−35% to +1%) |
+| New York speed humps (1,008) and San Francisco continental crosswalks (780) | | **No measurable change** (−0.4% and +4%) |
+| 200 fake programs (random sites and dates) | credits 8.0% | credits 5.5% (3.1–9.6%), above the 2.5% it nominally allows |
 
-**An AI analyst with and without the gate.** We gave Muse Spark Open the programs blind and let it write and run its own analysis code in a sandbox. On its own, it missed New York's leading pedestrian intervals, credited turn calming (−9%) and speed humps (−11%), called DC's intervals an "increase" while reporting −15%, and credited 2 of 20 fake programs. With the gate deciding on held-out sites, it confirmed New York (−16%) and Seattle and refused the rest. It also passed 5 of 20 fake programs, all with short designs it chose itself.
+A stricter, calibrated version also requires a program to beat 97.5% of fake programs run through the same design. It cut false passes on 100 fresh fakes from 6 to 3, but no longer confirms the leading pedestrian intervals: New York's effect beats 87% of fakes, not 97.5%. The site shows that rank next to each verdict. Read the interval result as consistent evidence across two cities and published studies, not as proof.
 
-**We tested the tester.** Those 5 false passes led to a stricter, calibrated gate, which also requires a program to beat 97.5% of 200 fake programs run through the same design. On 100 fresh fake programs it cut false passes from 6 to 3 (and from 3 to 2 with the short design). But it no longer confirms the leading pedestrian intervals: New York's effect is stronger than 87% of fake programs, not 97.5%. We kept the original gate, and the copilot shows that rank next to the verdict. Read the interval result as consistent evidence across two cities and published studies, not as proof.
+## Red-teaming the gate (T18)
 
-Projection, not a test: 119 of the 304 priority corners have no leading pedestrian interval. At New York's measured effect, adding them would prevent about 43 pedestrian injury crashes a year (29–56). Each site still needs an engineer's check.
+An attacker model reads a real receipt and writes false claims that sound right, each with a spec of the field it misreports. Code checks the spec, so a claim counts as false only when the data says so. Muse Spark attacked first; the holes it found were patched, and the patch was frozen and pushed. Then Muse Spark Open attacked with two prompt styles never used in development, on corners never used in development.
 
-## An agent that may only report what survived a test it never saw
+| | False claims accepted | Worst type | True claims refused |
+|---|---|---|---|
+| Development attacks, gate as registered | 82 of 194 (42%) | "none" claims, 31 of 31 | 3 of 113 |
+| Development attacks, patched gate | 15 of 194 (8%) | | 4 of 113 |
+| Held-out attacks, gate as registered | 104 of 273 (38%) | "none" claims, 52 of 56 | 22 of 190 |
+| Held-out attacks, patched gate | 56 of 273 (21%) | "none" claims, 27 of 56 | 30 of 190 |
 
-The gates above check what an agent says. The miner checks what an agent claims to have found. At the 100 worst corners, Muse Spark Open reads the crash records from before May 2024: the vehicle- and person-level tables, with each driver's maneuver, direction of travel and point of impact, and each pedestrian's action. It proposes any crash mechanism it likes. Code then tests every proposal, corrects for all of them (Holm), and checks the survivors once on records from May 2024 on, which the agent's tools never show it. The same runs on 100 null corners built from crashes drawn at random, which have no real mechanism. Two arms with no model run the same test: a grid that tries every pattern of one or two conditions (156 per corner), and a greedy arm that takes the 10 most over-represented ones.
-
-| Arm (100 corners each) | Patterns tested per corner | Confirmed per corner | Distinct mechanisms per corner | Share of tested that held up | False finds per null corner |
-|---|---|---|---|---|---|
-| Muse Spark Open | 3.6 | 0.94 | 0.72 | 26% | 0.02 |
-| Grid | 156 | 2.7 | 0.64 | 1.7% | 0.00 |
-| Greedy top 10 | 10 | 2.3 | 0.82 | 23% | 0.01 |
-
-What this shows: the sealed test keeps false finds near zero for every arm, the model included. The agent does not beat the arms with no model, so the registered rule was not met. It finds about as many distinct mechanisms as the grid (the difference, +0.08 per corner, has a 95% interval of −0.07 to +0.23) from 43 times fewer tests. At 13 corners it confirmed a mechanism neither other arm found. One example is Astoria Boulevard & Hoyt Avenue: "following too closely" is in 24% of its crashes against 6% citywide, and the share held up on later years. The run cost $8.11 on Baseten. The confirmed mechanisms appear in each case under "Held up on later years".
-
-**Ask the engineer.** Any question about a corner goes to Muse Spark Open, which answers from that corner's saved receipts under the same finish gate. We asked 40 questions across 10 corners: answerable ones, ones the record cannot answer, and ones that bait it to say a factor "caused" the crashes. With the gate, no wrong sentence reached the reader; without it, 31 did, in 13 of the 40 answers. Without the gate it took the bait 9 times in 10, and with the gate it never did. The price: with the gate, 38% of questions ended with no answer that passed, against 10% without it. Refused sentences are shown struck through, with the reason.
-
-**What the aerial photo shows (T16), a negative result.** An engineer visits a site before recommending a fix. The remote version: Muse Spark reads the state's aerial photo of each of the 304 corners and says whether it has a high-visibility crosswalk, a bike lane and a median, pointing at each one. SAM 3.1 must find the same thing within 15 m of Spark's point. The answers are scored against the city's own map layers and OpenStreetMap. The registered rule (accuracy at least 0.85, coverage at least 0.5) was met for crosswalks and bike lanes. But always giving the more common answer scores the same or better (0.94 and 0.91), because the gated answer mostly repeats it: it called a crosswalk present at all 13 corners that have none, and found none of the 21 painted bike lanes. Spark alone did find 18 of 39 bike lanes, but SAM 3.1 finds almost none from overhead, so the check discarded those along with Spark's errors. Having seen this, we added a stricter rule: an attribute must also beat the common answer, and none does. So the site check is shown on each case, but it changes no recommendation.
+The patch cut held-out attacks by 46%, short of the registered 50%. One false claim in five still gets past the patched gate on a new attacker, mostly claims that something is absent. The gate is a strong filter, not proof against a determined writer.
 
 ## Try it
 
 ```bash
 uv sync                                                    # Python 3.12; no extras needed
+uv run nml --replay plan nyc                               # the city's plan: totals, tiers, one letter per agency
 uv run nml --replay engineer "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY"
-uv run nml --replay engineer nyc                           # screen the city, open its worst corner
 uv run nml app                                             # the copilot on http://127.0.0.1:8770
-uv run nml pages                                           # rebuild the static site in docs/
+uv run nml --replay pages --city nyc --saved-only          # rebuild the static site in docs/
 uv run nml treatments T11                                  # rerun New York's study and its gate
-uv run nml --replay selftest                               # offline self-test; the drone-video rows need nml fetch
+uv run nml --replay selftest                               # offline self-test
 ```
 
-`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so the commands above give the same answers without keys or network once the replay cache (`nearmisslens_replay_cache.tar.gz` on the GitHub release) is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open), `MODEL_API_KEY` (Meta Model API), and optionally `MAPILLARY_CLIENT_TOKEN`. Every paid call is cached and logged, and `NML_BUDGET_USD` caps Meta spend.
+`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network once the replay cache (on the GitHub release) is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
 
-**Cities are data, not code.** Each dataset, district map, road inventory and agency is an entry in [`registry.json`](nearmisslens/data/registry.json), and each study is a JSON file in [`validation/studies/`](validation/studies/). The data agent (`nml discover LAT LON`) finds a new city's crash data in the public Socrata and ArcGIS catalogs; its validator refused two wrong mappings for Seattle before accepting one. The program agent (`nml programs seattle`) found Seattle's leading pedestrian interval layer, turned down 39 other layers, and `nml gate seattle` then measured −33% on 366 intersections, matching the hand-built study.
+**Cities are data, not code.** Each dataset, district map, road inventory, agency and request log is an entry in [`registry.json`](nearmisslens/data/registry.json). Each CMF's limits are in [`fhwa_psc.json`](nearmisslens/data/fhwa_psc.json), and each study is a JSON file in [`validation/studies/`](validation/studies/).
 
-## Meta models
+## How we kept ourselves honest
 
-| Model | Where | What it does |
-|---|---|---|
-| **Muse Spark Open** on Baseten | the engineer, the analyst, letters | Chooses the engineer's steps and writes its claims; writes and runs analysis code in a sandbox; drafts the request letters. All three go through gates |
-| **Muse Spark Open** on Baseten | the miner, Ask the engineer | Proposes crash mechanisms from the earlier years, which code tests on years it never saw (T15). Answers free questions about a corner from its receipts, under the finish gate (T17) |
-| Muse Spark (vision) + SAM 3.1 | site check | Reads the aerial photo for crosswalks, bike lanes and medians; SAM 3.1 must confirm each point. Scored on 304 corners; not yet better than the common answer (T16) |
-| Muse Spark | data agent, program agent | Maps a new city's datasets; a validator in the tool refuses bad mappings |
-| SAM 3.1 | drone video, drawing check | Tracks vehicles (recall 0.51–0.97 on unseen flights) and two-wheelers (0.00–0.73) in drone video; pedestrians are not tracked from 120 m. Checks that a drawn fix is really there and no real car moved |
-| Muse Image | fix drawings | Draws the top fix on the aerial photo; 13 of 20 drawings pass the SAM 3.1 check |
-
-**Near-misses from video**, where video exists: SAM 3.1 tracks road users in drone footage, and the conflict engine measures time-to-collision and post-encroachment time (FHWA SSAM definitions). On 11 unseen one-minute windows, better kinematics and re-seeding raised PET ≤ 1.5 s F1 from 0.23 to 0.36, though neither step met its registered rule. The drone viewer is at [`docs/video/`](docs/video/).
-
-## Tried, and did not help
-
-| What | Result |
-|---|---|
-| Muse Wonder planning which video to review | Covered 32.7 reference conflicts per dollar against 106.3 for a greedy rule |
-| A Muse Spark / Muse Wonder review panel (proposer, skeptic, arbiter) | Did not change the audit facts; its ablation had a bug that is now fixed but was not rerun |
-| Muse Spark scouting points for SAM | Missed the registered go/no-go rule |
-| Muse Spark watching video clips to rate conflicts | Precision rose from 0.46 to 0.69 at equal recall, but removing the video raised F1 (0.106 to 0.198) |
-| Residents' near-miss reports in crash prediction (DC) | No gain on held-out areas and future years (top-5% precision 0.586 with and without) |
-| Muse Spark Open as the complaint checker | 25 of 32 self-made complaints; Muse Spark got 32 and a fixed rule 28 |
-| Muse Spark + SAM 3.1 reading the aerial photo | No better than always giving the more common answer for crosswalks, bike lanes or medians (T16), so it changes no recommendation |
-| The miner against tests with no model | Comparable distinct mechanisms from 43 times fewer tests, but fewer confirmed findings than the grid and greedy arms, so its registered rule was not met (T15) |
-
-The number checker itself: without it, 4 of 34 memos used a number not in the record. With it, none do, because it refuses them.
+- **Registration.** The rules of every test are in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md). Earlier registrations were often committed with their results, so git cannot confirm their order. T18 and T19 were committed and pushed before they ran (commits 89de45b and 28ba1b0), and changes after a run are listed there.
+- **Cases are rechecked.** Every saved case is rewritten by the current code and rechecked before the site is built. A rule change that would refuse an old claim shows up at once.
+- **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.
 
 ## Limits
 
-- **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, so fixes must not be added together, and a qualified engineer must review every recommendation.
-- **The causal gate is observational.** Cities choose their sites, so some regression to the mean can remain even with the placebo, and 5.5% of fake programs passed it.
-- **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause. A third of the crashes here have no factor recorded, and the page says so.
-- **"No recorded treatment" means none in the city's open datasets** within 60–150 m. Work recorded elsewhere is not seen.
-- **Road owners come from the state inventory**, which lists state and designated routes; a street it does not list is shown as an inferred city street.
-- **US cities only so far.** New York, Seattle, Washington DC and San Francisco are registered. The three newer cities have no road-owner dataset in the registry, so their owners come from OpenStreetMap route tags, or the city's agency is presumed and the case says so. Their "no recorded safety work" counts only the program datasets registered for them. A city elsewhere needs its crash data, a harm table and an owner layer in the registry.
+- **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, one fix per corner, never stacked, and a qualified engineer must review each one.
+- **Regression to the mean is measured, not modelled.** The plan's factor (0.95 in New York) compares the worst corners with the rest within the listed corners. Where the corners were picked by the same records (Seattle, DC, SF), it understates the effect.
+- **The causal gate is observational.** Cities choose their sites, and 5.5% of fake programs passed it.
+- **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause.
+- **"No recorded treatment" means none in the city's open datasets.** The state's 2022 work at Bruckner is one example of what they miss.
+- **Signal control comes from OpenStreetMap.** At 42 of the 304 New York corners the street layout could not be fetched before the deadline (the API limited our requests), so their control is unknown and signal-only fixes are not estimated there. The supported totals are low rather than high for that reason.
+- **Matching requests to corners uses street names.** 256 of 304 corners matched; the rest are left out, not guessed.
+- **US cities only so far.** The method needs geocoded crash records, a log of fixes made or denied, a road-owner layer and local crash costs. Bangladesh's police counted 5,084 road deaths in 2021 where WHO estimates 31,578 ([Dhaka Tribune](https://www.dhakatribune.com/bangladesh/381561/who-road-crashes-claiming-young-lives-in)), and no official geocoded record is public, so Dhaka is the next step, not a claim.
+
+## Related work
+
+The causal gate follows road-safety evaluation practice (Hauer, 1997; Gross, Persaud & Lyon, 2010, FHWA-SA-10-032). Its placebo date is a negative-control exposure (Lipsitch et al., 2010), and passing it does not prove parallel trends (Roth, 2022). The agent side is close in spirit to POPPER (Huang et al., ICML 2025), which has agents design falsification experiments. It also responds to evidence that AI analysts' verdicts shift with persona or prompt while their estimates do not (Miao et al., 2026; Alizadeh et al., 2026). The number checker belongs with checking text against relational data (Jo et al., 2019), and attacking it with a model follows Perez et al. (2022). [`docs/METHOD.md`](docs/METHOD.md) has the longer version.
 
 ## Built during the hackathon
 
-Meta Global AI Developer Hackathon, Indie track, "Push the Frontier". Solo entry by Morningstaaar36.
-
-Every line here was written during the event (Oct 27 – Nov 4, 2026). The first commit, `dc089bf`, is dated Oct 27 (ET), and no earlier code was used. Built in that window: the engineer and its six tools, the finish gate and receipts, the causal gate and its studies, the root-cause and road-owner tools, the CMF eligibility rules, the copilot page and static site, the drone-video pipeline and the benchmark. Data and model licences are in [`LICENSES.md`](LICENSES.md), and what is stored about whom is in [`PRIVACY.md`](PRIVACY.md).
+Meta Global AI Developer Hackathon, Indie track, "Push the Frontier". Solo entry by Morningstaaar36. Every line was written during the event (Oct 27 – Nov 4, 2026). The first commit, `dc089bf`, is dated Oct 27 (ET), and no earlier code was used. Data and model licences are in [`LICENSES.md`](LICENSES.md), and what is stored about whom is in [`PRIVACY.md`](PRIVACY.md).

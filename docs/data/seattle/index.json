@@ -24,6 +24,9 @@
 "harm_source": "U.S. DOT, Benefit-Cost Analysis Guidance for Discretionary Grant Programs, 2026 Update (December 2025), Appendix A, Table A-1 (values in 2024 dollars) and section 4.3 (discount rate)"
 },
 "screen": "crash clusters",
+"plan": true,
+"years": 5,
+"gap_min_injury_crashes": 10,
 "corners": [
 {
 "slug": "5th_avenue_pine_street",

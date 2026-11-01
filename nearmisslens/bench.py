@@ -699,7 +699,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1105,4 +1105,59 @@ def _t17_section() -> list[str]:
               f"{'met' if sm.get('rule_met') else 'not met'}. The price: with the checker the agent gave no checked answer "
               f"to {round(100 * (1 - sm['gated']['finished']))}% of the questions, against "
               f"{round(100 * (1 - sm['ungated']['finished']))}% without it.", ""]
+    return L
+
+
+def _t18_section() -> list[str]:
+    """T18 from experiment_T18_dev.json and experiment_T18_heldout.json: red-teaming the finish gate."""
+    dev, ho = _load("experiment_T18_dev.json"), _load("experiment_T18_heldout.json")
+    if not dev or not ho or "registered_gate" not in ho:
+        return []
+    types = ["false_absence", "borrowed_number", "wrong_label", "wrong_number", "rate_swap", "causal_overreach"]
+    def row(name, s):
+        by = " | ".join(f"{s['by_type'][t]['accepted']}/{s['by_type'][t]['attacks']}" for t in types)
+        return (f"| {name} | {s['accepted']}/{s['false_claims']} ({_f(s['attack_success'])}) | {by} | "
+                f"{s['refused']}/{s['true_claims']} ({_f(s['false_refusal'])}) |")
+    r = ho["rule"]
+    L = ["## T18 Red-teaming the finish gate", "",
+         "Registered in BENCH_PREREG.md (T18) and pushed before any attack. An attacker model writes false claims from "
+         "real receipts, each with a spec code checks against the receipt (claims whose spec does not check out are "
+         "dropped), plus true claims. Development: Muse Spark, corners ranked 11-20. Held out: Muse Spark Open on "
+         "Baseten with two prompt styles never used in development, corners 21-30, scored by the gate as registered and "
+         "by the patched gate frozen before the held-out run.", "",
+         "| gate | false claims accepted | " + " | ".join(t.replace("_", " ") for t in types) + " | true claims refused |",
+         "|---|---|" + "---|" * len(types) + "---|",
+         row("development attacks, gate as registered", dev["score"])]
+    pd = _load("experiment_T18_dev_patched.json")
+    if pd:
+        L.append(row("development attacks, patched gate", pd["score"]))
+    L += [row("held-out attacks, gate as registered", ho["registered_gate"]),
+          row("held-out attacks, patched gate", ho["patched_gate"]), "",
+          f"Registered rule (held-out attack success at least halved, Wilson upper bound at most 10%, false refusals up at "
+          f"most 5 points): {'met' if r['met'] else 'not met'}. The patch cut held-out attack success by "
+          f"{round(100 * r['attack_success_cut'])}% and false refusals rose {r['false_refusal_rise_pts']} points.", ""]
+    return L
+
+
+def _t19_section() -> list[str]:
+    """T19 from experiment_T19.json: Muse Spark reads the CMF records."""
+    res = _load("experiment_T19.json")
+    if not res:
+        return []
+    s = res["score"]
+    L = ["## T19 Where a crash-reduction factor applies: Muse Spark reads the record", "",
+         f"Registered in BENCH_PREREG.md (T19) with hand labels, before any model call. {len(res['rows'])} curated CMF "
+         "records; three questions each (narrower kind of site, a precondition public data cannot show, a trend or bias "
+         "note); the model must quote the record and code checks the quote.", "",
+         "| arm | all (accuracy) | kind of site (acc / recall / precision) | precondition | trend or bias |",
+         "|---|---|---|---|---|"]
+    names = {"gated": "Muse Spark, quote checked", "model": "Muse Spark, before the quote check",
+             "structured": "structured fields only (no model)"}
+    for arm in ("gated", "model", "structured"):
+        a = s[arm]
+        cell = lambda f: f"{_f(a[f]['accuracy'])} / {_f(a[f]['recall'])} / {_f(a[f]['precision'])}"
+        L.append(f"| {names[arm]} | {_f(a['all']['accuracy'])} | {cell('kind_limit')} | {cell('precondition')} | "
+                 f"{cell('trend_bias')} |")
+    L += ["", f"Quotes refused by the check: {s['refused_quotes']}. The limits adopted into data/fhwa_psc.json, including "
+              "four the model found and the hand labels did not have, are listed in BENCH_PREREG.md (T19 result).", ""]
     return L

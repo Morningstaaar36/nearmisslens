@@ -434,7 +434,8 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
             continue
         seen.add(p["label"])
         agree = [a for a in p.get("also_tested", []) if a["status"] == p["status"]]
-        out.append({"text": f"The city's {p['label']}: {p['status']} ({p['text']})"
+        shown = {"worked": "passed the causal gate"}.get(p["status"], p["status"])  # what happened, not a verdict
+        out.append({"text": f"The city's {p['label']}: {shown} ({p['text']})"
                             + (f"; a second run of the same design on {agree[0]['sites']:,} sites agrees" if agree else "")
                             + ".", "receipt": rp})
     for o in [o for o in fx.get("options", []) if o.get("scale") == "low-cost"][:2]:
