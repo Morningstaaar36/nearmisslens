@@ -1,0 +1,18 @@
+{
+"city": "sf",
+"since": "2021-10-31",
+"crashes": 1880,
+"counts": {
+"crash type: vehicle(s) only involved": 1080,
+"someone hurt": 1880,
+"crash type: vehicle-pedestrian": 426,
+"crash type: vehicle-bicycle": 292,
+"crash type: bicycle-pedestrian": 19,
+"crash type: bicycle-parked car": 8,
+"crash type: bicycle only": 47,
+"crash type: unknown/not stated": 2,
+"crash type: bicycle-unknown/not stated": 3,
+"crash type: pedestrian only or pedestrian-parked car": 2,
+"crash type: vehicle-bicycle-pedestrian": 1
+}
+}
