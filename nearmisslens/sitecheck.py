@@ -170,15 +170,18 @@ def score(rows: list[dict]) -> dict:
     return out
 
 
-def run_t16(client, corners: list[dict], out: Path | None = None) -> dict:
-    """Both models on every corner's photo, the gate, and the ground truth; written after each corner."""
+def run_t16(client, corners: list[dict], out: Path | None = None, workers: int = 4) -> dict:
+    """Both models on every corner's photo, the gate, and the ground truth; corners run in parallel (the time goes on
+    waiting for public servers) and results are written as each corner finishes."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
     from .evaluate import RESULTS_DIR
     out = out or RESULTS_DIR / "bench" / "experiment_T16.json"
     res = json.loads(out.read_text()) if out.exists() else {"id": "T16", "spec": SPEC, "rows": []}
     done = {r["slug"] for r in res["rows"]}
-    for c in corners:
-        if c["slug"] in done:
-            continue
+    lock = threading.Lock()
+
+    def one(c: dict) -> None:
         row = {"slug": c["slug"], "name": c["name"], "lat": c["lat"], "lon": c["lon"]}
         try:
             row["truth"] = truth(c["lat"], c["lon"])
@@ -192,8 +195,17 @@ def run_t16(client, corners: list[dict], out: Path | None = None) -> dict:
                                             img.shape) for a in ATTRS}
         except Exception as e:  # one corner's failure is recorded, not fatal
             row["error"] = f"{type(e).__name__}: {str(e)[:200]}"
-        res["rows"].append(row)
-        out.write_text(json.dumps(res, indent=0, default=str))
+        with lock:
+            res["rows"].append(row)
+            out.write_text(json.dumps(res, indent=0, default=str))
+
+    todo, seen = [], set(done)
+    for c in corners:
+        if c["slug"] not in seen:
+            seen.add(c["slug"])
+            todo.append(c)
+    with ThreadPoolExecutor(max(1, workers)) as pool:
+        list(pool.map(one, todo))
     res["summary"] = score(res["rows"])
     out.write_text(json.dumps(res, indent=0, default=str))
     return res
