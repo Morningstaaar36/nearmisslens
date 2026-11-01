@@ -31,6 +31,17 @@ def cities() -> list[str]:
     return [c["id"] for c in opendata.load_cities() if junction_adapters(c["id"]) or (c.get("screen") or {}).get("from") == "crashes"]
 
 
+def peers(city: str | None) -> str:
+    """How claims name the corners a share is compared with: the registry's peer_label, else by how the city was
+    screened (its own priority list, or crash clusters found from its records)."""
+    from . import opendata
+    c = opendata.city(city) if city else None
+    if c and c.get("peer_label"):
+        return c["peer_label"]
+    return "the city's worst crash locations" if c and (c.get("screen") or {}).get("from") == "crashes" \
+        else "the city's priority junctions"
+
+
 def _named_roads(lat: float, lon: float, radius_m: int) -> list[dict]:
     """Named ways near the point: the OSM API's map call for a small box (about a second), else Overpass."""
     try:

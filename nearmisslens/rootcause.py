@@ -51,12 +51,13 @@ def tags(r: dict, a: dict) -> tuple[set[str], set[str]]:
         missing.add("who was hurt, by mode")
     if hurt:
         out.add("someone hurt")
+    labels = a.get("labels") or {}
     for f in a.get("factor_fields", []):
         v = str(r.get(f) or "").strip()
-        if v.lower() in ("y", "yes", "true", "1"):
-            out.add(f"factor: {f.lower()}")
-        elif v.lower() not in EMPTY and v.lower() not in ("n", "no", "false", "0"):
-            out.add(f"factor: {v.lower()}")
+        if v.lower() in ("y", "yes", "true", "1"):  # a flag field: its label (or name) is the factor
+            out.add(f"factor: {labels.get(f, f.lower())}")
+        elif v.lower() not in EMPTY and v.lower() not in ("n", "no", "false", "0") and _meaningful(v, labels):
+            out.add(f"factor: {labels.get(v, v.lower())}")
     if not a.get("factor_fields"):
         missing.add("contributing factors")
     groups = a.get("vehicle_groups") or {}
@@ -80,12 +81,23 @@ def tags(r: dict, a: dict) -> tuple[set[str], set[str]]:
     if a.get("surface_fields"):
         out |= {"on a wet or icy road"} if any(w in surface for w in ("wet", "ice", "snow", "slush")) else set()
     for f in a.get("crash_type_fields", []):
-        v = str(r.get(f) or "").strip().lower()
-        if v and v not in EMPTY:
-            out.add(f"crash type: {v}")
+        raw = str(r.get(f) or "").strip()
+        v = raw.lower()
+        if v and v not in EMPTY and _meaningful(raw, labels):
+            out.add(f"crash type: {labels.get(raw, v)}")
     if not a.get("crash_type_fields"):
         missing.add("crash types")
     return out, missing
+
+
+def _peers(city: str | None) -> str:
+    from .citywide import peers
+    return peers(city)
+
+
+def _meaningful(value: str, labels: dict) -> bool:
+    """A bare code ('32') says nothing to a reader unless the adapter labels it."""
+    return value in labels or not re.fullmatch(r"[\d.\-]+", value)
 
 
 def phrase(pattern: str) -> str:
@@ -165,7 +177,7 @@ def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100) -> di
         t["p"] = round(float(t["p"]), 5) if t["p"] is not None else None
     over = [t for t in tested if t["over_represented"]]
     return {"crashes": n, "since": since(years).isoformat(), "radius_m": radius_m, "source": a["source"],
-            "baseline": {"crashes": base["crashes"], "junctions": "the city's screened priority junctions"} if base else None,
+            "baseline": {"crashes": base["crashes"], "junctions": _peers(a.get("city"))} if base else None,
             "patterns": tested[:25], "over_represented": over,
             "factor_unspecified_share": round(unspecified / n, 3) if n and a.get("factor_fields") else None,
             "not_recorded": sorted(missing), "enough_crashes": n >= MIN_CRASHES,

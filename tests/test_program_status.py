@@ -28,3 +28,22 @@ def test_status_labels_and_repeat_risk(monkeypatch):
 
 def test_pct_rounds_half_away_from_zero():
     assert T.pct(100 * (0.675 - 1)) == -33 and T.pct(-32.5) == -33 and T.pct(32.5) == 33 and T.pct(-0.4) == 0
+
+
+def test_one_entry_per_program_registered_study_first(monkeypatch):
+    from nearmisslens import treatments as T
+    rows = [{"city": "x", "study": "auto_x", "program": "a", "countermeasure": "LPI", "outcome": "pedestrian",
+             "sites": 366, "status": "worked", "label": "leading pedestrian intervals"},
+            {"city": "x", "study": "T13_x", "program": "b", "countermeasure": "LPI", "outcome": "pedestrian",
+             "sites": 371, "status": "worked", "label": "LPI signals"}]
+    monkeypatch.setattr(T, "programs", lambda city=None: rows)
+    out = T.distinct_programs("x")
+    assert len(out) == 1 and out[0]["study"] == "T13_x" and out[0]["also_tested"][0]["sites"] == 366
+
+
+def test_flag_fields_use_registry_labels_and_bare_codes_are_skipped():
+    from nearmisslens import rootcause as R
+    a = {"factor_fields": ["HITPARKEDCAR"], "crash_type_fields": ["CODE", "DESC"], "labels": {"HITPARKEDCAR": "hit a parked car"}}
+    tags, _ = R.profile([{"HITPARKEDCAR": "Y", "CODE": "32", "DESC": "Rear Ended"}], a)[0:2]
+    assert "factor: hit a parked car" in tags and "crash type: rear ended" in tags
+    assert not any(t.endswith(": 32") for t in tags)

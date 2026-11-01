@@ -488,12 +488,12 @@
     ]
    },
    "crash_type_fields": [
-    "SDOT_COLCODE",
     "SDOT_COLDESC",
-    "ST_COLCODE",
     "ST_COLDESC",
     "ST_COLLISIONTYPE"
    ],
+   "labels": {"INATTENTIONIND": "inattention", "UNDERINFL": "driver under the influence", "SPEEDING": "speeding",
+              "PEDROWNOTGRNT": "pedestrian right of way not granted", "HITPARKEDCAR": "hit a parked car"},
    "factor_fields": [
     "INATTENTIONIND",
     "UNDERINFL",

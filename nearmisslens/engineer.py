@@ -76,13 +76,14 @@ def root_cause(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     t0 = time.perf_counter()
     data = rootcause.analyse(lat, lon)
     over = data.get("over_represented") or []
-    checks = ["one-sided binomial test against the pooled crashes of the city's priority junctions, Holm-corrected",
+    peers = (data.get("baseline") or {}).get("junctions") or "the city's priority junctions"
+    checks = [f"one-sided binomial test against the pooled crashes of {peers}, Holm-corrected",
               f"needs at least {rootcause.MIN_CRASHES} crashes"]
     if data.get("not_recorded"):
         checks.append("not in this dataset: " + ", ".join(data["not_recorded"]))
     rid = desk.record("root_cause", data, [data.get("source")], checks, t0,
                       ("over-represented: " + ", ".join(t["pattern"] for t in over)) if over
-                      else "no pattern stands out against the city's priority junctions")
+                      else f"no pattern stands out against {peers}")
     return data, rid
 
 
@@ -92,7 +93,7 @@ def test_programs(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     t0 = time.perf_counter()
     d = desk.dossier(lat, lon)
     projects = (d.get("plans") or {}).get("projects", [])
-    progs = treatments.programs(d.get("city"))
+    progs = treatments.distinct_programs(d.get("city"))
     data = {"city": d.get("city"), "programs": progs, "repeat_risk": treatments.repeat_risk(d.get("city"), projects),
             "projects_here": projects, "in_place": list(brief.in_place(d).values())}
     rid = desk.record("test_programs", data, [p["source"] for p in progs] + [p.get("dataset") for p in projects],
@@ -251,7 +252,7 @@ def refresh(report: dict) -> dict:
     who["summary"] = "; ".join(f"{r['party']} ({', '.join(r['roads'])})" for r in who["owners"]) or "no road owner found"
     findings["who_must_act"] = who
     tp = dict(findings["test_programs"])  # the program verdicts and their wording, from the current study results
-    tp["programs"] = treatments.programs(tp.get("city"))
+    tp["programs"] = treatments.distinct_programs(tp.get("city"))
     tp["repeat_risk"] = treatments.repeat_risk(tp.get("city"), tp.get("projects_here") or [])
     findings["test_programs"] = tp
     report = {**report, "findings": findings}
@@ -353,12 +354,14 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
                                 "a year.", "receipt": rf})
     rc, rr = rec["root_cause"]
     over = rc.get("over_represented") or []
+    peers = (rc.get("baseline") or {}).get("junctions") or "the city's priority junctions"
+    peers = peers.replace("screened ", "")  # older receipts said "the city's screened priority junctions"
     if over:
         out += [{"text": f"{treatments.pct(100 * t['share'])}% of crashes here {t['phrase']}, against "
-                         f"{treatments.pct(100 * t['city_share'])}% at the city's priority junctions.", "receipt": rr}
+                         f"{treatments.pct(100 * t['city_share'])}% at {peers}.", "receipt": rr}
                 for t in over[:3]]
     elif rc.get("crashes") is not None:
-        out.append({"text": "No crash pattern here stands out against the city's priority junctions"
+        out.append({"text": f"No crash pattern here stands out against {peers}"
                             + ("" if rc.get("enough_crashes") else " (too few crashes to test)") + ".", "receipt": rr})
     if rec.get("mechanisms"):
         mk, rm = rec["mechanisms"]
@@ -383,7 +386,10 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
         if p["label"] in seen:
             continue
         seen.add(p["label"])
-        out.append({"text": f"The city's {p['label']}: {p['status']} ({p['text']}).", "receipt": rp})
+        agree = [a for a in p.get("also_tested", []) if a["status"] == p["status"]]
+        out.append({"text": f"The city's {p['label']}: {p['status']} ({p['text']})"
+                            + (f"; a second run of the same design on {agree[0]['sites']:,} sites agrees" if agree else "")
+                            + ".", "receipt": rp})
     for o in [o for o in fx.get("options", []) if o.get("scale") == "low-cost"][:2]:
         out.append({"text": f"{o['countermeasure']} would avoid about {o['expected_crashes_avoided_per_year']} "
                             f"crashes a year (CMF {o['cmf_id']}, {o['chosen_by']}), worth "

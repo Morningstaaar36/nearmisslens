@@ -539,6 +539,20 @@ def programs(city: str | None = None) -> list[dict]:
     return out
 
 
+def distinct_programs(city: str | None = None) -> list[dict]:
+    """programs(), with one entry per city, countermeasure and outcome: a registered study is kept over a run the
+    program agent set up itself (study ids starting 'auto'), and the other runs are listed under 'also_tested'."""
+    out: dict[tuple, dict] = {}
+    for p in sorted(programs(city), key=lambda p: (str(p.get("study", "")).startswith("auto"), str(p.get("study", "")))):
+        k = (p.get("city"), p.get("countermeasure") or p.get("program") or p.get("label"), p.get("outcome"))
+        if k in out:
+            out[k].setdefault("also_tested", []).append({"study": p.get("study"), "sites": p.get("sites"),
+                                                         "status": p.get("status")})
+        else:
+            out[k] = dict(p)
+    return list(out.values())
+
+
 def program_status(city: str | None, countermeasure: str | None = None, adapter: str | None = None) -> dict:
     """The city's verdict on one countermeasure (or one program dataset): a study that passed wins, otherwise the
     largest study; 'untested' when no registered study covers it."""
