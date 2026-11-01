@@ -25,8 +25,7 @@ from .agent import Tool, run_agent
 from .config import SETTINGS, portable, resolve
 
 YEARS = context.YEARS
-OVERPASS_SERVERS = (context.OVERPASS, "https://overpass.private.coffee/api/interpreter",
-                    "https://maps.mail.ru/osm/tools/overpass/api/interpreter")
+OVERPASS_SERVERS = (context.OVERPASS, *context.OVERPASS_MIRRORS)
 
 
 GEOCODES = Path(__file__).resolve().parent / "data" / "geocodes.json"

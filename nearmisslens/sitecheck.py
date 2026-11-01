@@ -133,12 +133,16 @@ def truth(lat: float, lon: float, radius_m: float = SPEC["radius_m"]) -> dict:
     layer wins over a global one); None when no source covers it or the source is silent."""
     from . import opendata
     out, sources = {}, {}
+    failed = {}
     for a in sorted(opendata.adapters_for(lat, lon, "site_truth"), key=lambda a: a.get("city") is None):
         if a["attribute"] in out and out[a["attribute"]] is not None:
             continue
-        out[a["attribute"]] = _truth_one(a, lat, lon, radius_m)
-        sources[a["attribute"]] = a["source"]
-    return {**{k: out.get(k) for k in ATTRS}, "sources": sources}
+        try:
+            out[a["attribute"]] = _truth_one(a, lat, lon, radius_m)
+            sources[a["attribute"]] = a["source"]
+        except Exception as e:  # an unreachable source makes that attribute unknown here (excluded), not the corner
+            failed[a["attribute"]] = f"{type(e).__name__}: {str(e)[:120]}"
+    return {**{k: out.get(k) for k in ATTRS}, "sources": sources, **({"failed": failed} if failed else {})}
 
 
 # ------------------------------------------------------------------------------------------------- T16
@@ -178,6 +182,7 @@ def run_t16(client, corners: list[dict], out: Path | None = None, workers: int =
     from .evaluate import RESULTS_DIR
     out = out or RESULTS_DIR / "bench" / "experiment_T16.json"
     res = json.loads(out.read_text()) if out.exists() else {"id": "T16", "spec": SPEC, "rows": []}
+    res["rows"] = [r for r in res["rows"] if not r.get("error")]  # failed corners are tried again
     done = {r["slug"] for r in res["rows"]}
     lock = threading.Lock()
 

@@ -25,6 +25,9 @@ from .meta_client import MetaClient
 
 UA = {"User-Agent": "NearMissLens/0.2 (road-safety research; https://github.com/Morningstaaar36/nearmisslens)"}
 OVERPASS = "https://overpass-api.de/api/interpreter"
+# public Overpass mirrors: a request to OVERPASS falls back to these when the main server refuses or is busy; the cache
+# key stays the main URL, so a cached answer is the same whichever server gave it
+OVERPASS_MIRRORS = ("https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter")
 CRASH_RADIUS_M, PLAN_RADIUS_M, OSM_RADIUS_M = 100, 150, 80
 TREATMENT_RADIUS_M = 60
 YEARS = 5
@@ -53,10 +56,12 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
     if SETTINGS.replay:
         raise FileNotFoundError(f"context request not cached: {url}")
     t = time.time()
+    servers = [url, *OVERPASS_MIRRORS] if url == OVERPASS else [url]
     for attempt in range(6):
+        target = servers[attempt % len(servers)]
         try:
             with httpx.Client(headers=UA, timeout=timeout, follow_redirects=True) as c:
-                r = c.post(url, data=data) if data is not None else c.get(url, params=params)
+                r = c.post(target, data=data) if data is not None else c.get(target, params=params)
             if r.status_code == 200:
                 out = r.json()
                 path.write_text(json.dumps(out))
