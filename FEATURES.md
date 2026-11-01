@@ -30,6 +30,12 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **AI analyst with and without the gate (T12 agentic arms):** Muse Spark Open writes and runs its own analysis code in a sandbox (Modal, or a local network-isolated fallback); the gated arm explores on half the sites and the gate decides on the other half. Built and tested; the full run is in progress.
 - [x] **Registry-driven cities:** crash datasets, treatment programs, district offices, agencies and factor vocabularies are data in `registry.json`; no city is named in the engine's code.
 
+## Discovery, site check and questions
+- [x] **Mechanism miner** (`miner.py`, NML-Bench T15): Muse Spark Open proposes crash mechanisms from the years before 2024-05-01, using the NYC vehicle and person tables (column names from registry roles). Code tests every proposal with Holm over all of them and confirms survivors once on later years the agent never sees. Grid and greedy arms run without a model, and 100 null corners measure false finds. Run on 100 corners: 0.02 false finds per null corner; comparable distinct mechanisms to the grid from 43× fewer tests; registered rule not met. Verified by `tests/test_miner.py` (the sealed years are hidden from the agent, every proposal counts in the correction, overclaiming wording is refused).
+- [x] **Site check** (`sitecheck.py`, T16): Muse Spark reads the orthophoto and points; SAM 3.1 must confirm within 15 m. Ground truth comes from registry `site_truth` adapters (city layers, or OpenStreetMap anywhere), and the attributes are in `data/site_attributes.json`. Run on 304 corners: the registered rule is met for two attributes, but no attribute beats always giving the common answer, so none changes a recommendation (change 1). Verified by `tests/test_sitecheck.py`.
+- [x] **Ask the engineer** (`askeng.py`, `POST /ask`, T17): Muse Spark Open answers a free question from the corner's saved receipts under the finish gate, and refused sentences are returned with the reason. On 40 questions: 0 wrong sentences shown with the gate, 31 without; 62.5% answered with the gate, 90% without. Verified by `tests/test_askeng.py` and `tests/test_hosting.py`.
+- [x] **More cities by crash clusters** (`citywide.junctions_from_crashes`, registry `"screen": {"from": "crashes"}`): Seattle, Washington DC and San Francisco, the 50 worst injury-crash clusters each, named from OpenStreetMap streets, with no model cost.
+
 ## Briefs, screens and studies
 - [x] **Safety Brief for any address** (`nml brief`): official crash record, city designations and recorded treatments, eligible FHWA countermeasures ranked by expected crashes avoided (CMF method), dollar values, aerial and street photos, a checked memo.
 - [x] **Checked memo:** code builds the ranking; the agent writes the narrative; a checker rejects any number not in the facts. Verified by T8 (0 of 34 ungrounded with the checker vs 4 of 34 without).
@@ -58,13 +64,13 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Voice complaints run:** 8 of 8 synthetic complaints matched correctly (English, Spanish, French, plus decoys). Mean word error rate 7–13%.
 - [x] **Signal-entry chart:** red and yellow entries by approach and road-user class. Verified by `tests/test_export.py`; shown in the viewer's "Who enters on red" section.
 
-## Validation (pre-registered in `validation/PREREG.md`)
+## Validation (rules registered in `validation/PREREG.md`)
 - [x] **Two-wheeler experiment (change 8, dev only):** negative result. No prompt or tile size met the registered rule.
 - [x] **Track stitching (change 9):** two-wheeler IDF1 0.46→0.54 on test and 0.37→0.42 on held-out. Reported next to the registered numbers.
 - [x] **Signal-entry evidence (change 7):** limited to vehicles for SAM tracks after the agreement check. Disclosed as decided after the test run.
 - [x] Splits fixed before any test or held-out run: dev, test, and held-out intersection.
 - [x] **Evaluation of test and held-out:** written to `validation/RESULTS.md`. Dev was used for development only.
-- [x] **B0 baseline, built:** scorer and windows as pre-registered. Verified by `tests/test_baseline.py`.
+- [x] **B0 baseline, built:** scorer and windows as registered. Verified by `tests/test_baseline.py`.
 - [x] **B0 run:** near-miss F1 is 0.32 for the pipeline against 0.02 for Muse Spark alone.
 - [x] **Verifier precision-gain test, built:** command `nml verifier`.
 - [x] **Verifier run:** precision 0.69 for events rated real, against 0.46 for the severity ranking at matched recall.

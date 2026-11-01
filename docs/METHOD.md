@@ -6,7 +6,7 @@ NearMissLens is a street-safety copilot built from agents on Meta's models. Each
 
 Meta's verifiable-agent pattern (the Agents 102 workshop, `meta-models/legal-agent-workshop`) puts the checks inside the tools, so an agent cannot finish until its work passes them. Those checks compare an agent's claims with documents it was given. Road safety needs one more kind of check: a claim about the world, such as "a leading pedestrian interval will cut pedestrian crashes here", cannot be verified by reading a document. It can only be tested against what happened when the city did it before.
 
-A falsification gate is a deterministic test, inside the tool an agent uses to finish, that tries to show a claim is wrong. The claim goes through only if the test fails to break it. NearMissLens has four gates:
+A falsification gate is a deterministic test, inside the tool an agent uses to finish, that tries to show a claim is wrong. The claim goes through only if the test fails to break it. NearMissLens has these gates:
 
 | Claim | Gate | Where it sits |
 |---|---|---|
@@ -14,6 +14,9 @@ A falsification gate is a deterministic test, inside the tool an agent uses to f
 | "This dataset is the city's crash data, and these fields mean injuries" | The adapter must return real records near a point in the city, with dates that parse and are recent, and injury fields that are numeric | `opendata.validate_crash_adapter`, inside the data agent's tool |
 | "This fix works in this city" | The city's own past installs must show the effect in a registered before/after design, and a fake install date before the real one must show nothing | `treatments.gate`, inside the analyst's `commit_design` and `finish` tools |
 | "The drawing shows the proposed fix" | SAM 3.1 must find more of the fix's concept in the edited photo than in the original, inside the junction, with every real road user unchanged | `brief.illustrate_fix` |
+| "These crashes share a mechanism" | Every pattern the agent proposes is tested, Holm-corrected over all of them, then checked once on later years its tools never show | `miner.agent_arm` (code runs the test after the agent's `propose`) |
+| "The aerial photo shows a bike lane here" | SAM 3.1 must find it within 15 m of Muse Spark's point; an attribute acts only if it beats the common answer against city map layers | `sitecheck.decide`, `engineer.site_check` |
+| A sentence in an answer to a free question | It must cite a receipt of the corner's case and use that receipt's numbers; "caused" and "failed" are refused | `askeng.ask`, the engineer's finish gate |
 
 ## The causal gate
 
@@ -74,6 +77,25 @@ The gate fixed every disagreement on a real program. On fake programs it did wor
 | Seattle DOT (2023) | City summary, method not stated | Pedestrian killed or seriously injured −34% |
 
 Our New York estimate sits between the federal CMF and the city's own naive figure. The same NYC DOT report credits turn calming with −17.5% pedestrian injuries using a naive design; our gate does not credit it, because the decline began before the work.
+
+## Gated discovery: the miner (T15)
+
+The causal gate tests claims someone proposes. The miner lets an agent explore, and gates what it may claim it found.
+
+1. **Split by date.** Crash records before 2024-05-01 are the explore years. Records from that date on are sealed: the agent's tools (`describe`, `query_crashes`) never return them.
+2. **Propose.** Muse Spark Open looks at a corner's explore-year crashes (the driver maneuver, direction and point of impact from the vehicle table; the pedestrian action from the person table; contributing factors) and proposes up to 12 patterns of one or two conditions, each with a plain-words mechanism. Wording that says "caused" is refused.
+3. **Test every proposal.** For each pattern, a one-sided binomial test compares the corner's share with the pooled share at the city's other screened corners (at least 10 crashes). Holm runs over every proposal, not only the ones the agent likes.
+4. **Confirm once on the sealed years.** A pattern that passes is tested once more, on the sealed years only. Only patterns that hold there are reported.
+5. **Null corners.** 100 corners built from crashes drawn at random across corners (seed 1500) go through the same steps. They have no real mechanism, so whatever is confirmed there is a false find.
+6. **Arms without a model.** A grid tries every one- or two-condition pattern (156 per corner on average) and a greedy arm takes the 10 most over-represented ones. Both use the same test, correction, sealed check and null corners.
+
+Result (100 real and 100 null corners per arm): false finds per null corner were 0.02 for the agent, 0.00 for the grid and 0.01 for the greedy arm. The agent confirmed 0.94 patterns per corner from 3.6 tested; the grid confirmed 2.7 from 156, and the greedy arm 2.3 from 10. Merging findings that cover the same crashes, the agent found 0.72 distinct mechanisms per corner against the grid's 0.64 (difference +0.08, 95% interval −0.07 to +0.23). The registered rule (more confirmed findings than both arms without a model) was not met. The second measure was added after the arms without a model had run; the reason is disclosed in the registration file. At 13 corners the agent confirmed a mechanism no other arm did.
+
+## The site check (T16) and Ask the engineer (T17)
+
+**Site check.** Muse Spark reads a 768-pixel orthophoto (180 m across) of each corner and answers present, absent or unsure for three attributes, pointing at what it sees. SAM 3.1 segments the same concept. The gated answer is "present" only when a SAM detection lies within 15 m of a Spark point, and "absent" only when both find nothing. Ground truth within 40 m comes from NYC Bike Routes (classes I and II), the NYC planimetric median layer, and OpenStreetMap `crossing:markings`. The registered rule (accuracy at least 0.85, coverage at least 0.5) was met for crosswalks and bike lanes. Always giving the more common answer scored as well or better, though, so a stricter rule added after the run (beat the common answer) turns every attribute off. SAM 3.1 finds almost no painted bike lanes from overhead, so the gate discards Spark's 18 of 39 correct finds along with its errors. The lesson for gate design: a rule on raw accuracy must be checked against the base rate.
+
+**Ask the engineer.** Muse Spark Open answers a free question from the receipts already saved for a corner, plus the miner's and the site check's results. The answer must pass the engineer's finish gate. Over 40 questions (20 answerable, 10 the record cannot answer, 10 baiting a causal claim), no wrong sentence reached the reader with the gate, against 31 without it. With the gate, 62.5% of questions got an answer that passed, against 90% without it.
 
 ## Related work
 
