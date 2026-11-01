@@ -138,6 +138,44 @@ def mechanisms(desk: Desk, slug: str) -> tuple[dict, str] | None:
     return data, rid
 
 
+def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
+    """What the aerial photo shows at the corner (NML-Bench T16): Muse Spark's answer confirmed by SAM 3.1 per
+    attribute, and whether that attribute is reliable enough (its registered rule) to change a recommendation."""
+    from . import sitecheck
+    from .evaluate import RESULTS_DIR
+    t0 = time.perf_counter()
+    p = RESULTS_DIR / "bench" / "experiment_T16.json"
+    if not p.exists():
+        return None
+    res = json.loads(p.read_text())
+    row = next((r for r in res.get("rows", []) if r["slug"] == slug and r.get("answers")), None)
+    if not row:
+        return None
+    used = {a: v["used_in_product"] for a, v in (res.get("summary") or sitecheck.score(res["rows"])).items()}
+    data = {"answers": {a: {"answer": v["gated"], "reliable": used.get(a, False),
+                            "fix_if_present": sitecheck.CATALOG.get(a, {}).get("fix_present")}
+                        for a, v in row["answers"].items()}}
+    rid = desk.record("site_check", data, ["state orthophoto (NYS GIS Program Office)", "Muse Spark (Meta API)", "SAM 3.1"],
+                      ["present only when SAM 3.1 finds it within 15 m of Muse Spark's point",
+                       "an attribute changes a recommendation only if its accuracy against city map layers met the "
+                       "registered rule (NML-Bench T16)"], t0,
+                      ", ".join(f"{a.replace('_', ' ')}: {v['answer']}" for a, v in data["answers"].items()))
+    return data, rid
+
+
+def apply_site(fx: dict, site: dict) -> dict:
+    """Fixes the aerial photo shows are already there, for reliable attributes, move to 'already in place'."""
+    fx = dict(fx)
+    present = {v["fix_if_present"]: a for a, v in site["answers"].items()
+               if v["reliable"] and v["answer"] == "present" and v.get("fix_if_present")}
+    if not present:
+        return fx
+    fx["options"] = [o for o in fx.get("options", []) if o["countermeasure"] not in present]
+    fx["in_place"] = list(fx.get("in_place", [])) + [{"countermeasure": name, "year": None, "dataset": "aerial photo",
+                                                       "seen_in_aerial": True} for name in present]
+    return fx
+
+
 def _streets(name: str, d: dict) -> list[str]:
     named = [s.strip() for s in re.split(r"\s*&\s*|\s+and\s+", name.split(",")[0]) if s.strip()]
     return named or [r["name"] for r in (d.get("street") or {}).get("roads", []) if r.get("name")]
@@ -227,6 +265,19 @@ def refresh(report: dict) -> dict:
         receipts.append({**desk.receipts[0], "id": rid})
         findings["mechanisms"] = mk[0]
         rec["mechanisms"] = (mk[0], rid)
+    receipts = [r for r in receipts if r["tool"] != "site_check"]
+    findings.pop("site_check", None)
+    sc = site_check(Desk(), slug(report["junction"]["name"]))
+    if sc:
+        sdesk = Desk()
+        sc = site_check(sdesk, slug(report["junction"]["name"]))
+        rid = f"R{len(receipts) + 1}"
+        receipts.append({**sdesk.receipts[0], "id": rid})
+        findings["site_check"] = sc[0]
+        rec["site_check"] = (sc[0], rid)
+        fx = apply_site(findings["choose_fixes"], sc[0])
+        findings["choose_fixes"] = fx
+        rec["choose_fixes"] = (fx, rec["choose_fixes"][1])
     report = {**report, "receipts": receipts, "findings": findings}
     return recheck({**report, "claims": claims_for(report["junction"]["name"].split(",")[0], rec)})
 
@@ -305,6 +356,14 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
             out.append({"text": f"Held up on later years: {f['words']} in {treatments.pct(100 * f['sealed']['share'])}% of "
                                 f"crashes since {mk['split']}, against {treatments.pct(100 * f['sealed']['city_share'])}% at "
                                 f"the city's priority junctions (found by {who}).", "receipt": rm})
+    if rec.get("site_check"):
+        sd, rs = rec["site_check"]
+        seen = [a.replace("_", " ") for a, v in sd["answers"].items() if v["answer"] == "present" and v["reliable"]]
+        moved = [v["fix_if_present"] for a, v in sd["answers"].items()
+                 if v["answer"] == "present" and v["reliable"] and v.get("fix_if_present")]
+        if seen:
+            out.append({"text": f"The aerial photo shows {', '.join(seen)} already (Muse Spark, confirmed by SAM 3.1)"
+                                + (f", so {', '.join(moved)} is not proposed again." if moved else "."), "receipt": rs})
     pg, rp = rec["test_programs"]
     out += [{"text": f["text"], "receipt": rp} for f in pg["repeat_risk"]]
     seen = set()
