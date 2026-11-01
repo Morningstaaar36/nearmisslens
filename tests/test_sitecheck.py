@@ -37,3 +37,38 @@ def test_score_counts_only_decided_corners_and_applies_the_rule():
 def test_wilson_interval():
     lo, hi = S.wilson(85, 100)
     assert 0.76 < lo < 0.78 and 0.90 < hi < 0.92
+
+
+def test_osm_truth_reads_one_cached_tile_per_area(monkeypatch):
+    from nearmisslens import context, sitecheck as S
+    calls = []
+
+    def fake(url, params=None, data=None, timeout=0):
+        calls.append(data["data"])
+        return {"elements": [{"lat": 40.75001, "lon": -73.98, "tags": {"crossing:markings": "ladder:skewed"}},
+                             {"lat": 40.76, "lon": -73.98, "tags": {"crossing:markings": "lines"}}]}, 0.0
+    monkeypatch.setattr(context, "fetch", fake)
+    a = {"platform": "overpass", "osm_filter": "node[highway=crossing]", "tag": "crossing:markings",
+         "yes_values": ["zebra", "ladder"]}
+    assert S._truth_one(a, 40.75, -73.98, 40) is True        # ladder variant 1 m away
+    assert S._truth_one(a, 40.7599, -73.98, 40) is False     # only plain lines within 40 m
+    assert S._truth_one(a, 40.705, -73.95, 40) is None       # nothing tagged nearby: unknown, excluded
+    assert all('["crossing:markings"]' in q and "around" not in q for q in calls)
+
+
+def test_osm_api_truth_reads_a_box_around_the_point(monkeypatch):
+    from nearmisslens import context, sitecheck as S
+    seen = {}
+
+    def fake(url, params=None, data=None, timeout=0):
+        seen["url"], seen["bbox"] = url, params["bbox"]
+        return {"elements": [
+            {"type": "node", "lat": 40.75001, "lon": -73.98, "tags": {"highway": "crossing", "crossing:markings": "zebra"}},
+            {"type": "node", "lat": 40.7501, "lon": -73.98, "tags": {"highway": "traffic_signals", "crossing:markings": "zebra"}},
+            {"type": "way", "tags": {"highway": "footway"}}]}, 0.0
+    monkeypatch.setattr(context, "fetch", fake)
+    a = {"platform": "osm", "element": "node", "match": {"highway": "crossing"}, "tag": "crossing:markings",
+         "yes_values": ["zebra", "ladder"]}
+    assert S._truth_one(a, 40.75, -73.98, 40) is True
+    w, s, e, n = map(float, seen["bbox"].split(","))
+    assert seen["url"].endswith("/map.json") and s < 40.75 < n and w < -73.98 < e and (n - s) < 0.001

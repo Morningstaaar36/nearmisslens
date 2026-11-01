@@ -930,8 +930,9 @@
    "kind": "site_truth",
    "city": null,
    "attribute": "high_visibility_crosswalk",
-   "platform": "overpass",
-   "osm_filter": "node[highway=crossing]",
+   "platform": "osm",
+   "element": "node",
+   "match": {"highway": "crossing"},
    "tag": "crossing:markings",
    "yes_values": [
     "zebra",

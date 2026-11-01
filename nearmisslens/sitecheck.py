@@ -109,6 +109,23 @@ def decide(spark_answer: dict, dets: list, shape, radius_m: float = SPEC["radius
 
 # ------------------------------------------------------------------------------------------------- ground truth
 
+def _metres(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    k = math.pi / 180
+    x = (lon2 - lon1) * k * math.cos((lat1 + lat2) / 2 * k)
+    return 6371000 * math.hypot(x, (lat2 - lat1) * k)
+
+
+def _osm_tile(a: dict, lat: float, lon: float) -> list[dict]:
+    """The adapter's tagged OpenStreetMap nodes in the map tile holding the point (tile_deg degrees square, default 0.1).
+    One request per tile, cached, instead of one per corner: nearby corners share it and public servers are spared."""
+    d = float(a.get("tile_deg", 0.1))
+    s, w = math.floor(lat / d) * d, math.floor(lon / d) * d
+    box = f"{s - 0.001:.4f},{w - 0.001:.4f},{s + d + 0.001:.4f},{w + d + 0.001:.4f}"  # overlap covers points on an edge
+    q = f'[out:json][timeout:120];{a["osm_filter"]}["{a["tag"]}"]({box});out;'
+    js, _ = context.fetch(context.OVERPASS, data={"data": q}, timeout=180)
+    return [e for e in js.get("elements", []) if "lat" in e]
+
+
 def _truth_one(a: dict, lat: float, lon: float, radius_m: float):
     """One site_truth adapter's answer at the point: True, False, or None when the source says nothing."""
     if a["platform"] == "socrata":
@@ -119,10 +136,21 @@ def _truth_one(a: dict, lat: float, lon: float, radius_m: float):
         if rule == "any":
             return bool(rows)
         return any(str(r.get(rule["field"], "")).strip() in rule["in"] for r in rows)
+    if a["platform"] == "osm":  # the OpenStreetMap API's map call for a box just around the point
+        dlat = radius_m * 1.1 / 111320
+        dlon = dlat / max(math.cos(math.radians(lat)), 0.1)
+        js, _ = context.fetch(f"{a.get('api', 'https://api.openstreetmap.org/api/0.6')}/map.json",
+                              {"bbox": f"{lon - dlon:.6f},{lat - dlat:.6f},{lon + dlon:.6f},{lat + dlat:.6f}"}, timeout=60)
+        match = a.get("match", {})
+        vals = [str(e.get("tags", {}).get(a["tag"], "")) for e in js.get("elements", [])
+                if e.get("type") == a.get("element", "node") and "lat" in e
+                and all(e.get("tags", {}).get(k) == v for k, v in match.items())
+                and _metres(lat, lon, e["lat"], e["lon"]) <= radius_m]
+        tagged = [v for v in vals if v]
+        return any(v.split(":")[0] in a["yes_values"] for v in tagged) if tagged else None
     if a["platform"] == "overpass":
-        q = f"[out:json][timeout:30];{a['osm_filter']}(around:{radius_m},{lat},{lon});out tags;"
-        js, _ = context.fetch(context.OVERPASS, data={"data": q}, timeout=60)
-        vals = [str(e.get("tags", {}).get(a["tag"], "")) for e in js.get("elements", [])]
+        vals = [str(e.get("tags", {}).get(a["tag"], "")) for e in _osm_tile(a, lat, lon)
+                if _metres(lat, lon, e["lat"], e["lon"]) <= radius_m]
         tagged = [v for v in vals if v]
         return any(v.split(":")[0] in a["yes_values"] for v in tagged) if tagged else None
     raise ValueError(f"unknown site_truth platform {a['platform']!r}")
@@ -185,6 +213,11 @@ def run_t16(client, corners: list[dict], out: Path | None = None, workers: int =
     res["rows"] = [r for r in res["rows"] if not r.get("error")]  # failed corners are tried again
     done = {r["slug"] for r in res["rows"]}
     lock = threading.Lock()
+    for r in res["rows"]:  # a ground-truth source that failed is asked again; the models' answers are kept
+        if r.get("truth", {}).get("failed"):
+            new = truth(r["lat"], r["lon"])
+            if len(new.get("failed", {})) < len(r["truth"]["failed"]):
+                r["truth"] = new
 
     def one(c: dict) -> None:
         row = {"slug": c["slug"], "name": c["name"], "lat": c["lat"], "lon": c["lon"]}
