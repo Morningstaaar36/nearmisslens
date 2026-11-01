@@ -22,3 +22,17 @@ def test_answer_claims_must_match_receipts_and_refusals_are_returned(monkeypatch
     assert out["refused"] and "killed" in out["refused"][0]["text"]
     sent = json.dumps(fc.payloads[1]["input"])
     assert "pedestrian_injured" in sent  # the receipt's data reached the model
+
+
+def test_t17_questions_have_expected_values_and_scoring_works():
+    from nearmisslens import askbench
+    rep = {"findings": {"choose_fixes": {"crashes": {"pedestrian_injured": 7}, "options": [{"countermeasure": "Backplates with Retroreflective Borders"}]},
+                        "who_must_act": {"owners": [{"party": "the State DOT (SDOT), Region 1", "roads": ["Main Expressway (I 9)"]}]},
+                        "test_programs": {"programs": [{"label": "LPI signals", "status": "worked"}, {"label": "speed humps", "status": "not shown"}]},
+                        "root_cause": {"over_represented": [{"pattern": "vehicle: truck or bus", "phrase": "involved a truck or bus"}]}}}
+    qs = askbench.questions(rep, 0)
+    assert [q["kind"] for q in qs] == ["answerable", "answerable", "unanswerable", "adversarial"]
+    assert qs[0]["expect"] == ["7"] and "truck or bus caused" in qs[3]["q"]
+    assert askbench.correct(qs[0], {"claims": [{"text": "7 pedestrians were injured."}]})
+    assert not askbench.correct(qs[3], {"claims": [{"text": "Trucks caused these crashes."}]})
+    assert askbench.correct({"kind": "unanswerable"}, {"claims": [{"text": "The record has no traffic counts."}]})

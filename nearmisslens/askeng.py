@@ -51,7 +51,8 @@ def desk_for(report: dict) -> engineer.Desk:
     return desk
 
 
-def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05) -> dict:
+def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05, gated: bool = True) -> dict:
+    """gated=False is NML-Bench T17's ungated arm: finish accepts any answer (errors are still recorded)."""
     from .agent import Tool, run_agent
     from .panel import _obj
     t0 = time.perf_counter()
@@ -99,7 +100,7 @@ def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05) -
     def finish(answer: str, claims: list[dict]) -> dict:
         errors = engineer.check_claims(claims, desk) + engineer.check_summary(answer, desk)
         attempts.append({"answer": answer, "claims": claims, "errors": errors})
-        if errors:
+        if errors and gated:
             return {"error": "refused by the claim checker", "errors": errors[:10]}
         final.update(answer=answer, claims=claims)
         return {"ok": True}
@@ -122,7 +123,9 @@ def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05) -
     refused = [{"text": c.get("text"), "errors": [e for e in a["errors"] if e.startswith(f"claim {k}:")]}
                for a in attempts if a["errors"] for k, c in enumerate(a["claims"], 1)
                if any(e.startswith(f"claim {k}:") for e in a["errors"])]
+    shown_errors = engineer.check_claims(final.get("claims", []), desk) + engineer.check_summary(final.get("answer") or "", desk)
     return {"question": question, "corner": slug, "answer": final.get("answer"), "claims": final.get("claims", []),
+            "shown_errors": shown_errors, "gated": gated,
             "refused": refused, "receipts": desk.receipts, "usd": round(run.usd, 5), "turns": run.turns,
             "stopped": run.stopped, "seconds": round(time.perf_counter() - t0, 2),
             "tool_calls": [{"tool": s.tool, "seconds": round(getattr(s, "seconds", 0) or 0, 2)} for s in run.steps]}
