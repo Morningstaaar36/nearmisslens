@@ -158,7 +158,7 @@ def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
     rid = desk.record("site_check", data, ["state orthophoto (NYS GIS Program Office)", "Muse Spark (Meta API)", "SAM 3.1"],
                       ["present only when SAM 3.1 finds it within 15 m of Muse Spark's point",
                        "an attribute changes a recommendation only if its accuracy against city map layers met the "
-                       "registered rule (NML-Bench T16)"], t0,
+                       "registered rule and beat always giving the more common answer (NML-Bench T16, change 1)"], t0,
                       ", ".join(f"{a.replace('_', ' ')}: {v['answer']}" for a, v in data["answers"].items()))
     return data, rid
 

@@ -170,7 +170,8 @@ function show(r, corner) {
   const skipped = (fx.not_estimated || []).map(x => `<li><b>${esc(x.countermeasure)}</b>: ${esc(x.reason)}</li>`).join("");
   const sc = f.site_check, word = {present: "seen", absent: "not seen", unsure: "unsure"};
   const site = sc ? `<div class="mech"><h4>What the aerial photo shows</h4><p class="why">Muse Spark reads the state aerial photo; ` +
-    `SAM 3.1 must find each thing it points at. Only features that met their accuracy rule against the city's own map layers change a recommendation.</p><ul>` +
+    `SAM 3.1 must find each thing it points at. A feature changes a recommendation only if, scored against the city's own map layers, it met its accuracy rule and beat always giving the most common answer.` +
+    (Object.values(sc.answers).some(v => v.reliable) ? "" : " None has yet.") + `</p><ul>` +
     Object.entries(sc.answers).map(([a, v]) => `<li><b>${esc(a.replace(/_/g, " "))}</b>: ${esc(word[v.answer] || v.answer)}` +
       (v.reliable ? "" : ` <span class="legend">(not reliable enough to act on)</span>`) +
       (v.reliable && v.answer === "present" && v.fix_if_present ? ` <span class="found">${esc(v.fix_if_present)} already there</span>` : "") +

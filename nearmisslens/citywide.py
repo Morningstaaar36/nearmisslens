@@ -29,22 +29,32 @@ def cities() -> list[str]:
     return [c["id"] for c in opendata.load_cities() if junction_adapters(c["id"]) or (c.get("screen") or {}).get("from") == "crashes"]
 
 
-def corner_name(lat: float, lon: float) -> str:
-    """'A & B' from the two most important named roads at the point (OpenStreetMap), for crash-found corners."""
-    rank = {"trunk": 0, "primary": 1, "secondary": 2, "tertiary": 3, "unclassified": 4, "residential": 5}
-    q = f'[out:json][timeout:25];way(around:25,{lat},{lon})[highway][name];out tags;'
-    try:  # a light query: only named roads within 25 m
+def _named_roads(lat: float, lon: float, radius_m: int) -> list[dict]:
+    q = f'[out:json][timeout:25];way(around:{radius_m},{lat},{lon})[highway][name];out tags;'
+    try:  # a light query: only named roads near the point
         js, _ = context.overpass(q, timeout=40)
-        roads = [e.get("tags", {}) for e in js.get("elements", [])]
+        return [e.get("tags", {}) for e in js.get("elements", [])]
     except Exception:
-        try:  # the OSM API's map call for a 25 m box
-            roads = [e.get("tags", {}) for e in context.osm_map(lat, lon, 25)
-                     if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
+        try:  # the OSM API's map call for a box of the same size
+            return [e.get("tags", {}) for e in context.osm_map(lat, lon, radius_m)
+                    if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
         except Exception:  # a name is a convenience; the coordinates are the corner
-            roads = []
-    streets = [r for r in roads if r.get("highway") in rank or r.get("highway", "").endswith("_link")]
-    named = sorted(streets or roads, key=lambda r: rank.get(r.get("highway"), 9))  # a footpath names no corner
-    names = list(dict.fromkeys(r["name"] for r in named if r.get("name")))[:2]
+            return []
+
+
+def corner_name(lat: float, lon: float, radii: tuple[int, ...] = (25, 50)) -> str:
+    """'A & B' from the two most important named roads at the point (OpenStreetMap), for crash-found corners. A
+    crash cluster's centre can sit a little off the junction, so the search widens until two streets are found."""
+    rank = {"motorway": 0, "trunk": 0, "primary": 1, "secondary": 2, "tertiary": 3, "unclassified": 4, "residential": 5,
+            "living_street": 6}
+    names: list[str] = []
+    for r in radii:
+        roads = _named_roads(lat, lon, r)
+        streets = [w for w in roads if w.get("highway") in rank or w.get("highway", "").endswith("_link")]
+        named = sorted(streets or roads, key=lambda w: rank.get(w.get("highway"), 9))  # a footpath names no corner
+        names = list(dict.fromkeys(w["name"] for w in named if w.get("name")))[:2]
+        if len(names) == 2:
+            break
     return " & ".join(names) if names else f"Corner at {lat:.5f}, {lon:.5f}"
 
 
@@ -101,10 +111,11 @@ def screen(city: str, workers: int = 4) -> pd.DataFrame:
     def one(j):
         d = context.dossier(j["lat"], j["lon"], street=False)
         cr, pl = d.get("crashes") or {}, d.get("plans") or {}
-        years = [p["year"] for p in pl.get("projects", []) if isinstance(p.get("year"), int)]
+        years = [p["year"] for p in pl.get("projects", []) if isinstance(p.get("year"), int) and not p.get("planned")]
         return {**j, "since": cr.get("since"), "crashes": cr.get("crashes"), "injury_crashes": cr.get("injury_crashes"),
                 "pedestrians_injured": cr.get("pedestrian_injured"), "cyclists_injured": cr.get("cyclist_injured"),
-                "killed": sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed")),
+                "killed": sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
+                or cr.get("any_killed", 0),  # cities that record deaths without the mode
                 "projects_ever": len(years), "last_project_year": max(years) if years else None,
                 "recent_projects": d.get("recent_projects"), "plan_gap": d.get("plan_gap"),
                 "error": "; ".join(v["error"] for v in (cr, pl) if isinstance(v, dict) and "error" in v) or None}

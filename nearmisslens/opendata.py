@@ -315,8 +315,9 @@ def projects_near(a: dict, lat: float, lon: float, radius_m: float | None = None
         d = _date(r.get(a.get("date_field"))) if a.get("date_field") else None
         y = r.get(a.get("year_field")) if a.get("year_field") else None
         year = int(y) if str(y or "").isdigit() else (d.year if d else None)
+        from .config import asof
         out.append({"name": str(r.get(a.get("name_field")) or a.get("label") or a["id"]), "year": year,
-                    "dataset": a["id"]})
+                    "dataset": a["id"], **({"planned": True} if year and year > asof().year else {})})
     return out
 
 

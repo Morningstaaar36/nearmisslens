@@ -204,7 +204,8 @@ def dossier(lat: float, lon: float, street: bool = True) -> dict:
         except Exception as e:  # an unavailable source is reported, not fatal
             out[name] = {"error": f"{type(e).__name__}: {e}"}
     cr, pl = out.get("crashes") or {}, out.get("plans") or {}
-    recent = [p for p in pl.get("projects", []) if isinstance(p.get("year"), int) and p["year"] >= _since().year]
+    recent = [p for p in pl.get("projects", []) if isinstance(p.get("year"), int) and p["year"] >= _since().year
+              and not p.get("planned")]  # a project dated after the as-of date is planned, not done
     out["plan_gap"] = bool(cr.get("injury_crashes", 0) >= GAP_MIN_INJURY_CRASHES and not recent) if cr and pl else None
     out["recent_projects"] = len(recent)
     if not cr:
