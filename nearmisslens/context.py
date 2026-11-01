@@ -48,7 +48,8 @@ def _cache_dir() -> Path:
     return p
 
 
-def fetch(url: str, params: dict | None = None, data: dict | None = None, timeout: float = 90.0) -> tuple[dict, float]:
+def fetch(url: str, params: dict | None = None, data: dict | None = None, timeout: float = 90.0,
+          attempts: int = 6) -> tuple[dict, float]:
     """GET (or POST form) JSON with a disk cache keyed by the request; returns (json, seconds, 0 when cached)."""
     key = hashlib.sha256(json.dumps([url, params, data], sort_keys=True).encode()).hexdigest()[:24]
     path = _cache_dir() / f"{key}.json"
@@ -58,7 +59,7 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
         raise FileNotFoundError(f"context request not cached: {url}")
     t = time.time()
     servers = [url, *OVERPASS_MIRRORS] if url == OVERPASS else [url]
-    for attempt in range(6):
+    for attempt in range(attempts):
         target = servers[attempt % len(servers)]
         try:
             with httpx.Client(headers=UA, timeout=timeout, follow_redirects=True) as c:
@@ -72,7 +73,8 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
                 break
         except (httpx.TransportError, json.JSONDecodeError) as e:
             err = f"{type(e).__name__}"
-        time.sleep(min(60, 3 * 2 ** attempt))  # public servers shed load with 429/503: back off up to a minute
+        if attempt + 1 < attempts:
+            time.sleep(min(60, 3 * 2 ** attempt))  # public servers shed load with 429/503: back off up to a minute
     raise RuntimeError(f"{url}: {err}")
 
 
@@ -95,14 +97,26 @@ def osm_map(lat: float, lon: float, radius_m: float) -> list[dict]:
     return js.get("elements", [])
 
 
+def _down_file() -> Path:
+    return _cache_dir() / "overpass_down.txt"
+
+
 def overpass(query: str, timeout: float = 120) -> dict:
-    """An Overpass query, unless Overpass already failed in this process (then RuntimeError at once)."""
-    if _OVERPASS_DOWN:
-        raise RuntimeError(f"Overpass unreachable earlier: {_OVERPASS_DOWN[0]}")
+    """An Overpass query, unless Overpass failed in the last hour (then RuntimeError at once, so callers fall back
+    without waiting through the retries again). A cached answer is always served."""
+    key = hashlib.sha256(json.dumps([OVERPASS, None, {"data": query}], sort_keys=True).encode()).hexdigest()[:24]
+    if not (_cache_dir() / f"{key}.json").exists():
+        f = _down_file()
+        if not _OVERPASS_DOWN and f.exists() and time.time() - f.stat().st_mtime < 3600:
+            _OVERPASS_DOWN.append(f.read_text()[:120])
+        if _OVERPASS_DOWN:
+            raise RuntimeError(f"Overpass unreachable earlier: {_OVERPASS_DOWN[0]}")
     try:
-        return fetch(OVERPASS, data={"data": query}, timeout=timeout)
-    except RuntimeError as e:
+        return fetch(OVERPASS, data={"data": query}, timeout=min(timeout, 60), attempts=3)  # each server once: callers
+    except RuntimeError as e:                                                                # have a fallback
         _OVERPASS_DOWN.append(str(e)[:120])
+        if not SETTINGS.replay:
+            _down_file().write_text(str(e)[:120])
         raise
 
 

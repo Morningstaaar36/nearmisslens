@@ -4,6 +4,8 @@ police-reported crashes nearby over five years and the city's Street Improvement
 person to review: "no project" means none in the city's open project datasets within 150 m."""
 from __future__ import annotations
 
+import re
+
 import datetime as dt
 import json
 from concurrent.futures import ThreadPoolExecutor
@@ -30,19 +32,29 @@ def cities() -> list[str]:
 
 
 def _named_roads(lat: float, lon: float, radius_m: int) -> list[dict]:
-    q = f'[out:json][timeout:25];way(around:{radius_m},{lat},{lon})[highway][name];out tags;'
-    try:  # a light query: only named roads near the point
-        js, _ = context.overpass(q, timeout=40)
-        return [e.get("tags", {}) for e in js.get("elements", [])]
+    """Named ways near the point: the OSM API's map call for a small box (about a second), else Overpass."""
+    try:
+        return [e.get("tags", {}) for e in context.osm_map(lat, lon, radius_m)
+                if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
     except Exception:
-        try:  # the OSM API's map call for a box of the same size
-            return [e.get("tags", {}) for e in context.osm_map(lat, lon, radius_m)
-                    if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
+        try:
+            q = f'[out:json][timeout:25];way(around:{radius_m},{lat},{lon})[highway][name];out tags;'
+            js, _ = context.overpass(q, timeout=40)
+            return [e.get("tags", {}) for e in js.get("elements", [])]
         except Exception:  # a name is a convenience; the coordinates are the corner
             return []
 
 
-def corner_name(lat: float, lon: float, radii: tuple[int, ...] = (25, 50)) -> str:
+_COMPASS = re.compile(r"\b(north|south|east|west|northeast|northwest|southeast|southwest|n|s|e|w|ne|nw|se|sw)\b\.?",
+                      re.I)
+
+
+def _street_key(name: str) -> str:
+    """The same street on both sides of a quadrant line ('Constitution Avenue NE' / 'NW') is one street."""
+    return " ".join(_COMPASS.sub(" ", name).lower().split())
+
+
+def corner_name(lat: float, lon: float, radii: tuple[int, ...] = (25, 50, 80)) -> str:
     """'A & B' from the two most important named roads at the point (OpenStreetMap), for crash-found corners. A
     crash cluster's centre can sit a little off the junction, so the search widens until two streets are found."""
     rank = {"motorway": 0, "trunk": 0, "primary": 1, "secondary": 2, "tertiary": 3, "unclassified": 4, "residential": 5,
@@ -52,7 +64,7 @@ def corner_name(lat: float, lon: float, radii: tuple[int, ...] = (25, 50)) -> st
         roads = _named_roads(lat, lon, r)
         streets = [w for w in roads if w.get("highway") in rank or w.get("highway", "").endswith("_link")]
         named = sorted(streets or roads, key=lambda w: rank.get(w.get("highway"), 9))  # a footpath names no corner
-        names = list(dict.fromkeys(w["name"] for w in named if w.get("name")))[:2]
+        names = list({_street_key(w["name"]): w["name"] for w in reversed(named) if w.get("name")}.values())[::-1][:2]
         if len(names) == 2:
             break
     return " & ".join(names) if names else f"Corner at {lat:.5f}, {lon:.5f}"

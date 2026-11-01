@@ -93,3 +93,15 @@ def test_osm_profile_falls_back_to_the_map_call_when_overpass_is_down(monkeypatc
     o = context.osm(lat, lon)
     assert o["signals"] == 1 and o["bus_stops_200m"] == 1 and o["schools_400m"] == 1
     assert [r["name"] for r in o["roads"]] == ["1st Ave"]
+
+
+def test_corner_names_merge_one_street_across_a_quadrant_line_and_skip_footpaths(monkeypatch):
+    from nearmisslens import citywide
+    ways = [{"highway": "footway", "name": "Pedestrian Concourse"},
+            {"highway": "primary", "name": "Constitution Avenue Northeast"},
+            {"highway": "primary", "name": "Constitution Avenue Northwest"},
+            {"highway": "secondary", "name": "1st Street Northeast"}]
+    monkeypatch.setattr(citywide, "_named_roads", lambda lat, lon, r: ways)
+    assert citywide.corner_name(38.89, -77.0) == "Constitution Avenue Northeast & 1st Street Northeast"
+    monkeypatch.setattr(citywide, "_named_roads", lambda lat, lon, r: [])
+    assert citywide.corner_name(38.89, -77.0).startswith("Corner at")
