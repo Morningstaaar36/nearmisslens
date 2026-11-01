@@ -28,11 +28,19 @@ from pathlib import Path
 from scipy.stats import binomtest
 
 from . import citywide, context, engineer, opendata, rootcause
-from .config import ROOT, SETTINGS, since
+from .config import ASOF_FILE, ROOT, SETTINGS
 
 SPEC = json.loads((ROOT / "validation" / "experiments" / "T15.json").read_text())
 EMPTY = rootcause.EMPTY | {"not applicable", "unspecified", "other*", "none"}
 BATCH = 120
+
+
+def window_start(years: int = 5):
+    """The start of the experiment's window: always the pinned as-of date (validation/ASOF), so results and the
+    dataset do not move with today's date or the environment."""
+    import datetime as dt
+    a = dt.date.fromisoformat(ASOF_FILE.read_text().strip())
+    return a.replace(year=a.year - years) if not (a.month == 2 and a.day == 29) else a.replace(year=a.year - years, day=28)
 
 
 def _norm(v) -> str | None:
@@ -98,20 +106,25 @@ def _details(a: dict, ids: list[str]) -> dict[str, list[dict]]:
     return out
 
 
+@__import__("functools").lru_cache(maxsize=2)
+def _load(path: str) -> dict:
+    return json.loads(gzip.decompress(Path(path).read_bytes()))
+
+
 def build(city: str | None = None, top: int | None = None) -> dict:
     """Every crash within the registered radius of the city's screened corners over the 5 years to the as-of date,
     with its features, and each corner's crash ids. Cached under the data directory."""
     city = city or SPEC["city"]
-    path = SETTINGS.data_dir / "miner" / f"{city}_{since(5).isoformat()}.json.gz"
+    path = SETTINGS.data_dir / "miner" / f"{city}_{window_start(5).isoformat()}.json.gz"
     if path.exists():
-        return json.loads(gzip.decompress(path.read_bytes()))
+        return _load(str(path))
     crash_a = opendata.adapters_of(city, "crash")[0]
     details = opendata.adapters_of(city, "crash_detail")
     rows = sorted(dict(citywide.screened())[city]["rows"], key=lambda r: -(r.get("injury_crashes") or 0))
     corners, crashes = [], {}
     for k, j in enumerate(rows[:top] if top else rows):
         ids = []
-        for r in opendata.rows_near(crash_a, j["lat"], j["lon"], SPEC["radius_m"], since(5)):
+        for r in opendata.rows_near(crash_a, j["lat"], j["lon"], SPEC["radius_m"], window_start(5)):
             cid = str(r.get(crash_a["id_field"]))
             date = str(r.get(crash_a["date_field"]) or "")[:10]
             if not cid or not date:
@@ -126,7 +139,7 @@ def build(city: str | None = None, top: int | None = None) -> dict:
         extra = detail_features(found.get("vehicle", {}).get(cid, []), found.get("person", {}).get(cid, []),
                                 roles.get("vehicle", {}), roles.get("person", {}))
         c["f"].update({k: sorted(v) for k, v in extra.items()})
-    ds = {"city": city, "since": since(5).isoformat(), "split": SPEC["split"], "corners": corners, "crashes": crashes,
+    ds = {"city": city, "since": window_start(5).isoformat(), "split": SPEC["split"], "corners": corners, "crashes": crashes,
           "coverage": {lvl: round(sum(cid in m for cid in all_ids) / max(len(all_ids), 1), 3) for lvl, m in found.items()},
           "sources": [crash_a["source"]] + [a["source"] for a in details]}
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -426,3 +439,50 @@ def analyse(res: dict, ds: dict | None = None, boot: int = 2000, seed: int = 15)
         out["agent_only"] = only
         out["agent_only_corners"] = len({x["corner"] for x in only})
     return out
+
+
+# ------------------------------------------------------------------------------------------------- for the product
+
+WORDS = {"pre_crash": "a vehicle was {v}", "maneuver": "a vehicle was {v}", "point_of_impact": "a vehicle was hit on the {v}",
+         "ped_action": "the pedestrian or cyclist was {v}", "ped_location": "the pedestrian or cyclist was at {v}",
+         "outcome": "{v}", "time": "it happened in the {v}", "vehicle_kind": "a {v} was involved",
+         "factor": "“{v}” was recorded"}
+
+
+def words(pattern_key: str) -> str:
+    """'maneuver=making left turn, heading west AND ped_action=crossing with signal' in plain words."""
+    parts = []
+    for c in pattern_key.split(" AND "):
+        f, v = c.split("=", 1)
+        parts.append(WORDS.get(f, f + ": {v}").format(v=v))
+    return " and ".join(parts)
+
+
+def corner_mechanisms(slug: str, res: dict | None = None, ds: dict | None = None) -> list[dict]:
+    """The mechanisms confirmed at a corner by any T15 arm, merged by crash overlap, each with who found it, the
+    explore and sealed shares, and the agent's sentence when it found it."""
+    from .evaluate import RESULTS_DIR
+    p = RESULTS_DIR / "bench" / "experiment_T15.json"
+    res = res or (json.loads(p.read_text()) if p.exists() else None)
+    if not res:
+        return []
+    rows = [r for r in res["runs"] if r["corner"] == slug and not r["null"]]
+    if not rows:
+        return []
+    ds = ds or build(res.get("spec", SPEC)["city"])
+    ids = next((c["ids"] for c in ds["corners"] if c["slug"] == slug), [])
+    found = []
+    for r in sorted(rows, key=lambda r: r["arm"] != "agent"):  # the agent's wording first, when it found the same thing
+        for c in r["confirmed"]:
+            s = _crashes_of(ds, ids, c["pattern"])
+            hit = next((f for f in found if _overlap(s, f["_s"]) >= 0.8), None)
+            if hit:
+                hit["found_by"] = sorted(set(hit["found_by"]) | {r["arm"]})
+                continue
+            found.append({"pattern": c["pattern"], "words": words(c["pattern"]), "found_by": [r["arm"]],
+                          "mechanism": c.get("mechanism"),
+                          "explore": {k: c["explore"][k] for k in ("k", "n", "share", "city_share")},
+                          "sealed": {k: c[k] for k in ("k", "n", "share", "city_share")}, "_s": s})
+    for f in found:
+        f.pop("_s")
+    return sorted(found, key=lambda f: -(f["sealed"]["share"] - f["sealed"]["city_share"]))

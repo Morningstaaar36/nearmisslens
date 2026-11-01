@@ -120,6 +120,24 @@ def choose_fixes(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     return data, rid
 
 
+def mechanisms(desk: Desk, slug: str) -> tuple[dict, str] | None:
+    """Crash mechanisms at the corner that held up on sealed later years (NML-Bench T15), or None where none were mined."""
+    from . import miner
+    t0 = time.perf_counter()
+    try:
+        found = miner.corner_mechanisms(slug)
+    except (FileNotFoundError, KeyError, ValueError):
+        return None
+    if not found:
+        return None
+    data = {"split": miner.SPEC["split"], "mechanisms": found}
+    rid = desk.record("mechanisms", data, ["NML-Bench T15 (validation/BENCH.md)"] + list(miner.SPEC.get("sources", [])),
+                      [f"explored on crashes before {miner.SPEC['split']}, confirmed once on crashes after it",
+                       "Holm correction over every pattern tested", "arms: Muse Spark Open, exhaustive grid, greedy"],
+                      t0, f"{len(found)} mechanisms held up on later years")
+    return data, rid
+
+
 def _streets(name: str, d: dict) -> list[str]:
     named = [s.strip() for s in re.split(r"\s*&\s*|\s+and\s+", name.split(",")[0]) if s.strip()]
     return named or [r["name"] for r in (d.get("street") or {}).get("roads", []) if r.get("name")]
@@ -200,6 +218,16 @@ def refresh(report: dict) -> dict:
     findings["test_programs"] = tp
     report = {**report, "findings": findings}
     rec = {t: (report["findings"][t], by_tool[t]) for t in REQUIRED + ("draft_request",)}
+    desk = Desk()
+    mk = mechanisms(desk, slug(report["junction"]["name"]))
+    receipts = [r for r in report["receipts"] if r["tool"] != "mechanisms"]
+    findings = {k: v for k, v in report["findings"].items() if k != "mechanisms"}
+    if mk:
+        rid = f"R{len(receipts) + 1}"
+        receipts.append({**desk.receipts[0], "id": rid})
+        findings["mechanisms"] = mk[0]
+        rec["mechanisms"] = (mk[0], rid)
+    report = {**report, "receipts": receipts, "findings": findings}
     return recheck({**report, "claims": claims_for(report["junction"]["name"].split(",")[0], rec)})
 
 
@@ -269,6 +297,14 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
     elif rc.get("crashes") is not None:
         out.append({"text": "No crash pattern here stands out against the city's priority junctions"
                             + ("" if rc.get("enough_crashes") else " (too few crashes to test)") + ".", "receipt": rr})
+    if rec.get("mechanisms"):
+        mk, rm = rec["mechanisms"]
+        for f in mk["mechanisms"][:2]:
+            who = " and ".join({"agent": "the AI analyst", "grid": "the exhaustive search", "greedy": "the greedy search"}[x]
+                               for x in f["found_by"])
+            out.append({"text": f"Held up on later years: {f['words']} in {treatments.pct(100 * f['sealed']['share'])}% of "
+                                f"crashes since {mk['split']}, against {treatments.pct(100 * f['sealed']['city_share'])}% at "
+                                f"the city's priority junctions (found by {who}).", "receipt": rm})
     pg, rp = rec["test_programs"]
     out += [{"text": f["text"], "receipt": rp} for f in pg["repeat_risk"]]
     seen = set()
@@ -338,6 +374,9 @@ def investigate(desk: Desk, query: str, name: str, lat: float, lon: float, t0: f
     desk.places.add(name.split(",")[0])
     rec = {"root_cause": root_cause(desk, lat, lon), "test_programs": test_programs(desk, lat, lon),
            "choose_fixes": choose_fixes(desk, lat, lon)}
+    mk = mechanisms(desk, slug(name))
+    if mk:
+        rec["mechanisms"] = mk
     rec["who_must_act"] = who_must_act(desk, lat, lon, name)
     rec["draft_request"] = draft_request(desk, lat, lon, name, rec["who_must_act"][0], letter_client)
     return _report(query, name, lat, lon, desk, claims_for(name.split(",")[0], rec), t0, "deterministic", extra)
