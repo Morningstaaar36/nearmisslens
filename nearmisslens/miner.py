@@ -363,3 +363,66 @@ def summarise(runs: list[dict]) -> dict:
                     "tested_per_corner": round(sum(r["tested"] for r in real) / max(len(real), 1), 1),
                     "usd": round(sum(r.get("usd", 0) for r in real + null), 3)}
     return out
+
+
+# ------------------------------------------------------------------------------------------------- analysis
+
+def _crashes_of(ds: dict, ids: list[str], pattern_key: str) -> set[str]:
+    pat = [{"field": c.split("=", 1)[0], "value": c.split("=", 1)[1]} for c in pattern_key.split(" AND ")]
+    return {i for i in period(ds, ids, False) if matches(ds["crashes"][i]["f"], pat)}
+
+
+def _overlap(a: set, b: set) -> float:
+    return len(a & b) / max(min(len(a), len(b)), 1)
+
+
+def distinct(ds: dict, ids: list[str], confirmed: list[dict], min_overlap: float = 0.8) -> list[dict]:
+    """Confirmed findings merged when their explore-year crashes overlap by at least min_overlap (largest first)."""
+    kept: list[tuple[dict, set]] = []
+    for c in sorted(confirmed, key=lambda c: -c["explore"]["k"]):
+        s = _crashes_of(ds, ids, c["pattern"])
+        if all(_overlap(s, t) < min_overlap for _, t in kept):
+            kept.append((c, s))
+    return [c for c, _ in kept]
+
+
+def analyse(res: dict, ds: dict | None = None, boot: int = 2000, seed: int = 15) -> dict:
+    """The registered rule (bootstrap over corners), distinct findings, and findings only one arm confirmed."""
+    import numpy as np
+    ds = ds or build(SPEC["city"])
+    ids_of = {c["slug"]: c["ids"] for c in ds["corners"]}
+    runs = [r for r in res["runs"] if not r["null"]]
+    arms = sorted({r["arm"] for r in runs})
+    by = {(r["arm"], r["corner"]): r for r in runs}
+    corners = sorted({r["corner"] for r in runs if all((a, r["corner"]) in by for a in arms)})
+    out = {"corners_with_every_arm": len(corners), "summary": summarise(res["runs"])}
+    count = {a: np.array([len(by[(a, c)]["confirmed"]) for c in corners]) for a in arms}
+    dist = {a: [distinct(ds, ids_of[c], by[(a, c)]["confirmed"]) for c in corners] for a in arms}
+    out["distinct_per_corner"] = {a: round(float(np.mean([len(d) for d in dist[a]])), 3) if corners else None for a in arms}
+    rng = np.random.default_rng(seed)
+    if "agent" in arms and corners:
+        diffs = {}
+        for b in (x for x in arms if x != "agent"):
+            for name, a_vals, b_vals in (("count", count["agent"], count[b]),
+                                         ("distinct", np.array([len(d) for d in dist["agent"]]),
+                                          np.array([len(d) for d in dist[b]]))):
+                d = a_vals - b_vals
+                bs = [float(np.mean(rng.choice(d, len(d)))) for _ in range(boot)]
+                diffs[f"agent_minus_{b}_{name}"] = {"mean": round(float(d.mean()), 3),
+                                                    "ci95": [round(float(np.percentile(bs, 2.5)), 3),
+                                                             round(float(np.percentile(bs, 97.5)), 3)]}
+        out["differences"] = diffs
+        null_rate = out["summary"].get("agent", {}).get("null_false_per_corner")
+        out["rule_met"] = bool(all(diffs[f"agent_minus_{b}_count"]["ci95"][0] > 0 for b in arms if b != "agent")
+                               and null_rate is not None and null_rate <= 0.05)
+        only = []  # agent findings no other arm confirmed at that corner (by 80% crash overlap)
+        for c, d in zip(corners, dist["agent"]):
+            others = [_crashes_of(ds, ids_of[c], f["pattern"]) for b in arms if b != "agent" for f in by[(b, c)]["confirmed"]]
+            for f in d:
+                s = _crashes_of(ds, ids_of[c], f["pattern"])
+                if all(_overlap(s, t) < 0.8 for t in others):
+                    only.append({"corner": c, "pattern": f["pattern"], "share": f["share"], "city_share": f["city_share"],
+                                 "mechanism": f.get("mechanism")})
+        out["agent_only"] = only
+        out["agent_only_corners"] = len({x["corner"] for x in only})
+    return out

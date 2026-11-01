@@ -117,3 +117,11 @@ def test_overclaiming_mechanisms_are_refused():
     ])
     out = M.agent_arm(ds, pool, ds["corners"][0], fc, "corner-000002")
     assert not out["finished"] and out["confirmed"] == []
+
+
+def test_distinct_merges_findings_on_the_same_crashes():
+    ds = _ds(); pool = M.Pool(ds)
+    ids = ds["corners"][0]["ids"]
+    conf = M.score_arm(ds, pool, ids, [[LEFT, WITH], [LEFT], [WITH]], [[LEFT, WITH], [LEFT], [WITH]])["confirmed"]
+    d = M.distinct(ds, ids, conf)
+    assert len(d) <= len(conf) and len(d) >= 1

@@ -699,6 +699,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
+    L += _t15_section() + _t16_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1012,3 +1013,59 @@ def _t14_verdict(a14: dict, b14: dict) -> str:
     return (out + "The calibrated gate does not replace the original gate; the product keeps the original gate and shows "
             f"each program's rank among fake programs next to its verdict (the LPI programs rank {_f(min(ranks))}–"
             f"{_f(max(ranks))}, where the calibrated gate needs below 0.025).")
+
+
+def _t15_section() -> list[str]:
+    """T15 from experiment_T15.json: per-arm results, the registered rule from the bootstrap, distinct findings."""
+    res = _load("experiment_T15.json")
+    if not res or not res.get("runs"):
+        return []
+    from . import miner
+    a = res.get("analysis") or miner.analyse(res)
+    sm = a["summary"]
+    L = ["## T15 Falsification-gated discovery: crash mechanisms that hold up on sealed later years", "",
+         "Registered in BENCH_PREREG.md (T15, change 1). Explore years before 2024-05-01, sealed years after; Holm over "
+         "every pattern an arm tested; 100 real corners and 100 null corners (crashes drawn at random from all corners).", "",
+         "| arm | real corners | patterns tested per corner | confirmed per corner | distinct per corner (secondary) | "
+         "precision | false findings per null corner | cost |", "|---|---|---|---|---|---|---|---|"]
+    names = {"agent": "agent (Muse Spark Open proposes, code tests)", "grid": "grid: every 1-2 condition pattern (no model)",
+             "greedy": "greedy: 10 largest excesses (no model)"}
+    for arm in ("agent", "greedy", "grid"):
+        if arm in sm:
+            v = sm[arm]
+            L.append(f"| {names[arm]} | {v['real_corners']} | {v['tested_per_corner']} | {v['confirmed_per_corner']} | "
+                     f"{a['distinct_per_corner'].get(arm)} | {_f(v['precision']) if v['precision'] is not None else 'n/a'} | "
+                     f"{v['null_false_per_corner']} | ${v['usd']} |")
+    d = a.get("differences") or {}
+    if d:
+        L += ["", "Agent minus each no-model arm, per corner (95% bootstrap over corners): " + "; ".join(
+            f"{k.replace('agent_minus_', '').replace('_', ' ')} {v['mean']:+} [{v['ci95'][0]:+}, {v['ci95'][1]:+}]"
+            for k, v in d.items()) + ".",
+              f"Registered rule (agent above both no-model arms on confirmed findings, null false findings at most 0.05 "
+              f"per corner): {'met' if a.get('rule_met') else 'not met'}."]
+        if a.get("agent_only"):
+            L.append(f"Findings the agent confirmed that no other arm confirmed (by 80% crash overlap): "
+                     f"{len(a['agent_only'])} at {a['agent_only_corners']} corners, for example: " + "; ".join(
+                         f"{x['pattern']} ({_f(x['share'])} here vs {_f(x['city_share'])})" for x in a["agent_only"][:3]) + ".")
+    return L + [""]
+
+
+def _t16_section() -> list[str]:
+    """T16 from experiment_T16.json: per attribute and arm, accuracy on decided corners and coverage."""
+    res = _load("experiment_T16.json")
+    if not res or not res.get("rows"):
+        return []
+    from . import sitecheck
+    sm = sitecheck.score(res["rows"])
+    L = ["## T16 Site check from the aerial photo: Muse Spark proposes, SAM 3.1 confirms", "",
+         f"Registered in BENCH_PREREG.md (T16). {len(res['rows'])} corners; ground truth within 40 m from the city's map "
+         "layers or OpenStreetMap (corners without ground truth are excluded per attribute).", "",
+         "| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | used in the product |",
+         "|---|---|---|---|---|---|---|"]
+    for attr, arms in sm.items():
+        for arm in ("spark", "sam", "gated"):
+            v = arms[arm]
+            acc = f"{_f(v['accuracy'])} ({_f(v['accuracy_ci95'][0])}-{_f(v['accuracy_ci95'][1])})" if v["accuracy"] is not None else "n/a"
+            L.append(f"| {attr.replace('_', ' ')} | {arm} | {v['corners']} | {v['decided']} | {_f(v['coverage'])} | {acc} | "
+                     f"{('yes' if arms['used_in_product'] else 'no') if arm == 'gated' else ''} |")
+    return L + [""]
