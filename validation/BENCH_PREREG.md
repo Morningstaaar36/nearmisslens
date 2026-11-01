@@ -399,3 +399,13 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
   - the hand-labelled limits on 8002, 8004 (rural and suburban), 206 (single-lane roundabouts) and 7774 (no street lighting before);
   - four kind-of-site limits the model found and the hand labels did not have, each reviewed against its quote: 10608 (higher-speed Arizona sites), 11158 (mid-block crossings), 11246 and 11027 (road segments, not intersections).
 - **Not adopted:** the model's fifth extra limit, on 12087 (study roads were minor arterials and major collectors), describes the study roads rather than limiting where the CMF applies. The model also missed one hand label (206).
+
+### T18 held-out result (2026-11-02)
+- **Attacker:** Muse Spark Open on Baseten, "journalist" and "staffer" styles, corners 21–30. 273 verified false and 190 verified true claims; 257 claims were dropped because their spec did not check out. Cost $0.40.
+- **Gate as registered (89de45b):** 104 of 273 false claims accepted (38.1%, Wilson 32.5–44.0%); 22 of 190 true claims refused (11.6%).
+- **Patched gate (f587183):** 56 of 273 accepted (20.5%, Wilson 16.1–25.7%); 30 of 190 refused (15.8%).
+- **Rule not met.** The cut is 46%, short of the registered 50%, and the upper bound is above 10%. False refusals rose 4.2 points, within the 5-point limit.
+- **What still gets through most:**
+  - false absences (27 of 56);
+  - numbers borrowed from another field (17 of 41).
+- No further patch is credited against these attacks, since that would need a new held-out set.
