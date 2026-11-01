@@ -1,0 +1,1495 @@
+{
+ "id": "T19",
+ "registered": "validation/BENCH_PREREG.md, T19",
+ "model": "muse-spark-1.3-contributor",
+ "score": {
+  "model": {
+   "kind_limit": {
+    "accuracy": 0.76,
+    "recall": 0.8,
+    "precision": 0.444
+   },
+   "precondition": {
+    "accuracy": 1.0,
+    "recall": 1.0,
+    "precision": 1.0
+   },
+   "trend_bias": {
+    "accuracy": 1.0,
+    "recall": 1.0,
+    "precision": 1.0
+   },
+   "all": {
+    "accuracy": 0.92
+   }
+  },
+  "gated": {
+   "kind_limit": {
+    "accuracy": 0.76,
+    "recall": 0.8,
+    "precision": 0.444
+   },
+   "precondition": {
+    "accuracy": 1.0,
+    "recall": 1.0,
+    "precision": 1.0
+   },
+   "trend_bias": {
+    "accuracy": 1.0,
+    "recall": 1.0,
+    "precision": 1.0
+   },
+   "all": {
+    "accuracy": 0.92
+   }
+  },
+  "structured": {
+   "kind_limit": {
+    "accuracy": 0.76,
+    "recall": 0.4,
+    "precision": 0.4
+   },
+   "precondition": {
+    "accuracy": 0.84,
+    "recall": 0.833,
+    "precision": 0.625
+   },
+   "trend_bias": {
+    "accuracy": 1.0,
+    "recall": 1.0,
+    "precision": 1.0
+   },
+   "all": {
+    "accuracy": 0.867
+   }
+  },
+  "refused_quotes": 0
+ },
+ "rows": [
+  {
+   "crfid": "2697",
+   "name": "Install high-visibility yellow, continental type crosswalks at schools",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Install high-visibility yellow, continental type crosswalks at schools",
+     "text": "Study sites were school crosswalks, a narrower kind of place than a general urban intersection."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": true,
+     "quote": "Analysis did not explicitly address general downward trend in ped-related crashes in the city during the study period.",
+     "text": "The study did not account for the citywide downward trend in pedestrian crashes."
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were school crosswalks, a narrower kind of place than a general urban intersection.",
+     "quote": "Install high-visibility yellow, continental type crosswalks at schools",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": true,
+     "text": "The study did not account for the citywide downward trend in pedestrian crashes.",
+     "quote": "Analysis did not explicitly address general downward trend in ped-related crashes in the city during the study period.",
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": true
+    }
+   },
+   "hand": {
+    "kind_limit": "school crossings",
+    "precondition": null,
+    "trend_bias": true
+   }
+  },
+  {
+   "crfid": "9918",
+   "name": "Modify signal phasing (implement a leading pedestrian interval)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "9903",
+   "name": "Modify signal phasing (implement a leading pedestrian interval)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "8799",
+   "name": "Install raised median with or without marked crosswalk (uncontrolled)",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Also, study sites were a combination of intersection and mid-block locations.",
+     "text": "Study included mid-block locations as well as intersections"
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study included mid-block locations as well as intersections",
+     "quote": "Also, study sites were a combination of intersection and mid-block locations.",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": "a mix of intersection and mid-block crossings",
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "10608",
+   "name": "Install a pedestrian hybrid beacon (PHB or HAWK)",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "This study selected 10 Arizona locations representing higher-operating-speed conditions (85th-percentile speed ranging between 44 and 54 mph).",
+     "text": "Study sites were higher-speed state highway pedestrian crossings, not typical busy urban intersections."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were higher-speed state highway pedestrian crossings, not typical busy urban intersections.",
+     "quote": "This study selected 10 Arizona locations representing higher-operating-speed conditions (85th-percentile speed ranging between 44 and 54 mph).",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "9024",
+   "name": "Install rectangular rapid flashing beacon (RRFB)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "11158",
+   "name": "Install rectangular rapid flashing beacon (RRFB)",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Roadway/pedestrian crossing (eg, midblock crossing)",
+     "text": "Study sites were midblock roadway/pedestrian crossings, not urban intersections."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were midblock roadway/pedestrian crossings, not urban intersections.",
+     "quote": "Roadway/pedestrian crossing (eg, midblock crossing)",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": true
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "11246",
+   "name": "Install sidewalk",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "The results showed that absence of sidewalk along roadway segments is one of the main factors that have significant impact on the expected number of pedestrian crashes at a specific location.",
+     "text": "Study examined roadway segments with sidewalk gaps, not intersections."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study examined roadway segments with sidewalk gaps, not intersections.",
+     "quote": "The results showed that absence of sidewalk along roadway segments is one of the main factors that have significant impact on the expected number of pedestrian crashes at a specific location.",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "1410",
+   "name": "Add 3-inch yellow retroreflective sheeting to signal backplates",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "12087",
+   "name": "Add 3-inch yellow retroreflective sheeting to signal backplates",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "roadwayType: Minor Arterial, Major Collector",
+     "text": "study limited to minor arterial and major collector roads"
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "study limited to minor arterial and major collector roads",
+     "quote": "roadwayType: Minor Arterial, Major Collector",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "275",
+   "name": "Provide a left-turn lane on both major-road approaches",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "8002",
+   "name": "Install left-turn lane at signalized intersection",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Data from 117 intersections on two lane roads in rural and suburban areas in North Carolina were used to determine the safety effect of signalization with and without left turn lanes.",
+     "text": "Study sites were rural and suburban two-lane road intersections, not busy urban intersections."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were rural and suburban two-lane road intersections, not busy urban intersections.",
+     "quote": "Data from 117 intersections on two lane roads in rural and suburban areas in North Carolina were used to determine the safety effect of signalization with and without left turn lanes.",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": true
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": "rural and suburban areas",
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "8004",
+   "name": "Install left-turn lane at signalized intersection",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Data from 117 intersections on two lane roads in rural and suburban areas in North Carolina were used to determine the safety effect of signalization with and without left turn lanes.",
+     "text": "Study sites were rural and suburban two-lane road intersections, not busy urban intersections."
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were rural and suburban two-lane road intersections, not busy urban intersections.",
+     "quote": "Data from 117 intersections on two lane roads in rural and suburban areas in North Carolina were used to determine the safety effect of signalization with and without left turn lanes.",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": true
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": "rural and suburban areas",
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "273",
+   "name": "Provide a left-turn lane on both major-road approaches",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "269",
+   "name": "Provide a left-turn lane on both major-road approaches",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "10851",
+   "name": "Convert intersection to median U-turn (MUT) intersection",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "4255",
+   "name": "Convert signalized intersection to modern roundabout",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "206",
+   "name": "Conversion of stop-controlled intersection into single-lane roundabout",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": "single-lane roundabouts",
+    "precondition": null,
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "4216",
+   "name": "Increase total change interval (remains less than ITE recommended practice)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "text": "sites started with total change interval below ITE recommended practice"
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "sites started with total change interval below ITE recommended practice",
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "total change interval below the ITE recommended practice",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "4215",
+   "name": "Increase total change interval (remains less than ITE recommended practice)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "text": "Sites had a total change interval below ITE recommended practice before treatment"
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "Sites had a total change interval below ITE recommended practice before treatment",
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "total change interval below the ITE recommended practice",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "4219",
+   "name": "Increase total change interval (greater than ITE recommended practice)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "text": "sites had a change interval below ITE recommended practice before treatment"
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "sites had a change interval below ITE recommended practice before treatment",
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "total change interval below the ITE recommended practice",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "4220",
+   "name": "Increase total change interval (greater than ITE recommended practice)",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "text": "sites had a total change interval below ITE recommended practice before treatment"
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "sites had a total change interval below ITE recommended practice before treatment",
+     "quote": "Signalized intersection with total change interval less than the ITE recommended practice.",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "total change interval below the ITE recommended practice",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "7774",
+   "name": "Install lighting",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Roadways without street lighting",
+     "text": "sites had no street lighting before treatment"
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "sites had no street lighting before treatment",
+     "quote": "Roadways without street lighting",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": true
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "no street lighting before",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "11027",
+   "name": "Improve street lighting illuminance and uniformity",
+   "model": {
+    "kind_limit": {
+     "present": true,
+     "quote": "Add or update street lighting to change the illuminance and uniformity along a roadway segment",
+     "text": "Study sites were roadway segments, not intersections."
+    },
+    "precondition": {
+     "present": true,
+     "quote": "Average lighting level is [0.5 ft, 1.0 fc]",
+     "text": "Sites had an average lighting level of 0.5 to 1.0 fc before treatment."
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": true,
+     "text": "Study sites were roadway segments, not intersections.",
+     "quote": "Add or update street lighting to change the illuminance and uniformity along a roadway segment",
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": true,
+     "text": "Sites had an average lighting level of 0.5 to 1.0 fc before treatment.",
+     "quote": "Average lighting level is [0.5 ft, 1.0 fc]",
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": false
+    },
+    "precondition": {
+     "present": true
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": "average lighting level between 0.5 and 1.0 foot-candles before",
+    "trend_bias": false
+   }
+  },
+  {
+   "crfid": "195",
+   "name": "Increased pavement friction",
+   "model": {
+    "kind_limit": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "precondition": {
+     "present": false,
+     "quote": null,
+     "text": null
+    },
+    "trend_bias": {
+     "present": false,
+     "quote": null,
+     "text": null
+    }
+   },
+   "gated": {
+    "kind_limit": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "precondition": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    },
+    "trend_bias": {
+     "present": false,
+     "text": null,
+     "quote": null,
+     "refused_quote": false
+    }
+   },
+   "structured": {
+    "kind_limit": {
+     "present": true
+    },
+    "precondition": {
+     "present": false
+    },
+    "trend_bias": {
+     "present": false
+    }
+   },
+   "hand": {
+    "kind_limit": null,
+    "precondition": null,
+    "trend_bias": false
+   }
+  }
+ ]
+}

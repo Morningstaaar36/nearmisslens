@@ -383,4 +383,19 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
   - percentages are bound to the named item, and a simple before/after change needs a sentence that says so;
   - more causal wording is refused ("certain", "will cut").
 - **On the development attacks after the patch:** 15 of 194 accepted (7.7%), and 4 of 113 true claims refused. Three of those four quote yellow-interval figures that changed when the even-count CMF pick changed (commit 28ba1b0), not the checker. None of the 454 saved cases' own claims is refused.
-- **Frozen:** this commit. The held-out attack (Muse Spark Open, "journalist" and "staffer" styles, corners 21–30) runs after it, judged by the gate as registered (commit 89de45b) and by this one.
+- **Frozen:** this commit. The held-out attack (Muse Spark Open, "journalist" and "staffer" styles, corners 21–30) runs after it, scored by the gate as registered (commit 89de45b) and by this one.
+
+### T19 result and adoptions (2026-11-02, after the run)
+- **Accuracy against the hand labels (75 answers):**
+  - gated Muse Spark: 0.92;
+  - Muse Spark before the quote check: 0.92;
+  - structured fields only: 0.867.
+- **By question:**
+  - precondition and trend bias: 1.00 for the model, against 0.84 and 1.00 for the structured fields;
+  - kind of site: 0.76 for both arms. The model's recall is 0.8 against 0.4 for the structured fields.
+- **Quotes:** no quote was refused.
+- **Rule met:** the model's accuracy is at least the no-model arm's and at least 0.85, and it misses no limit on 2697 or 4215–4220.
+- **Adopted into `data/fhwa_psc.json`**, each marked with its `limit_source`:
+  - the hand-labelled limits on 8002, 8004 (rural and suburban), 206 (single-lane roundabouts) and 7774 (no street lighting before);
+  - four kind-of-site limits the model found and the hand labels did not have, each reviewed against its quote: 10608 (higher-speed Arizona sites), 11158 (mid-block crossings), 11246 and 11027 (road segments, not intersections).
+- **Not adopted:** the model's fifth extra limit, on 12087 (study roads were minor arterials and major collectors), describes the study roads rather than limiting where the CMF applies. The model also missed one hand label (206).
