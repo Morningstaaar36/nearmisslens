@@ -71,6 +71,7 @@ def test_idf1_is_one_to_one():
     assert m["idf1"] == pytest.approx(0.5)
 
 
+@pytest.mark.skipif(__import__('shutil').which('ffmpeg') is None, reason='needs ffmpeg')
 def test_cut_leaves_no_file_when_ffmpeg_fails(tmp_path):
     out = tmp_path / "x.mp4"
     with pytest.raises(subprocess.CalledProcessError):

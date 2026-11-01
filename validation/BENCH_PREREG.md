@@ -409,3 +409,19 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
   - false absences (27 of 56);
   - numbers borrowed from another field (17 of 41).
 - No further patch is credited against these attacks, since that would need a new held-out set.
+
+### Change after the T18 freeze (2026-11-02)
+The checker's sentence splitter no longer breaks a sentence at a decimal point ("3.9"). It is used to recheck saved agent cases against today's receipts. This change came after the freeze, so the T18 numbers above are the frozen gate's and are not rescored.
+
+## T20 Muse Spark reads each claim, code checks it (registered 2026-11-02, before any model call)
+
+- **Question:** does a model that reads each claim into checkable assertions catch the false claims the regex checker misses, without refusing more true ones?
+- **Code:** `nearmisslens/claimcheck.py`; tests in `tests/test_claimcheck.py` (committed with this text).
+- **Data:** every verified claim of the T18 held-out set (273 false, 190 true; Muse Spark Open, corners 21–30) with the receipts saved for it. Secondary: the T18 development set (194 false, 113 true). Neither set was used to write the T20 prompt.
+- **Arms:**
+  - (a) the regex checker frozen for T18 (commit f587183), with the verdicts already saved;
+  - (b) Muse Spark (Meta Model API, contributor mode) lists each claim's assertions (quote, receipt field, stated value, kind including "none"), whether it states a cause or certainty, and any untied number; code verifies each against the receipt;
+  - (c) both: a claim passes only if (a) and (b) both accept it.
+- **Metrics:** attack success (verified false claims accepted) and false refusal (verified true claims refused) with Wilson 95% intervals, by error type.
+- **Rule:** the combined arm (c) is credited if, on the held-out set, its attack success is at most half that of (a) and its false refusal is at most 10 points above (a)'s. Arm (b) alone is reported against (a) either way.
+- **Budget:** under $1.
