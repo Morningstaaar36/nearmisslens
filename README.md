@@ -2,7 +2,7 @@
 
 **A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It finds the worst corners, works out what their crashes have in common, checks what the city already tried, picks the fix the record supports and prices it, finds who has to act, and drafts the request. Every sentence it writes cites the receipt behind it, and a sentence whose numbers do not match its receipt is refused before anyone sees it.
 
-**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) has the case for each of New York's 304 Vision Zero priority intersections, with no key and no install.
+**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) has the case for each of New York's 304 Vision Zero priority intersections, and for the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
 ![The copilot open on Bruckner Boulevard & Hunts Point Avenue: the city's priority corners on a map and a ranked list on the left; on the right the case, each sentence followed by the receipt it rests on](docs/img/copilot_bruckner.png)
 
@@ -139,7 +139,7 @@ The number checker itself: without it, 4 of 34 memos used a number not in the re
 - **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause. A third of the crashes here have no factor recorded, and the page says so.
 - **"No recorded treatment" means none in the city's open datasets** within 60–150 m. Work recorded elsewhere is not seen.
 - **Road owners come from the state inventory**, which lists state and designated routes; a street it does not list is shown as an inferred city street.
-- **US cities only so far.** New York, Seattle, Washington DC and San Francisco are registered. A city elsewhere needs its crash data, a harm table and an owner layer in the registry.
+- **US cities only so far.** New York, Seattle, Washington DC and San Francisco are registered. The three newer cities have no road-owner dataset in the registry, so their owners come from OpenStreetMap route tags, or the city's agency is presumed and the case says so. Their "no recorded safety work" counts only the program datasets registered for them. A city elsewhere needs its crash data, a harm table and an owner layer in the registry.
 
 ## Built during the hackathon
 

@@ -87,3 +87,8 @@ table.fixes th:nth-child(4),table.fixes td:nth-child(4){display:none}}
 code{font-size:13px;overflow-wrap:anywhere}
 .legend,.note,.why,.claims li{overflow-wrap:anywhere}
 table{table-layout:auto}
+.mech{margin-top:18px;max-width:820px}.mech h4{margin:0 0 4px;font-size:16px}.mech ul{margin:6px 0 0;padding-left:18px}.mech li{margin:6px 0}
+.found{font-size:12px;font-weight:700;color:var(--go);background:var(--go-bg);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.cityswitch{padding:0 18px 10px;font-size:14px}.cityswitch select{font:inherit;padding:6px 8px;border-radius:6px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink)}
+.askcard{border-left:4px solid var(--guide);padding:8px 14px;margin:12px 0;max-width:780px;background:var(--sheet);border-radius:0 6px 6px 0}.askcard .q{font-weight:700;margin:0 0 6px}
+.refused s{color:var(--mut)}form.ask{padding:0;max-width:780px}
