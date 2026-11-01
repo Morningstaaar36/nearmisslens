@@ -265,8 +265,8 @@ def cmd_engineer(args) -> int:
     letter_client = _memo_client(not args.meta) if args.letter else None
     rep = engineer.run(args.query, _memo_client(True), letter_client=letter_client) if args.agent else \
         engineer.plan(args.query, letter_client=letter_client)
-    slug = "".join(ch if ch.isalnum() else "_" for ch in rep["junction"]["name"].split(",")[0].lower())[:60]
-    out = SETTINGS.runs_dir / "engineer" / f"{slug}.json"
+    # each mode keeps its own report, so a fixed-order run never overwrites an agent run
+    out = SETTINGS.runs_dir / "engineer" / "cli" / rep["mode"] / f"{engineer.slug(rep['junction']['name'])}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(portable(json.dumps(rep, indent=1, default=str)))
     print(engineer.text(rep))

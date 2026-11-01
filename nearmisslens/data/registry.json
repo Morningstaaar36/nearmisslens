@@ -838,6 +838,54 @@
    "provenance": {
     "found_by": "seed (written by hand); owner codes read from the layer's distinct values"
    }
+  },
+  {
+   "id": "nyc-crash-vehicles",
+   "kind": "crash_detail",
+   "city": "nyc",
+   "place": "New York City",
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/bm4k-52h4.json",
+   "join_field": "collision_id",
+   "crash_adapter": "nyc-crashes",
+   "level": "vehicle",
+   "source": "NYC Open Data, Motor Vehicle Collisions - Vehicles (bm4k-52h4)",
+   "fields": {
+    "pre_crash": "what the vehicle was doing",
+    "travel_direction": "direction of travel",
+    "point_of_impact": "where it was hit",
+    "vehicle_type": "vehicle type"
+   },
+   "provenance": {
+    "found_by": "research agent (R18), checked by live query 2026-11-01"
+   }
+  },
+  {
+   "id": "nyc-crash-persons",
+   "kind": "crash_detail",
+   "city": "nyc",
+   "place": "New York City",
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/f55k-p6yu.json",
+   "join_field": "collision_id",
+   "crash_adapter": "nyc-crashes",
+   "level": "person",
+   "filter": {
+    "person_type": [
+     "Pedestrian",
+     "Bicyclist"
+    ]
+   },
+   "source": "NYC Open Data, Motor Vehicle Collisions - Person (f55k-p6yu)",
+   "fields": {
+    "person_type": "who was hurt (pedestrian or cyclist)",
+    "ped_action": "what the pedestrian was doing",
+    "ped_location": "where the pedestrian was",
+    "person_injury": "injury"
+   },
+   "provenance": {
+    "found_by": "research agent (R18), checked by live query 2026-11-01"
+   }
   }
  ],
  "cities": [

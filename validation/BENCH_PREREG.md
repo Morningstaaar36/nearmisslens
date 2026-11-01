@@ -294,3 +294,4 @@ deciding role is now called the Arbiter in the docs). No rule, threshold, sample
   - greedy (the 10 largest-excess patterns).
 - **Metrics:** confirmed findings per real corner; precision (confirmed / reported); null false discoveries per null corner; findings confirmed by one arm and not another; USD and turns.
 - **Rule:** the agent is credited with finding what code misses only if, on real corners, its confirmed findings per corner exceed both the grid's and the greedy arm's (95% bootstrap interval of the difference above 0, resampling corners) and its null false discoveries per corner are at most 0.05. Everything is reported either way.
+- **Note on timing:** the download of the two detail tables began about two minutes before the T15 registration commit (acd98c6); no downloaded row was looked at before that commit, and no arm had run.
