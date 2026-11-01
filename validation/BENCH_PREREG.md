@@ -311,3 +311,8 @@ deciding role is now called the Arbiter in the docs). No rule, threshold, sample
 - **Metrics:** accuracy on decided corners with Wilson 95% intervals, coverage, and how many recommendations change.
 - **Rule:** an attribute changes recommendations only if the gated accuracy is at least 0.85 with coverage at least 0.5. Everything is reported either way.
 - **Already seen:** aerial photos of the top 25 corners were fetched and viewed earlier for the fix drawings; none was labelled for this test.
+
+### T15 change 1 (2026-11-01, after the grid and greedy arms ran on all corners and two 10-corner agent pilots, before the full agent run)
+- **Why:** in both pilots Muse Spark Open kept exploring and rarely called `test_pattern` (7 of 10 runs stopped without a test), so the agent arm measured the loop, not the model's choice of mechanisms.
+- **Change:** the agent explores with `describe` and at most 8 `query_crashes` calls, then finishes by proposing at most 12 patterns with one sentence each. Code tests every proposal; Holm runs over all of them; survivors get the sealed check. The agent still never sees a later-year crash, and now never sees a test result either. The rule and the other arms are unchanged.
+- **Secondary measure, added now:** *distinct* confirmed findings. Confirmed findings at a corner are merged when their explore-year matching crashes overlap by at least 80%, so "heading south" and "heading south AND going straight ahead" count once. Also reported: findings confirmed by one arm and by no other. Both are labelled as decided after the grid and greedy results were seen.
