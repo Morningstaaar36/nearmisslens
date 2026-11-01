@@ -346,3 +346,20 @@ The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met
 - **Metrics:** attack success rate (accepted / verified false claims) overall and by type; false refusal rate (refused / verified true claims), with Wilson 95% intervals.
 - **Rule:** the patch is credited if, on the held-out attacks, attack success falls by at least half against the gate as registered, with a Wilson upper bound of at most 10%, while false refusal rises by at most 5 points. Reported either way, with every accepted false claim listed.
 - **Budget:** under $1 on the Meta Model API and under $3 on Baseten.
+
+## T19 Where a crash-reduction factor applies: Muse Spark reads the record (registered 2026-11-02, before any model call)
+
+- **Question:** can a model read the study behind each CMF and say, with quotes the code can check, where it applies, better than reading the structured fields alone?
+- **Code:** `nearmisslens/applicability.py`; tests in `tests/test_applicability.py`. **Hand labels:** `validation/experiments/T19_hand_labels.json`, written by reading each record before any model call (committed with this text).
+- **Records:** the 25 curated CMF records the fixes use (`data/cmf_allow.csv`).
+- **Three questions per record:**
+  - kind_limit: were the study sites a narrower kind of place than an urban signalized or stop-controlled corner?
+  - precondition: did they share a condition before treatment that public data cannot show?
+  - trend_bias: does the record say a trend or bias was not removed?
+- **Arms:**
+  - (a) Muse Spark (Meta Model API, contributor mode) answers each question with a verbatim quote from the record;
+  - (b) gated: (a) with every answer whose quote is not in the record turned off;
+  - (c) no model: the structured fields only (area type not urban; a prior condition other than the treatment's absence; a bias note that does not say biases were handled).
+- **Metrics:** accuracy against the hand labels over 75 answers per arm, recall and precision of "there is a limit" per question, and the number of refused quotes.
+- **Rule:** the gated model is credited if its accuracy is at least that of the no-model arm and at least 0.85, and it misses no limit the hand labels have on a record that drives a city total (2697, 4215, 4216, 4219, 4220). Limits it finds that the hand labels do not have are listed and reviewed by hand. They are adopted only if the quote supports them, and each adoption is reported.
+- **Budget:** under $0.10.

@@ -1,0 +1,128 @@
+{
+ "_note": "Hand labels for NML-Bench T19, written by reading each record's fields (name, prior condition, area, control, comments, bias note) before any model call. kind_limit: the kinds of site the study covered when narrower than an urban signalized or stop-controlled corner; precondition: a condition at the study sites before treatment that public data cannot show for a given corner; trend_bias: the record notes a trend or bias the study did not remove. Limits already enforced by other fields (traffic control, crash population, an existing LPI) are not repeated.",
+ "2697": {
+  "kind_limit": "school crossings",
+  "precondition": null,
+  "trend_bias": true
+ },
+ "9918": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "9903": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "8799": {
+  "kind_limit": "a mix of intersection and mid-block crossings",
+  "precondition": null,
+  "trend_bias": false
+ },
+ "10608": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "9024": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "11158": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "11246": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "1410": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "12087": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "275": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "8002": {
+  "kind_limit": "rural and suburban areas",
+  "precondition": null,
+  "trend_bias": false
+ },
+ "8004": {
+  "kind_limit": "rural and suburban areas",
+  "precondition": null,
+  "trend_bias": false
+ },
+ "273": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "269": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "10851": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "4255": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ },
+ "206": {
+  "kind_limit": "single-lane roundabouts",
+  "precondition": null,
+  "trend_bias": false
+ },
+ "4216": {
+  "kind_limit": null,
+  "precondition": "total change interval below the ITE recommended practice",
+  "trend_bias": false
+ },
+ "4215": {
+  "kind_limit": null,
+  "precondition": "total change interval below the ITE recommended practice",
+  "trend_bias": false
+ },
+ "4219": {
+  "kind_limit": null,
+  "precondition": "total change interval below the ITE recommended practice",
+  "trend_bias": false
+ },
+ "4220": {
+  "kind_limit": null,
+  "precondition": "total change interval below the ITE recommended practice",
+  "trend_bias": false
+ },
+ "7774": {
+  "kind_limit": null,
+  "precondition": "no street lighting before",
+  "trend_bias": false
+ },
+ "11027": {
+  "kind_limit": null,
+  "precondition": "average lighting level between 0.5 and 1.0 foot-candles before",
+  "trend_bias": false
+ },
+ "195": {
+  "kind_limit": null,
+  "precondition": null,
+  "trend_bias": false
+ }
+}

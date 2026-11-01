@@ -45,7 +45,7 @@ def test_pick_is_the_cited_record_or_the_median_never_the_largest_effect():
     db = cm.load_cmf()
     o = {x["countermeasure"]: x for x in brief.fix_options(_dossier(), db)["options"]}
     assert o["Leading Pedestrian Interval"]["cmf_id"] == "9918"          # cited, not 9903 (0.81)
-    assert o["Yellow Change Intervals"]["cmf_id"] == "4215"              # median of 4, not 4216 (0.662)
+    assert o["Yellow Change Intervals"]["cmf_id"] == "4219"              # the smaller-effect middle of 4, never 4216 (0.662)
     assert o["Yellow Change Intervals"]["cmf_range"] == [0.662, 0.937]
 
 

@@ -136,3 +136,10 @@ def test_a_fix_that_needs_a_site_check_cannot_be_stated_as_supported_outright():
     assert E.conditional_fix_errors("Fixes the record supports include Yellow Change Intervals.", data)
     assert not E.conditional_fix_errors("Yellow Change Intervals, if a timing check confirms it.", data)
     assert not E.conditional_fix_errors("Backplates with Retroreflective Borders.", data)
+
+
+def test_the_summary_is_held_to_the_site_check_rule_too():
+    desk = E.Desk(receipts=[{"id": "R3", "tool": "choose_fixes"}], data={"R3": {"options": [
+        {"countermeasure": "Yellow Change Intervals", "evidence": "needs a site check", "verify_on_site": "timing"}]}})
+    assert E.check_summary("Fix the record supports: Yellow Change Intervals.", desk)
+    assert not E.check_summary("Yellow Change Intervals only if a timing check confirms it.", desk)

@@ -242,7 +242,8 @@ def strip_places(text: str, desk: Desk) -> str:
 def check_summary(summary: str, desk: Desk) -> list[str]:
     """The free-text summary: its numbers must be in some receipt, under the right labels, and its wording plain."""
     s = strip_places(summary or "", desk)
-    return [f"summary: {e}" for e in context.FactCheck(desk.data).text(s) + wording(s)]
+    cond = [e for d in desk.data.values() for e in conditional_fix_errors(s, d)]
+    return [f"summary: {e}" for e in context.FactCheck(desk.data).text(s) + wording(s) + list(dict.fromkeys(cond))]
 
 
 def refreshed_fixes(report: dict) -> dict | None:

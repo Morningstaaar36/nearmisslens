@@ -64,8 +64,8 @@ def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame,
     it is for this site's control (an 'uncontrolled' record never serves a signal), has at least 3 stars, the crash
     record shows the population it covers (wet-road, darkness and walking-along records need those shares), and a
     record studied only at one kind of site ("only_for", e.g. school crossings) is used only where the site is known
-    to be that kind. The pick is the record FHWA's fact sheet cites, else the median of the eligible ones; never the
-    largest effect. A precondition of the chosen record's study sites that the public data cannot show
+    to be that kind. The pick is the record FHWA's fact sheet cites, else the median of the eligible ones (with an even
+    count, the middle record with the smaller effect); never the largest effect. A precondition of the chosen record's study sites that the public data cannot show
     ("site_condition", e.g. a change interval below ITE practice) is returned, so the fix is marked for a check."""
     allow = item.get("cmf_allow") or []
     if not allow:
@@ -106,8 +106,9 @@ def select(item: dict, control: str, populations: dict, cmf: pd.DataFrame,
         e, r = cited[0]
         how = "the record FHWA's fact sheet cites"
     else:
-        e, r = same[(len(same) - 1) // 2]
-        how = f"the median of {len(same)} eligible records" if len(same) > 1 else "the only eligible record"
+        e, r = same[len(same) // 2]  # sorted by CMF: with an even count, the upper middle (the smaller effect)
+        how = ("the only eligible record" if len(same) == 1 else f"the median of {len(same)} eligible records"
+               if len(same) % 2 else f"the more conservative of the two middle records of {len(same)}")
     cmfs = [float(x[1]["cmf"]) for x in same]
     return {"quantified": True, "cmf_id": e["crfid"], "cmf": round(float(r["cmf"]), 3), "stars": stars_label(r["stars"]),
             "cmf_name": r["name"], "cmf_crash_type": r["crash_type"], "cmf_severity": r["severity"],
