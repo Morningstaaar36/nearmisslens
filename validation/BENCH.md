@@ -462,19 +462,21 @@ Findings the agent confirmed that no other arm confirmed (by 80% crash overlap):
 
 ## T16 Site check from the aerial photo: Muse Spark proposes, SAM 3.1 confirms
 
-Registered in BENCH_PREREG.md (T16). 68 corners; ground truth within 40 m from the city's map layers or OpenStreetMap (corners without ground truth are excluded per attribute).
+Registered in BENCH_PREREG.md (T16). 304 corners; ground truth within 40 m from the city's map layers or OpenStreetMap (corners without ground truth are excluded per attribute).
 
-| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | used in the product |
-|---|---|---|---|---|---|---|
-| high visibility crosswalk | spark | 29 | 29 | 1.000 | 0.862 (0.694-0.945) |  |
-| high visibility crosswalk | sam | 29 | 29 | 1.000 | 0.897 (0.736-0.964) |  |
-| high visibility crosswalk | gated | 29 | 28 | 0.966 | 0.893 (0.728-0.963) | yes |
-| bike lane | spark | 40 | 39 | 0.975 | 0.718 (0.562-0.835) |  |
-| bike lane | sam | 40 | 40 | 1.000 | 0.875 (0.739-0.945) |  |
-| bike lane | gated | 40 | 31 | 0.775 | 0.871 (0.711-0.949) | yes |
-| median | spark | 40 | 39 | 0.975 | 0.590 (0.434-0.729) |  |
-| median | sam | 40 | 40 | 1.000 | 0.775 (0.625-0.877) |  |
-| median | gated | 40 | 31 | 0.775 | 0.742 (0.568-0.863) | no |
+| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | always the common answer | present found | absent found | rule as registered | used (change 1) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| high visibility crosswalk | spark | 221 | 215 | 0.973 | 0.912 (0.866-0.943) | 0.935 | 196/201 | 0/14 |  |  |
+| high visibility crosswalk | sam | 221 | 221 | 1.000 | 0.882 (0.833-0.918) | 0.937 | 194/207 | 1/14 |  |  |
+| high visibility crosswalk | gated | 221 | 210 | 0.950 | 0.919 (0.874-0.949) | 0.938 | 193/197 | 0/13 | met | no |
+| bike lane | spark | 304 | 295 | 0.970 | 0.817 (0.769-0.857) | 0.868 | 18/39 | 223/256 |  |  |
+| bike lane | sam | 304 | 304 | 1.000 | 0.852 (0.808-0.887) | 0.872 | 0/39 | 259/265 |  |  |
+| bike lane | gated | 304 | 238 | 0.783 | 0.912 (0.869-0.942) | 0.912 | 0/21 | 217/217 | met | no |
+| median | spark | 304 | 295 | 0.970 | 0.668 (0.612-0.719) | 0.692 | 24/91 | 173/204 |  |  |
+| median | sam | 304 | 304 | 1.000 | 0.688 (0.633-0.737) | 0.691 | 3/94 | 206/210 |  |  |
+| median | gated | 304 | 247 | 0.812 | 0.713 (0.653-0.765) | 0.717 | 3/70 | 173/177 | not met | no |
+
+Change 1 (decided after seeing the results, and stricter than the registered rule): an attribute is used only if its gated accuracy also beats always giving the more common answer on the same corners. No attribute passes it: at the orthophoto's resolution the gated answer mostly repeats the common answer (crosswalks called present almost everywhere, bike lanes and medians absent almost everywhere), so the site check changes no recommendation.
 
 ## T17 Ask the engineer: the claim checker and the person asking
 

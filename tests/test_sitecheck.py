@@ -29,7 +29,12 @@ def test_score_counts_only_decided_corners_and_applies_the_rule():
     out = S.score(rows)
     g = out["bike_lane"]["gated"]
     assert g["decided"] == 8 and g["coverage"] == 0.8 and g["accuracy"] == 0.875
-    assert out["bike_lane"]["used_in_product"] is True
+    assert out["bike_lane"]["rule_as_registered"] is True
+    assert out["bike_lane"]["used_in_product"] is False  # 0.875 is what always saying "present" scores (7 of 8)
+    for r in rows[2:5]:
+        r["truth"] = {a: False for a in S.ATTRS}
+        r["answers"] = {a: {"spark": "absent", "sam": "absent", "gated": "absent"} for a in S.ATTRS}
+    assert S.score(rows)["bike_lane"]["used_in_product"] is True  # now it tells present from absent
     rows[1]["truth"] = {a: None for a in S.ATTRS}  # unknown truth is excluded
     assert S.score(rows)["median"]["gated"]["corners"] == 9
 

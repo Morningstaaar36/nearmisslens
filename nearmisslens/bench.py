@@ -1060,14 +1060,25 @@ def _t16_section() -> list[str]:
     L = ["## T16 Site check from the aerial photo: Muse Spark proposes, SAM 3.1 confirms", "",
          f"Registered in BENCH_PREREG.md (T16). {len(res['rows'])} corners; ground truth within 40 m from the city's map "
          "layers or OpenStreetMap (corners without ground truth are excluded per attribute).", "",
-         "| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | used in the product |",
-         "|---|---|---|---|---|---|---|"]
+         "| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | always the common answer "
+         "| present found | absent found | rule as registered | used (change 1) |",
+         "|---|---|---|---|---|---|---|---|---|---|---|"]
     for attr, arms in sm.items():
         for arm in ("spark", "sam", "gated"):
             v = arms[arm]
             acc = f"{_f(v['accuracy'])} ({_f(v['accuracy_ci95'][0])}-{_f(v['accuracy_ci95'][1])})" if v["accuracy"] is not None else "n/a"
+            g = arm == "gated"
             L.append(f"| {attr.replace('_', ' ')} | {arm} | {v['corners']} | {v['decided']} | {_f(v['coverage'])} | {acc} | "
-                     f"{('yes' if arms['used_in_product'] else 'no') if arm == 'gated' else ''} |")
+                     f"{_f(v['majority_accuracy'])} | {v['found_present']} | {v['found_absent']} | "
+                     f"{('met' if arms['rule_as_registered'] else 'not met') if g else ''} | "
+                     f"{('yes' if arms['used_in_product'] else 'no') if g else ''} |")
+    used = [a for a, arms in sm.items() if arms["used_in_product"]]
+    L += ["", "Change 1 (decided after seeing the results, and stricter than the registered rule): an attribute is used only "
+          "if its gated accuracy also beats always giving the more common answer on the same corners. "
+          + (f"Used: {', '.join(a.replace('_', ' ') for a in used)}." if used else
+             "No attribute passes it: at the orthophoto's resolution the gated answer mostly repeats the common answer "
+             "(crosswalks called present almost everywhere, bike lanes and medians absent almost everywhere), so the "
+             "site check changes no recommendation.")]
     return L + [""]
 
 

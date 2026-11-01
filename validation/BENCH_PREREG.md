@@ -311,11 +311,16 @@ deciding role is now called the Arbiter in the docs). No rule, threshold, sample
 - **Metrics:** accuracy on decided corners with Wilson 95% intervals, coverage, and how many recommendations change.
 - **Rule:** an attribute changes recommendations only if the gated accuracy is at least 0.85 with coverage at least 0.5. Everything is reported either way.
 - **Already seen:** aerial photos of the top 25 corners were fetched and viewed earlier for the fix drawings; none was labelled for this test.
+- **Note added during the run (no change to the design):** partway through, the Overpass servers began refusing this machine, which left the crosswalk ground truth missing at 18 corners. From then on, the same OpenStreetMap `crossing:markings` tags were read through the OpenStreetMap API's map call for a box around each corner, keeping only nodes within 40 m. The 18 corners got ground truth that way, and their model answers were kept as they were, with no new model calls.
 
 ### T15 change 1 (2026-11-01, after the grid and greedy arms ran on all corners and two 10-corner agent pilots, before the full agent run)
 - **Why:** in both pilots Muse Spark Open kept exploring and rarely called `test_pattern` (7 of 10 runs stopped without a test), so the agent arm measured the loop, not the model's choice of mechanisms.
 - **Change:** the agent explores with `describe` and at most 8 `query_crashes` calls, then finishes by proposing at most 12 patterns with one sentence each. Code tests every proposal; Holm runs over all of them; survivors get the sealed check. The agent still never sees a later-year crash, and now never sees a test result either. The rule and the other arms are unchanged.
 - **Secondary measure, added now:** *distinct* confirmed findings. Confirmed findings at a corner are merged when their explore-year matching crashes overlap by at least 80%, so "heading south" and "heading south AND going straight ahead" count once. Also reported: findings confirmed by one arm and by no other. Both are labelled as decided after the grid and greedy results were seen.
+
+### T16 change 1 (2026-11-01, after the full run, decided after seeing the results)
+
+The registered rule (gated accuracy at least 0.85, coverage at least 0.5) is met for crosswalks and bike lanes, but on those corners always giving the more common answer scores about the same or better: 0.94 for crosswalks, where most tagged crossings are zebra, and 0.91 for bike lanes, where most corners have none. The gated answer mostly repeats that common answer. A rule that a constant answer can pass should not change recommendations. So an attribute is now used only if its gated accuracy also beats always giving the more common answer on the same decided corners. The change can only turn attributes off. BENCH.md reports both verdicts.
 
 ## T17 Ask the engineer (registered 2026-11-01, before any question was asked)
 

@@ -191,11 +191,19 @@ def score(rows: list[dict]) -> dict:
             pairs = [(r["answers"][a][arm], r["truth"][a]) for r in rows if r.get("answers") and r["truth"].get(a) is not None]
             dec = [(x, t) for x, t in pairs if x in ("present", "absent")]
             ok = sum((x == "present") == bool(t) for x, t in dec)
+            yes = sum(bool(t) for _, t in dec)
+            tp = sum(x == "present" and bool(t) for x, t in dec)
+            tn = sum(x == "absent" and not t for x, t in dec)
             out[a][arm] = {"corners": len(pairs), "decided": len(dec), "coverage": round(len(dec) / max(len(pairs), 1), 3),
                            "accuracy": round(ok / len(dec), 3) if dec else None, "accuracy_ci95": wilson(ok, len(dec)),
-                           "truth_yes": sum(bool(t) for _, t in pairs)}
+                           "truth_yes": sum(bool(t) for _, t in pairs),
+                           # always giving the more common answer on the same decided corners
+                           "majority_accuracy": round(max(yes, len(dec) - yes) / len(dec), 3) if dec else None,
+                           "found_present": f"{tp}/{yes}", "found_absent": f"{tn}/{len(dec) - yes}"}
         g = out[a]["gated"]
-        out[a]["used_in_product"] = bool(g["accuracy"] is not None and g["accuracy"] >= 0.85 and g["coverage"] >= 0.5)
+        out[a]["rule_as_registered"] = bool(g["accuracy"] is not None and g["accuracy"] >= 0.85 and g["coverage"] >= 0.5)
+        # T16 change 1: an attribute must also beat always giving the more common answer, or it carries no information
+        out[a]["used_in_product"] = bool(out[a]["rule_as_registered"] and g["accuracy"] > g["majority_accuracy"])
     return out
 
 
