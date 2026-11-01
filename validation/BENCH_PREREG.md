@@ -295,3 +295,19 @@ deciding role is now called the Arbiter in the docs). No rule, threshold, sample
 - **Metrics:** confirmed findings per real corner; precision (confirmed / reported); null false discoveries per null corner; findings confirmed by one arm and not another; USD and turns.
 - **Rule:** the agent is credited with finding what code misses only if, on real corners, its confirmed findings per corner exceed both the grid's and the greedy arm's (95% bootstrap interval of the difference above 0, resampling corners) and its null false discoveries per corner are at most 0.05. Everything is reported either way.
 - **Note on timing:** the download of the two detail tables began about two minutes before the T15 registration commit (acd98c6); no downloaded row was looked at before that commit, and no arm had run.
+
+## T16 Site check from the aerial photo (registered 2026-11-01, before any new aerial photo was fetched for it or any model looked at one)
+
+- **Question:** can Muse Spark reading the state aerial photo, confirmed by SAM 3.1, tell what a corner already has, well enough to change a recommendation?
+- **Design file:** `validation/experiments/T16.json` (committed with this text).
+- **Attributes and ground truth (within 40 m):**
+  - high-visibility crosswalk: OpenStreetMap `crossing:markings` zebra or ladder; untagged corners are excluded;
+  - painted or protected bike lane: NYC Bike Routes, classes I–II;
+  - median or traffic island: NYC Planimetric Median.
+- **Arms:**
+  - Spark alone;
+  - SAM 3.1 alone (detections covering at least 0.2% of the circle);
+  - gated: present only when Spark says present and a SAM detection lies within 15 m of Spark's point; absent when both find nothing; otherwise unsure.
+- **Metrics:** accuracy on decided corners with Wilson 95% intervals, coverage, and how many recommendations change.
+- **Rule:** an attribute changes recommendations only if the gated accuracy is at least 0.85 with coverage at least 0.5. Everything is reported either way.
+- **Already seen:** aerial photos of the top 25 corners were fetched and viewed earlier for the fix drawings; none was labelled for this test.

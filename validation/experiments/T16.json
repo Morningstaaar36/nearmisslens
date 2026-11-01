@@ -1,0 +1,21 @@
+{
+ "id": "T16",
+ "title": "Site check: can Muse Spark reading the aerial photo, confirmed by SAM 3.1, tell what a corner already has?",
+ "registered": "validation/BENCH_PREREG.md, T16 (2026-11-01, before any new aerial photo was fetched for it or any model looked at one)",
+ "city": "nyc",
+ "corners": "all screened corners with an aerial photo",
+ "image": "the state orthophoto (NYS GIS Program Office) through brief.aerial: 768 x 768 px over 180 m, centred on the corner",
+ "radius_m": 40,
+ "attributes": {
+  "high_visibility_crosswalk": {"sam_concept": "zebra crosswalk", "truth": "OpenStreetMap crossing nodes within 40 m: crossing:markings zebra or ladder (any variant) = yes; lines, dashes, surface or no = no; untagged = unknown (excluded)"},
+  "bike_lane": {"sam_concept": "bike lane", "truth": "NYC Bike Routes (mzxg-pwib) within 40 m with facility class I or II = yes, otherwise no (class III shared lanes are not painted lanes)"},
+  "median": {"sam_concept": "traffic island", "truth": "NYC Planimetric Median (ees7-4ufv) polygon within 40 m = yes, otherwise no"}
+ },
+ "arms": {
+  "spark": "Muse Spark (Meta API) answers present / absent / unsure per attribute with points on the image",
+  "sam": "SAM 3.1 image segmentation of the concept: present when its detections cover at least 0.2% of the 40 m circle",
+  "gated": "present only when Spark says present and a SAM 3.1 detection lies within 15 m of one of Spark's points; absent when Spark says absent and SAM finds nothing in the circle; otherwise unsure"
+ },
+ "metrics": ["accuracy on decided corners per attribute and arm, with Wilson 95% interval", "coverage (share decided)", "for the gated arm: how many top-fix recommendations change (Crosswalk Visibility Enhancements marked as already present)"],
+ "rule": "An attribute's gated answer is used in the product only if its gated accuracy is at least 0.85 with coverage at least 0.5; otherwise it is shown but does not change any recommendation. Everything is reported either way."
+}
