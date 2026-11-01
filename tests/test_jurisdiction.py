@@ -45,3 +45,14 @@ def test_one_entry_per_agency_with_inferred_roads_named():
     assert [o["party"] for o in out] == ["city", "state"]
     assert out[0]["confidence"] == "recorded" and out[0]["roads"] == ["Main Ave (NY 1)", "Oak St"]
     assert out[0]["inferred_roads"] == ["Oak St"] and "inferred_roads" not in out[1]
+
+
+def test_city_without_owner_data_or_street_layout_presumes_its_agency(monkeypatch):
+    from nearmisslens import jurisdiction as J, opendata, context, engineer
+    monkeypatch.setattr(context, "city_of", lambda lat, lon: "dc")
+    monkeypatch.setattr(J, "owners", lambda lat, lon, streets: {"owners": [], "adapter": False})
+    monkeypatch.setattr(opendata, "offices_at", lambda lat, lon: [])
+    w = J.who_must_act(38.9, -77.0, ["North Capitol Street", "Michigan Avenue"], {"roads": []})
+    assert len(w["owners"]) == 1 and "DDOT" in w["owners"][0]["party"]
+    assert w["owners"][0]["roads"] == ["North Capitol Street", "Michigan Avenue"]
+    assert engineer._basis(w["owners"][0]) == "no road-owner dataset registered for this city, so presumed a city street"

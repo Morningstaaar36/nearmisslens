@@ -320,9 +320,25 @@ def _basis(owner: dict) -> str:
     if owner["confidence"] == "recorded" and owner.get("inferred_roads"):
         return (f"owner recorded in {source}; {', '.join(owner['inferred_roads'])} not listed there, "
                 f"so {'a city street' if len(owner['inferred_roads']) == 1 else 'city streets'}")
+    why = str((owner.get("basis") or {}).get("value") or "")
+    if owner["confidence"] == "inferred" and why.startswith("no "):  # e.g. no road-owner dataset registered here
+        return f"{why}, so presumed a city street"
     return {"recorded": f"owner recorded in {source}",
             "inferred": f"not listed in {source}, so a city street",
             "designation only": "signed route in OpenStreetMap; owner not confirmed"}.get(owner["confidence"], source)
+
+
+def crash_sentence(name: str, cr: dict) -> str:
+    """The record's headline, stating only the counts the city's dataset records (older summaries without
+    'recorded' come from datasets that record pedestrians, cyclists and deaths)."""
+    rec = cr.get("recorded") or {"injured_by_mode": ["cyclist", "pedestrian"], "killed": True}
+    killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed")) or cr.get("any_killed", 0)
+    parts = [f"{cr.get(f'{m}_injured', 0)} {m}s injured" for m in ("pedestrian", "cyclist") if m in rec["injured_by_mode"]]
+    if rec.get("killed"):
+        parts.append(f"{killed} {'person' if killed == 1 else 'people'} killed")
+    body = (", ".join(parts[:-1]) + " and " + parts[-1]) if len(parts) > 1 else "".join(parts)
+    return (f"{name} had {cr.get('injury_crashes', 0)} injury crashes in police records since {cr.get('since')}"
+            + (f": {body}." if body else "."))
 
 
 def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
@@ -331,11 +347,7 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
     fx, rf = rec["choose_fixes"]
     cr = fx.get("crashes") or {}
     if cr and "error" not in cr:
-        killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
-        out.append({"text": f"{name} had {cr.get('injury_crashes', 0)} injury crashes in police records since "
-                            f"{cr.get('since')}: {cr.get('pedestrian_injured', 0)} pedestrians injured, "
-                            f"{cr.get('cyclist_injured', 0)} cyclists injured and {killed} {'person' if killed == 1 else 'people'} killed.",
-                    "receipt": rf})
+        out.append({"text": crash_sentence(name, cr), "receipt": rf})
         if fx.get("harm"):
             out.append({"text": f"At the U.S. DOT's values that harm costs about {_usd(fx['harm']['usd_per_year'])} "
                                 "a year.", "receipt": rf})

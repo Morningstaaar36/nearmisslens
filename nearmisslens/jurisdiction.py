@@ -129,6 +129,11 @@ def who_must_act(lat: float, lon: float, streets: list[str], street_layout: dict
     city = opendata.city(context.city_of(lat, lon))
     own = owners(lat, lon, streets)
     rows = own["owners"] if own["adapter"] else osm_designations(street_layout, city)
+    if not rows and city:  # no owner dataset and no street layout: the junction's named streets, as city streets
+        rows = _merge([{"party": city.get("agency") or "the city's transportation department", "role": "owner",
+                        "road": s, "route": None, "confidence": "inferred",
+                        "basis": {"dataset": "the junction's street names", "field": "name",
+                                  "value": "no road-owner dataset registered for this city"}} for s in streets if s])
     requesters = [{"party": o["office"], "role": o.get("role") or "office", "contact": o.get("contact"),
                    "salutation": o.get("salutation"),
                    "basis": {"dataset": o.get("source"), "field": "district", "value": o["office"]},

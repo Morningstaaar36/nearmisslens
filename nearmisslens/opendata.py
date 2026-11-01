@@ -300,6 +300,10 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
     return {"source": a["source"], "adapter": a["id"], "radius_m": radius_m, "since": since.isoformat(),
             "asof": asof().isoformat(),
             "crashes": n, "injury_crashes": injury_crashes, "by_year": dict(sorted(years_c.items())),
+            # which counts the dataset records at all (an absent count is zero only for these)
+            "recorded": {"injured_by_mode": sorted(m for m in MODES if m != "any" and inj.get(m)),
+                         "killed_by_mode": sorted(m for m in MODES if m != "any" and kil.get(m)),
+                         "killed": bool(kil)},
             **{k: int(v) for k, v in sums.items() if v}, "crash_groups": dict(groups),
             "crash_type_recorded": bool(a.get("crash_type_fields")),
             "dark_share": round(dark / n, 3) if n and a.get("light_fields") else None,
