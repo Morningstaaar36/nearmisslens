@@ -22,16 +22,11 @@ from .cost import token_usd
 from .meta_client import output_text
 
 SPEC = json.loads((ROOT / "validation" / "experiments" / "T16.json").read_text())
+CATALOG = json.loads((Path(__file__).resolve().parent / "data" / "site_attributes.json").read_text())["attributes"]
 MODEL = "muse-spark-1.3-contributor"
-SIZE, SPAN_M = 768, 180.0  # brief.aerial: 768 px over 2 x 90 m
+SIZE, SPAN_M = brief.AERIAL_PX, 2 * brief.AERIAL_RADIUS_M
 M_PER_PX = SPAN_M / SIZE
-OVERPASS = "https://overpass-api.de/api/interpreter"
-HIGH_VIS = ("zebra", "ladder")
-ATTRS = list(SPEC["attributes"])
-DESCRIBE = {"high_visibility_crosswalk": "crosswalks painted with wide parallel bars (zebra or ladder pattern), not just "
-                                         "two thin lines",
-            "bike_lane": "a painted or protected bicycle lane (often green paint or a bicycle symbol) on the roadway",
-            "median": "a raised median or traffic island separating lanes"}
+ATTRS = list(CATALOG)
 SCHEMA = {"type": "object", "additionalProperties": False, "required": ATTRS,
           "properties": {a: {"type": "object", "additionalProperties": False, "required": ["answer", "points"],
                              "properties": {"answer": {"type": "string", "enum": ["present", "absent", "unsure"]},
@@ -40,13 +35,13 @@ SCHEMA = {"type": "object", "additionalProperties": False, "required": ATTRS,
                                                 "maxItems": 2}}}} for a in ATTRS}}
 
 
-def photo(name: str, slug: str, lat: float, lon: float, city: str = "nyc") -> Path | None:
+def photo(name: str, slug: str, lat: float, lon: float, city: str | None = None) -> Path | None:
     """The corner's aerial photo: the one saved with its brief if there is one, else a new one in runs/site/."""
     from .pages import _brief_dir
     saved = _brief_dir(name) / "aerial.jpg"
     if saved.exists():
         return saved
-    return brief.aerial(lat, lon, city, SETTINGS.runs_dir / "site" / slug / "aerial.jpg")
+    return brief.aerial(lat, lon, city or context.city_of(lat, lon), SETTINGS.runs_dir / "site" / slug / "aerial.jpg")
 
 
 def _circle(shape, radius_m: float) -> np.ndarray:
@@ -61,7 +56,7 @@ def spark(client, img_path: Path, tag: str) -> dict:
     """Muse Spark's answer per attribute, with points in image pixels."""
     img = cv2.imread(str(img_path))
     url = sam_api.png_data_url(img)
-    what = "; ".join(f"{a}: {DESCRIBE[a]}" for a in ATTRS)
+    what = "; ".join(f"{a}: {CATALOG[a]['describe']}" for a in ATTRS)
     instructions = (f"This is a top-down aerial photo of a street intersection, {SIZE} x {SIZE} pixels covering "
                     f"{SPAN_M:.0f} m, with the intersection at the centre. For each attribute, answer present, absent "
                     f"or unsure for the area within {SPEC['radius_m']} m of the centre (a circle of radius "
@@ -114,22 +109,36 @@ def decide(spark_answer: dict, dets: list, shape, radius_m: float = SPEC["radius
 
 # ------------------------------------------------------------------------------------------------- ground truth
 
+def _truth_one(a: dict, lat: float, lon: float, radius_m: float):
+    """One site_truth adapter's answer at the point: True, False, or None when the source says nothing."""
+    if a["platform"] == "socrata":
+        rows, _ = context.fetch(a["endpoint"], {"$where": f"within_circle({a['geo_field']},{lat},{lon},{radius_m})",
+                                                "$limit": 500})
+        rows = rows if isinstance(rows, list) else []
+        rule = a.get("yes_when", "any")
+        if rule == "any":
+            return bool(rows)
+        return any(str(r.get(rule["field"], "")).strip() in rule["in"] for r in rows)
+    if a["platform"] == "overpass":
+        q = f"[out:json][timeout:30];{a['osm_filter']}(around:{radius_m},{lat},{lon});out tags;"
+        js, _ = context.fetch(context.OVERPASS, data={"data": q}, timeout=60)
+        vals = [str(e.get("tags", {}).get(a["tag"], "")) for e in js.get("elements", [])]
+        tagged = [v for v in vals if v]
+        return any(v.split(":")[0] in a["yes_values"] for v in tagged) if tagged else None
+    raise ValueError(f"unknown site_truth platform {a['platform']!r}")
+
+
 def truth(lat: float, lon: float, radius_m: float = SPEC["radius_m"]) -> dict:
-    """The city's map layers and OpenStreetMap within the radius: True / False, or None when unknown."""
-    out = {}
-    bikes, _ = context.fetch("https://data.cityofnewyork.us/resource/mzxg-pwib.json", {
-        "$where": f"within_circle(the_geom,{lat},{lon},{radius_m})", "$select": "facilitycl,status", "$limit": 200})
-    out["bike_lane"] = any(str(b.get("facilitycl", "")).strip().upper() in ("I", "II") for b in bikes or [])
-    med, _ = context.fetch("https://data.cityofnewyork.us/resource/ees7-4ufv.json", {
-        "$where": f"within_circle(the_geom,{lat},{lon},{radius_m})", "$select": "feat_code", "$limit": 50})
-    out["median"] = bool(med)
-    q = f"[out:json][timeout:30];node(around:{radius_m},{lat},{lon})[highway=crossing];out tags;"
-    js, _ = context.fetch(OVERPASS, data={"data": q}, timeout=60)
-    marks = [str(e.get("tags", {}).get("crossing:markings", "")) for e in js.get("elements", [])]
-    tagged = [m for m in marks if m]
-    out["high_visibility_crosswalk"] = (any(m.split(":")[0] in HIGH_VIS for m in tagged) if tagged else None)
-    out["osm_crossings"], out["osm_tagged"] = len(marks), len(tagged)
-    return out
+    """Each attribute's ground truth at the point from the registry's site_truth adapters that cover it (a city's own
+    layer wins over a global one); None when no source covers it or the source is silent."""
+    from . import opendata
+    out, sources = {}, {}
+    for a in sorted(opendata.adapters_for(lat, lon, "site_truth"), key=lambda a: a.get("city") is None):
+        if a["attribute"] in out and out[a["attribute"]] is not None:
+            continue
+        out[a["attribute"]] = _truth_one(a, lat, lon, radius_m)
+        sources[a["attribute"]] = a["source"]
+    return {**{k: out.get(k) for k in ATTRS}, "sources": sources}
 
 
 # ------------------------------------------------------------------------------------------------- T16
@@ -179,7 +188,7 @@ def run_t16(client, corners: list[dict], out: Path | None = None) -> dict:
             else:
                 img = cv2.imread(str(p))
                 sp = spark(client, p, c["slug"])
-                row["answers"] = {a: decide(sp.get(a, {}), sam(client, p, SPEC["attributes"][a]["sam_concept"], c["slug"]),
+                row["answers"] = {a: decide(sp.get(a, {}), sam(client, p, CATALOG[a]["sam_concept"], c["slug"]),
                                             img.shape) for a in ATTRS}
         except Exception as e:  # one corner's failure is recorded, not fatal
             row["error"] = f"{type(e).__name__}: {str(e)[:200]}"

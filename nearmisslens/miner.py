@@ -61,23 +61,24 @@ def crash_features(row: dict, a: dict) -> dict[str, set[str]]:
     return {k: v for k, v in f.items() if v}
 
 
-def detail_features(vehicles: list[dict], persons: list[dict]) -> dict[str, set[str]]:
-    """Fields from the vehicle and person tables (a crash has the value if any of its vehicles or people has it)."""
+def detail_features(vehicles: list[dict], persons: list[dict], vroles: dict, proles: dict) -> dict[str, set[str]]:
+    """Fields from the vehicle and person tables (a crash has the value if any of its vehicles or people has it). The
+    adapters' "roles" map each feature to the dataset's own column, so another city's tables plug in by registry."""
     f: dict[str, set[str]] = {"pre_crash": set(), "maneuver": set(), "point_of_impact": set(), "ped_action": set(),
                               "ped_location": set()}
+    col = lambda roles, r, name: _norm(r.get(roles[name])) if roles.get(name) else None
     for v in vehicles:
-        pre, d = _norm(v.get("pre_crash")), _norm(v.get("travel_direction"))
+        pre, d = col(vroles, v, "pre_crash"), col(vroles, v, "direction")
         if pre:
             f["pre_crash"].add(pre)
             if d:
                 f["maneuver"].add(f"{pre}, heading {d}")
-        if (p := _norm(v.get("point_of_impact"))):
+        if (p := col(vroles, v, "point_of_impact")):
             f["point_of_impact"].add(p)
     for p in persons:
-        if (x := _norm(p.get("ped_action"))):
-            f["ped_action"].add(x)
-        if (x := _norm(p.get("ped_location"))):
-            f["ped_location"].add(x)
+        for name in ("ped_action", "ped_location"):
+            if (x := col(proles, p, name)):
+                f[name].add(x)
     return {k: v for k, v in f.items() if v}
 
 
@@ -85,7 +86,7 @@ def detail_features(vehicles: list[dict], persons: list[dict]) -> dict[str, set[
 
 def _details(a: dict, ids: list[str]) -> dict[str, list[dict]]:
     out: dict[str, list[dict]] = {}
-    want = list(a.get("fields", {})) + [a["join_field"]] + list(a.get("filter") or {})
+    want = list((a.get("roles") or {}).values()) + [a["join_field"]] + list(a.get("filter") or {})
     for i in range(0, len(ids), BATCH):
         chunk = ids[i:i + BATCH]
         where = f"{a['join_field']} in (" + ",".join(f"'{c}'" for c in chunk) + ")"
@@ -119,8 +120,10 @@ def build(city: str = "nyc", top: int | None = None) -> dict:
         corners.append({"slug": engineer.slug(j["name"]), "name": j["name"], "rank": k + 1, "ids": sorted(set(ids))})
     all_ids = sorted(crashes)
     found = {a["level"]: _details(a, all_ids) for a in details}
+    roles = {a["level"]: a.get("roles") or {} for a in details}
     for cid, c in crashes.items():
-        extra = detail_features(found.get("vehicle", {}).get(cid, []), found.get("person", {}).get(cid, []))
+        extra = detail_features(found.get("vehicle", {}).get(cid, []), found.get("person", {}).get(cid, []),
+                                roles.get("vehicle", {}), roles.get("person", {}))
         c["f"].update({k: sorted(v) for k, v in extra.items()})
     ds = {"city": city, "since": since(5).isoformat(), "split": SPEC["split"], "corners": corners, "crashes": crashes,
           "coverage": {lvl: round(sum(cid in m for cid in all_ids) / max(len(all_ids), 1), 3) for lvl, m in found.items()},

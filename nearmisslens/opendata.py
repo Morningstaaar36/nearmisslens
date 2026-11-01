@@ -52,10 +52,20 @@ def save_adapter(adapter: dict) -> None:
 
 
 def adapters_for(lat: float, lon: float, kind: str) -> list[dict]:
+    """Adapters of a kind that cover the point: by their own box, else their city's box; an adapter with neither
+    (a global source such as OpenStreetMap) covers every point."""
     out = []
     for a in load_registry():
-        s, w, n, e = a["bbox"]
-        if a["kind"] == kind and s <= lat <= n and w <= lon <= e:
+        if a["kind"] != kind:
+            continue
+        box = a.get("bbox") or (city(a.get("city")) or {}).get("bbox")
+        if box is None and a.get("city") is None:
+            out.append(a)
+            continue
+        if box is None:
+            continue
+        s, w, n, e = box
+        if s <= lat <= n and w <= lon <= e:
             out.append(a)
     return out
 

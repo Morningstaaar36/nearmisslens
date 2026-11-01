@@ -1,0 +1,19 @@
+{
+ "note": "Site-check attributes: how Muse Spark is told what to look for and the noun phrase SAM 3.1 segments. Ground truth for each attribute comes from the registry's site_truth adapters, per city or global.",
+ "attributes": {
+  "high_visibility_crosswalk": {
+   "describe": "crosswalks painted with wide parallel bars (zebra or ladder pattern), not just two thin lines",
+   "sam_concept": "zebra crosswalk",
+   "fix_present": "Crosswalk Visibility Enhancements"
+  },
+  "bike_lane": {
+   "describe": "a painted or protected bicycle lane (often green paint or a bicycle symbol) on the roadway",
+   "sam_concept": "bike lane"
+  },
+  "median": {
+   "describe": "a raised median or traffic island separating lanes",
+   "sam_concept": "traffic island",
+   "fix_present": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas"
+  }
+ }
+}

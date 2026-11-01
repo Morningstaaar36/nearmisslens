@@ -858,6 +858,11 @@
    },
    "provenance": {
     "found_by": "research agent (R18), checked by live query 2026-11-01"
+   },
+   "roles": {
+    "pre_crash": "pre_crash",
+    "direction": "travel_direction",
+    "point_of_impact": "point_of_impact"
    }
   },
   {
@@ -885,7 +890,55 @@
    },
    "provenance": {
     "found_by": "research agent (R18), checked by live query 2026-11-01"
+   },
+   "roles": {
+    "ped_action": "ped_action",
+    "ped_location": "ped_location"
    }
+  },
+  {
+   "id": "nyc-bike-routes",
+   "kind": "site_truth",
+   "city": "nyc",
+   "attribute": "bike_lane",
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/mzxg-pwib.json",
+   "geo_field": "the_geom",
+   "yes_when": {
+    "field": "facilitycl",
+    "in": [
+     "I",
+     "II"
+    ]
+   },
+   "source": "NYC Open Data, Bike Routes (mzxg-pwib)",
+   "note": "classes I (protected) and II (painted lane) are visible from above; class III shared lanes are not"
+  },
+  {
+   "id": "nyc-planimetric-median",
+   "kind": "site_truth",
+   "city": "nyc",
+   "attribute": "median",
+   "platform": "socrata",
+   "endpoint": "https://data.cityofnewyork.us/resource/ees7-4ufv.json",
+   "geo_field": "the_geom",
+   "yes_when": "any",
+   "source": "NYC Open Data, Planimetric Database: Median (ees7-4ufv)"
+  },
+  {
+   "id": "osm-crossing-markings",
+   "kind": "site_truth",
+   "city": null,
+   "attribute": "high_visibility_crosswalk",
+   "platform": "overpass",
+   "osm_filter": "node[highway=crossing]",
+   "tag": "crossing:markings",
+   "yes_values": [
+    "zebra",
+    "ladder"
+   ],
+   "source": "OpenStreetMap crossing:markings (ODbL)",
+   "note": "untagged crossings give no answer; any variant of zebra or ladder (e.g. ladder:skewed) counts as yes"
   }
  ],
  "cities": [

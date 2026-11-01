@@ -53,7 +53,7 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
     if SETTINGS.replay:
         raise FileNotFoundError(f"context request not cached: {url}")
     t = time.time()
-    for attempt in range(3):
+    for attempt in range(6):
         try:
             with httpx.Client(headers=UA, timeout=timeout, follow_redirects=True) as c:
                 r = c.post(url, data=data) if data is not None else c.get(url, params=params)
@@ -62,9 +62,11 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
                 path.write_text(json.dumps(out))
                 return out, round(time.time() - t, 2)
             err = f"HTTP {r.status_code}"
+            if r.status_code < 500 and r.status_code != 429:  # a bad request will not get better by waiting
+                break
         except (httpx.TransportError, json.JSONDecodeError) as e:
             err = f"{type(e).__name__}"
-        time.sleep(2 * (attempt + 1))
+        time.sleep(min(60, 3 * 2 ** attempt))  # public servers shed load with 429/503: back off up to a minute
     raise RuntimeError(f"{url}: {err}")
 
 

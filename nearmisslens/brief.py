@@ -230,7 +230,11 @@ def _mercator(lat: float, lon: float) -> tuple[float, float]:
 USGS_IMAGERY = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/export"
 
 
-def aerial(lat: float, lon: float, city: str | None, out: Path, size: int = 768, radius_m: float = 90.0) -> Path | None:
+AERIAL_PX, AERIAL_RADIUS_M = 768, 90.0  # the aerial photo: AERIAL_PX square over 2 x AERIAL_RADIUS_M
+
+
+def aerial(lat: float, lon: float, city: str | None, out: Path, size: int = AERIAL_PX,
+           radius_m: float = AERIAL_RADIUS_M) -> Path | None:
     """An aerial photo centred on the junction: a city or state orthophoto from the registry when one covers the
     point, otherwise USGS national imagery (public domain, any US location)."""
     from . import opendata
