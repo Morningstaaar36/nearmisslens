@@ -72,6 +72,22 @@ That last one is the **causal gate**. The statistics are standard road-safety ev
 
 Projection, not a test: 119 of the 304 priority corners have no leading pedestrian interval. At New York's measured effect, adding them would prevent about 43 pedestrian injury crashes a year (29–56). Each site still needs an engineer's check.
 
+## An agent that may only report what survived a test it never saw
+
+The gates above check what an agent says. The miner checks what an agent claims to have found. At the 100 worst corners, Muse Spark Open reads the crash records from before May 2024: the vehicle- and person-level tables, with each driver's maneuver, direction of travel and point of impact, and each pedestrian's action. It proposes any crash mechanism it likes. Code then tests every proposal, corrects for all of them (Holm), and checks the survivors once on records from May 2024 on, which the agent's tools never show it. The same runs on 100 null corners built from crashes drawn at random, which have no real mechanism. Two arms with no model run the same test: a grid that tries every pattern of one or two conditions (156 per corner), and a greedy arm that takes the 10 most over-represented ones.
+
+| Arm (100 corners each) | Patterns tested per corner | Confirmed per corner | Distinct mechanisms per corner | Share of tested that held up | False finds per null corner |
+|---|---|---|---|---|---|
+| Muse Spark Open | 3.6 | 0.94 | 0.72 | 26% | 0.02 |
+| Grid | 156 | 2.7 | 0.64 | 1.7% | 0.00 |
+| Greedy top 10 | 10 | 2.3 | 0.82 | 23% | 0.01 |
+
+What this shows: the sealed test keeps false finds near zero for every arm, the model included. The agent does not beat the arms with no model, so the registered rule was not met. It finds about as many distinct mechanisms as the grid (the difference, +0.08 per corner, has a 95% interval of −0.07 to +0.23) from 43 times fewer tests. At 13 corners it confirmed a mechanism neither other arm found. One example is Astoria Boulevard & Hoyt Avenue: "following too closely" is in 24% of its crashes against 6% citywide, and the share held up on later years. The run cost $8.11 on Baseten. The confirmed mechanisms appear in each case under "Held up on later years".
+
+**Ask the engineer.** Any question about a corner goes to Muse Spark Open, which answers from that corner's saved receipts under the same finish gate. We asked 40 questions across 10 corners: answerable ones, ones the record cannot answer, and ones that bait it to say a factor "caused" the crashes. With the gate, no wrong sentence reached the reader; without it, 31 did, in 13 of the 40 answers. Without the gate it took the bait 9 times in 10, and with the gate it never did. The price: with the gate, 38% of questions ended with no answer that passed, against 10% without it. Refused sentences are shown struck through, with the reason.
+
+**What the aerial photo shows (T16), a negative result.** An engineer visits a site before recommending a fix. The remote version: Muse Spark reads the state's aerial photo of each of the 304 corners and says whether it has a high-visibility crosswalk, a bike lane and a median, pointing at each one. SAM 3.1 must find the same thing within 15 m of Spark's point. The answers are scored against the city's own map layers and OpenStreetMap. The registered rule (accuracy at least 0.85, coverage at least 0.5) was met for crosswalks and bike lanes. But always giving the more common answer scores the same or better (0.94 and 0.91), because the gated answer mostly repeats it: it called a crosswalk present at all 13 corners that have none, and found none of the 21 painted bike lanes. Spark alone did find 18 of 39 bike lanes, but SAM 3.1 finds almost none from overhead, so the check discarded those along with Spark's errors. Having seen this, we added a stricter rule: an attribute must also beat the common answer, and none does. So the site check is shown on each case, but it changes no recommendation.
+
 ## Try it
 
 ```bash
@@ -93,6 +109,8 @@ uv run nml --replay selftest                               # offline self-test; 
 | Model | Where | What it does |
 |---|---|---|
 | **Muse Spark Open** on Baseten | the engineer, the analyst, letters | Chooses the engineer's steps and writes its claims; writes and runs analysis code in a sandbox; drafts the request letters. All three go through gates |
+| **Muse Spark Open** on Baseten | the miner, Ask the engineer | Proposes crash mechanisms from the earlier years, which code tests on years it never saw (T15). Answers free questions about a corner from its receipts, under the finish gate (T17) |
+| Muse Spark (vision) + SAM 3.1 | site check | Reads the aerial photo for crosswalks, bike lanes and medians; SAM 3.1 must confirm each point. Scored on 304 corners; not yet better than the common answer (T16) |
 | Muse Spark | data agent, program agent | Maps a new city's datasets; a validator in the tool refuses bad mappings |
 | SAM 3.1 | drone video, drawing check | Tracks vehicles (recall 0.51–0.97 on unseen flights) and two-wheelers (0.00–0.73) in drone video; pedestrians are not tracked from 120 m. Checks that a drawn fix is really there and no real car moved |
 | Muse Image | fix drawings | Draws the top fix on the aerial photo; 13 of 20 drawings pass the SAM 3.1 check |
@@ -109,6 +127,8 @@ uv run nml --replay selftest                               # offline self-test; 
 | Muse Spark watching video clips to rate conflicts | Precision rose from 0.46 to 0.69 at equal recall, but removing the video raised F1 (0.106 to 0.198) |
 | Residents' near-miss reports in crash prediction (DC) | No gain on held-out areas and future years (top-5% precision 0.586 with and without) |
 | Muse Spark Open as the complaint checker | 25 of 32 self-made complaints; Muse Spark got 32 and a fixed rule 28 |
+| Muse Spark + SAM 3.1 reading the aerial photo | No better than always giving the more common answer for crosswalks, bike lanes or medians (T16), so it changes no recommendation |
+| The miner against tests with no model | Comparable distinct mechanisms from 43 times fewer tests, but fewer confirmed findings than the grid and greedy arms, so its registered rule was not met (T15) |
 
 The number checker itself: without it, 4 of 34 memos used a number not in the record. With it, none do, because it refuses them.
 
