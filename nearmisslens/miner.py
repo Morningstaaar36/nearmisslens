@@ -239,24 +239,27 @@ def null_corners(ds: dict, pool: Pool, real: list[dict], seed: int) -> list[dict
 
 INSTRUCTIONS = (
     "You are a traffic-safety analyst looking for crash mechanisms at one street corner, identified only by an id. "
-    "Use describe and query_crashes to explore this corner's crashes (earlier years only), then use test_pattern on the "
-    "mechanisms you think are real and specific: combinations that say what happened (for example a turning maneuver "
-    "together with what the pedestrian was doing). Every test you run counts against you in a correction for multiple "
-    "testing, and you have at most 12, so test only what you believe. Then call finish with the patterns you stand behind "
-    "and one plain sentence each saying what these crashes have in common (never 'caused'). Your patterns will be checked "
-    "on later years you cannot see.")
+    "Call describe, then use at most 8 query_crashes calls to explore this corner's crashes (earlier years only; each "
+    "result shows the share of all crashes here and in the city for the combination). Then call propose with up to 12 "
+    "patterns you believe are real and specific: combinations that say what happened, for example a turning maneuver "
+    "together with what the pedestrian was doing, or a vehicle kind with a maneuver. Every pattern you propose is tested "
+    "and corrected for multiple testing, so propose only what you believe; then each survivor is checked once on later "
+    "years you cannot see. For each pattern give one plain sentence saying what these crashes have in common (never "
+    "'caused').")
 
 
-def agent_arm(ds: dict, pool: Pool, corner: dict, client, blind_id: str, max_tests: int = 12,
-              budget_usd: float = 0.3) -> dict:
+def agent_arm(ds: dict, pool: Pool, corner: dict, client, blind_id: str, max_props: int = 12,
+              max_queries: int = 8, budget_usd: float = 0.3) -> dict:
+    """The agent explores, then proposes; code tests every proposal (all count in the correction) and runs the sealed
+    check. The agent never sees a test result or a later-year crash."""
     from .agent import Tool, run_agent
     from .panel import _obj
     sub = period(ds, corner["ids"], False)
-    tested: list[list[dict]] = []
     final: dict = {}
-    fields = [f for f in SPEC["fields"]]
+    fields = list(SPEC["fields"])
     cond = {"type": "array", "items": _obj({"field": {"type": "string", "enum": fields}, "value": {"type": "string"}},
                                            ["field", "value"]), "minItems": 1, "maxItems": 3}
+    queries: list = []
 
     def top_values(ids: list[str], field: str, n: int = 8) -> list[dict]:
         c = Counter(v for i in ids for v in ds["crashes"][i]["f"].get(field, []))
@@ -268,23 +271,26 @@ def agent_arm(ds: dict, pool: Pool, corner: dict, client, blind_id: str, max_tes
                 "fields": {f: top_values(sub, f) for f in fields}}
 
     def query_crashes(where: list[dict], group_by: str) -> dict:
+        if len(queries) >= max_queries:
+            return {"error": f"you have used all {max_queries} queries; call propose now"}
+        queries.append(where)
         ids = [i for i in sub if matches(ds["crashes"][i]["f"], where)]
-        return {"matching": len(ids), "of": len(sub), "by": top_values(ids, group_by, 10)}
+        c = Counter(v for i in ids for v in ds["crashes"][i]["f"].get(group_by, []))
+        by = [{"value": v, "crashes": k, "share_of_all_crashes": round(k / max(len(sub), 1), 3),
+               "city_share_of_all_crashes": round(pool.share(list(where) + [{"field": group_by, "value": v}], False), 3)}
+              for v, k in c.most_common(10)]
+        return {"matching": len(ids), "of": len(sub), "by": by, "queries_left": max_queries - len(queries)}
 
-    def test_pattern(pattern: list[dict], why: str) -> dict:
-        if len(tested) >= max_tests:
-            return {"error": f"you have used all {max_tests} tests; call finish"}
-        tested.append(pattern)
-        r = test(ds, pool, corner["ids"], pattern, False)
-        return {**r, "tests_used": len(tested), "tests_left": max_tests - len(tested)}
-
-    def finish(findings: list[dict]) -> dict:
-        done = {key(p) for p in tested}
-        bad = [f"pattern {key(f['pattern'])} was never tested" for f in findings if key(f["pattern"]) not in done]
-        bad += [e for f in findings for e in engineer.wording(f.get("mechanism", ""))]
+    def propose(findings: list[dict] | None = None) -> dict:
+        findings = findings or []
+        if not findings:
+            return {"error": "propose at least one pattern, each with a mechanism sentence"}
+        bad = [e for f in findings for e in engineer.wording(f.get("mechanism", ""))]
+        bad += [f"pattern {key(f['pattern'])} has a value this corner never shows"
+                for f in findings if not any(matches(ds["crashes"][i]["f"], f["pattern"]) for i in sub)]
         if bad:
-            return {"error": "refused", "errors": bad}
-        final["findings"] = findings
+            return {"error": "refused", "errors": bad[:8]}
+        final["findings"] = findings[:max_props]
         return {"ok": True}
 
     finding = _obj({"pattern": cond, "mechanism": {"type": "string"}}, ["pattern", "mechanism"])
@@ -293,20 +299,20 @@ def agent_arm(ds: dict, pool: Pool, corner: dict, client, blind_id: str, max_tes
              Tool("query_crashes", "Among earlier-year crashes matching all conditions, counts by another field.",
                   _obj({"where": {**cond, "minItems": 0}, "group_by": {"type": "string", "enum": fields}},
                        ["where", "group_by"]), query_crashes),
-             Tool("test_pattern", "Test one pattern on earlier years (counts toward the correction).",
-                  _obj({"pattern": cond, "why": {"type": "string"}}, ["pattern", "why"]), test_pattern),
-             Tool("finish", "Report the tested patterns you stand behind.",
-                  _obj({"findings": {"type": "array", "items": finding}}, ["findings"]), finish)]
+             Tool("finish", "Propose up to 12 patterns you believe, each with one plain sentence.",
+                  _obj({"findings": {"type": "array", "items": finding, "maxItems": max_props}}, ["findings"]), propose)]
     if hasattr(client, "force_finish_after"):
-        client.force_finish_after = max(client.force_finish_after, 16)
-    run = run_agent(client, "muse-spark-open", INSTRUCTIONS, f"Corner {blind_id}.", tools, 20, budget_usd,
+        client.force_finish_after = max(client.force_finish_after, 2 + max_queries + 2)
+    run = run_agent(client, "muse-spark-open", INSTRUCTIONS, f"Corner {blind_id}.", tools, 16, budget_usd,
                     effort="low", tag=f"miner {blind_id}", escalate_after=3)
-    reported = [f["pattern"] for f in final.get("findings", [])]
-    out = score_arm(ds, pool, corner["ids"], tested, reported)
+    props = [f["pattern"] for f in final.get("findings", [])]
+    out = score_arm(ds, pool, corner["ids"], props, props)
     texts = {key(f["pattern"]): f["mechanism"] for f in final.get("findings", [])}
     for c in out["confirmed"]:
         c["mechanism"] = texts.get(c["pattern"])
-    return {**out, "usd": round(run.usd, 5), "turns": run.turns, "stopped": run.stopped, "finished": bool(final)}
+    return {**out, "usd": round(run.usd, 5), "turns": run.turns, "stopped": run.stopped, "finished": bool(final),
+            "queries": len(queries), "proposals": [{"pattern": key(f["pattern"]), "mechanism": f["mechanism"]}
+                                                   for f in final.get("findings", [])]}
 
 
 # ------------------------------------------------------------------------------------------------- T15

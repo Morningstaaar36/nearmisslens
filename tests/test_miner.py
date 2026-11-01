@@ -81,17 +81,16 @@ def test_grid_greedy_and_null_corners():
     assert sum(len(M.greedy_arm(ds, pool, n["ids"])["confirmed"]) for n in nulls) <= 1
 
 
-def test_agent_sees_only_explore_years_and_must_report_tested_patterns():
+def test_agent_sees_only_explore_years_and_every_proposal_is_tested():
     ds = _ds(); pool = M.Pool(ds)
     pat = [LEFT, WITH]
     seen = {}
     fc = FakeClient([
         {"id": "r1", "output": [call("describe", {}, "c1")], "usage": usage()},
-        {"id": "r2", "output": [call("finish", {"findings": [{"pattern": [LEFT], "mechanism": "left turns"}]}, "c2")],
-         "usage": usage()},
-        {"id": "r3", "output": [call("test_pattern", {"pattern": pat, "why": "LPI-type conflict"}, "c3")], "usage": usage()},
-        {"id": "r4", "output": [call("finish", {"findings": [{"pattern": pat, "mechanism":
-                                 "left-turning drivers hitting pedestrians crossing with the signal"}]}, "c4")],
+        {"id": "r2", "output": [call("finish", {"findings": []}, "c2")], "usage": usage()},
+        {"id": "r3", "output": [call("finish", {"findings": [
+            {"pattern": pat, "mechanism": "left-turning drivers hitting pedestrians crossing with the signal"},
+            {"pattern": [{"field": "outcome", "value": "pedestrian hurt"}], "mechanism": "a pedestrian was hurt"}]}, "c3")],
          "usage": usage()},
     ])
     orig = fc.create_response
@@ -104,18 +103,17 @@ def test_agent_sees_only_explore_years_and_must_report_tested_patterns():
     fc.create_response = spy
     out = M.agent_arm(ds, pool, ds["corners"][0], fc, "corner-000001")
     assert '"crashes_in_earlier_years": 80' in seen["describe"]  # 80 explore crashes; the 80 sealed ones are hidden
-    assert out["finished"] and out["tested"] == 1 and out["reported"] == 1
-    assert out["confirmed"] and out["confirmed"][0]["mechanism"].startswith("left-turning")
+    assert out["finished"] and out["tested"] == 2 and out["reported"] == 2  # both proposals count in the correction
+    assert any(c["mechanism"].startswith("left-turning") for c in out["confirmed"])
 
 
 def test_overclaiming_mechanisms_are_refused():
     ds = _ds(); pool = M.Pool(ds)
     pat = [LEFT, WITH]
     fc = FakeClient([
-        {"id": "r1", "output": [call("test_pattern", {"pattern": pat, "why": "x"}, "c1")], "usage": usage()},
-        {"id": "r2", "output": [call("finish", {"findings": [{"pattern": pat, "mechanism": "left turns caused these"}]}, "c2")],
+        {"id": "r1", "output": [call("finish", {"findings": [{"pattern": pat, "mechanism": "left turns caused these"}]}, "c1")],
          "usage": usage()},
-        {"id": "r3", "output": [{"type": "message", "content": [{"type": "output_text", "text": "stop"}]}], "usage": usage()},
+        {"id": "r2", "output": [{"type": "message", "content": [{"type": "output_text", "text": "stop"}]}], "usage": usage()},
     ])
     out = M.agent_arm(ds, pool, ds["corners"][0], fc, "corner-000002")
     assert not out["finished"] and out["confirmed"] == []
