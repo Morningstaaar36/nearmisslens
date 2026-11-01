@@ -278,3 +278,19 @@ All agreement is with FLUID's reference trajectories (a trained YOLOv8-OBB + Spa
 
 Several verbs were reworded to "rate", "score" or "assess" in this file and in PREREG.md (and the review panel's
 deciding role is now called the Arbiter in the docs). No rule, threshold, sample or outcome changed.
+
+## T15 Falsification-gated discovery (registered 2026-11-01, before any crash-detail table was fetched for it or any agent was run)
+
+- **Question:** does an agent that chooses which crash mechanisms to test find more mechanisms that hold up on later years it never saw than code that tests everything, without reporting more mechanisms that are not there?
+- **Design file:** `validation/experiments/T15.json` (committed with this text).
+- **Data:** NYC crashes within 100 m of the screened priority corners over the 5 years to `validation/ASOF`, joined on the collision id to the vehicle table (`bm4k-52h4`: pre-crash maneuver, direction, point of impact) and the person table (`f55k-p6yu`: pedestrian action and location).
+- **Split:** explore = crashes before 2024-05-01; sealed = crashes on or after. Every arm explores only; the sealed years are read once by code after the arm finishes.
+- **Pattern and test:** 1 to 3 field=value conditions; one-sided binomial of the corner's share against the pooled share at all screened corners in the same period; at least 5 matches.
+- **Correction:** Holm at 0.05 over every pattern an arm tested at a corner (for the agent, every test call, reported or not); patterns that pass are tested on the sealed years with Holm over them.
+- **Corners:** the top 100 corners by injury crashes with at least 40 explore crashes; 100 null corners (same crash counts drawn at random from all corners' crashes per period, seed 1500). Arms see blind ids.
+- **Arms:**
+  - agent (Muse Spark Open on Baseten, at most 12 tests per corner);
+  - grid (every 1- and 2-condition pattern);
+  - greedy (the 10 largest-excess patterns).
+- **Metrics:** confirmed findings per real corner; precision (confirmed / reported); null false discoveries per null corner; findings confirmed by one arm and not another; USD and turns.
+- **Rule:** the agent is credited with finding what code misses only if, on real corners, its confirmed findings per corner exceed both the grid's and the greedy arm's (95% bootstrap interval of the difference above 0, resampling corners) and its null false discoveries per corner are at most 0.05. Everything is reported either way.

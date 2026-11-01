@@ -1,0 +1,26 @@
+{
+ "id": "T15",
+ "title": "Falsification-gated discovery: does an agent that chooses which crash mechanisms to test find more that hold up on sealed later years than code that tests everything?",
+ "registered": "validation/BENCH_PREREG.md, T15 (2026-11-01, before any detail table was fetched for it or any agent was run)",
+ "city": "nyc",
+ "radius_m": 100,
+ "window": "the 5 years to validation/ASOF",
+ "split": "2024-05-01",
+ "explore": "crashes before the split date; the agent's tools only ever read these",
+ "sealed": "crashes on or after the split date; read once by code after an arm has finished",
+ "corners": {"from": "the city's screen, by injury crashes", "top": 100, "min_explore_crashes": 40},
+ "null_corners": {"count": 100, "seed": 1500, "how": "for each of the top 100 corners, the same number of crashes drawn at random from all screened corners' crashes, separately for each period; the arm sees a blind id"},
+ "fields": ["outcome", "time", "vehicle_kind", "pre_crash", "maneuver", "point_of_impact", "ped_action", "ped_location", "factor"],
+ "pattern": "1 to 3 field=value conditions, all true for a crash (vehicle fields: any vehicle in the crash)",
+ "test": "one-sided binomial: the corner's share of crashes matching the pattern against the pooled share at all screened corners in the same period",
+ "min_matches": 5,
+ "alpha": 0.05,
+ "correction": "Holm over every pattern an arm tested at a corner (the agent: every test_pattern call, not only those it reports); patterns passing explore are then tested once on sealed years with Holm over them",
+ "arms": {
+  "agent": "Muse Spark Open (Baseten) with describe, query_crashes and test_pattern tools on the explore years, blind corner ids, at most 12 tests per corner, then finish with the patterns it stands behind",
+  "grid": "every 1- and 2-condition pattern with at least min_matches explore matches (no model)",
+  "greedy": "the 10 patterns with the largest explore excess over the pooled share among 1- and 2-condition patterns (no model; what the agent's strategy could be without the model)"
+ },
+ "metrics": ["confirmed findings per real corner (passed explore and sealed)", "precision: confirmed / reported", "null false discoveries per null corner", "findings confirmed by one arm and not another", "USD and turns per corner"],
+ "rule": "The agent arm is credited with finding what code misses only if, on real corners, its confirmed findings per corner exceed both the grid's and the greedy arm's (95% bootstrap interval of the difference above 0, resampling corners) and its null false discoveries per corner are at most 0.05. Everything is reported either way."
+}
