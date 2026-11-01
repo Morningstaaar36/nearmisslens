@@ -288,6 +288,19 @@ def cmd_pack_cache(args) -> int:
     return 0
 
 
+def cmd_ask_engineer(args) -> int:
+    from . import askeng, citywide
+    city = args.city or next(iter(citywide.cities()), None)
+    out = askeng.ask(city, args.slug, args.question, _memo_client(True))
+    print(out["answer"] or f"no answer ({out['stopped']})")
+    for c in out["claims"]:
+        print(f"- {c['text']}  [{c['receipt']}]")
+    for r in out["refused"]:
+        print(f"  refused: {r['text']}  ({'; '.join(r['errors'])})")
+    print(f"{out['turns']} turns, ${out['usd']}, {out['seconds']} s")
+    return 0 if out["answer"] else 1
+
+
 def cmd_pages(args) -> int:
     from pathlib import Path
     from . import pages
@@ -493,6 +506,10 @@ def main(argv: list[str] | None = None) -> int:
     en.add_argument("--agent", action="store_true", help="let Muse Spark Open choose the steps and write the claims")
     en.add_argument("--letter", action="store_true", help="draft the checked request letter (Muse Spark Open)")
     en.add_argument("--meta", action="store_true", help="draft the letter on the Meta API instead")
+    ae = sub.add_parser("ask-engineer", help="ask a question about a corner; Muse Spark Open answers from its receipts, checked")
+    ae.add_argument("slug", help="the corner id (as in the copilot's URL)")
+    ae.add_argument("question")
+    ae.add_argument("--city", help="a registry city id (default: the first city with a saved screen)")
     pk = sub.add_parser("pack-cache", help="the replay cache for the GitHub release, contact details removed, refused if a key is found")
     pk.add_argument("--out", default="runs/release/nearmisslens_replay_cache.tar.gz")
     pg2 = sub.add_parser("pages", help="the static copilot for GitHub Pages: one engineer report per screened corner (docs/)")
@@ -528,7 +545,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "pack-cache": cmd_pack_cache}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -74,3 +74,12 @@ def test_pack_cache_removes_contacts_and_refuses_keys(tmp_path):
     (cache / "agent" / "k.json").write_text('{"authorization": "Bearer abcdefghijklmnopqrstuvwxyz"}')
     with pytest.raises(RuntimeError):
         packcache.pack(tmp_path / "d.tar.gz", cache)
+
+
+def test_ask_requests_are_validated(monkeypatch):
+    monkeypatch.setattr("nearmisslens.citywide.cities", lambda: ["nyc"])
+    for q in ({"slug": "../etc", "question": "why?"}, {"slug": "a_b", "question": "x"}, {"slug": "a_b", "question": "q" * 400},
+              {"slug": "a_b", "question": "why?", "city": "../x"}):
+        with pytest.raises(app.BadRequest):
+            app.question(q)
+    assert app.question({"slug": "a_b", "question": " why here? "}) == ("nyc", "a_b", "why here?")

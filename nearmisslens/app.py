@@ -27,6 +27,7 @@ WEB = ROOT / "nearmisslens" / "web"
 DOCS = ROOT / "docs"
 MAX_BODY = 4096
 LETTER_RESERVE_USD = 0.03
+ASK_RESERVE_USD = 0.05
 
 
 class BadRequest(ValueError):
@@ -59,6 +60,20 @@ def point(q: dict) -> tuple[str, float, float]:
     if context.city_of(lat, lon) is None:
         raise BadRequest("that place is outside the cities this copy covers")
     return name, float(lat), float(lon)
+
+
+def question(q: dict) -> tuple[str, str, str]:
+    """(city, corner slug, question) for /ask; the city defaults to the first city with a saved screen."""
+    import re
+    from . import citywide
+    slug, text, city = q.get("slug"), q.get("question"), q.get("city") or next(iter(citywide.cities()), None)
+    if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9_]{1,80}", slug):
+        raise BadRequest("slug must be a corner id from the list")
+    if not isinstance(text, str) or not 3 <= len(text.strip()) <= 300 or not text.isprintable():
+        raise BadRequest("ask a question of at most 300 characters")
+    if not isinstance(city, str) or not re.fullmatch(r"[a-z0-9_-]{1,40}", city):
+        raise BadRequest("city must be a registry city id")
+    return city, slug, text.strip()
 
 
 def static_file(path: str):
@@ -161,6 +176,20 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                         if public:
                             budget.settle(LETTER_RESERVE_USD, spent)
                     return self._json(200, {k: out.get(k) for k in ("letter", "rejected_drafts", "checker_errors", "usd")})
+                if path == "/ask":
+                    from . import askeng
+                    city, slug, text = question(q)
+                    if public and not budget.reserve(ASK_RESERVE_USD):
+                        return self._json(429, {"error": "questions are paused for today (the daily model budget is "
+                                                         "used up); the corner's case above is complete"})
+                    spent = 0.0
+                    try:
+                        out = askeng.ask(city, slug, text, memo_client)
+                        spent = out.get("usd") or 0.0
+                    finally:
+                        if public:
+                            budget.settle(ASK_RESERVE_USD, spent)
+                    return self._json(200, out)
                 return self._json(404, {"error": "unknown endpoint"})
             except BadRequest as e:
                 return self._json(400, {"error": str(e)})
