@@ -90,10 +90,11 @@ def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05, g
         return {"receipt": rid, **data}
 
     def find_corners(field: str, value: str) -> dict:
-        idx = json.loads((SETTINGS.runs_dir.parent / "docs" / "data" / "index.json").read_text()) \
-            if (SETTINGS.runs_dir.parent / "docs" / "data" / "index.json").exists() else {"corners": []}
+        from .pages import DOCS
+        f = DOCS / "data" / city / "index.json"
+        idx = json.loads(f.read_text()) if f.exists() else {"corners": []}
         hits = [c for c in idx.get("corners", []) if str(c.get(field, "")).lower() == value.lower()][:20]
-        rid = desk.record("find_corners", {"field": field, "value": value, "corners": hits}, ["docs/data/index.json"],
+        rid = desk.record("find_corners", {"field": field, "value": value, "corners": hits}, [f"docs/data/{city}/index.json"],
                           ["exact match on the index field"], time.perf_counter(), f"{len(hits)} corners")
         return {"receipt": rid, "corners": hits}
 
