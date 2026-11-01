@@ -85,7 +85,7 @@ $("search").onsubmit = async e => {
   listCorners(INDEX.corners);
   if (LIVE === null) {
     $("out").innerHTML = `<div class="empty"><h2>That corner is not in this copy.</h2><p>This page holds the reports for ` +
-      `the city's ${INDEX.corners.length} priority corners. For any other address, run it yourself:</p>` +
+      `the city's ${INDEX.corners.length} ${INDEX.screen === "crash clusters" ? "corners with the most injury crashes" : "priority corners"}. For any other address, run it yourself:</p>` +
       `<p><code>nml engineer "${esc(q)}"</code></p></div>`;
     return;
   }
@@ -136,18 +136,19 @@ function show(r, corner) {
     `${fx.harm ? `, about ${usd(fx.harm.usd_per_year)} a year in harm` : ""}. ` +
     (owners ? `${WORDS[owners] || owners} road ${owners === 1 ? "owner" : "owners"} must act.` : "") : "No crash record is registered for this place.";
 
-  // what the crashes have in common
+  // what the crashes have in common; the corners a share is compared with, as the receipt names them
+  const peers = ((rc.baseline || {}).junctions || "the city's priority junctions").replace("screened ", "");
   const mk = f.mechanisms;
   const by = {agent: "AI analyst", grid: "exhaustive search", greedy: "greedy search"};
   const mech = mk && mk.mechanisms && mk.mechanisms.length ? `<div class="mech"><h4>Held up on later years</h4>` +
     `<p class="why">Patterns found in crashes before ${esc(date(mk.split))} and confirmed once on the crashes after it, which the search never saw.</p><ul>` +
     mk.mechanisms.slice(0, 5).map(m => `<li><b>${esc(m.words[0].toUpperCase() + m.words.slice(1))}</b>: ` +
-      `${pct(m.explore.share)} before, ${pct(m.sealed.share)} after, against ${pct(m.sealed.city_share)} at the city's priority corners` +
+      `${pct(m.explore.share)} before, ${pct(m.sealed.share)} after, against ${pct(m.sealed.city_share)} at ${esc(peers)}` +
       ` <span class="found">${m.found_by.map(x => esc(by[x] || x)).join(" + ")}</span>` +
       (m.mechanism ? `<div class="note">${esc(m.mechanism)}</div>` : "") + `</li>`).join("") + `</ul></div>` : "";
   const pats = (rc.patterns || []).filter(p => p.city_share != null).slice(0, 8);
   const bars = pats.map(p => `<div class="lab ${p.over_represented ? "over" : ""}">${esc(p.phrase || p.pattern)}</div>` +
-    `<div class="bar ${p.over_represented ? "over" : ""}" role="img" aria-label="${pct(p.share)} here, ${pct(p.city_share)} at the city's priority corners">` +
+    `<div class="bar ${p.over_represented ? "over" : ""}" role="img" aria-label="${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}">` +
     `<i style="width:${Math.min(100, 100 * p.share)}%"></i><b class="city" style="left:${Math.min(100, 100 * p.city_share)}%"></b>` +
     `<span>${pct(p.share)} here, ${pct(p.city_share)} citywide</span></div>`).join("");
 
@@ -204,7 +205,7 @@ function show(r, corner) {
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>
       <ul class="claims">${r.claims.map(c => `<li>${esc(c.text)}${tag(c.receipt)}</li>`).join("")}</ul></section>
     <section class="step"><h3><span class="no">2</span>What the crashes have in common</h3>
-      <p class="why">${rc.crashes ?? "?"} police-reported crashes within ${rc.radius_m ?? 100} m. Yellow marks a pattern that is more common here than at the city's priority corners after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
+      <p class="why">${rc.crashes ?? "?"} police-reported crashes within ${rc.radius_m ?? 100} m. Yellow marks a pattern that is more common here than at ${esc(peers)} after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
       <div class="bars">${bars || '<p class="legend">Too few crashes to compare.</p>'}</div>
       ${rc.not_recorded && rc.not_recorded.length ? `<p class="legend">Not recorded in this dataset: ${esc(rc.not_recorded.join(", "))}.</p>` : ""}
       ${rc.factor_unspecified_share != null ? `<p class="legend">${pct(rc.factor_unspecified_share)} of these crashes have no contributing factor recorded.</p>` : ""}

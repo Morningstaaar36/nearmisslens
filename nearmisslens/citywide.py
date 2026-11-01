@@ -43,10 +43,11 @@ def peers(city: str | None) -> str:
 
 
 def _named_roads(lat: float, lon: float, radius_m: int) -> list[dict]:
-    """Named ways near the point: the OSM API's map call for a small box (about a second), else Overpass."""
+    """Named ways near the point, each with 'meets_m': for every other street it shares a node with, the distance
+    from the point to where they meet. From the OSM API's map call for a small box (about a second), else Overpass
+    (tags only)."""
     try:
-        return [e.get("tags", {}) for e in context.osm_map(lat, lon, radius_m)
-                if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
+        el = context.osm_map(lat, lon, radius_m)
     except Exception:
         try:
             q = f'[out:json][timeout:25];way(around:{radius_m},{lat},{lon})[highway][name];out tags;'
@@ -54,6 +55,22 @@ def _named_roads(lat: float, lon: float, radius_m: int) -> list[dict]:
             return [e.get("tags", {}) for e in js.get("elements", [])]
         except Exception:  # a name is a convenience; the coordinates are the corner
             return []
+    where = {e["id"]: (e["lat"], e["lon"]) for e in el if e.get("type") == "node" and "lat" in e}
+    ways = [e for e in el if e.get("type") == "way" and e.get("tags", {}).get("highway") and e["tags"].get("name")]
+    owner: dict[int, set] = {}
+    for w in ways:
+        for n in w.get("nodes", []):
+            owner.setdefault(n, set()).add(_street_key(w["tags"]["name"]))
+    out = []
+    for w in ways:
+        me, meets = _street_key(w["tags"]["name"]), {}
+        for n in w.get("nodes", []):
+            if n in where:
+                for other in owner.get(n, set()) - {me}:
+                    d = context.metres(lat, lon, *where[n])
+                    meets[other] = min(d, meets.get(other, d))
+        out.append({**w["tags"], "meets_m": meets})
+    return out
 
 
 _COMPASS = re.compile(r"\b(north|south|east|west|northeast|northwest|southeast|southwest|n|s|e|w|ne|nw|se|sw)\b\.?",
@@ -75,9 +92,19 @@ def corner_name(lat: float, lon: float, radii: tuple[int, ...] = (25, 50, 80)) -
         roads = _named_roads(lat, lon, r)
         streets = [w for w in roads if w.get("highway") in rank or w.get("highway", "").endswith("_link")]
         named = sorted(streets or roads, key=lambda w: rank.get(w.get("highway"), 9))  # a footpath names no corner
-        names = list({_street_key(w["name"]): w["name"] for w in reversed(named) if w.get("name")}.values())[::-1][:2]
-        if len(names) == 2:
+        by_key = {}
+        for w in named:
+            by_key.setdefault(_street_key(w["name"]), w)
+        # two streets that meet, nearest the point, so parallel avenues are never paired
+        pairs = sorted((d, a, b) for a, w in by_key.items() for b, d in (w.get("meets_m") or {}).items()
+                       if b in by_key and a < b)
+        if pairs:
+            _, a, b = pairs[0]
+            names = [x["name"] for x in sorted((by_key[a], by_key[b]), key=lambda w: rank.get(w.get("highway"), 9))]
             break
+        names = [w["name"] for w in by_key.values()][:2]
+        if len(names) == 2 and not any(w.get("meets_m") is not None for w in by_key.values()):
+            break  # tags only (Overpass): the two most important names
     return " & ".join(names) if names else f"Corner at {lat:.5f}, {lon:.5f}"
 
 

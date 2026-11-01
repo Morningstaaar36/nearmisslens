@@ -105,3 +105,14 @@ def test_corner_names_merge_one_street_across_a_quadrant_line_and_skip_footpaths
     assert citywide.corner_name(38.89, -77.0) == "Constitution Avenue Northeast & 1st Street Northeast"
     monkeypatch.setattr(citywide, "_named_roads", lambda lat, lon, r: [])
     assert citywide.corner_name(38.89, -77.0).startswith("Corner at")
+
+
+def test_corner_names_pair_streets_that_meet_not_parallel_ones(monkeypatch):
+    from nearmisslens import citywide, context
+    el = [{"type": "node", "id": 1, "lat": 47.6110, "lon": -122.3370}, {"type": "node", "id": 2, "lat": 47.6115, "lon": -122.3380},
+          {"type": "node", "id": 3, "lat": 47.6105, "lon": -122.3360},
+          {"type": "way", "nodes": [1, 2], "tags": {"highway": "primary", "name": "4th Avenue"}},
+          {"type": "way", "nodes": [3], "tags": {"highway": "primary", "name": "5th Avenue"}},
+          {"type": "way", "nodes": [1, 3], "tags": {"highway": "secondary", "name": "Pine Street"}}]
+    monkeypatch.setattr(context, "osm_map", lambda lat, lon, r: el)
+    assert citywide.corner_name(47.6111, -122.3371) == "4th Avenue & Pine Street"  # they meet at node 1, nearest
