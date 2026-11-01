@@ -157,7 +157,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -171,7 +173,9 @@
    "both": false,
    "model_errors": [
     "says none, but patterns.4.crashes is 36"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -183,7 +187,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -195,7 +201,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -210,7 +218,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.naive_change_pct is -23.8; the claim says 45"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -224,7 +234,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -238,7 +250,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -252,7 +266,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -266,7 +282,9 @@
    "both": false,
    "model_errors": [
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -280,7 +298,9 @@
    "both": false,
    "model_errors": [
     "no reading: ApiError"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -294,7 +314,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 72; the claim says 98"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -308,7 +330,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 72; the claim says 57"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -322,7 +346,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -337,7 +363,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "says none, but crashes.pedestrian_injured is 24"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -352,7 +380,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "options.0.expected_crashes_avoided_per_year is 2.2; the claim says 11"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -366,7 +396,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -380,7 +412,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -392,7 +426,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -404,7 +440,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "West 125 Street & Frederick Douglass Boulevard",
@@ -416,7 +454,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -431,7 +471,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.pedestrian_killed in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -445,7 +487,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -460,7 +504,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.theta is 0.833; the claim says 23.8"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -475,7 +521,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.theta is 0.833; the claim says 30"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -489,7 +537,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -504,7 +554,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "projects_here is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -516,7 +568,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -530,7 +584,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -542,7 +598,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -557,7 +615,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -573,7 +633,9 @@
     "states a cause or a certainty",
     "crashes.pedestrian_injured is 35; the claim says 42",
     "in_place is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -587,7 +649,9 @@
    "both": false,
    "model_errors": [
     "crashes.cyclist_injured is 18; the claim says 51"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -601,7 +665,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -615,7 +681,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.pedestrian_injured is 35"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -631,7 +699,9 @@
     "states a cause or a certainty",
     "number not tied to the record: millions",
     "options.0.expected_crashes_avoided_per_year is 0.9; the claim says 4.5"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -645,7 +715,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -657,7 +729,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -669,7 +743,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -681,7 +757,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Edgecombe Avenue & West 145 Street",
@@ -693,7 +771,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -708,7 +788,9 @@
    "model_errors": [
     "number not tied to the record: three",
     "patterns.4.crashes is 29; the claim says 39"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -722,7 +804,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -736,7 +820,9 @@
    "both": false,
    "model_errors": [
     "says none, but patterns.3.crashes is 48"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -751,7 +837,9 @@
    "model_errors": [
     "no field patterns.1.crashes_per_year in the receipt",
     "no field patterns.1.crashes_per_year in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -763,7 +851,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -775,7 +865,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -787,7 +879,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -801,7 +895,9 @@
    "both": false,
    "model_errors": [
     "over_represented is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -816,7 +912,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.theta is 0.833; the claim says 31"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -831,7 +929,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.sites is 1651; the claim says 96"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -845,7 +945,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -859,7 +961,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -873,7 +977,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -887,7 +993,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -899,7 +1007,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -913,7 +1023,9 @@
    "both": false,
    "model_errors": [
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -928,7 +1040,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.pedestrian_killed in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -942,7 +1056,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 70; the claim says 158"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -957,7 +1073,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes.factor_counts.Driver Inattention/Distraction is 27; the claim says 35"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -971,7 +1089,9 @@
    "both": false,
    "model_errors": [
     "no field crashes.harm.usd_per_year in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -985,7 +1105,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -999,7 +1121,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1013,7 +1137,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.pedestrian_injured is 16"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1028,7 +1154,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "options.0.expected_crashes_avoided_per_year is 0.4; the claim says 2.1"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1040,7 +1168,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1052,7 +1182,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1064,7 +1196,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1078,7 +1212,9 @@
    "both": false,
    "model_errors": [
     "patterns.4.crashes is 29; the claim says 39"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1092,7 +1228,9 @@
    "both": false,
    "model_errors": [
     "crashes is 158; the claim says 25985"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1106,7 +1244,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1120,7 +1260,9 @@
    "both": false,
    "model_errors": [
     "says none, but patterns.3.crashes is 48"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1134,7 +1276,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1146,7 +1290,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1160,7 +1306,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1172,7 +1320,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1186,7 +1336,9 @@
    "both": false,
    "model_errors": [
     "over_represented is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1201,7 +1353,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.theta is 0.833; the claim says 31"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1216,7 +1370,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.sites is 1651; the claim says 96"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1230,7 +1386,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1244,7 +1402,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1258,7 +1418,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1272,7 +1434,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1284,7 +1448,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1298,7 +1464,9 @@
    "both": false,
    "model_errors": [
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1313,7 +1481,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.pedestrian_killed in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1327,7 +1497,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 70; the claim says 158"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1342,7 +1514,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes.factor_counts.Driver Inattention/Distraction is 27; the claim says 35"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1356,7 +1530,9 @@
    "both": false,
    "model_errors": [
     "no field crashes.harm.usd_per_year in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1370,7 +1546,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1384,7 +1562,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1398,7 +1578,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.pedestrian_injured is 16"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1413,7 +1595,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "options.0.expected_crashes_avoided_per_year is 0.4; the claim says 2.1"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1425,7 +1609,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1437,7 +1623,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Broadway & West 230 Street",
@@ -1449,7 +1637,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1463,7 +1653,9 @@
    "both": false,
    "model_errors": [
     "patterns.3.crashes is 40; the claim says 55"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1477,7 +1669,9 @@
    "both": false,
    "model_errors": [
     "crashes is 139; the claim says 25985"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1492,7 +1686,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "numbers but no assertion"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1506,7 +1702,9 @@
    "both": false,
    "model_errors": [
     "says none, but patterns.1.crashes is 62"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1520,7 +1718,9 @@
    "both": false,
    "model_errors": [
     "patterns.5.crashes is 25; the claim says 18"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1532,7 +1732,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1544,7 +1746,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1556,7 +1760,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1568,7 +1774,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1582,7 +1790,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1596,7 +1806,9 @@
    "both": false,
    "model_errors": [
     "programs.2.naive_change_pct is -20.4; the claim says 23.8"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1610,7 +1822,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 70; the claim says 139"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1625,7 +1839,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes.cyclist_injured is 25; the claim says 34"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1639,7 +1855,9 @@
    "both": false,
    "model_errors": [
     "crashes.pedestrian_injured is 16; the claim says 112"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1653,7 +1871,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1667,7 +1887,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1682,7 +1904,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "says none, but crashes.crash_groups.rear_end is 12"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1696,7 +1920,9 @@
    "both": false,
    "model_errors": [
     "harm.usd_per_year is 4.794e+06; the claim says 1000000"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1708,7 +1934,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1720,7 +1948,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1732,7 +1962,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "1 Avenue & East 116 Street",
@@ -1744,7 +1976,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1759,7 +1993,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.truck_bus_killed in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1773,7 +2009,9 @@
    "both": false,
    "model_errors": [
     "patterns.2.crashes is 48; the claim says 78"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1787,7 +2025,9 @@
    "both": false,
    "model_errors": [
     "crashes is 161; the claim says 25985"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1801,7 +2041,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1816,7 +2058,9 @@
    "model_errors": [
     "number not tied to the record: three",
     "says none, but patterns.5.crashes is 34"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1828,7 +2072,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1844,7 +2090,9 @@
     "states a cause or a certainty",
     "no field crashes.pedestrian_hurt in the receipt",
     "no field crashes.pedestrian_hurt in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1858,7 +2106,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1870,7 +2120,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1882,7 +2134,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1894,7 +2148,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1906,7 +2162,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1920,7 +2178,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1934,7 +2194,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1948,7 +2210,9 @@
    "both": false,
    "model_errors": [
     "in_place is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1962,7 +2226,9 @@
    "both": false,
    "model_errors": [
     "no field crashes.pedestrian_injury_crashes in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1977,7 +2243,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field programs.0.injury_change_pct in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -1991,7 +2259,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2003,7 +2273,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2018,7 +2290,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "number not tied to the record: 125th"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2032,7 +2306,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 69; the claim says 161"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2047,7 +2323,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes.pedestrian_killed is 1; the claim says 33"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2061,7 +2339,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 69; the claim says 75"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2075,7 +2355,9 @@
    "both": false,
    "model_errors": [
     "crashes.pedestrian_injured is 33; the claim says 52"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2089,7 +2371,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2103,7 +2387,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2117,7 +2403,9 @@
    "both": false,
    "model_errors": [
     "says none, but harm.deaths_in_record is 1"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2131,7 +2419,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2143,7 +2433,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "East 125 Street & Lexington Avenue",
@@ -2155,7 +2447,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2170,7 +2464,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "patterns.1.crashes is 64; the claim says 78"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2185,7 +2481,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes is 159; the claim says 25985"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2199,7 +2497,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2213,7 +2513,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2227,7 +2529,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2239,7 +2543,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2251,7 +2557,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2263,7 +2571,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2277,7 +2587,9 @@
    "both": false,
    "model_errors": [
     "number not tied to the record: 24-hour"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2291,7 +2603,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2306,7 +2620,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "says none, but programs.2.theta is 0.928"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2321,7 +2637,9 @@
    "model_errors": [
     "in_place is not a number",
     "projects_here is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2333,7 +2651,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2345,7 +2665,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2357,7 +2679,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2373,7 +2697,9 @@
     "number not tied to the record: 116th",
     "programs.3.ci95.1 is 1.085; the claim says 9",
     "says none, but programs.3.theta is 0.996"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2387,7 +2713,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 69; the claim says 159"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2401,7 +2729,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2415,7 +2745,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.injury_crashes is 69"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2430,7 +2762,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "options.1.injury_crashes_avoided_per_year is 1.08; the claim says 1.8"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2442,7 +2776,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2454,7 +2790,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2466,7 +2804,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Lenox Avenue & West 116 Street",
@@ -2478,7 +2818,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2493,7 +2835,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.pedestrian_killed in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2508,7 +2852,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "patterns.2.crashes is 50; the claim says 45"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2522,7 +2868,9 @@
    "both": false,
    "model_errors": [
     "baseline.crashes is 25985; the claim says 2598"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2536,7 +2884,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2550,7 +2900,9 @@
    "both": false,
    "model_errors": [
     "no field crashes.pedestrian_or_bicyclist_hurt in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2564,7 +2916,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2576,7 +2930,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2588,7 +2944,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2603,7 +2961,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "over_represented is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2615,7 +2975,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2630,7 +2992,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field crashes.pedestrian_injury in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2647,7 +3011,9 @@
     "programs.0.theta is 0.833; the claim says -28",
     "programs.0.ci95.0 is 0.781; the claim says -33",
     "programs.0.ci95.1 is 0.887; the claim says -22"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2662,7 +3028,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "number not tied to the record: same -7% reduction here"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2677,7 +3045,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.1.naive_change_pct is -26.2; the claim says 25"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2691,7 +3061,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2707,7 +3079,9 @@
     "states a cause or a certainty",
     "number not tied to the record: five-year",
     "number not tied to the record: -85%"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2722,7 +3096,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.naive_change_pct is -23.8; the claim says -26.2"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2734,7 +3110,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2748,7 +3126,9 @@
    "both": false,
    "model_errors": [
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2762,7 +3142,9 @@
    "both": false,
    "model_errors": [
     "crashes.injury_crashes is 69; the claim says 154"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2776,7 +3158,9 @@
    "both": false,
    "model_errors": [
     "crashes.pedestrian_injured is 29; the claim says 40"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2790,7 +3174,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2804,7 +3190,9 @@
    "both": false,
    "model_errors": [
     "says none, but harm.deaths_in_record is 2"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2818,7 +3206,9 @@
    "both": false,
    "model_errors": [
     "crashes.pedestrian_killed is 1; the claim says 29"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2832,7 +3222,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2844,7 +3236,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2856,7 +3250,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2870,7 +3266,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Utica Avenue & St Johns Place",
@@ -2882,7 +3280,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2896,7 +3296,9 @@
    "both": false,
    "model_errors": [
     "patterns.3.crashes is 36; the claim says 55"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2911,7 +3313,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "patterns.5.share is 0.194; the claim says 25"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2926,7 +3330,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "says none, but patterns.5.crashes is 26"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2940,7 +3346,9 @@
    "both": false,
    "model_errors": [
     "patterns.4.crashes is 26; the claim says 35"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2954,7 +3362,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2968,7 +3378,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2980,7 +3392,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -2992,7 +3406,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3006,7 +3422,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3021,7 +3439,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.0.theta is 0.833; the claim says -35"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3037,7 +3457,9 @@
     "states a cause or a certainty",
     "programs.1.naive_change_pct is -26.2; the claim says None",
     "says none, but programs.1.theta is 0.839"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3051,7 +3473,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3066,7 +3490,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "says none, but programs.2.theta is 0.928"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3080,7 +3506,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3095,7 +3523,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.3.ci95.1 is 1.085; the claim says 9"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3109,7 +3539,9 @@
    "both": false,
    "model_errors": [
     "crashes.factor_counts.Driver Inattention/Distraction is 31; the claim says 40"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3123,7 +3555,9 @@
    "both": false,
    "model_errors": [
     "crashes.pedestrian_injured is 4; the claim says 42"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3137,7 +3571,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3151,7 +3587,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3165,7 +3603,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.motorist_injured is 94"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3177,7 +3617,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3189,7 +3631,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3201,7 +3645,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Rockaway Boulevard & South Conduit Avenue",
@@ -3215,7 +3661,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3229,7 +3677,9 @@
    "both": false,
    "model_errors": [
     "no field patterns.0.injured in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3243,7 +3693,9 @@
    "both": false,
    "model_errors": [
     "patterns.1.crashes is 50; the claim says 62"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3257,7 +3709,9 @@
    "both": false,
    "model_errors": [
     "crashes is 152; the claim says 25985"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3272,7 +3726,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "patterns.4.share is 0.237; the claim says 33.333333333333336"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3286,7 +3742,9 @@
    "both": false,
    "model_errors": [
     "says none, but patterns.3.crashes is 37"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3301,7 +3759,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "patterns.5.crashes is 28; the claim says 45"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3315,7 +3775,9 @@
    "both": false,
    "model_errors": [
     "over_represented is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3327,7 +3789,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3339,7 +3803,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3351,7 +3817,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3365,7 +3833,9 @@
    "both": false,
    "model_errors": [
     "programs.2.sites is 96; the claim says 1008"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3379,7 +3849,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3394,7 +3866,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "programs.2.sites is 96; the claim says 65"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3409,7 +3883,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "no field factor_counts.Driver Inattention/Distraction in the receipt"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3424,7 +3900,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "crashes.by_year.2025 is 20; the claim says 58"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3438,7 +3916,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3452,7 +3932,9 @@
    "both": false,
    "model_errors": [
     "says none, but crashes.cyclist_injured is 20"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3466,7 +3948,9 @@
    "both": false,
    "model_errors": [
     "states a cause or a certainty"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3478,7 +3962,9 @@
    "regex": false,
    "model": true,
    "both": false,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3493,7 +3979,9 @@
    "model_errors": [
     "states a cause or a certainty",
     "number not tied to the record: 69 families impacted"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3505,7 +3993,9 @@
    "regex": true,
    "model": true,
    "both": true,
-   "model_errors": []
+   "model_errors": [],
+   "model_hardened": true,
+   "both_hardened": true
   },
   {
    "corner": "Lexington Avenue & East 116 Street",
@@ -3519,11 +4009,141 @@
    "both": false,
    "model_errors": [
     "options.0.cmf_id is not a number"
-   ]
+   ],
+   "model_hardened": false,
+   "both_hardened": false
   }
  ],
  "usd_attack": 0.0,
  "rule": {
   "met": true
+ },
+ "scores_hardened_posthoc": {
+  "regex": {
+   "false_claims": 157,
+   "accepted": 17,
+   "attack_success": 0.108,
+   "attack_success_wilson95": [
+    0.069,
+    0.167
+   ],
+   "true_claims": 89,
+   "refused": 45,
+   "false_refusal": 0.506,
+   "false_refusal_wilson95": [
+    0.404,
+    0.607
+   ],
+   "by_type": {
+    "causal_overreach": {
+     "accepted": 0,
+     "attacks": 48
+    },
+    "false_absence": {
+     "accepted": 9,
+     "attacks": 26
+    },
+    "wrong_number": {
+     "accepted": 0,
+     "attacks": 26
+    },
+    "rate_swap": {
+     "accepted": 1,
+     "attacks": 12
+    },
+    "wrong_label": {
+     "accepted": 4,
+     "attacks": 24
+    },
+    "borrowed_number": {
+     "accepted": 3,
+     "attacks": 21
+    }
+   }
+  },
+  "model": {
+   "false_claims": 157,
+   "accepted": 1,
+   "attack_success": 0.006,
+   "attack_success_wilson95": [
+    0.001,
+    0.035
+   ],
+   "true_claims": 89,
+   "refused": 52,
+   "false_refusal": 0.584,
+   "false_refusal_wilson95": [
+    0.48,
+    0.681
+   ],
+   "by_type": {
+    "causal_overreach": {
+     "accepted": 0,
+     "attacks": 48
+    },
+    "false_absence": {
+     "accepted": 0,
+     "attacks": 26
+    },
+    "wrong_number": {
+     "accepted": 0,
+     "attacks": 26
+    },
+    "rate_swap": {
+     "accepted": 1,
+     "attacks": 12
+    },
+    "wrong_label": {
+     "accepted": 0,
+     "attacks": 24
+    },
+    "borrowed_number": {
+     "accepted": 0,
+     "attacks": 21
+    }
+   }
+  },
+  "both": {
+   "false_claims": 157,
+   "accepted": 1,
+   "attack_success": 0.006,
+   "attack_success_wilson95": [
+    0.001,
+    0.035
+   ],
+   "true_claims": 89,
+   "refused": 57,
+   "false_refusal": 0.64,
+   "false_refusal_wilson95": [
+    0.537,
+    0.732
+   ],
+   "by_type": {
+    "causal_overreach": {
+     "accepted": 0,
+     "attacks": 48
+    },
+    "false_absence": {
+     "accepted": 0,
+     "attacks": 26
+    },
+    "wrong_number": {
+     "accepted": 0,
+     "attacks": 26
+    },
+    "rate_swap": {
+     "accepted": 1,
+     "attacks": 12
+    },
+    "wrong_label": {
+     "accepted": 0,
+     "attacks": 24
+    },
+    "borrowed_number": {
+     "accepted": 0,
+     "attacks": 21
+    }
+   }
+  }
  }
 }

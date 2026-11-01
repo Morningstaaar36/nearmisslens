@@ -24,7 +24,8 @@ from .evaluate import RESULTS_DIR
 
 BEFORE, AFTER = ("2022", "2023"), ("2024", "2025")  # full calendar years inside every case's five-year window
 TOP_SHARE = 0.25  # "the worst corners" for the regression-to-the-mean measurement
-TIER_WORDS = {"measured here": "this city's own past installs, which passed the causal gate",
+TIER_WORDS = {"measured here": "this city's own past installs, which passed the causal gate (a stricter calibrated "
+                                "check is less sure); the estimate uses the national CMF, the smaller effect",
               "FHWA-cited": "the study FHWA's fact sheet cites", "national studies": "national studies"}
 
 
@@ -189,8 +190,8 @@ def agency_letter(city: str, g: dict, rows: dict[str, dict], records_to: str | N
              "and taken to be yours at the rest because the state's road inventory does not list them)")
     body = (f"In the {facts['years']} years of public police crash records up to {facts['records_to']}, the "
             f"{n} high-crash {'intersection' if n == 1 else 'intersections'} in {c.get('name', city)} where {whose} "
-            f"had {g['injury_crashes_total']:,} injury crashes. "
-            + (f"At {g['intersections_with_supported_fix']} of them, a low-cost fix the evidence supports would avoid "
+            f"had {g['injury_crashes_total']:,} injury crashes within 100 m (a crash near two of them counts for each). "
+            + (f"At {g['intersections_with_supported_fix']} of {'it' if n == 1 else 'them'}, a low-cost fix the evidence supports would avoid "
                f"about {g['crashes_avoided_per_year_total']} crashes a year, worth about "
                f"{_m(g['harm_avoided_usd_per_year_total'])} a year at the U.S. DOT's values. "
                if g["intersections_with_supported_fix"] else
@@ -198,7 +199,7 @@ def agency_letter(city: str, g: dict, rows: dict[str, dict], records_to: str | N
             + (f"At {g['intersections_needing_site_check']} more, a fix needs a site check first; the table names what to "
                "check. " if g["intersections_needing_site_check"] else "")
             + "The table lists each intersection, the fix and the evidence behind it. "
-            "We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will "
+            f"We ask for a safety review at {'the intersection' if n == 1 else 'each intersection'} and for the fixes listed, and a reply on which you will "
             "take up.")
     errors = context.FactCheck(facts).text(body)
     from . import engineer

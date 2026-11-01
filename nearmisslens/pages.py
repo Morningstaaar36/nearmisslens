@@ -71,7 +71,7 @@ def _brief_dir(name: str) -> Path:
 
 
 def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top: int = 25, letters: int = 0,
-          letter_client=None, workers: int = 3, saved_only: bool = False) -> dict:
+          letter_client=None, workers: int = 3, saved_only: bool = False, model_check_client=None) -> dict:
     city = city or next(iter(citywide.cities()), None)  # the first city with a saved screen
     if not city:
         raise ValueError("no city has a saved screen yet; run nml citywide --city CITY")
@@ -79,6 +79,13 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     # reuses saved reports and builds any that are missing (saved_only: a preview from what is already built)
     index = engineer.precompute(city, letters=letters, letter_client=letter_client, out_dir=src, workers=workers,
                                 saved_only=saved_only)
+    seen, unique = set(), []
+    for row in index:  # the city's list can name one point twice (two rows, one place): show it once
+        key = (round(row["lat"], 5), round(row["lon"], 5))
+        if key not in seen:
+            seen.add(key)
+            unique.append({**row, "rank": len(unique) + 1})
+    index = unique
     root = docs / "data"
     data = root / city
     asks = answered(city)
@@ -98,7 +105,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
         if ag.exists():
             a = json.loads(ag.read_text())
             if a.get("finished"):
-                keep, gone = engineer.recheck_agent(a, full)  # against today's receipts, not the ones it saw
+                keep, gone = engineer.recheck_agent(a, full, model_check_client)  # today's receipts, both gates
                 rep["agent"] = {"summary": a.get("summary"), "claims": keep, "superseded": gone, "turns": a.get("turns"),
                                 "usd": a.get("usd"), "refused": a.get("refused_attempts") or [],
                                 "receipts": {r["id"]: r["tool"] for r in a.get("receipts") or []}}

@@ -532,6 +532,11 @@ Registered in BENCH_PREREG.md (T20, T20b). Muse Spark lists each claim's asserti
 | regex checker | 17/157 (0.108) | 45/89 (0.506) |
 | Muse Spark reads, code checks | 2/157 (0.013) | 24/89 (0.270) |
 | both | 1/157 (0.006) | 55/89 (0.618) |
+| **Post hoc: verifier hardened after review (every number covered, no complement shares, exact counts)** | | |
+| T20 held-out, Muse Spark reads, code checks | 4/273 (0.015) | 44/190 (0.232) |
+| T20 held-out, both | 3/273 (0.011) | 59/190 (0.311) |
+| T20b, Muse Spark reads, code checks | 1/157 (0.006) | 52/89 (0.584) |
+| T20b, both | 1/157 (0.006) | 57/89 (0.640) |
 
 T20 registered rule: not met (false refusals rose too much, mostly through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack success, false refusal at most 5 points higher): met.
 

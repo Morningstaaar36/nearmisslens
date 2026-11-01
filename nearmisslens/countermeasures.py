@@ -204,7 +204,7 @@ def candidates(cmf: pd.DataFrame, pair: tuple[str, str], conflict_type: str, con
         # the record FHWA's fact sheet cites, else the median, never the largest effect
         cited = good[good["crfid"].map(lambda c: allowed[c].get("fhwa_cited", False))]
         ordered = good.sort_values("cmf")
-        best = cited.iloc[0] if not cited.empty else ordered.iloc[(len(ordered) - 1) // 2]
+        best = cited.iloc[0] if not cited.empty else ordered.iloc[len(ordered) // 2]  # even count: smaller effect
         out.append(Candidate(item["name"], best["crfid"], best["name"], stars_label(best["stars"]), float(best["crf_pct"]),
                              float(best["cmf"]), best["crash_type"], best["severity"], best["control"] or "not specified",
                              note))

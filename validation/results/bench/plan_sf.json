@@ -119,8 +119,10 @@
    "letter": {
     "to": "the San Francisco Municipal Transportation Agency (SFMTA)",
     "subject": "50 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 50 high-crash intersections in San Francisco where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 1,919 injury crashes. None of them has a low-cost fix that the public evidence supports without a site visit. At 50 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
-    "refused": [],
+    "body": null,
+    "refused": [
+     "number 100 is not in the dossier"
+    ],
     "facts": {
      "intersections": 50,
      "intersections_owner_recorded": 0,
@@ -658,8 +660,10 @@
    "letter": {
     "to": "the state transportation department (route designation only; confirm ownership)",
     "subject": "7 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 7 high-crash intersections in San Francisco where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 270 injury crashes. None of them has a low-cost fix that the public evidence supports without a site visit. At 7 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
-    "refused": [],
+    "body": null,
+    "refused": [
+     "number 100 is not in the dossier"
+    ],
     "facts": {
      "intersections": 7,
      "intersections_owner_recorded": 0,

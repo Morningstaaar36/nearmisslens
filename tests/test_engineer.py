@@ -184,3 +184,12 @@ def test_post_hoc_probes_from_the_technical_review():
     assert rc.text("No crash here involved a truck.")
     tp = FactCheck({"programs": [{"label": "Leading Pedestrian Interval signals", "sites": 1651}]})
     assert not tp.text("No Leading Pedestrian Interval signals are recorded here.")
+
+
+def test_no_one_killed_means_the_total_across_modes():
+    from nearmisslens.context import FactCheck
+    fc = FactCheck({"crashes": {"motorist_killed": 1, "pedestrian_killed": 0, "pedestrian_injured": 29},
+                    "options": [{"harm_avoided_usd_per_year": 1325000.0}]})
+    assert fc.text("No one was killed here.") and fc.text("There were no deaths.") and fc.text("There were 0 deaths.")
+    assert not fc.text("1 person was killed.") and not fc.text("No pedestrians were killed.")
+    assert not fc.text("Backplates would save $1.3 million a year.")

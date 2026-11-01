@@ -240,6 +240,7 @@ INSTRUCTIONS = (
 
 # a number written next to one of these words must be the record's value for it (the field names it maps to)
 LABELS = [  # (name, words before the number, words after it, field-name pattern); the first match decides
+    ("dollars", r"\$\s*$", None, r"usd|harm|cost|dollar|million"),
     ("pedestrians killed", None, r"^\s*pedestrians?\b[^.;,\d]{0,20}\b(killed|died|dead)\b", r"pedestrian.*kill"),
     ("cyclists killed", None, r"^\s*(cyclists?|bicyclists?)\b[^.;,\d]{0,20}\b(killed|died|dead)\b", r"cyclist.*kill"),
     ("deaths", None, r"^[^.;,\d]{0,30}\b(killed|deaths?|died|dead|fatal|fatalities)\b", r"killed|death|fatal"),
@@ -250,7 +251,6 @@ LABELS = [  # (name, words before the number, words after it, field-name pattern
     ("injury crashes", None, r"^\s*(\w+\s){0,2}(injury crashes|crashes with injur)", r"injury_crash"),
     ("sites", None, r"^\s*(\w+\s)?(sites|intersections|locations)\b", r"(^|_)sites$"),
     ("crashes", None, r"^\s*(\w+\s){0,2}crash(es)?\b", None),  # any count, bound below to its subject and year
-    ("dollars", r"\$\s*$", None, r"usd|harm|cost|dollar|million"),
 ]
 NAME_KEYS = ("label", "phrase", "countermeasure", "factor", "words", "party", "program", "pattern")  # what a
 # sentence can name; a pattern such as "time: night" is also named by its value ("night")
@@ -344,6 +344,10 @@ class FactCheck:
             vals = [v for k, vs in fields.items() if pattern and re.search(pattern, k) for v in vs]
             if name == "dollars":  # "$8.8 million" and "$561,000" both name a dollar field
                 vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
+            if name == "deaths":  # "no one was killed" is about everyone: the total, not any one mode's count
+                tot = [v for p_, k, v in self.paths if k in ("any_killed", "deaths_in_record")]
+                modes = sum(v for p_, k, v in self.paths if k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
+                vals = [max(tot + [modes])] if (tot or modes) else []
             self.by_label[name] = vals or [0.0]  # an absent count is zero (the record lists only non-zero counts)
         self.known |= {round(v, 1) for v in self.by_label["dollars"]} | {0.0}  # "$8.8 million"; absent counts are 0
         # a percentage must be a share (0.28 -> 28%), a ratio's change (theta 0.833 -> 17%) or a field that is itself a
@@ -384,6 +388,8 @@ class FactCheck:
 
     def _values(self, name: str, pattern, sentence: str, tail: str, bound: list[tuple]) -> list[float] | None:
         """The values a labelled number may take in this sentence (None: the record has no such field to bind to)."""
+        if name == "deaths":
+            return self.by_label["deaths"]  # always the total across modes
         if pattern and not any(re.search(pattern, k) for _, k, _ in self.paths):
             return None if name == "sites" else ([0.0] if name != "dollars" else [])  # an absent count is zero
         compare = bool(COMPARE.search(sentence))

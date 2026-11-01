@@ -36,7 +36,36 @@ def test_dates_rounded_percentages_and_frame_numbers():
     rec = {"crashes": {"since": "2021-10-31", "crashes": 172}, "patterns": [{"city_share": 0.062}]}
     a = lambda q, f, v, k: {"assertions": [{"quote": q, "field": f, "value": v, "kind": k}], "causal_or_certain": False,
                             "untied": ["five", "95%"]}
+    two = a("since October 31, 2021", "crashes.since", 2021, "year")
+    two["assertions"].append({"quote": "172 crashes", "field": "crashes.crashes", "value": 172, "kind": "count"})
+    assert C.verify("172 crashes since October 31, 2021, in the five-year window", rec, two) == []
     assert C.verify("172 crashes since October 31, 2021, in the five-year window", rec,
-                    a("since October 31, 2021", "crashes.since", 2021, "year")) == []
+                    a("since October 31, 2021", "crashes.since", 2021, "year"))  # 172 left out of every assertion
     assert C.verify("about 6% at priority junctions", rec, a("6% at priority junctions", "patterns.0.city_share", 6, "share")) == []
     assert C.verify("about 8% at priority junctions", rec, a("8% at priority junctions", "patterns.0.city_share", 8, "share"))
+
+
+def test_the_model_read_check_is_a_second_gate_on_agent_claims():
+    import json
+    from nearmisslens import engineer
+    class Fake:
+        def cached(self, ns, req, run, cost, est, what, require_text=False, complete=None):
+            return run()
+        def create_response(self, payload):
+            out = {"assertions": [{"quote": "29 pedestrians were killed", "field": "crashes.pedestrian_killed",
+                                   "value": 29, "kind": "count"}], "causal_or_certain": False, "untied": []}
+            return {"status": "completed", "output": [{"type": "message", "role": "assistant",
+                    "content": [{"type": "output_text", "text": json.dumps(out)}]}]}
+    errs = engineer.model_read_errors("Here 29 pedestrians were killed.", R, Fake())
+    assert errs and errs[0].startswith("model-read check")
+    assert engineer.model_read_errors("anything", R, None) == []
+
+
+def test_no_complement_shares_no_slack_on_counts_and_none_needs_a_real_parent():
+    rec = {"crashes": {"crashes": 310, "pedestrian_injured": 29}, "patterns": [{"share": 0.277}]}
+    a = lambda q, f, v, k: {"assertions": [{"quote": q, "field": f, "value": v, "kind": k}], "causal_or_certain": False,
+                            "untied": []}
+    assert C.verify("72% of crashes involved a truck", rec, a("72% of crashes", "patterns.0.share", 72, "share"))
+    assert not C.verify("28% of crashes involved a truck", rec, a("28% of crashes", "patterns.0.share", 28, "share"))
+    assert C.verify("313 crashes", rec, a("313 crashes", "crashes.crashes", 313, "count"))
+    assert C.verify("no one died", rec, a("no one died", "made.up.deaths", None, "none"))

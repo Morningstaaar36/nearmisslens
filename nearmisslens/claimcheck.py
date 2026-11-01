@@ -44,16 +44,20 @@ INSTRUCTIONS = (
     "any number in the sentence you could not tie to a field.")
 
 
-def _close(stated: float, rv: float, kind: str) -> bool:
+def _close(stated: float, rv: float, kind: str, field: str = "") -> bool:
     """Whether the stated value is the record's value, allowing rounding and the usual scalings: a percentage may be
     rounded to a whole number (6.2% written as 6%), a count to its nearest whole, money to one decimal in millions."""
     s = abs(stated)
-    if kind in ("share", "change"):
-        cands = [100 * rv, 100 * abs(1 - rv)] if abs(rv) <= 2 else []
-        return any(abs(s - abs(c)) <= 0.5 for c in cands + [abs(rv)])
-    cands = [rv] + ([rv / 1e6, rv / 1e3] if kind == "money" else [])
-    return any(abs(s - abs(c)) <= max(0.5, 0.01 * abs(c)) if abs(c) >= 10 else abs(s - abs(c)) <= 0.051 + 0.006 * abs(c)
-               for c in cands)
+    pct_field = bool(re.search(r"pct|percent|share|rate|change|crf", field or ""))
+    if kind == "share":  # a share of crashes: 0.277 -> 28%; never the complement, never a raw count
+        cands = ([100 * rv] if 0 <= rv <= 1 else []) + ([abs(rv)] if pct_field else [])
+        return any(abs(s - c) <= 0.5 for c in cands)
+    if kind == "change":  # a ratio's change: theta 0.833 -> 17%; or a field that is itself a percentage change
+        cands = ([100 * abs(1 - rv)] if 0 < rv <= 3 else []) + ([abs(rv)] if pct_field else [])
+        return any(abs(s - c) <= 0.5 for c in cands)
+    if kind == "money":
+        return any(abs(s - c) <= max(0.5, 0.01 * c) if c >= 10 else abs(s - c) <= 0.051 for c in (abs(rv), abs(rv) / 1e6, abs(rv) / 1e3))
+    return abs(s - abs(rv)) <= (0.5 if abs(rv) >= 1 else 0.051)  # a count, rounded to the written precision
 
 
 # numbers every case states about itself rather than about the record: the confidence level, the five-year window,
@@ -61,10 +65,27 @@ def _close(stated: float, rv: float, kind: str) -> bool:
 FRAME = re.compile(r"^\W*(95\s*%?|five|5|100|100 ?m(eters|etres)?)\W*$", re.I)
 
 
-def verify(claim: str, receipt: dict, parsed: dict) -> list[str]:
+def verify(claim: str, receipt: dict, parsed: dict, places: tuple[str, ...] = ()) -> list[str]:
     """Code's verdict on the model's reading: the reasons the claim fails (empty: it passes)."""
+    from . import panel
     bad = []
     low = re.sub(r"\s+", " ", claim.lower())
+    named = low
+    for pl in sorted(places, key=len, reverse=True):  # street numbers in the corner's name are places, not counts
+        named = named.replace(pl.lower(), " " * len(pl))
+    spans = []
+    for a in parsed.get("assertions") or []:
+        q = re.sub(r"\s+", " ", (a.get("quote") or "").lower()).strip(" .")
+        i = low.find(q) if q else -1
+        if i >= 0:
+            spans.append((i, i + len(q)))
+    untied = [str(u) for u in parsed.get("untied") or []]
+    for m in panel.NUMBER.finditer(named):  # every number must sit inside some assertion's quote
+        if FRAME.match(m.group(0)) or any(a <= m.start() and m.end() <= b for a, b in spans) or m.group(0) in untied:
+            continue
+        if re.fullmatch(r"(19|20)\d\d|\d\d?", m.group(0).strip("-")) and re.search(r"\d{4}-\d\d-\d\d|\b(19|20)\d\d\b", named[max(0, m.start() - 8):m.end() + 8]):
+            continue  # part of a date the claim gives as its window
+        bad.append(f"number not covered by any assertion: {m.group(0)}")
     if parsed.get("causal_or_certain"):
         bad.append("states a cause or a certainty")
     for u in parsed.get("untied") or []:
@@ -84,16 +105,20 @@ def verify(claim: str, receipt: dict, parsed: dict) -> list[str]:
         if isinstance(rv, bool) or (rv is not None and not isinstance(rv, (int, float))):
             bad.append(f"{a.get('field')} is not a number")
             continue
+        parent = get_path(receipt, (a.get("field") or "").rsplit(".", 1)[0]) if "." in (a.get("field") or "") else receipt
         if a.get("kind") == "none":
             if rv not in (None, 0):
                 bad.append(f"says none, but {a['field']} is {rv:g}")
+            elif rv is None and not isinstance(parent, dict):
+                bad.append(f"no field {a.get('field')} in the receipt")
             continue
         if rv is None:
-            if re.search(r"killed|death|fatal|_injured$", a.get("field") or "") and a.get("value") in (0, None):
+            if re.search(r"killed|death|fatal|_injured$", a.get("field") or "") and a.get("value") in (0, None) \
+                    and isinstance(parent, dict):
                 continue  # the record lists only non-zero counts
             bad.append(f"no field {a.get('field')} in the receipt")
             continue
-        if a.get("value") is None or not _close(float(a["value"]), float(rv), a.get("kind") or "count"):
+        if a.get("value") is None or not _close(float(a["value"]), float(rv), a.get("kind") or "count", a.get("field") or ""):
             bad.append(f"{a.get('field')} is {rv:g}; the claim says {a.get('value')}")
     return bad
 

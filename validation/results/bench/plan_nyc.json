@@ -673,8 +673,10 @@
    "letter": {
     "to": "the NYC Department of Transportation (NYC DOT)",
     "subject": "303 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 303 high-crash intersections in New York City where you are responsible for at least one of the roads (listed in the road-owner records at 26 of them, and taken to be yours at the rest because the state's road inventory does not list them) had 11,914 injury crashes. At 129 of them, a low-cost fix the evidence supports would avoid about 86.4 crashes a year, worth about $29.5 million a year at the U.S. DOT's values. At 144 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
-    "refused": [],
+    "body": null,
+    "refused": [
+     "number 100 is not in the dossier"
+    ],
     "facts": {
      "intersections": 303,
      "intersections_owner_recorded": 26,
@@ -992,7 +994,7 @@
       "injury_crashes": 81,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.9,
       "check_first": null,
       "copy_to": "Council Member, District 3, New York City Council; Manhattan Community Board 5"
@@ -1002,7 +1004,7 @@
       "injury_crashes": 72,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.9,
       "check_first": null,
       "copy_to": "Council Member, District 9, New York City Council; Manhattan Community Board 9"
@@ -1012,7 +1014,7 @@
       "injury_crashes": 46,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.9,
       "check_first": null,
       "copy_to": "Council Member, District 20, New York City Council; Queens Community Board 7"
@@ -1102,7 +1104,7 @@
       "injury_crashes": 79,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.7,
       "check_first": null,
       "copy_to": "Council Member, District 7, New York City Council; Manhattan Community Board 9"
@@ -1112,7 +1114,7 @@
       "injury_crashes": 63,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.7,
       "check_first": null,
       "copy_to": "Council Member, District 4, New York City Council; Manhattan Community Board 5"
@@ -1142,7 +1144,7 @@
       "injury_crashes": 66,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.6,
       "check_first": null,
       "copy_to": "Council Member, District 10, New York City Council; Manhattan Community Board 12"
@@ -1152,7 +1154,7 @@
       "injury_crashes": 57,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.6,
       "check_first": null,
       "copy_to": "Council Member, District 46, New York City Council; Brooklyn Community Board 18"
@@ -1162,7 +1164,7 @@
       "injury_crashes": 46,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.6,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 17"
@@ -1202,7 +1204,7 @@
       "injury_crashes": 92,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.5,
       "check_first": null,
       "copy_to": "Council Member, District 8, New York City Council; Manhattan Community Board 11"
@@ -1212,7 +1214,7 @@
       "injury_crashes": 53,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.5,
       "check_first": null,
       "copy_to": "Council Member, District 45, New York City Council; Brooklyn Community Board 14"
@@ -1222,7 +1224,7 @@
       "injury_crashes": 53,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.5,
       "check_first": null,
       "copy_to": "Council Member, District 11, New York City Council; Bronx Community Board 7"
@@ -1232,7 +1234,7 @@
       "injury_crashes": 52,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.5,
       "check_first": null,
       "copy_to": "Council Member, District 1, New York City Council; Manhattan Community Board 2"
@@ -1242,7 +1244,7 @@
       "injury_crashes": 43,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.5,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
@@ -1262,7 +1264,7 @@
       "injury_crashes": 86,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 36, New York City Council; Brooklyn Community Board 8"
@@ -1272,7 +1274,7 @@
       "injury_crashes": 77,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 9"
@@ -1282,7 +1284,7 @@
       "injury_crashes": 70,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 14, New York City Council; Bronx Community Board 8"
@@ -1292,7 +1294,7 @@
       "injury_crashes": 64,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
@@ -1302,7 +1304,7 @@
       "injury_crashes": 59,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 14, New York City Council; Bronx Community Board 5"
@@ -1312,7 +1314,7 @@
       "injury_crashes": 58,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 1, New York City Council; Manhattan Community Board 3"
@@ -1322,7 +1324,7 @@
       "injury_crashes": 53,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 1, New York City Council; Manhattan Community Board 3"
@@ -1332,7 +1334,7 @@
       "injury_crashes": 50,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 22, New York City Council; Queens Community Board 1"
@@ -1342,7 +1344,7 @@
       "injury_crashes": 50,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 9, New York City Council; Manhattan Community Board 10"
@@ -1352,7 +1354,7 @@
       "injury_crashes": 41,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 32, New York City Council; Queens Community Board 10"
@@ -1362,7 +1364,7 @@
       "injury_crashes": 39,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
@@ -1372,7 +1374,7 @@
       "injury_crashes": 35,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 15, New York City Council; Bronx Community Board 11"
@@ -1382,7 +1384,7 @@
       "injury_crashes": 29,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 30, New York City Council; Queens Community Board 4"
@@ -1392,7 +1394,7 @@
       "injury_crashes": 27,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 17"
@@ -1402,7 +1404,7 @@
       "injury_crashes": 87,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 9"
@@ -1412,7 +1414,7 @@
       "injury_crashes": 85,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 37, New York City Council; Brooklyn Community Board 5"
@@ -1422,7 +1424,7 @@
       "injury_crashes": 84,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 37, New York City Council; Brooklyn Community Board 5"
@@ -1432,7 +1434,7 @@
       "injury_crashes": 73,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 10, New York City Council; Manhattan Community Board 12"
@@ -1442,7 +1444,7 @@
       "injury_crashes": 65,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 46, New York City Council; Brooklyn Community Board 18"
@@ -1452,7 +1454,7 @@
       "injury_crashes": 63,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 18, New York City Council; Bronx Community Board 9"
@@ -1462,7 +1464,7 @@
       "injury_crashes": 59,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
@@ -1472,7 +1474,7 @@
       "injury_crashes": 54,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 14, New York City Council; Bronx Community Board 7"
@@ -1482,7 +1484,7 @@
       "injury_crashes": 46,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 2, New York City Council; Manhattan Community Board 3"
@@ -1492,7 +1494,7 @@
       "injury_crashes": 37,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 23, New York City Council; Queens Community Board 13"
@@ -1502,7 +1504,7 @@
       "injury_crashes": 37,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 36, New York City Council; Brooklyn Community Board 3"
@@ -1512,7 +1514,7 @@
       "injury_crashes": 37,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 45, New York City Council; Brooklyn Community Board 14"
@@ -1522,7 +1524,7 @@
       "injury_crashes": 34,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 22, New York City Council; Queens Community Board 1"
@@ -1532,7 +1534,7 @@
       "injury_crashes": 33,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 12"
@@ -1542,7 +1544,7 @@
       "injury_crashes": 30,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 16, New York City Council; Bronx Community Board 4"
@@ -1552,7 +1554,7 @@
       "injury_crashes": 27,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 14"
@@ -1562,7 +1564,7 @@
       "injury_crashes": 25,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 16"
@@ -1572,7 +1574,7 @@
       "injury_crashes": 25,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 39, New York City Council; Brooklyn Community Board 12"
@@ -1582,7 +1584,7 @@
       "injury_crashes": 22,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 26, New York City Council; Queens Community Board 2"
@@ -1592,7 +1594,7 @@
       "injury_crashes": 22,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 24, New York City Council; Queens Community Board 8"
@@ -1602,7 +1604,7 @@
       "injury_crashes": 19,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
@@ -1622,7 +1624,7 @@
       "injury_crashes": 61,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 38, New York City Council; Brooklyn Community Board 10"
@@ -1632,7 +1634,7 @@
       "injury_crashes": 52,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 37, New York City Council; Brooklyn Community Board 5"
@@ -1642,7 +1644,7 @@
       "injury_crashes": 51,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 42, New York City Council; Brooklyn Community Board 5"
@@ -1652,7 +1654,7 @@
       "injury_crashes": 38,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 9"
@@ -1662,7 +1664,7 @@
       "injury_crashes": 37,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 35, New York City Council"
@@ -1672,7 +1674,7 @@
       "injury_crashes": 34,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 3, New York City Council; Manhattan Community Board 4"
@@ -1682,7 +1684,7 @@
       "injury_crashes": 34,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 35, New York City Council; Brooklyn Community Board 2"
@@ -1692,7 +1694,7 @@
       "injury_crashes": 24,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 3"
@@ -1702,7 +1704,7 @@
       "injury_crashes": 22,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 30, New York City Council; Queens Community Board 5"
@@ -1712,7 +1714,7 @@
       "injury_crashes": 21,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 24, New York City Council; Queens Community Board 8"
@@ -1722,7 +1724,7 @@
       "injury_crashes": 20,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 15, New York City Council; Bronx Community Board 5"
@@ -1732,7 +1734,7 @@
       "injury_crashes": 18,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 28, New York City Council; Queens Community Board 12"
@@ -1742,7 +1744,7 @@
       "injury_crashes": 17,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
@@ -1752,7 +1754,7 @@
       "injury_crashes": 16,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 29, New York City Council; Queens Community Board 6"
@@ -1762,7 +1764,7 @@
       "injury_crashes": 15,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 44, New York City Council; Brooklyn Community Board 14"
@@ -1772,7 +1774,7 @@
       "injury_crashes": 15,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 20, New York City Council; Queens Community Board 7"
@@ -1782,7 +1784,7 @@
       "injury_crashes": 75,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
@@ -1792,7 +1794,7 @@
       "injury_crashes": 69,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
@@ -1802,7 +1804,7 @@
       "injury_crashes": 44,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 32, New York City Council; Queens Community Board 5"
@@ -1812,7 +1814,7 @@
       "injury_crashes": 35,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 3, New York City Council; Manhattan Community Board 2"
@@ -1822,7 +1824,7 @@
       "injury_crashes": 31,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 38, New York City Council; Brooklyn Community Board 6"
@@ -1832,7 +1834,7 @@
       "injury_crashes": 30,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 16, New York City Council; Bronx Community Board 4"
@@ -1842,7 +1844,7 @@
       "injury_crashes": 27,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 43, New York City Council; Brooklyn Community Board 11"
@@ -1852,7 +1854,7 @@
       "injury_crashes": 26,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 2"
@@ -1862,7 +1864,7 @@
       "injury_crashes": 19,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 15, New York City Council; Bronx Community Board 7"
@@ -1872,7 +1874,7 @@
       "injury_crashes": 19,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 1, New York City Council; Manhattan Community Board 3"
@@ -1882,7 +1884,7 @@
       "injury_crashes": 19,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 4, New York City Council; Manhattan Community Board 8"
@@ -1892,7 +1894,7 @@
       "injury_crashes": 17,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
@@ -1902,7 +1904,7 @@
       "injury_crashes": 15,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 14"
@@ -1912,7 +1914,7 @@
       "injury_crashes": 13,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 2"
@@ -1922,7 +1924,7 @@
       "injury_crashes": 12,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
@@ -1932,7 +1934,7 @@
       "injury_crashes": 10,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 49, New York City Council; Staten Island Community Board 1"
@@ -1942,7 +1944,7 @@
       "injury_crashes": 8,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 23, New York City Council; Queens Community Board 11"
@@ -1962,7 +1964,7 @@
       "injury_crashes": 3,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 51, New York City Council; Staten Island Community Board 3"
@@ -3672,7 +3674,7 @@
       "injury_crashes": 7,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.0,
       "check_first": null,
       "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 1"
@@ -3746,8 +3748,10 @@
    "letter": {
     "to": "the New York State Department of Transportation (NYSDOT), Region 11",
     "subject": "11 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 11 high-crash intersections in New York City where the road-owner records list you for at least one of the roads had 798 injury crashes. At 3 of them, a low-cost fix the evidence supports would avoid about 6.1 crashes a year, worth about $2.1 million a year at the U.S. DOT's values. At 6 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
-    "refused": [],
+    "body": null,
+    "refused": [
+     "number 100 is not in the dossier"
+    ],
     "facts": {
      "intersections": 11,
      "intersections_owner_recorded": 11,
@@ -3785,7 +3789,7 @@
       "injury_crashes": 61,
       "fix": "Leading Pedestrian Interval",
       "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
+      "evidence": "this city's own past installs, which passed the causal gate (a stricter calibrated check is less sure); the estimate uses the national CMF, the smaller effect",
       "crashes_avoided_per_year": 0.2,
       "check_first": null,
       "copy_to": "Council Member, District 38, New York City Council; Brooklyn Community Board 10"
@@ -3889,8 +3893,10 @@
    "letter": {
     "to": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)",
     "subject": "1 high-crash intersection on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 1 high-crash intersection in New York City where the road-owner records list you for at least one of the roads had 43 injury crashes. At 1 of them, a low-cost fix the evidence supports would avoid about 1.3 crashes a year, worth about $0.4 million a year at the U.S. DOT's values. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
-    "refused": [],
+    "body": null,
+    "refused": [
+     "number 100 is not in the dossier"
+    ],
     "facts": {
      "intersections": 1,
      "intersections_owner_recorded": 1,

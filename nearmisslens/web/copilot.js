@@ -70,7 +70,7 @@ async function boot() {
   else if (INDEX.plan) showPlan();  // a city opens on its action plan
 }
 
-const TIER = {"measured here": "measured in this city", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
+const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
 
 async function showPlan() {
   for (const b of $("corners").querySelectorAll("button")) b.setAttribute("aria-current", "false");
@@ -103,7 +103,7 @@ async function showPlan() {
     (q && q.rerequests.length ? `<section class="step"><h3>Asked for and turned down</h3><p class="legend">From ${esc(q.source)}, matched by street names (${q.corners_matched} of ${q.corners} corners matched).</p>` +
       `<ul class="claims">${q.rerequests.map(x => `<li><b>${link(x.corner)}</b>: ${esc(x.text)} <span class="legend">request ${esc(x.reference)}</span></li>`).join("")}</ul></section>` : "") +
     `<section class="step"><h3>Who must act</h3>` + p.agencies.map(g =>
-      `<details class="agency"><summary><b>${esc(g.party)}</b>${g.presumed ? ' <span class="status">presumed</span>' : ""}: ${g.intersections} corners` +
+      `<details class="agency"><summary><b>${esc(g.party)}</b>${g.presumed ? ' <span class="status">presumed</span>' : ""}: ${g.intersections} ${g.intersections === 1 ? "corner" : "corners"}` +
       (g.intersections_with_supported_fix ? `, ${g.crashes_avoided_per_year_total} crashes a year avoidable at ${g.intersections_with_supported_fix}` : "") + `</summary>` +
       (g.letter.body ? `<p class="letter">${esc(g.letter.body)}</p><button class="quiet copy" data-t="${esc(g.letter.body)}">Copy the letter</button>`
                      : `<p class="legend">Letter refused by the number checker: ${esc(g.letter.refused.join("; "))}</p>`) +
@@ -176,7 +176,8 @@ function agentHTML(a) {
     `<p class="why">Muse Spark Open chose the tools and wrote these sentences (${a.turns} turns, $${Number(a.usd || 0).toFixed(2)}). ` +
     `The same checker refused ${a.refused.length ? `${a.refused.length} earlier ${a.refused.length === 1 ? "attempt" : "attempts"}, struck through below` : "nothing"}.</p>` +
     (a.summary ? `<p>${esc(a.summary)}</p>` : "") +
-    `<ul class="claims">${(a.claims || []).map(c => `<li>${esc(c.text)} <span class="legend">${esc(tool(c.receipt))}</span></li>`).join("")}</ul>` +
+    `<ul class="claims">${(a.claims || []).map(c => `<li>${esc(c.text)} <span class="legend">${esc(tool(c.receipt))}</span>` +
+      ((c.flags || []).length ? ` <span class="status">flagged by the model-read check</span> <span class="legend">${esc(c.flags.join("; "))}</span>` : "") + `</li>`).join("")}</ul>` +
     ((a.superseded || []).length ? `<p class="legend">Checked again against today's receipts, these no longer pass (the record or a rule changed after the agent wrote them):</p>` +
       `<ul class="claims refused">${a.superseded.map(c => `<li><s>${esc(c.text)}</s> <span class="legend">${esc((c.errors || []).join("; "))}</span></li>`).join("")}</ul>` : "") +
     a.refused.map(x => `<ul class="claims refused">${(x.claims || []).filter(c => x.errors.some(e => e.startsWith(`claim ${x.claims.indexOf(c) + 1}:`)))
@@ -273,7 +274,7 @@ function show(r, corner) {
     <p class="where">${corner ? `Corner ${corner.rank} of ${INDEX.corners.length} by injury crashes` : "Searched corner"}</p>
     <h2 class="corner">${esc(j.name.split(",")[0])}</h2>
     <p class="lede">${esc(lede)}</p>
-    <p class="meta">Built in ${r.seconds < 1 ? "under a second" : `${Math.round(r.seconds)} s`} from records as of ${date(r.asof)}. ${r.claim_errors.length ? `${r.claim_errors.length} claims refused by the checker.` : "Every claim passed the checker."}</p>
+    <p class="meta">Built in ${r.seconds < 1 ? "under a second" : `${Math.round(r.seconds)} s`} from records as of ${date(r.asof)}. ${r.claim_errors.length ? `${r.claim_errors.length} claims refused by the checker.` : "Every claim passed the number checker."}</p>
     ${media}
     <section class="step"><h3><span class="no">1</span>The case</h3>
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>

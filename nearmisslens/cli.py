@@ -332,8 +332,12 @@ def cmd_pages(args) -> int:
     from pathlib import Path
     from . import pages
     lc = _memo_client(not args.meta) if args.letters else None
+    mc = None
+    if args.model_check:
+        from .meta_client import MetaClient
+        mc = MetaClient(SETTINGS)
     out = pages.build(args.city, args.live or "", Path(args.out) if args.out else pages.DOCS, letters=args.letters,
-                      letter_client=lc, workers=args.workers, saved_only=args.saved_only)
+                      letter_client=lc, workers=args.workers, saved_only=args.saved_only, model_check_client=mc)
     print(f"{out['corners']} corners, {out['letters']} letters, {out['mb']} MB in {out['path']}; claims refused: "
           f"{out['claim_errors']}. Preview: python -m http.server -d {out['path']}")
     return 0
@@ -551,6 +555,7 @@ def main(argv: list[str] | None = None) -> int:
     pg2.add_argument("--meta", action="store_true", help="draft letters on the Meta API instead")
     pg2.add_argument("--workers", type=int, default=3)
     pg2.add_argument("--saved-only", action="store_true", help="only corners already built (a quick preview)")
+    pg2.add_argument("--model-check", action="store_true", help="recheck agent cases with the model-read check too (T20b)")
     pg2.add_argument("--out", help="write somewhere other than docs/")
     st = sub.add_parser("selftest", help="end-to-end check on real data and cached model responses")
     st.add_argument("--live", action="store_true", help="allow Meta API calls for missing cache entries")

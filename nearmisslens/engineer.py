@@ -262,9 +262,21 @@ def refreshed_fixes(report: dict) -> dict | None:
     return {"crashes": d.get("crashes"), **brief.fix_options(d, load_cmf())}
 
 
-def recheck_agent(agent: dict, current: dict) -> tuple[list[dict], list[dict]]:
-    """An agent's saved claims checked again against the corner's current receipts, tool by tool: a claim that no
-    longer passes (the record or a rule changed after it was written) is set apart with the reason."""
+def model_read_errors(text: str, data: dict, client) -> list[str]:
+    """The second gate (NML-Bench T20b): Muse Spark reads the claim into assertions, code checks each against the
+    receipt. Without a client, or when the reading is not available (replay without it), the claim is not refused."""
+    if client is None:
+        return []
+    from . import claimcheck
+    try:
+        return [f"model-read check: {e}" for e in claimcheck.verify(text, data, claimcheck.parse(client, text, data, "gate"))]
+    except Exception:
+        return []
+
+
+def recheck_agent(agent: dict, current: dict, model_client=None) -> tuple[list[dict], list[dict]]:
+    """An agent's saved claims checked again against the corner's current receipts, tool by tool, by the number
+    checker and (with a client) the model-read check: a claim that no longer passes is set apart with the reason."""
     tool_of = {r["id"]: r["tool"] for r in agent.get("receipts") or []}
     desk = Desk()
     desk.places.add(current["junction"]["name"].split(",")[0])
@@ -277,7 +289,11 @@ def recheck_agent(agent: dict, current: dict) -> tuple[list[dict], list[dict]]:
             keep.append({**c, "tool": tool, "rechecked": False})
             continue
         errors = context.FactCheck(data).text(text) + conditional_fix_errors(text, data) + wording(text)
-        (gone if errors else keep).append({**c, "tool": tool, **({"errors": errors} if errors else {})})
+        if errors:
+            gone.append({**c, "tool": tool, "errors": errors})
+            continue
+        flags = model_read_errors(c.get("text", ""), data, model_client)  # T20b: shown as a flag, since it also
+        keep.append({**c, "tool": tool, **({"flags": flags} if flags else {})})  # refuses some true claims
     return keep, gone
 
 
@@ -400,7 +416,8 @@ def crash_sentence(name: str, cr: dict) -> str:
     'recorded' come from datasets that record pedestrians, cyclists and deaths)."""
     rec = cr.get("recorded") or {"injured_by_mode": ["cyclist", "pedestrian"], "killed": True}
     killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed")) or cr.get("any_killed", 0)
-    parts = [f"{cr.get(f'{m}_injured', 0)} {m}s injured" for m in ("pedestrian", "cyclist") if m in rec["injured_by_mode"]]
+    parts = [f"{n} {m}{'' if n == 1 else 's'} injured" for m in ("pedestrian", "cyclist") if m in rec["injured_by_mode"]
+             for n in [cr.get(f'{m}_injured', 0)]]
     if rec.get("killed"):
         parts.append(f"{killed} {'person' if killed == 1 else 'people'} killed")
     body = (", ".join(parts[:-1]) + " and " + parts[-1]) if len(parts) > 1 else "".join(parts)
@@ -605,7 +622,8 @@ def _compact(data: dict, limit: int = 6000) -> str:
     return text if len(text) <= limit else text[:limit] + " ...(truncated)"
 
 
-def run(query: str, client, model: str = "muse-spark-open", letter_client=None, budget_usd: float = 0.10) -> dict:
+def run(query: str, client, model: str = "muse-spark-open", letter_client=None, budget_usd: float = 0.10,
+        model_check_client=None) -> dict:
     """The agent engineer: the model picks the steps and writes the claims; finish is the gate."""
     from .agent import Tool, run_agent
     from .panel import _obj
@@ -635,6 +653,10 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
 
     def finish(summary: str, claims: list[dict]):
         errors = check_claims(claims, desk, REQUIRED) + check_summary(summary, desk)
+        if not errors and model_check_client is not None:  # the second gate, on claims the number checker passed
+            for k, c in enumerate(claims, 1):
+                errors += [f"claim {k}: {e}" for e in model_read_errors(c.get("text", ""), desk.data.get(c.get("receipt")) or {},
+                                                                        model_check_client)]
         if errors:
             refused.append({"summary": summary, "claims": claims, "errors": errors[:12]})
             return {"error": "refused by the claim checker", "errors": errors[:12]}

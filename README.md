@@ -1,6 +1,6 @@
 # NearMissLens
 
-**A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It ranks the worst corners, works out what their crashes have in common, tests what the city already tried against the city's own crash history, ranks fixes by the strength of the evidence behind them, finds which agencies own the roads, and drafts one request per agency. Each claim cites the receipt behind it, and a claim whose numbers do not match that receipt is refused before it is shown.
+**A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It ranks the worst corners, works out what their crashes have in common, tests what the city already tried against the city's own crash history, ranks fixes by the strength of the evidence behind them, finds which agencies own the roads, and drafts one request per agency. Each claim cites the receipt behind it, and a claim whose numbers do not match that receipt is refused; our own red team measures how many false claims still get through.
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) opens on each city's action plan. It covers New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
@@ -41,11 +41,11 @@ In Seattle most estimates rest on a pavement-friction study whose sites were cho
 **New York, also from the same cases:**
 - **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and MTA Bridges and Tunnels at 1. Each agency gets its own letter, number-checked like every claim.
 - **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
-- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded there now, and pedestrians were injured there in the records since 2021. LPI policy has changed since those denials, which is why the list is worth sending again. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
+- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded in the city's open datasets there now, and pedestrians were injured there in the records since 2021. The city has since installed thousands of leading pedestrian intervals elsewhere (1,651 in the window our causal gate measured), so these corners stand out. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
 
 ## Who would use this
 
-- **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for any city with open crash data. It replaces the first weeks of pulling records and looking up CMFs, not the engineer's site visit.
+- **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for any city with open crash data. It is meant to replace the pulling of records and looking up of CMFs, not the engineer's site visit.
 - **A community board, council office or advocacy group:** a corner's case in plain language, and a letter addressed to the agency that owns the road, with every number checked. In New York that includes the 19 corners where a fix was asked for and turned down.
 - **A city's own safety team:** which of its programs the record backs (leading pedestrian intervals) and which it does not (turn calming), before the same program is proposed again.
 
@@ -75,7 +75,7 @@ The engineer is a Meta model with six tools. Each tool is plain code over public
 | `who_must_act` | The state road inventory, council and community-board maps | No party without the dataset row behind it; inferred owners are marked |
 | `draft_request` | The facts above | Every number in the letter must be the record's value for the words next to it |
 
-The agent finishes by submitting its claims, each citing a receipt. The **finish gate** refuses a claim that:
+The agent finishes by submitting its claims, each citing a receipt. The **finish gate** is built to refuse a claim that (T18 measures how often it fails):
 - cites no receipt;
 - uses a number that is not the receipt's value for what the sentence names. For example, "29 pedestrians were killed" when 29 were injured, a program's site count borrowed from another program, or "no crashes at night" when the record has 67;
 - uses wording the record cannot support ("caused", "proves", "certain to", "led to");
@@ -85,11 +85,11 @@ The agent finishes by submitting its claims, each citing a receipt. The **finish
 
 ## The model proposes, code checks
 
-Every Meta model use is paired with a check it cannot get around, and each pair is measured:
+Every Meta model use is paired with a check outside the model, and each pair is measured:
 
 | Meta model | What it does | The check | Result |
 |---|---|---|---|
-| Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts | 34 run, 26 finished with every claim passing, 37 refused attempts kept and shown struck through ($2.95) |
+| Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts by the number checker and the model-read check | 34 run, 26 finished, 37 refused attempts kept; on the site, 131 claims shown (55 flagged by the model-read check) and 44 struck through by today's stricter checker ($2.95) |
 | Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |
 | Muse Spark | Reads each claim into checkable assertions: field, value, or "none" (T20, T20b) | Code checks every assertion against the receipt | On a fresh attacker: 1.3% of false claims accepted and 27% of true ones refused, against 10.8% and 51% for the regex checker (registered rule met, T20b) |
 | Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
@@ -134,13 +134,13 @@ The patch cut held-out attacks by 46%, short of the registered 50%. One false cl
 
 **So we let a model read the claims (T20, T20b).** Muse Spark turns each claim into assertions (which receipt field, what value, or "none"), and code checks each one against the receipt; the model never decides whether a claim is true. On the T18 held-out set the registered run failed: it caught 98% of false claims but refused 46% of true ones, mostly through three bugs in our checking code (dates, whole-percent rounding, the confidence level). We fixed those and registered a fresh test on corners and an attacker style never used before:
 
-| T20b, fresh attacker (Muse Spark Open, "advocate" style, corners 31–40) | False claims accepted | True claims refused |
+| T20b, fresh attacker (Muse Spark Open, "advocate" style, corners ranked 31–40, 9 distinct) | False claims accepted | True claims refused |
 |---|---|---|
 | Regex checker | 17 of 157 (10.8%) | 45 of 89 (51%) |
-| Muse Spark reads, code checks | 2 of 157 (1.3%) | 24 of 89 (27%) |
+| Muse Spark reads, code checks | 2 of 157 (1.3%, Wilson 0.4–4.5%) | 24 of 89 (27%) |
 | Both | 1 of 157 | 55 of 89 (62%) |
 
-The model-read check beats the regex on both counts (registered rule met). It still refuses a quarter of true claims, so it is a second gate for agent-written text, not yet the only one.
+The model-read check beats the regex on both counts here (registered rule met). This style pushed the regex into refusing half the true claims; on the T18 held-out set, after the bug fixes, the model-read check let through 2.6% of false claims against the regex's 20.5%, but refused slightly more true ones (17.9% against 15.8%). Labels check only the numbers, so some "true" claims it refuses carry rhetoric a gate should refuse anyway. After a later review we hardened the code side (every number in a claim must be covered by an assertion; no complement shares; counts exact to rounding). On the same readings that lets through 1 of 157 false claims but refuses 58% of true ones, because the model does not always quote every number (post hoc, in BENCH.md). The site uses it as a second check on agent-written claims; it is not yet strict enough on both counts to be the only gate.
 
 ## Try it
 
@@ -172,7 +172,7 @@ uv run nml --replay selftest                               # offline self-test
 - **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause.
 - **"No recorded treatment" means none in the city's open datasets.** The state's 2022 work at Bruckner is one example of what they miss.
 - **Signal control comes from OpenStreetMap.** At 42 of the 304 New York corners the street layout could not be fetched before the deadline (the API limited our requests), so their control is unknown and signal-only fixes are not estimated there. The supported totals are low rather than high for that reason.
-- **Matching requests to corners uses street names.** 256 of 304 corners matched; the rest are left out, not guessed.
+- **Matching requests to corners uses street names and the borough.** 255 of 303 corners matched; the rest are left out, not guessed.
 - **US cities only so far.** The method needs geocoded crash records, a log of fixes made or denied, a road-owner layer and local crash costs. Bangladesh's police counted 5,084 road deaths in 2021 where WHO estimates 31,578 ([Dhaka Tribune](https://www.dhakatribune.com/bangladesh/381561/who-road-crashes-claiming-young-lives-in)), and no official geocoded record is public, so Dhaka is the next step, not a claim.
 
 ## Related work
