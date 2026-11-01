@@ -462,19 +462,30 @@ Findings the agent confirmed that no other arm confirmed (by 80% crash overlap):
 
 ## T16 Site check from the aerial photo: Muse Spark proposes, SAM 3.1 confirms
 
-Registered in BENCH_PREREG.md (T16). 30 corners; ground truth within 40 m from the city's map layers or OpenStreetMap (corners without ground truth are excluded per attribute).
+Registered in BENCH_PREREG.md (T16). 68 corners; ground truth within 40 m from the city's map layers or OpenStreetMap (corners without ground truth are excluded per attribute).
 
 | attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | used in the product |
 |---|---|---|---|---|---|---|
-| high visibility crosswalk | spark | 24 | 24 | 1.000 | 0.875 (0.690-0.957) |  |
-| high visibility crosswalk | sam | 24 | 24 | 1.000 | 0.917 (0.742-0.977) |  |
-| high visibility crosswalk | gated | 24 | 23 | 0.958 | 0.913 (0.732-0.976) | yes |
-| bike lane | spark | 30 | 29 | 0.967 | 0.655 (0.473-0.801) |  |
-| bike lane | sam | 30 | 30 | 1.000 | 0.833 (0.664-0.927) |  |
-| bike lane | gated | 30 | 22 | 0.733 | 0.818 (0.615-0.927) | no |
-| median | spark | 30 | 29 | 0.967 | 0.621 (0.440-0.773) |  |
-| median | sam | 30 | 30 | 1.000 | 0.833 (0.664-0.927) |  |
-| median | gated | 30 | 22 | 0.733 | 0.818 (0.615-0.927) | no |
+| high visibility crosswalk | spark | 29 | 29 | 1.000 | 0.862 (0.694-0.945) |  |
+| high visibility crosswalk | sam | 29 | 29 | 1.000 | 0.897 (0.736-0.964) |  |
+| high visibility crosswalk | gated | 29 | 28 | 0.966 | 0.893 (0.728-0.963) | yes |
+| bike lane | spark | 40 | 39 | 0.975 | 0.718 (0.562-0.835) |  |
+| bike lane | sam | 40 | 40 | 1.000 | 0.875 (0.739-0.945) |  |
+| bike lane | gated | 40 | 31 | 0.775 | 0.871 (0.711-0.949) | yes |
+| median | spark | 40 | 39 | 0.975 | 0.590 (0.434-0.729) |  |
+| median | sam | 40 | 40 | 1.000 | 0.775 (0.625-0.877) |  |
+| median | gated | 40 | 31 | 0.775 | 0.742 (0.568-0.863) | no |
+
+## T17 Ask the engineer: the claim checker and the person asking
+
+Registered in BENCH_PREREG.md (T17). 40 questions generated from the 10 worst corners' cases (2 answerable, 1 the records cannot answer, 1 adversarial per corner); the same Muse Spark Open agent with and without the checker; wrong sentences counted with the checker after the run, for both arms.
+
+| arm | wrong sentences shown | answers with a wrong sentence | answered | answerable right | unanswerable right | adversarial right | cost |
+|---|---|---|---|---|---|---|---|
+| with the checker | 0 | 0 | 0.625 | 0.800 | 0.900 | 1.000 | $1.606 |
+| without it | 31 | 13 | 0.900 | 0.900 | 0.900 | 0.100 | $1.575 |
+
+Registered rule (fewer wrong sentences with the checker, at least 80% of answerable questions right): met. The price: with the checker the agent gave no checked answer to 38% of the questions, against 10% without it.
 
 ## Data agent: adapters found and validated without hand-written code
 

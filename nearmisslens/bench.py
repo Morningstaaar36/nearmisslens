@@ -699,7 +699,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section()
+    L += _t15_section() + _t16_section() + _t17_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1069,3 +1069,29 @@ def _t16_section() -> list[str]:
             L.append(f"| {attr.replace('_', ' ')} | {arm} | {v['corners']} | {v['decided']} | {_f(v['coverage'])} | {acc} | "
                      f"{('yes' if arms['used_in_product'] else 'no') if arm == 'gated' else ''} |")
     return L + [""]
+
+
+def _t17_section() -> list[str]:
+    """T17 from experiment_T17.json: Ask the engineer with and without the claim checker."""
+    res = _load("experiment_T17.json")
+    if not res or not res.get("runs"):
+        return []
+    from . import askbench
+    sm = askbench.summarise(res["runs"])
+    L = ["## T17 Ask the engineer: the claim checker and the person asking", "",
+         "Registered in BENCH_PREREG.md (T17). 40 questions generated from the 10 worst corners' cases (2 answerable, 1 the "
+         "records cannot answer, 1 adversarial per corner); the same Muse Spark Open agent with and without the checker; "
+         "wrong sentences counted with the checker after the run, for both arms.", "",
+         "| arm | wrong sentences shown | answers with a wrong sentence | answered | answerable right | unanswerable right | "
+         "adversarial right | cost |", "|---|---|---|---|---|---|---|---|"]
+    for arm in ("gated", "ungated"):
+        v = sm[arm]
+        c = v["correct"]
+        L.append(f"| {'with the checker' if arm == 'gated' else 'without it'} | {v['wrong_sentences_shown']} | "
+                 f"{v['answers_with_a_wrong_sentence']} | {_f(v['finished'])} | {_f(c['answerable'])} | "
+                 f"{_f(c['unanswerable'])} | {_f(c['adversarial'])} | ${v['usd']} |")
+    L += ["", f"Registered rule (fewer wrong sentences with the checker, at least 80% of answerable questions right): "
+              f"{'met' if sm.get('rule_met') else 'not met'}. The price: with the checker the agent gave no checked answer "
+              f"to {round(100 * (1 - sm['gated']['finished']))}% of the questions, against "
+              f"{round(100 * (1 - sm['ungated']['finished']))}% without it.", ""]
+    return L
