@@ -514,6 +514,27 @@ Registered in BENCH_PREREG.md (T19) with hand labels, before any model call. 25 
 
 Quotes refused by the check: 0. The limits adopted into data/fhwa_psc.json, including four the model found and the hand labels did not have, are listed in BENCH_PREREG.md (T19 result).
 
+## T20 and T20b Muse Spark reads each claim, code checks it
+
+Registered in BENCH_PREREG.md (T20, T20b). Muse Spark lists each claim's assertions (receipt field, stated value, or none) and whether it states a cause; code checks each against the receipt. The model never decides that a claim is true.
+
+| arm | false claims accepted | true claims refused |
+|---|---|---|
+| **T20, T18 held-out set (registered run)** | | |
+| regex checker | 56/273 (0.205) | 30/190 (0.158) |
+| Muse Spark reads, code checks | 5/273 (0.018) | 87/190 (0.458) |
+| both | 3/273 (0.011) | 102/190 (0.537) |
+| **T20, same readings, three verifier bugs fixed (post hoc)** | | |
+| regex checker | 56/273 (0.205) | 30/190 (0.158) |
+| Muse Spark reads, code checks | 7/273 (0.026) | 34/190 (0.179) |
+| both | 4/273 (0.015) | 57/190 (0.300) |
+| **T20b, fresh attacker (advocate style, corners 31-40)** | | |
+| regex checker | 17/157 (0.108) | 45/89 (0.506) |
+| Muse Spark reads, code checks | 2/157 (0.013) | 24/89 (0.270) |
+| both | 1/157 (0.006) | 55/89 (0.618) |
+
+T20 registered rule: not met (false refusals rose too much, mostly through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack success, false refusal at most 5 points higher): met.
+
 ## Data agent: adapters found and validated without hand-written code
 
 | place | dataset | validator attempts | records near the test point | latest record |

@@ -4,7 +4,7 @@
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) opens on each city's action plan. It covers New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
-![The copilot open on Bruckner Boulevard & Hunts Point Avenue: the city's priority corners on a map and a ranked list on the left; on the right the case, each sentence followed by the receipt it rests on](docs/img/copilot_bruckner.png)
+![New York's action plan: the largest low-cost estimates add up to 338 fewer crashes a year, the evidence supports 86; tiles for harm, supported corners, road owners, turn calming and denied requests, then the corners where a fix was asked for and turned down](docs/img/plan_nyc.png)
 
 ## The problem
 
@@ -24,24 +24,22 @@ From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 Oc
 
 | | New York | Seattle | Washington DC | San Francisco |
 |---|---|---|---|---|
-| Corners | 304 priority intersections | 50 worst | 50 worst | 50 worst |
+| Corners | 303 distinct points among the 304 priority intersections | 50 worst | 50 worst | 50 worst |
 | Harm a year, each crash counted once (U.S. DOT injury-crash value; deaths not valued separately, so this is low) | $786 million | $183 million | $192 million | $129 million |
-| Largest low-cost estimate at each corner, added up | 328 crashes a year | 109 | 76 | 58 |
-| Supported without a site visit | **84** (80 after regression to the mean), at 123 corners | **74**, at 50 corners | **2**, at 5 corners | **0** |
+| Largest low-cost estimate at each corner, added up | 338 crashes a year | 109 | 76 | 58 |
+| Supported without a site visit | **86** at 129 corners; **83** with each crash counted once, **79** after regression to the mean | **8** at 8 corners (6 counted once) | **2** at 5 corners | **0** |
 
-The gap between the last two rows is the point. In New York the largest estimates mostly need a check nobody has made:
-- signal backplates where the record does not show red-light entries;
-- yellow timing where nobody knows whether the current interval is short;
-- crosswalk studies done at school crossings.
+The gap between the last two rows is the point. In New York the largest estimate at 270 of the corners is signal backplates, which hold only where the record shows red-light entries; elsewhere they need a check nobody has made. Yellow timing needs a timing check, and the only crosswalk study in the set was done at school crossings.
 
-What the evidence supports now is mostly two things:
-- **leading pedestrian intervals at 78 corners**, a fix the city's own past installs show working;
-- **backplates at 45 corners**, where FHWA's cited study fits.
+What the evidence supports now:
+- **leading pedestrian intervals at 83 corners**, a fix the city's own past installs passed the causal gate on;
+- **backplates at 44 corners**, where FHWA's cited study fits the record;
+- **rectangular rapid flashing beacons at 2** uncontrolled crossings.
 
-Seattle's records include road surface, so its wet-road friction estimates qualify. San Francisco's records do not support any low-cost estimate without a site visit.
+In Seattle most estimates rest on a pavement-friction study whose sites were chosen for low friction, which the crash record cannot show, so they need a site check too. San Francisco's records support no low-cost estimate without a site visit.
 
 **New York, also from the same cases:**
-- **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and a toll authority at 1. Each agency gets its own letter, number-checked like every claim.
+- **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and MTA Bridges and Tunnels at 1. Each agency gets its own letter, number-checked like every claim.
 - **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
 - **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded there now, and pedestrians were injured there in the records since 2021. LPI policy has changed since those denials, which is why the list is worth sending again. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
 
@@ -61,6 +59,8 @@ The worst of the 304:
   - Longer yellow plus all-red time: about 2.0 a year, but only if a timing check shows the current interval is below ITE practice. All four eligible records come from one study (NCHRP Report 705) at signals with short intervals. FHWA's own page cites lower-rated records (380/384, 8–14% fewer crashes), which the code's three-star rule leaves out.
 - **Who must act.** The state DOT (Region 11) owns the Bruckner Expressway (I-278) and the Sheridan Boulevard (NY 895), according to the state road inventory. The surface streets are not in that inventory, so they are presumed the city's. Council District 17 and Bronx Community Board 2 can push for the work.
 - **What the city's data does not show.** The city's open datasets record no safety work here since a 2015 street project. But New York State's Hunts Point access project improved this intersection in its first phase, completed in 2022 ([announcement](https://www.governor.ny.gov/news/governor-hochul-announces-completion-phase-one-17-billion-hunts-point-access-improvement)). A request to the state should start from that project.
+
+![The case for Bruckner Boulevard & Hunts Point Avenue: each sentence followed by the receipt it rests on](docs/img/copilot_bruckner.png)
 
 ## How it works
 
@@ -89,8 +89,9 @@ Every Meta model use is paired with a check it cannot get around, and each pair 
 
 | Meta model | What it does | The check | Result |
 |---|---|---|---|
-| Muse Spark Open (Baseten) | Writes the case for 35 top corners across 4 cities | Finish gate | 27 run so far: 21 finished with every claim passing, and 29 refused attempts kept, struck through, on the site |
+| Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts | 34 run, 26 finished with every claim passing, 37 refused attempts kept and shown struck through ($2.95) |
 | Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |
+| Muse Spark | Reads each claim into checkable assertions: field, value, or "none" (T20, T20b) | Code checks every assertion against the receipt | On a fresh attacker: 1.3% of false claims accepted and 27% of true ones refused, against 10.8% and 51% for the regex checker (registered rule met, T20b) |
 | Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
 | Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies, but the short designs it chose passed 5 of 20 fake programs, about four times the registered design's rate |
 | Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero; as many distinct mechanisms as an exhaustive grid from 43 times fewer tests, but fewer confirmed (rule not met) |
@@ -129,7 +130,17 @@ An attacker model reads a real receipt and writes false claims that sound right,
 | Held-out attacks, gate as registered | 104 of 273 (38%) | "none" claims, 52 of 56 | 22 of 190 |
 | Held-out attacks, patched gate | 56 of 273 (21%) | "none" claims, 27 of 56 | 30 of 190 |
 
-The patch cut held-out attacks by 46%, short of the registered 50%. One false claim in five still gets past the patched gate on a new attacker, mostly claims that something is absent. The gate is a strong filter, not proof against a determined writer.
+The patch cut held-out attacks by 46%, short of the registered 50%. One false claim in five still gets past the patched regex gate on a new attacker, mostly claims that something is absent.
+
+**So we let a model read the claims (T20, T20b).** Muse Spark turns each claim into assertions (which receipt field, what value, or "none"), and code checks each one against the receipt; the model never decides whether a claim is true. On the T18 held-out set the registered run failed: it caught 98% of false claims but refused 46% of true ones, mostly through three bugs in our checking code (dates, whole-percent rounding, the confidence level). We fixed those and registered a fresh test on corners and an attacker style never used before:
+
+| T20b, fresh attacker (Muse Spark Open, "advocate" style, corners 31–40) | False claims accepted | True claims refused |
+|---|---|---|
+| Regex checker | 17 of 157 (10.8%) | 45 of 89 (51%) |
+| Muse Spark reads, code checks | 2 of 157 (1.3%) | 24 of 89 (27%) |
+| Both | 1 of 157 | 55 of 89 (62%) |
+
+The model-read check beats the regex on both counts (registered rule met). It still refuses a quarter of true claims, so it is a second gate for agent-written text, not yet the only one.
 
 ## Try it
 

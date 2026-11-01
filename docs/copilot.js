@@ -90,7 +90,8 @@ async function showPlan() {
     `<h2 class="corner">Where the evidence says to act first</h2>` +
     `<p class="lede">Add up the largest low-cost estimate at each of these ${s.corners} corners and you get about ` +
     `<b>${Math.round(s.textbook_crashes_avoided_per_year)}</b> fewer crashes a year. The evidence supports <b>${Math.round(s.crashes_avoided_per_year_total)}</b> ` +
-    `without a site visit` + (r.factor != null && r.factor < 1 ? ` (about <b>${Math.round(s.crashes_avoided_per_year_after_rtm)}</b> after the drop the worst corners show on their own)` : "") +
+    `without a site visit` + (s.crashes_avoided_per_year_counted_once != null ? ` (<b>${Math.round(s.crashes_avoided_per_year_counted_once)}</b> counting each crash once` +
+      (r.factor != null && r.factor < 1 ? `, about <b>${Math.round(s.crashes_avoided_per_year_counted_once_after_rtm)}</b> after the drop the worst corners show on their own` : "") + `)` : "") +
     `. The difference rests on studies of other kinds of sites, or on a check nobody has made yet, such as the signal timing.</p>` +
     `<div class="tiles">` +
     tile(usd(s.harm_usd_per_year || s.harm_usd_per_year_summed), "a year in injury crashes at these corners (U.S. DOT values)") +
@@ -176,6 +177,8 @@ function agentHTML(a) {
     `The same checker refused ${a.refused.length ? `${a.refused.length} earlier ${a.refused.length === 1 ? "attempt" : "attempts"}, struck through below` : "nothing"}.</p>` +
     (a.summary ? `<p>${esc(a.summary)}</p>` : "") +
     `<ul class="claims">${(a.claims || []).map(c => `<li>${esc(c.text)} <span class="legend">${esc(tool(c.receipt))}</span></li>`).join("")}</ul>` +
+    ((a.superseded || []).length ? `<p class="legend">Checked again against today's receipts, these no longer pass (the record or a rule changed after the agent wrote them):</p>` +
+      `<ul class="claims refused">${a.superseded.map(c => `<li><s>${esc(c.text)}</s> <span class="legend">${esc((c.errors || []).join("; "))}</span></li>`).join("")}</ul>` : "") +
     a.refused.map(x => `<ul class="claims refused">${(x.claims || []).filter(c => x.errors.some(e => e.startsWith(`claim ${x.claims.indexOf(c) + 1}:`)))
       .map(c => `<li><s>${esc(c.text)}</s></li>`).join("")}${x.summary && x.errors.some(e => e.startsWith("summary")) ? `<li><s>${esc(x.summary)}</s></li>` : ""}</ul>` +
       `<p class="legend">Refused: ${esc(x.errors.join("; "))}</p>`).join("") + `</section>`;
@@ -221,7 +224,7 @@ function show(r, corner) {
   const bars = pats.map(p => `<div class="lab ${p.over_represented ? "over" : ""}">${esc(p.phrase || p.pattern)}</div>` +
     `<div class="bar ${p.over_represented ? "over" : ""}" role="img" aria-label="${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}">` +
     `<i style="width:${Math.min(100, 100 * p.share)}%"></i><b class="city" style="left:${Math.min(100, 100 * p.city_share)}%"></b>` +
-    `<span>${pct(p.share)} here, ${pct(p.city_share)} citywide</span></div>`).join("");
+    `<span>${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}</span></div>`).join("");
 
   // what the city tried
   const cls = {worked: "s-worked", "not shown": "s-not", "earlier trend": "s-trend", worse: "s-worse"};

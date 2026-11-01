@@ -5,12 +5,12 @@
  "requests": {
   "source": "NYC Open Data, Traffic Signal and All-Way Stop Study Requests (w76s-c5u4)",
   "dataset": "nyc-study-requests",
-  "corners": 304,
-  "corners_matched": 256,
-  "corners_with_a_denied_fix_request": 117,
+  "corners": 303,
+  "corners_matched": 255,
+  "corners_with_a_denied_fix_request": 116,
   "denied_fix_requests_by_type": {
    "Left Turn Arrow/Signal": 170,
-   "Leading Pedestrian Interval": 57
+   "Leading Pedestrian Interval": 56
   },
   "rerequests": [
    {
@@ -308,8 +308,12 @@
   "The regression-to-the-mean factor is measured within the listed corners, so it is a lower bound on that effect where the corners were themselves picked by the same records."
  ],
  "regression_to_mean": {
-  "factor": 0.947,
-  "corners": 253,
+  "factor": 0.945,
+  "factor_ci95": [
+   0.906,
+   0.98
+  ],
+  "corners": 252,
   "top": 63,
   "years_before": [
    "2022",
@@ -319,26 +323,29 @@
    "2024",
    "2025"
   ],
-  "top_ratio": 0.855,
+  "top_ratio": 0.852,
   "all_ratio": 0.902
  },
  "summary": {
-  "corners": 304,
-  "injury_crashes_total": 11984,
-  "harm_usd_per_year_summed": 820700000.0,
+  "corners": 303,
+  "injury_crashes_total": 11914,
+  "harm_usd_per_year_summed": 815900000.0,
   "harm_usd_per_year": 786000000.0,
   "injury_crashes_distinct": 11477,
-  "corners_with_supported_fix": 123,
+  "corners_with_supported_fix": 129,
   "supported_by_tier": {
-   "FHWA-cited": 45,
-   "measured here": 78
+   "FHWA-cited": 46,
+   "measured here": 83
   },
-  "crashes_avoided_per_year_total": 84.4,
-  "crashes_avoided_per_year_after_rtm": 79.9,
-  "harm_avoided_usd_per_year_total": 28800000.0,
-  "harm_avoided_usd_per_year_after_rtm": 27300000.0,
-  "textbook_crashes_avoided_per_year": 327.6,
-  "corners_where_textbook_fix_is_not_supported": 212,
+  "crashes_avoided_per_year_total": 86.4,
+  "crashes_avoided_per_year_after_rtm": 81.6,
+  "distinct_share": 0.963,
+  "crashes_avoided_per_year_counted_once": 83.2,
+  "crashes_avoided_per_year_counted_once_after_rtm": 78.7,
+  "harm_avoided_usd_per_year_total": 29500000.0,
+  "harm_avoided_usd_per_year_after_rtm": 27900000.0,
+  "textbook_crashes_avoided_per_year": 337.6,
+  "corners_where_textbook_fix_is_not_supported": 226,
   "corners_with_another_road_owner": 12,
   "corners_with_presumed_owner": 0,
   "repeat_risk_corners": {
@@ -384,6 +391,7 @@
     "atlantic_avenue_hoyt_street",
     "7_avenue_west_42_street",
     "edgecombe_avenue_west_145_street",
+    "main_street_kissena_boulevard",
     "guy_r_brewer_boulevard_foch_boulevard",
     "white_plains_road_nereid_avenue",
     "east_gun_hill_road_hering_avenue",
@@ -411,7 +419,6 @@
     "atlantic_avenue_bedford_avenue",
     "east_new_york_avenue_remsen_avenue",
     "broadway_west_230_street",
-    "broadway_west_230_street_2",
     "south_conduit_avenue_hook_creek_boulevard",
     "macombs_road_featherbed_lane",
     "canal_street_manhattan_br_approach",
@@ -419,6 +426,7 @@
     "30_avenue_38_street",
     "adam_clayton_powell_jr_boulevard_west_135_street",
     "cross_bay_boulevard_woodhaven_boulevard",
+    "merrick_boulevard_archer_avenue",
     "allerton_avenue_olinville_avenue",
     "queens_boulevard_broadway",
     "rockaway_parkway_willmohr_street",
@@ -437,10 +445,13 @@
     "broadway_33_street",
     "springfield_boulevard_merrick_boulevard",
     "east_161_street_sheridan_avenue",
+    "mott_avenue_beach_20_street",
     "east_98_street_legion_street",
     "east_4_street_church_avenue",
     "47_avenue_47_street",
+    "main_street_vleigh_place",
     "89_avenue_163_street",
+    "lily_pond_avenue_mc_clean_avenue",
     "65_street_gowanus_expressway_eb_en_65_st",
     "pennsylvania_avenue_fulton_street",
     "loring_avenue_fountain_avenue",
@@ -468,8 +479,10 @@
     "grand_concourse_east_192_street",
     "canal_street_forsyth_street",
     "3_avenue_east_72_street",
+    "merrick_boulevard_228_street",
     "seagirt_boulevard_beach_31_street",
     "victory_boulevard_morani_street",
+    "merrick_boulevard_foch_boulevard",
     "richmond_avenue_staten_island_expwy_et_7_wb",
     "bell_boulevard_48_avenue",
     "ascan_avenue_manse_street",
@@ -523,7 +536,6 @@
     "broadway_gates_avenue",
     "atlantic_avenue_crescent_street",
     "morris_avenue_east_161_street",
-    "main_street_kissena_boulevard",
     "ocean_parkway_church_avenue",
     "173_street_jamaica_avenue",
     "65_street_new_utrecht_avenue",
@@ -539,7 +551,6 @@
     "nagle_avenue_ft_george_hill",
     "avenue_of_the_americas_west_14_street",
     "utica_avenue_clarkson_avenue",
-    "merrick_boulevard_archer_avenue",
     "myrtle_avenue_gold_street",
     "west_204_street_10_avenue",
     "malcolm_x_boulevard_fulton_street",
@@ -576,7 +587,6 @@
     "90_street_northern_boulevard",
     "springfield_boulevard_hempstead_avenue",
     "ocean_parkway_brighton_beach_avenue",
-    "mott_avenue_beach_20_street",
     "atlantic_avenue_80_street",
     "jerome_avenue_ogden_avenue",
     "east_houston_street_columbia_street",
@@ -595,7 +605,6 @@
     "east_broadway_pike_street",
     "broadway_chambers_street",
     "astoria_boulevard_newtown_avenue",
-    "main_street_vleigh_place",
     "glenwood_road_remsen_avenue",
     "prospect_place_buffalo_avenue",
     "bowery_bayard_street",
@@ -625,7 +634,6 @@
     "park_avenue_east_86_street",
     "121_street_hawtree_creek_road",
     "myrtle_avenue_gates_avenue",
-    "merrick_boulevard_228_street",
     "lefferts_boulevard_metropolitan_avenue",
     "55_street_7_avenue",
     "buffalo_avenue_fulton_street",
@@ -641,13 +649,11 @@
     "hylan_boulevard_guyon_avenue",
     "97_street_57_avenue",
     "cross_island_parkway_150_street",
-    "merrick_boulevard_foch_boulevard",
     "union_turnpike_springfield_boulevard",
     "pelham_parkway_north_wallace_avenue",
     "myrtle_avenue_north_portland_avenue",
     "69_street_metropolitan_avenue",
     "travis_avenue_draper_place",
-    "lily_pond_avenue_mc_clean_avenue",
     "forest_avenue_summerfield_place",
     "milford_drive_endor_avenue",
     "guy_r_brewer_boulevard_tuskegee_airmen_way",
@@ -657,24 +663,26 @@
     "richmond_road_lighthouse_avenue",
     "victory_boulevard_baron_boulevard"
    ],
-   "intersections": 304,
-   "injury_crashes_total": 11984,
-   "intersections_with_supported_fix": 123,
-   "intersections_needing_site_check": 135,
-   "crashes_avoided_per_year_total": 84.4,
-   "harm_avoided_usd_per_year_total": 28789000.0,
+   "intersections": 303,
+   "intersections_owner_recorded": 26,
+   "injury_crashes_total": 11914,
+   "intersections_with_supported_fix": 129,
+   "intersections_needing_site_check": 144,
+   "crashes_avoided_per_year_total": 86.4,
+   "harm_avoided_usd_per_year_total": 29471000.0,
    "letter": {
     "to": "the NYC Department of Transportation (NYC DOT)",
-    "subject": "304 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 304 high-crash intersections in New York City where the records show you are responsible for at least one of the roads had 11,984 injury crashes. At 123 of them, a low-cost fix the evidence supports would avoid about 84.4 crashes a year, worth about $28.8 million a year at the U.S. DOT's values. At 135 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "subject": "303 high-crash intersections on your roads",
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 303 high-crash intersections in New York City where you are responsible for at least one of the roads (listed in the road-owner records at 26 of them, and taken to be yours at the rest because the state's road inventory does not list them) had 11,914 injury crashes. At 129 of them, a low-cost fix the evidence supports would avoid about 86.4 crashes a year, worth about $29.5 million a year at the U.S. DOT's values. At 144 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
     "refused": [],
     "facts": {
-     "intersections": 304,
-     "injury_crashes_total": 11984,
-     "intersections_with_supported_fix": 123,
-     "intersections_needing_site_check": 135,
-     "crashes_avoided_per_year_total": 84.4,
-     "harm_avoided_usd_per_year_total": 28789000.0,
+     "intersections": 303,
+     "intersections_owner_recorded": 26,
+     "injury_crashes_total": 11914,
+     "intersections_with_supported_fix": 129,
+     "intersections_needing_site_check": 144,
+     "crashes_avoided_per_year_total": 86.4,
+     "harm_avoided_usd_per_year_total": 29471000.0,
      "years": 5,
      "records_to": "2026-10-31"
     },
@@ -1000,6 +1008,16 @@
       "copy_to": "Council Member, District 9, New York City Council; Manhattan Community Board 9"
      },
      {
+      "intersection": "Main Street & Kissena Boulevard",
+      "injury_crashes": 46,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.9,
+      "check_first": null,
+      "copy_to": "Council Member, District 20, New York City Council; Queens Community Board 7"
+     },
+     {
       "intersection": "Guy R Brewer Boulevard & Foch Boulevard",
       "injury_crashes": 31,
       "fix": "Backplates with Retroreflective Borders",
@@ -1270,16 +1288,6 @@
       "copy_to": "Council Member, District 14, New York City Council; Bronx Community Board 8"
      },
      {
-      "intersection": "Broadway & West 230 Street",
-      "injury_crashes": 70,
-      "fix": "Leading Pedestrian Interval",
-      "cmf_id": "9918",
-      "evidence": "this city's own past installs, which passed the causal gate",
-      "crashes_avoided_per_year": 0.4,
-      "check_first": null,
-      "copy_to": "Council Member, District 14, New York City Council; Bronx Community Board 8"
-     },
-     {
       "intersection": "South Conduit Avenue & Hook Creek Boulevard",
       "injury_crashes": 64,
       "fix": "Leading Pedestrian Interval",
@@ -1348,6 +1356,16 @@
       "crashes_avoided_per_year": 0.4,
       "check_first": null,
       "copy_to": "Council Member, District 32, New York City Council; Queens Community Board 10"
+     },
+     {
+      "intersection": "Merrick Boulevard & Archer Avenue",
+      "injury_crashes": 39,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.4,
+      "check_first": null,
+      "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
      },
      {
       "intersection": "Allerton Avenue & Olinville Avenue",
@@ -1530,6 +1548,16 @@
       "copy_to": "Council Member, District 16, New York City Council; Bronx Community Board 4"
      },
      {
+      "intersection": "Mott Avenue & Beach 20 Street",
+      "injury_crashes": 27,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.3,
+      "check_first": null,
+      "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 14"
+     },
+     {
       "intersection": "East 98 Street & Legion Street",
       "injury_crashes": 25,
       "fix": "Leading Pedestrian Interval",
@@ -1560,6 +1588,16 @@
       "copy_to": "Council Member, District 26, New York City Council; Queens Community Board 2"
      },
      {
+      "intersection": "Main Street & Vleigh Place",
+      "injury_crashes": 22,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.3,
+      "check_first": null,
+      "copy_to": "Council Member, District 24, New York City Council; Queens Community Board 8"
+     },
+     {
       "intersection": "89 Avenue & 163 Street",
       "injury_crashes": 19,
       "fix": "Leading Pedestrian Interval",
@@ -1568,6 +1606,16 @@
       "crashes_avoided_per_year": 0.3,
       "check_first": null,
       "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
+     },
+     {
+      "intersection": "Lily Pond Avenue & Mc Clean Avenue",
+      "injury_crashes": 10,
+      "fix": "Backplates with Retroreflective Borders",
+      "cmf_id": "1410",
+      "evidence": "the study FHWA's fact sheet cites",
+      "crashes_avoided_per_year": 0.3,
+      "check_first": null,
+      "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 2"
      },
      {
       "intersection": "65 Street & Gowanus Expressway Eb En 65 St",
@@ -1840,6 +1888,16 @@
       "copy_to": "Council Member, District 4, New York City Council; Manhattan Community Board 8"
      },
      {
+      "intersection": "Merrick Boulevard & 228 Street",
+      "injury_crashes": 17,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.1,
+      "check_first": null,
+      "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
+     },
+     {
       "intersection": "Seagirt Boulevard & Beach 31 Street",
       "injury_crashes": 15,
       "fix": "Leading Pedestrian Interval",
@@ -1858,6 +1916,16 @@
       "crashes_avoided_per_year": 0.1,
       "check_first": null,
       "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 2"
+     },
+     {
+      "intersection": "Merrick Boulevard & Foch Boulevard",
+      "injury_crashes": 12,
+      "fix": "Leading Pedestrian Interval",
+      "cmf_id": "9918",
+      "evidence": "this city's own past installs, which passed the causal gate",
+      "crashes_avoided_per_year": 0.1,
+      "check_first": null,
+      "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
      },
      {
       "intersection": "Richmond Avenue & Staten Island Expwy Et 7 Wb",
@@ -2386,18 +2454,8 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 16, New York City Council; Bronx Community Board 4"
-     },
-     {
-      "intersection": "Main Street & Kissena Boulevard",
-      "injury_crashes": 46,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 20, New York City Council; Queens Community Board 7"
      },
      {
       "intersection": "Ocean Parkway & Church Avenue",
@@ -2446,7 +2504,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 4, New York City Council; Manhattan Community Board 6"
      },
      {
@@ -2548,16 +2606,6 @@
       "crashes_avoided_per_year": null,
       "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 41, New York City Council; Brooklyn Community Board 17"
-     },
-     {
-      "intersection": "Merrick Boulevard & Archer Avenue",
-      "injury_crashes": 39,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
      },
      {
       "intersection": "Myrtle Avenue & Gold Street",
@@ -2920,16 +2968,6 @@
       "copy_to": "Council Member, District 48, New York City Council; Brooklyn Community Board 13"
      },
      {
-      "intersection": "Mott Avenue & Beach 20 Street",
-      "injury_crashes": 27,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 14"
-     },
-     {
       "intersection": "Atlantic Avenue & 80 Street",
       "injury_crashes": 27,
       "fix": null,
@@ -3026,7 +3064,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 20, New York City Council; Queens Community Board 7"
      },
      {
@@ -3036,7 +3074,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 16, New York City Council; Bronx Community Board 4"
      },
      {
@@ -3110,16 +3148,6 @@
       "copy_to": "Council Member, District 22, New York City Council; Queens Community Board 1"
      },
      {
-      "intersection": "Main Street & Vleigh Place",
-      "injury_crashes": 22,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 24, New York City Council; Queens Community Board 8"
-     },
-     {
       "intersection": "Glenwood Road & Remsen Avenue",
       "injury_crashes": 21,
       "fix": null,
@@ -3166,7 +3194,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 29, New York City Council; Queens Community Board 9"
      },
      {
@@ -3236,7 +3264,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 36, New York City Council; Brooklyn Community Board 3"
      },
      {
@@ -3366,7 +3394,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 19, New York City Council; Queens Community Board 11"
      },
      {
@@ -3410,23 +3438,13 @@
       "copy_to": "Council Member, District 37, New York City Council; Brooklyn Community Board 4"
      },
      {
-      "intersection": "Merrick Boulevard & 228 Street",
-      "injury_crashes": 17,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 31, New York City Council; Queens Community Board 13"
-     },
-     {
       "intersection": "Lefferts Boulevard & Metropolitan Avenue",
       "injury_crashes": 17,
       "fix": null,
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 29, New York City Council; Queens Community Board 9"
      },
      {
@@ -3526,7 +3544,7 @@
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
       "crashes_avoided_per_year": null,
-      "check_first": null,
+      "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 47, New York City Council; Brooklyn Community Board 13"
      },
      {
@@ -3568,16 +3586,6 @@
       "crashes_avoided_per_year": null,
       "check_first": "an entry on yellow or red",
       "copy_to": "Council Member, District 19, New York City Council; Queens Community Board 7"
-     },
-     {
-      "intersection": "Merrick Boulevard & Foch Boulevard",
-      "injury_crashes": 12,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 27, New York City Council; Queens Community Board 12"
      },
      {
       "intersection": "Union Turnpike & Springfield Boulevard",
@@ -3622,16 +3630,6 @@
      {
       "intersection": "Travis Avenue & Draper Place",
       "injury_crashes": 11,
-      "fix": null,
-      "cmf_id": null,
-      "evidence": "no fix the evidence supports without a site visit",
-      "crashes_avoided_per_year": null,
-      "check_first": null,
-      "copy_to": "Council Member, District 50, New York City Council; Staten Island Community Board 2"
-     },
-     {
-      "intersection": "Lily Pond Avenue & Mc Clean Avenue",
-      "injury_crashes": 10,
       "fix": null,
       "cmf_id": null,
       "evidence": "no fix the evidence supports without a site visit",
@@ -3739,6 +3737,7 @@
     "ocean_parkway_avenue_x"
    ],
    "intersections": 11,
+   "intersections_owner_recorded": 11,
    "injury_crashes_total": 798,
    "intersections_with_supported_fix": 3,
    "intersections_needing_site_check": 6,
@@ -3747,10 +3746,11 @@
    "letter": {
     "to": "the New York State Department of Transportation (NYSDOT), Region 11",
     "subject": "11 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 11 high-crash intersections in New York City where the records show you are responsible for at least one of the roads had 798 injury crashes. At 3 of them, a low-cost fix the evidence supports would avoid about 6.1 crashes a year, worth about $2.1 million a year at the U.S. DOT's values. At 6 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 11 high-crash intersections in New York City where the road-owner records list you for at least one of the roads had 798 injury crashes. At 3 of them, a low-cost fix the evidence supports would avoid about 6.1 crashes a year, worth about $2.1 million a year at the U.S. DOT's values. At 6 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
     "refused": [],
     "facts": {
      "intersections": 11,
+     "intersections_owner_recorded": 11,
      "injury_crashes_total": 798,
      "intersections_with_supported_fix": 3,
      "intersections_needing_site_check": 6,
@@ -3874,24 +3874,26 @@
    }
   },
   {
-   "party": "the toll authority that runs this crossing",
+   "party": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)",
    "presumed": false,
    "corners": [
     "2_avenue_queens_midtown_tunnel_approach"
    ],
    "intersections": 1,
+   "intersections_owner_recorded": 1,
    "injury_crashes_total": 43,
    "intersections_with_supported_fix": 1,
    "intersections_needing_site_check": 0,
    "crashes_avoided_per_year_total": 1.3,
    "harm_avoided_usd_per_year_total": 442000.0,
    "letter": {
-    "to": "the toll authority that runs this crossing",
-    "subject": "1 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 1 high-crash intersections in New York City where the records show you are responsible for at least one of the roads had 43 injury crashes. At 1 of them, a low-cost fix the evidence supports would avoid about 1.3 crashes a year, worth about $0.4 million a year at the U.S. DOT's values. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "to": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)",
+    "subject": "1 high-crash intersection on your roads",
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 1 high-crash intersection in New York City where the road-owner records list you for at least one of the roads had 43 injury crashes. At 1 of them, a low-cost fix the evidence supports would avoid about 1.3 crashes a year, worth about $0.4 million a year at the U.S. DOT's values. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
     "refused": [],
     "facts": {
      "intersections": 1,
+     "intersections_owner_recorded": 1,
      "injury_crashes_total": 43,
      "intersections_with_supported_fix": 1,
      "intersections_needing_site_check": 0,
@@ -5186,47 +5188,6 @@
   },
   {
    "slug": "broadway_west_230_street",
-   "name": "Broadway & West 230 Street",
-   "lat": 40.8768772274,
-   "lon": -73.90649601,
-   "injury_crashes": 70,
-   "injury_crashes_per_year": 14.0,
-   "harm_usd_per_year": 4794000.0,
-   "best": {
-    "countermeasure": "Leading Pedestrian Interval",
-    "cmf_id": "9918",
-    "evidence": "measured here",
-    "crashes_avoided_per_year": 0.4,
-    "harm_avoided_usd_per_year": 125000.0,
-    "pays_for_itself_under_usd": 875000.0,
-    "verify_on_site": null
-   },
-   "textbook": {
-    "countermeasure": "Backplates with Retroreflective Borders",
-    "cmf_id": "1410",
-    "evidence": "FHWA-cited",
-    "crashes_avoided_per_year": 2.1,
-    "harm_avoided_usd_per_year": 719000.0,
-    "pays_for_itself_under_usd": 5050000.0,
-    "verify_on_site": null
-   },
-   "owners": [
-    {
-     "party": "the NYC Department of Transportation (NYC DOT)",
-     "confidence": "recorded",
-     "presumed": false
-    }
-   ],
-   "requesters": [
-    "Council Member, District 14, New York City Council",
-    "Bronx Community Board 8"
-   ],
-   "repeat_risk": [],
-   "has_pattern": false,
-   "project_years": []
-  },
-  {
-   "slug": "broadway_west_230_street_2",
    "name": "Broadway & West 230 Street",
    "lat": 40.8768772274,
    "lon": -73.90649601,
@@ -7726,7 +7687,15 @@
    "injury_crashes_per_year": 9.2,
    "harm_usd_per_year": 3150000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 1.4,
+    "harm_avoided_usd_per_year": 473000.0,
+    "pays_for_itself_under_usd": 3319000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -7752,8 +7721,24 @@
    "injury_crashes": 46,
    "injury_crashes_per_year": 9.2,
    "harm_usd_per_year": 3150000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.9,
+    "harm_avoided_usd_per_year": 320000.0,
+    "pays_for_itself_under_usd": 2251000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 1.4,
+    "harm_avoided_usd_per_year": 473000.0,
+    "pays_for_itself_under_usd": 3319000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -8107,7 +8092,7 @@
    },
    "owners": [
     {
-     "party": "the toll authority that runs this crossing",
+     "party": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)",
      "confidence": "recorded",
      "presumed": false
     },
@@ -8299,7 +8284,15 @@
    "injury_crashes_per_year": 8.6,
    "harm_usd_per_year": 2945000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 1.3,
+    "harm_avoided_usd_per_year": 442000.0,
+    "pays_for_itself_under_usd": 3102000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -8883,8 +8876,24 @@
    "injury_crashes": 39,
    "injury_crashes_per_year": 7.8,
    "harm_usd_per_year": 2671000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.4,
+    "harm_avoided_usd_per_year": 125000.0,
+    "pays_for_itself_under_usd": 875000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 1.2,
+    "harm_avoided_usd_per_year": 401000.0,
+    "pays_for_itself_under_usd": 2814000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -11220,8 +11229,24 @@
    "injury_crashes": 27,
    "injury_crashes_per_year": 5.4,
    "harm_usd_per_year": 1849000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.3,
+    "harm_avoided_usd_per_year": 116000.0,
+    "pays_for_itself_under_usd": 813000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.8,
+    "harm_avoided_usd_per_year": 277000.0,
+    "pays_for_itself_under_usd": 1948000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -11896,7 +11921,15 @@
    "injury_crashes_per_year": 4.8,
    "harm_usd_per_year": 1644000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.7,
+    "harm_avoided_usd_per_year": 247000.0,
+    "pays_for_itself_under_usd": 1732000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -11923,7 +11956,15 @@
    "injury_crashes_per_year": 4.6,
    "harm_usd_per_year": 1575000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.7,
+    "harm_avoided_usd_per_year": 236000.0,
+    "pays_for_itself_under_usd": 1659000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -12355,8 +12396,24 @@
    "injury_crashes": 22,
    "injury_crashes_per_year": 4.4,
    "harm_usd_per_year": 1507000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.3,
+    "harm_avoided_usd_per_year": 98000.0,
+    "pays_for_itself_under_usd": 688000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.7,
+    "harm_avoided_usd_per_year": 226000.0,
+    "pays_for_itself_under_usd": 1587000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -12557,7 +12614,15 @@
    "injury_crashes_per_year": 4.2,
    "harm_usd_per_year": 1438000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.6,
+    "harm_avoided_usd_per_year": 216000.0,
+    "pays_for_itself_under_usd": 1515000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -12845,7 +12910,15 @@
    "injury_crashes_per_year": 4.0,
    "harm_usd_per_year": 1370000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.6,
+    "harm_avoided_usd_per_year": 205000.0,
+    "pays_for_itself_under_usd": 1443000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -13628,7 +13701,15 @@
    "injury_crashes_per_year": 3.6,
    "harm_usd_per_year": 1233000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.5,
+    "harm_avoided_usd_per_year": 185000.0,
+    "pays_for_itself_under_usd": 1299000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -13821,8 +13902,24 @@
    "injury_crashes": 17,
    "injury_crashes_per_year": 3.4,
    "harm_usd_per_year": 1164000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.1,
+    "harm_avoided_usd_per_year": 18000.0,
+    "pays_for_itself_under_usd": 125000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.5,
+    "harm_avoided_usd_per_year": 175000.0,
+    "pays_for_itself_under_usd": 1226000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -13847,7 +13944,15 @@
    "injury_crashes_per_year": 3.4,
    "harm_usd_per_year": 1164000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.5,
+    "harm_avoided_usd_per_year": 175000.0,
+    "pays_for_itself_under_usd": 1226000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -14438,7 +14543,15 @@
    "injury_crashes_per_year": 3.0,
    "harm_usd_per_year": 1027000.0,
    "best": null,
-   "textbook": null,
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.5,
+    "harm_avoided_usd_per_year": 154000.0,
+    "pays_for_itself_under_usd": 1082000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -14640,8 +14753,24 @@
    "injury_crashes": 12,
    "injury_crashes_per_year": 2.4,
    "harm_usd_per_year": 822000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Leading Pedestrian Interval",
+    "cmf_id": "9918",
+    "evidence": "measured here",
+    "crashes_avoided_per_year": 0.1,
+    "harm_avoided_usd_per_year": 27000.0,
+    "pays_for_itself_under_usd": 188000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "needs a site check",
+    "crashes_avoided_per_year": 0.4,
+    "harm_avoided_usd_per_year": 123000.0,
+    "pays_for_itself_under_usd": 866000.0,
+    "verify_on_site": "an entry on yellow or red"
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",
@@ -14816,8 +14945,24 @@
    "injury_crashes": 10,
    "injury_crashes_per_year": 2.0,
    "harm_usd_per_year": 685000.0,
-   "best": null,
-   "textbook": null,
+   "best": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "FHWA-cited",
+    "crashes_avoided_per_year": 0.3,
+    "harm_avoided_usd_per_year": 103000.0,
+    "pays_for_itself_under_usd": 721000.0,
+    "verify_on_site": null
+   },
+   "textbook": {
+    "countermeasure": "Backplates with Retroreflective Borders",
+    "cmf_id": "1410",
+    "evidence": "FHWA-cited",
+    "crashes_avoided_per_year": 0.3,
+    "harm_avoided_usd_per_year": 103000.0,
+    "pays_for_itself_under_usd": 721000.0,
+    "verify_on_site": null
+   },
    "owners": [
     {
      "party": "the NYC Department of Transportation (NYC DOT)",

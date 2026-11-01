@@ -699,7 +699,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1160,4 +1160,29 @@ def _t19_section() -> list[str]:
                  f"{cell('trend_bias')} |")
     L += ["", f"Quotes refused by the check: {s['refused_quotes']}. The limits adopted into data/fhwa_psc.json, including "
               "four the model found and the hand labels did not have, are listed in BENCH_PREREG.md (T19 result).", ""]
+    return L
+
+
+def _t20_section() -> list[str]:
+    """T20 and T20b: Muse Spark reads each claim into assertions, code checks them."""
+    a, b = _load("experiment_T20.json"), _load("experiment_T20b.json")
+    if not a or not b:
+        return []
+    row = lambda name, x: (f"| {name} | {x['accepted']}/{x['false_claims']} ({_f(x['attack_success'])}) | "
+                           f"{x['refused']}/{x['true_claims']} ({_f(x['false_refusal'])}) |")
+    L = ["## T20 and T20b Muse Spark reads each claim, code checks it", "",
+         "Registered in BENCH_PREREG.md (T20, T20b). Muse Spark lists each claim's assertions (receipt field, stated value, "
+         "or none) and whether it states a cause; code checks each against the receipt. The model never decides that a "
+         "claim is true.", "", "| arm | false claims accepted | true claims refused |", "|---|---|---|"]
+    names = {"regex": "regex checker", "model": "Muse Spark reads, code checks", "both": "both"}
+    L.append("| **T20, T18 held-out set (registered run)** | | |")
+    L += [row(names[k], a["heldout"][k]) for k in ("regex", "model", "both")]
+    if a.get("heldout_verifier_fixed_posthoc"):
+        L.append("| **T20, same readings, three verifier bugs fixed (post hoc)** | | |")
+        L += [row(names[k], a["heldout_verifier_fixed_posthoc"][k]) for k in ("regex", "model", "both")]
+    L.append("| **T20b, fresh attacker (advocate style, corners 31-40)** | | |")
+    L += [row(names[k], b["scores"][k]) for k in ("regex", "model", "both")]
+    L += ["", f"T20 registered rule: {'met' if a['rule']['met'] else 'not met'} (false refusals rose too much, mostly "
+              f"through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack "
+              f"success, false refusal at most 5 points higher): {'met' if b['rule']['met'] else 'not met'}.", ""]
     return L

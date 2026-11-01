@@ -26,6 +26,9 @@
   },
   "crashes_avoided_per_year_total": 2.0,
   "crashes_avoided_per_year_after_rtm": 2.0,
+  "distinct_share": 0.943,
+  "crashes_avoided_per_year_counted_once": 1.9,
+  "crashes_avoided_per_year_counted_once_after_rtm": 1.9,
   "harm_avoided_usd_per_year_total": 700000.0,
   "harm_avoided_usd_per_year_after_rtm": 700000.0,
   "textbook_crashes_avoided_per_year": 75.9,
@@ -93,6 +96,7 @@
     "3rd_street_tunnel_2nd_street_southwest"
    ],
    "intersections": 49,
+   "intersections_owner_recorded": 0,
    "injury_crashes_total": 2900,
    "intersections_with_supported_fix": 5,
    "intersections_needing_site_check": 40,
@@ -101,10 +105,11 @@
    "letter": {
     "to": "the District Department of Transportation (DDOT)",
     "subject": "49 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 49 high-crash intersections in Washington DC where we presume you are responsible for at least one of the roads had 2,900 injury crashes. At 5 of them, a low-cost fix the evidence supports would avoid about 2.0 crashes a year, worth about $0.7 million a year at the U.S. DOT's values. At 40 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 49 high-crash intersections in Washington DC where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 2,900 injury crashes. At 5 of them, a low-cost fix the evidence supports would avoid about 2.0 crashes a year, worth about $0.7 million a year at the U.S. DOT's values. At 40 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
     "refused": [],
     "facts": {
      "intersections": 49,
+     "intersections_owner_recorded": 0,
      "injury_crashes_total": 2900,
      "intersections_with_supported_fix": 5,
      "intersections_needing_site_check": 40,
@@ -628,6 +633,7 @@
     "georgia_avenue_northwest_upshur_street_northwest"
    ],
    "intersections": 15,
+   "intersections_owner_recorded": 0,
    "injury_crashes_total": 959,
    "intersections_with_supported_fix": 0,
    "intersections_needing_site_check": 15,
@@ -636,10 +642,11 @@
    "letter": {
     "to": "the state transportation department (route designation only; confirm ownership)",
     "subject": "15 high-crash intersections on your roads",
-    "body": "In the 5 years of public police crash records up to 2026-10-31, the 15 high-crash intersections in Washington DC where we presume you are responsible for at least one of the roads had 959 injury crashes. None of them has a low-cost fix that the public evidence supports without a site visit. At 15 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 15 high-crash intersections in Washington DC where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 959 injury crashes. None of them has a low-cost fix that the public evidence supports without a site visit. At 15 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
     "refused": [],
     "facts": {
      "intersections": 15,
+     "intersections_owner_recorded": 0,
      "injury_crashes_total": 959,
      "intersections_with_supported_fix": 0,
      "intersections_needing_site_check": 15,

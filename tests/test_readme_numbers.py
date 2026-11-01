@@ -22,9 +22,9 @@ def test_city_plan_numbers():
         _has(f"${round(s['harm_usd_per_year'] / 1e6)} million")
     s = _load("plan_nyc.json")["summary"]
     _has(f"{round(s['textbook_crashes_avoided_per_year'])} crashes a year")
-    _has(f"**{round(s['crashes_avoided_per_year_total'])}** ({round(s['crashes_avoided_per_year_after_rtm'])} after "
-         "regression to the mean)")
-    _has(f"at {s['corners_with_supported_fix']} corners")
+    _has(f"**{round(s['crashes_avoided_per_year_total'])}** at {s['corners_with_supported_fix']} corners; "
+         f"**{round(s['crashes_avoided_per_year_counted_once'])}** with each crash counted once, "
+         f"**{round(s['crashes_avoided_per_year_counted_once_after_rtm'])}** after regression to the mean")
     _has(f"not the only road owner at {s['corners_with_another_road_owner']} corners")
     _has(f"{s['repeat_risk_corners']['turn traffic calming']} corners already got turn calming")
     _has(f"At {len(_load('plan_nyc.json')['requests']['rerequests'])} corners, a leading pedestrian interval")
@@ -52,3 +52,10 @@ def test_causal_gate_numbers():
     lpi = t11["runs"][g["primary"]][g["outcome"]]
     _has(f"{lpi['sites']:,} intersections")
     _has(f"−{round(100 * (1 - lpi['theta']))}%")
+
+
+def test_claim_reading_numbers():
+    t = _load("experiment_T20b.json")["scores"]
+    for arm in ("regex", "model"):
+        _has(f"{t[arm]['accepted']} of {t[arm]['false_claims']}")
+        _has(f"{t[arm]['refused']} of {t[arm]['true_claims']}")
