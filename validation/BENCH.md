@@ -446,6 +446,36 @@ These runs exclude only the program's own neighbouring installs, so New York's n
 
 Registered rule: (a) met (calibrated upper bounds 8.5%, 7.0%); (b) not met (calibrated verdict on New York's LPIs: no_evidence). The calibrated gate does not replace the original gate; the product keeps the original gate and shows each program's rank among fake programs next to its verdict (the LPI programs rank 0.070–0.184, where the calibrated gate needs below 0.025).
 
+## T15 Falsification-gated discovery: crash mechanisms that hold up on sealed later years
+
+Registered in BENCH_PREREG.md (T15, change 1). Explore years before 2024-05-01, sealed years after; Holm over every pattern an arm tested; 100 real corners and 100 null corners (crashes drawn at random from all corners).
+
+| arm | real corners | patterns tested per corner | confirmed per corner | distinct per corner (secondary) | precision | false findings per null corner | cost |
+|---|---|---|---|---|---|---|---|
+| agent (Muse Spark Open proposes, code tests) | 100 | 3.6 | 0.94 | 0.717 | 0.260 | 0.02 | $8.106 |
+| greedy: 10 largest excesses (no model) | 100 | 10.0 | 2.3 | 0.818 | 0.230 | 0.01 | $0 |
+| grid: every 1-2 condition pattern (no model) | 100 | 156.3 | 2.7 | 0.636 | 0.017 | 0.0 | $0 |
+
+Agent minus each no-model arm, per corner (95% bootstrap over corners): greedy count -1.354 [-1.768, -0.98]; greedy distinct -0.101 [-0.253, +0.04]; grid count -1.778 [-3.202, -0.768]; grid distinct +0.081 [-0.071, +0.232].
+Registered rule (agent above both no-model arms on confirmed findings, null false findings at most 0.05 per corner): not met.
+Findings the agent confirmed that no other arm confirmed (by 80% crash overlap): 14 at 13 corners, for example: maneuver=stopped in traffic, heading west (0.049 here vs 0.016); factor=following too closely (0.244 here vs 0.059); factor=other vehicular AND maneuver=parked, heading west (0.025 here vs 0.002).
+
+## T16 Site check from the aerial photo: Muse Spark proposes, SAM 3.1 confirms
+
+Registered in BENCH_PREREG.md (T16). 30 corners; ground truth within 40 m from the city's map layers or OpenStreetMap (corners without ground truth are excluded per attribute).
+
+| attribute | arm | corners with truth | decided | coverage | accuracy (95% interval) | used in the product |
+|---|---|---|---|---|---|---|
+| high visibility crosswalk | spark | 24 | 24 | 1.000 | 0.875 (0.690-0.957) |  |
+| high visibility crosswalk | sam | 24 | 24 | 1.000 | 0.917 (0.742-0.977) |  |
+| high visibility crosswalk | gated | 24 | 23 | 0.958 | 0.913 (0.732-0.976) | yes |
+| bike lane | spark | 30 | 29 | 0.967 | 0.655 (0.473-0.801) |  |
+| bike lane | sam | 30 | 30 | 1.000 | 0.833 (0.664-0.927) |  |
+| bike lane | gated | 30 | 22 | 0.733 | 0.818 (0.615-0.927) | no |
+| median | spark | 30 | 29 | 0.967 | 0.621 (0.440-0.773) |  |
+| median | sam | 30 | 30 | 1.000 | 0.833 (0.664-0.927) |  |
+| median | gated | 30 | 22 | 0.733 | 0.818 (0.615-0.927) | no |
+
 ## Data agent: adapters found and validated without hand-written code
 
 | place | dataset | validator attempts | records near the test point | latest record |
