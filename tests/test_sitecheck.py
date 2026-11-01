@@ -72,3 +72,19 @@ def test_osm_api_truth_reads_a_box_around_the_point(monkeypatch):
     assert S._truth_one(a, 40.75, -73.98, 40) is True
     w, s, e, n = map(float, seen["bbox"].split(","))
     assert seen["url"].endswith("/map.json") and s < 40.75 < n and w < -73.98 < e and (n - s) < 0.001
+
+
+def test_osm_profile_falls_back_to_the_map_call_when_overpass_is_down(monkeypatch):
+    from nearmisslens import context
+    monkeypatch.setattr(context, "_OVERPASS_DOWN", ["refused"])
+    lat, lon = 47.6, -122.33
+    near = [{"type": "node", "id": 1, "lat": lat, "lon": lon, "tags": {"highway": "traffic_signals"}},
+            {"type": "node", "id": 2, "lat": lat + 0.0015, "lon": lon, "tags": {"highway": "traffic_signals"}},  # 167 m
+            {"type": "node", "id": 3, "lat": lat + 0.0015, "lon": lon, "tags": {"highway": "bus_stop"}},
+            {"type": "way", "nodes": [1, 2], "tags": {"highway": "primary", "name": "1st Ave", "lanes": "4"}},
+            {"type": "way", "nodes": [2], "tags": {"highway": "residential", "name": "Far St"}}]
+    monkeypatch.setattr(context, "osm_map", lambda la, lo, r: near if r < 400 else
+                        [{"type": "node", "id": 9, "lat": lat, "lon": lon + 0.003, "tags": {"amenity": "school"}}])
+    o = context.osm(lat, lon)
+    assert o["signals"] == 1 and o["bus_stops_200m"] == 1 and o["schools_400m"] == 1
+    assert [r["name"] for r in o["roads"]] == ["1st Ave"]

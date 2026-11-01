@@ -11,6 +11,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import math
 import re
 import time
 from collections import Counter
@@ -75,16 +76,68 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
     raise RuntimeError(f"{url}: {err}")
 
 
+OSM_API = "https://api.openstreetmap.org/api/0.6"
+_OVERPASS_DOWN: list[str] = []  # set after Overpass fails once, so later requests go straight to the OSM API
+
+
+def metres(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    k = math.pi / 180
+    return 6371000 * math.hypot((lon2 - lon1) * k * math.cos((lat1 + lat2) / 2 * k), (lat2 - lat1) * k)
+
+
+def osm_map(lat: float, lon: float, radius_m: float) -> list[dict]:
+    """Every element in a box of radius_m around the point, from the OpenStreetMap API's map call: nodes with their
+    coordinates and tags, and the ways crossing the box with their tags. The fallback when Overpass is unreachable."""
+    dlat = radius_m * 1.1 / 111320
+    dlon = dlat / max(math.cos(math.radians(lat)), 0.1)
+    js, _ = fetch(f"{OSM_API}/map.json", {"bbox": f"{lon - dlon:.6f},{lat - dlat:.6f},{lon + dlon:.6f},{lat + dlat:.6f}"},
+                  timeout=90)
+    return js.get("elements", [])
+
+
+def overpass(query: str, timeout: float = 120) -> dict:
+    """An Overpass query, unless Overpass already failed in this process (then RuntimeError at once)."""
+    if _OVERPASS_DOWN:
+        raise RuntimeError(f"Overpass unreachable earlier: {_OVERPASS_DOWN[0]}")
+    try:
+        return fetch(OVERPASS, data={"data": query}, timeout=timeout)
+    except RuntimeError as e:
+        _OVERPASS_DOWN.append(str(e)[:120])
+        raise
+
+
+def _osm_from_map(lat: float, lon: float) -> tuple[list[dict], list[dict], float]:
+    """The same nodes and ways as osm()'s Overpass query, from two OSM API map calls."""
+    t = time.time()
+    near = osm_map(lat, lon, 200)
+    roads = ("primary", "secondary", "tertiary", "residential", "trunk", "unclassified")
+    nodes = [e.get("tags", {}) for e in near if e.get("type") == "node" and e.get("tags") and (
+        (e["tags"].get("highway") in ("traffic_signals", "crossing", "stop", "give_way")
+         and metres(lat, lon, e["lat"], e["lon"]) <= OSM_RADIUS_M) or e["tags"].get("highway") == "bus_stop")]
+    keep = {e["id"] for e in near if e.get("type") == "node" and metres(lat, lon, e["lat"], e["lon"]) <= OSM_RADIUS_M}
+    ways = [e.get("tags", {}) for e in near if e.get("type") == "way" and e.get("tags", {}).get("highway") in roads
+            and keep & set(e.get("nodes", []))]
+    try:  # a 400 m box in a dense centre can pass the API's node limit; then schools are not counted
+        nodes += [e["tags"] for e in osm_map(lat, lon, 400) if e.get("type") == "node" and e.get("tags", {}).get(
+            "amenity") in ("school", "kindergarten") and metres(lat, lon, e["lat"], e["lon"]) <= 400]
+    except RuntimeError:
+        nodes.append({"_schools_unknown": "yes"})
+    return nodes, ways, round(time.time() - t, 2)
+
+
 def osm(lat: float, lon: float) -> dict:
     q = (f"[out:json][timeout:60];("
          f"node(around:{OSM_RADIUS_M},{lat},{lon})[highway~\"traffic_signals|crossing|stop|give_way\"];"
          f"way(around:{OSM_RADIUS_M},{lat},{lon})[highway~\"primary|secondary|tertiary|residential|trunk|unclassified\"];"
          f"node(around:400,{lat},{lon})[amenity~\"school|kindergarten\"];"
          f"node(around:200,{lat},{lon})[highway=bus_stop];);out tags center;")
-    js, secs = fetch(OVERPASS, data={"data": q}, timeout=120)
-    el = js.get("elements", [])
-    nodes = [e.get("tags", {}) for e in el if e["type"] == "node"]
-    ways = [e.get("tags", {}) for e in el if e["type"] == "way"]
+    try:
+        js, secs = overpass(q, timeout=120)
+        el = js.get("elements", [])
+        nodes = [e.get("tags", {}) for e in el if e["type"] == "node"]
+        ways = [e.get("tags", {}) for e in el if e["type"] == "way"]
+    except RuntimeError:
+        nodes, ways, secs = _osm_from_map(lat, lon)
     roads = {}
     for w in ways:
         name = w.get("name") or w.get("ref") or "unnamed"
@@ -102,7 +155,8 @@ def osm(lat: float, lon: float) -> dict:
             "marked_crossings": sum(n.get("highway") == "crossing" and n.get("crossing") in
                                     ("marked", "traffic_signals", "zebra", "uncontrolled") for n in nodes),
             "stop_signs": sum(n.get("highway") in ("stop", "give_way") for n in nodes),
-            "schools_400m": sum(n.get("amenity") in ("school", "kindergarten") for n in nodes),
+            "schools_400m": None if any("_schools_unknown" in n for n in nodes) else
+            sum(n.get("amenity") in ("school", "kindergarten") for n in nodes),
             "bus_stops_200m": sum(n.get("highway") == "bus_stop" for n in nodes),
             "roads": [{"name": k, "highway": v["highway"], "lanes": sorted(v["lanes"]), "maxspeed": sorted(v["maxspeed"]),
                        "ref": sorted(v["ref"]), "operator": sorted(v["operator"])} for k, v in sorted(roads.items())]}

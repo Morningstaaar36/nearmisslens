@@ -109,10 +109,7 @@ def decide(spark_answer: dict, dets: list, shape, radius_m: float = SPEC["radius
 
 # ------------------------------------------------------------------------------------------------- ground truth
 
-def _metres(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    k = math.pi / 180
-    x = (lon2 - lon1) * k * math.cos((lat1 + lat2) / 2 * k)
-    return 6371000 * math.hypot(x, (lat2 - lat1) * k)
+_metres = context.metres
 
 
 def _osm_tile(a: dict, lat: float, lon: float) -> list[dict]:
