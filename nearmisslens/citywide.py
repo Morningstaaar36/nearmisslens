@@ -23,11 +23,65 @@ def junction_adapters(city: str) -> list[dict]:
 
 
 def cities() -> list[str]:
+    """Cities the screen can run on: a priority-intersection list in the registry, or a "screen" setting that finds
+    the worst corners from the city's own crash records."""
     from . import opendata
-    return [c["id"] for c in opendata.load_cities() if junction_adapters(c["id"])]
+    return [c["id"] for c in opendata.load_cities() if junction_adapters(c["id"]) or (c.get("screen") or {}).get("from") == "crashes"]
+
+
+def corner_name(lat: float, lon: float) -> str:
+    """'A & B' from the two most important named roads at the point (OpenStreetMap), for crash-found corners."""
+    rank = {"trunk": 0, "primary": 1, "secondary": 2, "tertiary": 3, "unclassified": 4, "residential": 5}
+    q = f'[out:json][timeout:25];way(around:25,{lat},{lon})[highway][name];out tags;'
+    try:  # a light query: only named roads within 25 m
+        js, _ = context.fetch(context.OVERPASS, data={"data": q}, timeout=40)
+        roads = [e.get("tags", {}) for e in js.get("elements", [])]
+    except Exception:  # a name is a convenience; the coordinates are the corner
+        roads = []
+    named = sorted(roads, key=lambda r: rank.get(r.get("highway"), 9))
+    names = list(dict.fromkeys(r["name"] for r in named if r.get("name")))[:2]
+    return " & ".join(names) if names else f"Corner at {lat:.5f}, {lon:.5f}"
+
+
+def junctions_from_crashes(city: str, top: int = 50, radius_m: float = 50.0, years: int = 5) -> list[dict]:
+    """The city's worst corners found from its own injury crashes: greedily the point with the most injury crashes
+    within radius_m over the years to the as-of date, then the next at least 2 x radius_m away, and so on."""
+    import numpy as np
+    from scipy.spatial import cKDTree
+    from . import treatments
+    from .config import since
+    org = treatments.origin(city)
+    df = treatments.crashes(city, org)
+    lo = since(years)
+    df = df[(df["month"] >= lo.year * 12 + lo.month - 1) & df["injury"]]
+    pts = df[["x", "y"]].to_numpy()
+    if not len(pts):
+        return []
+    tree = cKDTree(pts)
+    counts = np.array([len(n) for n in tree.query_ball_point(pts, radius_m)])
+    alive = np.ones(len(pts), bool)
+    out = []
+    for i in np.argsort(-counts):
+        if len(out) >= top:
+            break
+        if not alive[i]:
+            continue
+        near = tree.query_ball_point(pts[i], radius_m)
+        cx, cy = pts[near].mean(axis=0)
+        alive[tree.query_ball_point([cx, cy], 2 * radius_m)] = False
+        lat = org[0] + cy / 110_574
+        lon = org[1] + cx / (111_320 * np.cos(np.radians(org[0])))
+        out.append({"lat": round(float(lat), 6), "lon": round(float(lon), 6)})
+    for j in out:
+        j["name"] = corner_name(j["lat"], j["lon"])
+    return out
 
 
 def junctions(city: str) -> list[dict]:
+    from . import opendata
+    cfg = (opendata.city(city) or {}).get("screen") or {}
+    if cfg.get("from") == "crashes" and not junction_adapters(city):
+        return junctions_from_crashes(city, cfg.get("top", 50), cfg.get("radius_m", 50.0))
     out = []
     for a in junction_adapters(city):
         j = a["junctions"]

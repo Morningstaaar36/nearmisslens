@@ -964,7 +964,12 @@
     -76.9
    ],
    "agency": "the District Department of Transportation (DDOT)",
-   "short_name": "Washington"
+   "short_name": "Washington",
+   "screen": {
+    "from": "crashes",
+    "top": 50,
+    "radius_m": 50
+   }
   },
   {
    "id": "chicago",
@@ -1000,7 +1005,12 @@
     -121.99998618281417
    ],
    "agency": "the Seattle Department of Transportation (SDOT)",
-   "short_name": "Seattle"
+   "short_name": "Seattle",
+   "screen": {
+    "from": "crashes",
+    "top": 50,
+    "radius_m": 50
+   }
   },
   {
    "id": "sf",
@@ -1012,7 +1022,12 @@
     -122.35
    ],
    "agency": "the San Francisco Municipal Transportation Agency (SFMTA)",
-   "short_name": "San Francisco"
+   "short_name": "San Francisco",
+   "screen": {
+    "from": "crashes",
+    "top": 50,
+    "radius_m": 50
+   }
   }
  ],
  "geocoder": {
