@@ -85,3 +85,15 @@ def test_a_failed_source_marks_the_report_partial_and_says_so():
         f"SAVED REPORT (records as of {rep['asof']}), not a live run.",
         "PARTIAL: these sources could not be read, so the findings below leave them out: "
         "street: RuntimeError: Overpass unavailable"]
+
+
+def test_a_new_city_is_data_and_its_gaps_are_listed(tmp_path, monkeypatch):
+    import json
+    from nearmisslens import opendata
+    reg = tmp_path / "registry.json"
+    reg.write_text(json.dumps({"adapters": [{"id": "x-crashes", "kind": "crash", "city": "x"}], "cities": []}))
+    monkeypatch.setattr(opendata, "REGISTRY", reg)
+    assert opendata.coverage("x")["city"] is None
+    opendata.save_city({"id": "x", "name": "Xville", "bbox": [1, 1, 2, 2], "agency": "the X DOT", "short_name": "Xville"})
+    cov = opendata.coverage("x")
+    assert cov["kinds"] == {"crash": ["x-crashes"]} and "office" in cov["missing"] and "crash" not in cov["missing"]

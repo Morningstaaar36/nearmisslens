@@ -431,6 +431,9 @@ def cmd_discover(args) -> int:
     for t in r["tried"]:
         print(f"  rejected {t['candidate']}: {str(t['rejected'])[:160]}")
     a = r["adapter"]
+    if r.get("not_saved"):
+        print(f"found {a['id']} but did not save it: {r['not_saved']}")
+        return 1
     print(f"adapter for {r['place']['city']}: " + (f"{a['id']} ({a['source']}), validation {a['provenance']['validation']}"
                                                  if a else "none found"))
     return 0 if a else 1
@@ -456,6 +459,27 @@ def cmd_gate(args) -> int:
               f"{m.get('change_pct')}% {m.get('ci95')} on {m.get('sites')} sites")
     bench.write_bench_md()
     return 0
+
+
+def cmd_add_city(args) -> int:
+    from . import opendata
+    if not args.check:
+        if not (args.name and args.bbox and args.agency):
+            print("adding a city needs --name, --bbox and --agency (or --check to see what an existing city has)")
+            return 2
+        entry = {"id": args.id, "name": args.name, "bbox": args.bbox, "agency": args.agency,
+                 "short_name": args.short_name or args.name, **({"aliases": args.alias} if args.alias else {})}
+        opendata.save_city(entry)
+        print(f"saved city {args.id} to the registry")
+    cov = opendata.coverage(args.id)
+    if cov["city"] is None:
+        print(f"no city {args.id!r} in the registry; add it with --name, --bbox and --agency")
+        return 1
+    for k, ids in sorted(cov["kinds"].items()):
+        print(f"  has {k}: {', '.join(ids)}")
+    for k in cov["missing"]:
+        print(f"  missing {k}: {opendata.NEEDED[k]}")
+    return 0 if "crash" in cov["kinds"] else 1
 
 
 def cmd_voice_studio(args) -> int:
@@ -559,6 +583,16 @@ def main(argv: list[str] | None = None) -> int:
     br.add_argument("--no-memo", action="store_true")
     br.add_argument("--meta", action="store_true", help="memo on the Meta API instead of Muse Spark Open (Baseten)")
     br.add_argument("--letter", action="store_true", help="also draft a checked letter to the council member and community board")
+    ac = sub.add_parser("add-city", help="add a city to the registry (data only) and list what it has and lacks; "
+                        "e.g. nml add-city boston --name Boston --bbox 42.23 -71.19 42.40 -70.99 --agency 'the Boston "
+                        "Transportation Department (BTD)'")
+    ac.add_argument("id")
+    ac.add_argument("--name")
+    ac.add_argument("--bbox", type=float, nargs=4, metavar=("LAT_MIN", "LON_MIN", "LAT_MAX", "LON_MAX"))
+    ac.add_argument("--agency", help="the road agency letters go to, e.g. 'the Boston Transportation Department (BTD)'")
+    ac.add_argument("--short-name")
+    ac.add_argument("--alias", action="append", help="another name an address may use for the city (repeatable)")
+    ac.add_argument("--check", action="store_true", help="only list what the registry has for the city")
     dsc = sub.add_parser("discover", help="data agent: find and validate a city's open crash data for the registry")
     dsc.add_argument("lat", type=float)
     dsc.add_argument("lon", type=float)
@@ -644,7 +678,7 @@ def run_command(args) -> int:
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
-            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
             "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 

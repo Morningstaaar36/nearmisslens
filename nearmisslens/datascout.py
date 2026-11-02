@@ -180,10 +180,14 @@ def discover(client, lat: float, lon: float, save: bool = True) -> dict:
             tried.append({"candidate": c["name"], "rejected": why, "attempts": len(log)})
             continue
         a = got["adapter"]
+        a["city"] = context.city_of(lat, lon)  # a registry city's adapter, or none saved: add the city first
         a["provenance"] = {"found_by": "data agent", "catalog_id": c["id"], "model": MODEL,
                            "mapping_reason": got["mapping"]["reason"], "validation": got["validation"],
                            "attempts": len(log)}
-        if save:
+        if save and a["city"]:
             opendata.save_adapter(a)
+        elif save:
+            return {"place": place, "adapter": a, "tried": tried, "not_saved": "no registry city covers this point; "
+                    "add it first with nml add-city, then run discover again"}
         return {"place": place, "adapter": a, "tried": tried}
     return {"place": place, "adapter": None, "tried": tried}

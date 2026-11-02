@@ -33,6 +33,30 @@ def save_city(city: dict) -> None:
     REGISTRY.write_text(json.dumps(reg, indent=1))
 
 
+NEEDED = {"crash": "crash records (required): nml discover LAT LON finds and validates them",
+          "project": "safety projects, to test programs and spot corners with no recent work",
+          "designation": "the city's priority locations",
+          "jurisdiction": "who owns each road; without it the city is presumed the owner, marked inferred",
+          "office": "district offices that can request the work; without them the letter goes to the road owner only"}
+
+
+def _overlaps(a: list[float], b: list[float]) -> bool:
+    return a[0] <= b[2] and b[0] <= a[2] and a[1] <= b[3] and b[1] <= a[3]
+
+
+def coverage(city_id: str) -> dict:
+    """What the registry can do for a city: the adapters of each kind that cover it, and what is missing."""
+    c = city(city_id)
+    if c is None:
+        return {"city": None, "kinds": {}, "missing": list(NEEDED)}
+    kinds: dict[str, list[str]] = {}
+    for a in load_registry():
+        box = a.get("bbox") or (city(a.get("city")) or {}).get("bbox")
+        if a.get("city") == city_id or (a.get("city") is None and (box is None or _overlaps(box, c["bbox"]))):
+            kinds.setdefault(a["kind"], []).append(a["id"])
+    return {"city": c, "kinds": kinds, "missing": [k for k in NEEDED if k not in kinds]}
+
+
 def city(city_id: str | None) -> dict | None:
     return next((c for c in load_cities() if c["id"] == city_id), None)
 
