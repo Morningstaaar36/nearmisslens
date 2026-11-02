@@ -85,28 +85,6 @@ def cmd_export(args) -> int:
     return 0
 
 
-def cmd_programs(args) -> int:
-    from . import programscout
-    res = programscout.discover(_memo_client(not args.meta), args.city, save=not args.dry_run,
-                                skip_known=not args.all)
-    for a in res["found"]:
-        print(f"found: {a['source']} | date {a['date_field']} | filter {a.get('where')} | {a['label']} | "
-              f"{a.get('countermeasure')} | {a['provenance']['validation']['usable_dated']} usable dated records")
-    print(f"{len(res['tried'])} other layers turned down")
-    return 0
-
-
-def cmd_gate(args) -> int:
-    from . import bench, treatments
-    out = treatments.run_suite(treatments.auto_spec(args.city))
-    for k, g in out["gates"].items():
-        m = out["runs"][g["primary"]][g["outcome"]] or {}
-        print(f"{g['treatment']}: {'passed' if g['passed'] else 'not shown (' + str(g['reason']) + ')'}; "
-              f"{m.get('change_pct')}% {m.get('ci95')} on {m.get('sites')} sites")
-    bench.write_bench_md()
-    return 0
-
-
 def cmd_voice(args) -> int:
     from .runner import run_voice
     out = run_voice(args.split, args.source, args.audio)
