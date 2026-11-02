@@ -163,7 +163,7 @@ def attack(client, model: str, family: str, corner: str, tool: str, data: dict, 
     return {"false_claims": [], "true_claims": []}
 
 
-def judge(report: dict, rid: str, text: str) -> list[str]:
+def arbitrate(report: dict, rid: str, text: str) -> list[str]:
     """The gate's errors for one claim citing one receipt of a saved case (an empty list: accepted)."""
     desk = engineer.Desk(receipts=report["receipts"],
                          data={r["id"]: report["findings"][r["tool"]] for r in report["receipts"] if r["tool"] in report["findings"]})
@@ -192,7 +192,7 @@ TOOLS = ("choose_fixes", "root_cause", "test_programs")
 
 
 def run(client, model: str, family: str, reports: list[dict], n_false: int = 8, n_true: int = 4) -> list[dict]:
-    """Attack each case's receipts and judge every claim with the current gate."""
+    """Attack each case's receipts and test every claim with the current gate."""
     rows = []
     for rep in reports:
         rep = engineer.refresh(rep)
@@ -207,10 +207,10 @@ def run(client, model: str, family: str, reports: list[dict], n_false: int = 8, 
                 why = verify_false(data, c)
                 rows.append({"corner": name, "tool": r["tool"], "kind": "false", "error_type": c.get("error_type"),
                              "claim": c.get("claim"), "spec": c, "verified": why is not None, "why": why,
-                             "errors": (errs := judge(rep, r["id"], c.get("claim") or "")), "accepted": not errs})
+                             "errors": (errs := arbitrate(rep, r["id"], c.get("claim") or "")), "accepted": not errs})
             for c in got.get("true_claims") or []:
                 ok = verify_true(data, c)
                 rows.append({"corner": name, "tool": r["tool"], "kind": "true", "claim": c.get("claim"), "spec": c,
-                             "verified": ok, "errors": (errs := judge(rep, r["id"], c.get("claim") or "")),
+                             "verified": ok, "errors": (errs := arbitrate(rep, r["id"], c.get("claim") or "")),
                              "accepted": not errs})
     return rows

@@ -75,7 +75,7 @@ def test_panel_runs_three_agents_and_records_caught_claims(tmp_path):
     assert [len(s["rejected_attempts"]) for s in result["stages"]] == [1, 0, 1]
     assert result["caught"] == 2
     assert result["proposals"][0]["psc"] == "Backplates with Retroreflective Borders"
-    assert fc.payloads[3]["model"] == panel.SKEPTIC_MODEL and fc.payloads[5]["model"] == panel.JUDGE_MODEL
+    assert fc.payloads[3]["model"] == panel.SKEPTIC_MODEL and fc.payloads[5]["model"] == panel.ARBITER_MODEL
     panel.write(result, tmp_path, "test")
     md = (tmp_path / "panel.md").read_text()
     assert "rejected: memo: number 61.7 does not appear" in md and "| 1 | Backplates with Retroreflective Borders | 1447 | accept |" in md

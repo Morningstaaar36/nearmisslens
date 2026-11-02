@@ -31,9 +31,9 @@ def test_true_paraphrases_must_state_the_record_value():
     assert not T.verify_true(FX, {"claim": "30 pedestrians were injured.", "field": "crashes.pedestrian_injured", "record_value": 29})
 
 
-def test_the_gate_judges_attacks_like_any_claim():
-    assert T.judge(CASE, "R3", "Bruckner Boulevard & Hunts Point Avenue had 29 pedestrians killed.")
-    assert not T.judge(CASE, "R3", "Bruckner Boulevard & Hunts Point Avenue had 29 pedestrians injured.")
+def test_the_gate_tests_attacks_like_any_claim():
+    assert T.arbitrate(CASE, "R3", "Bruckner Boulevard & Hunts Point Avenue had 29 pedestrians killed.")
+    assert not T.arbitrate(CASE, "R3", "Bruckner Boulevard & Hunts Point Avenue had 29 pedestrians injured.")
 
 
 def test_score_counts_only_verified_claims():

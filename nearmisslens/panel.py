@@ -2,7 +2,7 @@
 to the data.
 
 The Proposer (Muse Spark) picks countermeasures per hotspot, the Skeptic (Muse Spark) objects with evidence, and the
-Judge (Muse Wonder) decides and writes the memo. An agent can only finish when the checker accepts its output: every
+Arbiter (Muse Wonder) decides and writes the memo. An agent can only finish when the checker accepts its output: every
 hotspot and CMF ID must exist in the audit, a recommended CMF must be one the audit kept for that hotspot, and every
 number in the text must appear in the audit, its memo or a tool result the agent read. Rejected attempts are kept."""
 from __future__ import annotations
@@ -20,7 +20,7 @@ from .config import MODELS
 
 PROPOSER_MODEL = MODELS["reader"]
 SKEPTIC_MODEL = MODELS["reader"]
-JUDGE_MODEL = MODELS["large"]
+ARBITER_MODEL = MODELS["large"]
 BUDGET_USD = {"proposer": 0.05, "skeptic": 0.05, "judge": 0.8}
 MAX_TURNS = 14
 MAX_OUTPUT_TOKENS = 16000
@@ -55,7 +55,7 @@ SKEPTIC_INSTRUCTIONS = (
     "unrated or estimated for other crash types, severities, area types or countries (look them up with cmf), and "
     "notes such as a missing two-wheeler crash type. Mark an objection blocking only when the evidence shows the "
     "countermeasure would not address the hotspot. Use crfid '' for an objection to the hotspot as a whole. " + _COMMON)
-JUDGE_INSTRUCTIONS = (
+ARBITER_INSTRUCTIONS = (  # wording unchanged since T5: the replay cache is keyed on it
     "You are the Judge on a road-safety review panel. Accept or reject every proposal, weighing the objections against "
     "the tool results. Then write a markdown memo for a city traffic engineer, at most 250 words: what was observed, "
     "which countermeasures to consider first and why, and the limits (surrogate measures from a short observation, "
@@ -252,7 +252,7 @@ def _finish(check: Callable[..., list[str]], checked: bool = True) -> Callable[.
 
 
 def run_panel(client: MetaClient, facts: dict, memo_md: str, cmf: pd.DataFrame, tag: str, checked: bool = True) -> dict:
-    """Proposer, Skeptic and Judge. checked=False is the NML-Bench T5 ablation: every finish is accepted as submitted
+    """Proposer, Skeptic and Arbiter. checked=False is the NML-Bench T5 ablation: every finish is accepted as submitted
     and the checker's errors are only recorded (stage["ungrounded"])."""
     g = Grounding(facts, memo_md)
     tools = read_tools(facts, cmf, g)
@@ -281,18 +281,18 @@ def run_panel(client: MetaClient, facts: dict, memo_md: str, cmf: pd.DataFrame, 
     objections = skeptic["output"]["objections"]
     dec = {"rank": {"type": "integer"}, "crfid": {"type": "string"}, "accept": {"type": "boolean"},
            "reason": {"type": "string"}}
-    judge = _stage(client, JUDGE_MODEL, JUDGE_INSTRUCTIONS,
+    arbiter = _stage(client, ARBITER_MODEL, ARBITER_INSTRUCTIONS,
                    f"Proposals:\n{json.dumps(proposals, indent=1)}\nObjections:\n{json.dumps(objections, indent=1)}\n"
                    "Decide every proposal and write the memo.",
                    tools, Tool("finish", "Submit the decisions and the memo.",
                                _obj({"decisions": _array(dec), "memo": {"type": "string"}}, ["decisions", "memo"]),
                                _finish(lambda decisions, memo: check_decisions(g, proposals, decisions, memo), checked)),
-                   "judge", tag, checked)
-    stages.append(judge)
-    if not judge["accepted"]:
+                   "judge", tag, checked)  # the role label (and the prompt's wording) are kept: saved results and the
+    stages.append(arbiter)                    # replay cache are keyed on them
+    if not arbiter["accepted"]:
         return {"status": "judge did not finish", "stages": stages, "proposals": proposals, "objections": objections}
     return {"status": "complete", "stages": stages, "proposals": proposals, "objections": objections,
-            "decisions": judge["output"]["decisions"], "memo": judge["output"]["memo"],
+            "decisions": arbiter["output"]["decisions"], "memo": arbiter["output"]["memo"],
             "usd": round(sum(s["usd"] for s in stages), 4),
             "caught": sum(len(a["errors"]) for s in stages for a in s["rejected_attempts"]),
             "ungrounded": sum(len(s.get("ungrounded", [])) for s in stages)}

@@ -1,5 +1,5 @@
 """Manager agent: Muse Wonder runs a junction's safety review end to end. It reads the audit, has Muse Spark's video
-reviews and the Proposer/Skeptic/Judge panel weigh in, checks residents' complaints with the intake agent, looks up the
+reviews and the Proposer/Skeptic/Arbiter panel weigh in, checks residents' complaints with the intake agent, looks up the
 fix test and hotspot persistence, asks a person to sign off, and writes a work order. Every claim passes the audit's
 grounding checker before the work order is accepted; three refusals stop the run for a person (Meta's verifiable-agent
 pattern). The run's reasoning summaries and tool calls form the mission-control timeline shown in the viewer."""
