@@ -1028,7 +1028,8 @@
     -73.68
    ],
    "agency": "the NYC Department of Transportation (NYC DOT)",
-   "short_name": "New York"
+   "short_name": "New York",
+   "aliases": ["New York", "NY", "Manhattan", "Brooklyn", "Bronx", "Queens", "Staten Island"]
   },
   {
    "id": "dc",
@@ -1041,6 +1042,7 @@
    ],
    "agency": "the District Department of Transportation (DDOT)",
    "short_name": "Washington",
+   "aliases": ["Washington, D.C.", "District of Columbia"],
    "screen": {
     "from": "crashes",
     "top": 50,
@@ -1069,7 +1071,8 @@
     -118.15
    ],
    "agency": "the Los Angeles Department of Transportation (LADOT)",
-   "short_name": "Los Angeles"
+   "short_name": "Los Angeles",
+   "aliases": ["LA"]
   },
   {
    "id": "seattle",
@@ -1099,6 +1102,7 @@
    ],
    "agency": "the San Francisco Municipal Transportation Agency (SFMTA)",
    "short_name": "San Francisco",
+   "aliases": ["SF"],
    "screen": {
     "from": "crashes",
     "top": 50,

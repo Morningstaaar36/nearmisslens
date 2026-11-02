@@ -38,6 +38,39 @@ def _key(address: str) -> str:
     return " & ".join(sorted(" ".join(x.split()) for x in streets.split("&")))
 
 
+def _norm(text: str) -> str:
+    return " " + " ".join(re.sub(r"[^a-z0-9 ]", " ", text.lower()).split()) + " "
+
+
+def city_named(address: str) -> str | None:
+    """The registry city named after the first comma ('Pine St & 5th Ave, Seattle, WA'), by its id, name or an alias
+    in registry.json; the name written first wins, so 'Seattle, Washington' is Seattle. None if no city is named."""
+    from . import opendata
+    rest = _norm(address.partition(",")[2])
+    best = None
+    for c in opendata.load_cities():
+        for n in {c["id"], c["name"], *c.get("aliases", [])}:
+            i = rest.find(_norm(n))
+            if i >= 0 and (best is None or i < best[0]):
+                best = (i, c["id"])
+    return best[1] if best else None
+
+
+def _entry(table: dict, address: str) -> dict | None:
+    """The offline table's point for an address, only in the city the address names. Without a city, a street pair
+    known in one city only is used; known in several, it is refused rather than guessed."""
+    key, city = _key(address), city_named(address)
+    if city:
+        return table.get(f"{city}|{key}")
+    if address.partition(",")[2].strip():
+        return None  # a place the registry does not know: never another city's point
+    hits = [v for k, v in table.items() if k.partition("|")[2] == key]
+    if len(hits) > 1:
+        raise ValueError(f"{address!r} is a corner in more than one city ({', '.join(sorted(h['city'] for h in hits))}); "
+                         "add the city, e.g. 'Street A & Street B, City'")
+    return hits[0] if hits else None
+
+
 def gazetteer() -> dict:
     return json.loads(GEOCODES.read_text()) if GEOCODES.exists() else {}
 
@@ -49,15 +82,15 @@ def save_gazetteer(extra: list[dict] | None = None) -> int:
     table = gazetteer()
     for city, res in citywide.screened():
         for r in res.get("rows", []):
-            table[_key(r["name"])] = {"lat": r["lat"], "lon": r["lon"], "name": r["name"], "city": city}
+            table[f"{city}|{_key(r['name'])}"] = {"lat": r["lat"], "lon": r["lon"], "name": r["name"], "city": city}
     for p in SETTINGS.runs_dir.glob("briefs/*/brief.json"):
         f = json.loads(p.read_text())
         d = f.get("dossier") or {}
-        if d.get("lat") is not None:
-            table.setdefault(_key(f["junction"]), {"lat": d["lat"], "lon": d["lon"], "name": f["junction"].split(",")[0],
+        if d.get("lat") is not None and d.get("city"):
+            table.setdefault(f"{d['city']}|{_key(f['junction'])}", {"lat": d["lat"], "lon": d["lon"], "name": f["junction"].split(",")[0],
                                                    "city": d.get("city")})
     for e in extra or []:
-        table[_key(e["name"])] = e
+        table[f"{e['city']}|{_key(e['name'])}"] = e
     GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
     return len(table)
 
@@ -98,7 +131,7 @@ def geocode(address: str) -> tuple[float, float, str]:
     finds the area, and for an intersection OpenStreetMap gives the node shared by the two streets nearest to it."""
     if not address or not address.strip():
         raise ValueError("give an address or an intersection, e.g. 'Street A & Street B, City'")
-    known = gazetteer().get(_key(address))
+    known = _entry(gazetteer(), address)
     if known:
         return known["lat"], known["lon"], f"{known['name']}, {address.split(',', 1)[1].strip()}" \
             if "," in address else known["name"]
@@ -143,9 +176,14 @@ def _lookup(address: str) -> tuple[float, float, str]:
     lat2, lon2 = min(nodes, key=lambda n: (n[0] - lat) ** 2 + (n[1] - lon) ** 2)
     from . import context as _c
     found = {"lat": lat2, "lon": lon2, "name": f"{a} & {b}", "city": _c.city_of(lat2, lon2)}
-    table = gazetteer()  # remembered, so the next lookup (and replay) needs no service
-    table[_key(address)] = found
-    GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
+    named = city_named(address)
+    if named and found["city"] != named:
+        raise ValueError(f"{a} & {b} was found in {found['city'] or 'a place no registry city covers'}, not in the city "
+                         "the address names")
+    if found["city"]:  # remembered in its own city, so the next lookup (and replay) needs no service
+        table = gazetteer()
+        table[f"{found['city']}|{_key(address)}"] = found
+        GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
     return lat2, lon2, f"{a} & {b}, {rest.strip()}"
 
 
