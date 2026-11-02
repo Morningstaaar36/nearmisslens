@@ -625,3 +625,47 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Hypothesis:** at least 20% of the baseline's quotes are absent from their readable page, or at least 20% of its number findings differ from the record. Reported either way.
 - **Caveat:** "differs" here means the number is not the record's within 100 m over five years. A source counting another area or period is not therefore wrong, and the baseline was not told the record's frame. The comparison measures what reaches the reader unchecked, not dishonesty.
 - **Change to the number checker made while building this, before any T24 case and after T21c:** an age, a time, a speed, a distance or a house number is never read as a count, so "a 30-year-old was killed" is not checked as 30 deaths.
+
+### T21d and T24 results (2026-11-02)
+- **T21d:** 12 of 12 published at $0.063 per case and 281 s per case, with 4 publish-gate refusals. All 26 published quotes were verified on their page, all 12 published cases state the corner's injury-crash count, and no published finding writes out a licence plate, so the registered rule was **met**.
+  - Two of its inputs (San Francisco 311 descriptions) printed licence plates. Saved results now redact plates everywhere, inputs included; quote checks compare redacted text on both sides.
+  - It ran the number checker from before the age exemption.
+- **Post-hoc review of the 14 published T21d claim verdicts** (not the hand audit; that is still pending):
+  - **9 are right:** seven "cannot be checked" (ages, a time, corridor totals from 2022, a TSI request count) and two "consistent" (one death and 4 pedestrians injured near the corner).
+  - **5 were wrong.** Under the corrected check described below, each is "cannot be checked".
+    - NYC news: "two women are dead" was called consistent. It is the people in one crash, against five years of crashes.
+    - DC news: a victim's age next to a date was called differing.
+    - San Francisco news: a $1.2 million state grant was called consistent. A crash record holds crash costs, not grants.
+    - NYC statement: "9 KSI in 5 crashes" and "116 intersections where five or more were killed or seriously injured" were called differing. The record does not separate serious injuries, and the 116 is a citywide count of places.
+  - **The cause was our code:** a number that matched anything in the record, or nothing at all, passed as consistent, and a label the receipt did not hold was compared with zero.
+- **T21c verdicts re-checked by the corrected code** (in replay, at the window T21c read):
+  - Streetsblog's "**at least** 106 crashes since 2021" fits the record's 113. The published "contradicted" was wrong.
+  - Its "30 crashes in 2025" does differ from the record's 28 for 2025; another area or data date can explain that.
+- **T24:** Muse Spark alone finished 11 of 12 cases at $0.091 per case.
+  - **Quotes:** 116 cited; 47 verified, 26 absent from the page they cite, 43 on pages that could not be read. That is 26 of 73 readable (36%).
+  - **Numbers:** 55 findings state numbers. **None** carries a number the corner's record tests and matches; 1 differs (the same "30 in 2025"), and 54 cannot be checked (corridor and citywide figures, other periods, ages, times, ids).
+  - **The hypothesis is supported** on quotes (36%, against at least 20%). On numbers, 1 of 55 differs (2%), so it is not met there. What the baseline lacks is the record, not accuracy about it: none of its 55 number findings was a count the record could test.
+  - **Scoring correction, made after the run and before this write-up; the model's answers were not rerun:**
+    - The first scoring rebuilt each corner's record at the pinned replay date instead of the date the desk run read. 5 of 12 rebuilds failed, and their findings were skipped.
+    - It also used the merged receipts rather than the one a claim is checked against.
+    - It now replays the desk's own `investigate` call in that run's window (`orchestrator.replay_record`) and scores with the desk's `claim_verdict`.
+    - First scoring: 26 number findings, 5 consistent, 5 differing, 16 not checkable. Corrected: 55, 0, 1, 54. The quote counts did not change.
+
+### Changes after T21d (post hoc, from the review above; before any further run)
+- **A claim is consistent only when a number in it was tested:** a different value in its place would have been refused as not the record's number. Otherwise the verdict is "cannot be checked", with the reason. (`orchestrator.checked_numbers`)
+- **Not compared with the record:**
+  - the people in one crash ("struck by a car", "the July 27 crash");
+  - a dollar sum that is not a crash cost;
+  - serious injuries, where the record does not separate them;
+  - a count of places, unless the sentence names the program whose sites they are;
+  - a corridor, district or citywide figure;
+  - a period that starts before the record's window;
+  - a label the receipt has no field for.
+- **Parsing:**
+  - Counts written as words ("two women") are read as counts.
+  - "At least 106" and "fewer than 60" are bounds, tested against the record's count.
+  - "Intersections where five or more" is a threshold that defines a group, not a count.
+  - "27 percent" is read as 27%.
+  - A day of the month ("October 19") is a date, not a count.
+- **Saved results** keep the claim-check and program-record receipts whole, and each case's as-of date, so a case's record can be rebuilt in the window it read.
+- Tests: `tests/test_claim_verdicts.py`.

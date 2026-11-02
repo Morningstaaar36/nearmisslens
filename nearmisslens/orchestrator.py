@@ -21,8 +21,9 @@ import time
 from . import context, engineer, opendata, treatments
 from .agent import Tool, run_agent
 from .cache import atomic_write
+from .config import MODELS, SETTINGS
+from .config import asof as config_asof
 
-from .config import MODELS
 MODEL = MODELS["orchestrator"]
 GEO_KINDS = ("crash", "project", "designation", "crash_detail")  # dataset kinds that can be queried around a point
 SNAP_M = 150.0  # an address (not an intersection) is investigated at the nearest screened corner within this distance
@@ -133,8 +134,8 @@ def quote_check(quote: str, url: str, known: dict | None = None) -> str:
     text = text_of(url, known)
     if text is None:
         return "unreadable"
-    q = _norm(quote)
-    return "verified" if len(q) >= 12 and q in _norm(text) else "absent"
+    q = _norm(redact(quote))  # a plate is removed from what we keep, so it is removed from the page compared too
+    return "verified" if len(q) >= 12 and q in _norm(redact(text)) else "absent"
 
 
 def quote_in_page(quote: str, url: str) -> bool:
@@ -419,7 +420,7 @@ PLATE = re.compile(r"\b(?:plate|licen[cs]e(?:\s+plate)?|tag)\b(?:\s+(?:number|no
 
 
 def has_plate(text: str) -> bool:
-    """A licence plate written out ("CA plate 9WHE045"): never published, even when the source printed it."""
+    """A licence plate written out ("CA plate 7ABC123"): never published, even when the source printed it."""
     return any(re.search(r"\d", m.group(1)) for m in PLATE.finditer(text or ""))
 
 
@@ -434,14 +435,140 @@ def numbers_in(text: str) -> set[str]:
     return {n.replace(",", "").rstrip(".").removesuffix(".0") for n in re.findall(r"\d[\d,]*(?:\.\d+)?", t)}
 
 
+NUMBER_WORDS = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve "
+                                             "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
+NUMBER_WORDS |= {"thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90}
+WORD_COUNT = re.compile(r"\b(" + "|".join(NUMBER_WORDS) + r")\b(?=\s+(?:[\w-]+\s+){0,2}?(?:people|persons?|pedestrians?|"
+                        r"cyclists?|bicyclists?|motorists?|drivers?|riders?|women|men|children|kids|crash(?:es)?|"
+                        r"collisions?|deaths?|fatalities|intersections|sites|locations|killed|injured|hurt|dead|died)\b)",
+                        re.I)
+# a sentence about one crash ("struck by a car", "the July 27 crash"): its counts are that crash's people, not the
+# record's counts over five years
+INCIDENT = re.compile(r"\b(?:the|a|this|that)\s+(?:[\w,-]+\s+){0,4}?(?:crash|collision|incident)\b|"
+                      r"\bby an?\s+(?:[\w-]+\s+){0,3}?(?:car|driver|vehicle|truck|suv|sedan|bus|van|motorist)\b", re.I)
+PEOPLE_LABELS = ("deaths", "pedestrians killed", "cyclists killed", "pedestrians injured", "cyclists injured")
+COST = re.compile(r"\b(cost|costs|harm|worth|value|economic)\b", re.I)
+AREA = re.compile(r"\bcorridor\b|\balong\b|\bcity-?wide\b|\bacross (?:the )?city\b|\bhigh[- ]injury network\b|"
+                  r"\bneighbou?rhood\b|\bdistrict\b|\bwards?\b", re.I)
+SEVERITY = re.compile(r"\bKSI\b|serious(?:ly)? injur|severe(?:ly)? injur|severe crash", re.I)
+MISMATCH = re.compile(r"^(\S+) is not the record's number of (.+?)(?: \(the record has.*| for what this sentence names)?$")
+
+
+def words_to_digits(text: str) -> str:
+    """"Two women are dead" -> "2 women are dead": a count written as a word is checked like one written as a digit."""
+    return WORD_COUNT.sub(lambda m: str(NUMBER_WORDS[m.group(1).lower()]), text or "")
+
+
+def _record_has(fc: context.FactCheck, label: str) -> bool:
+    pattern = next((p for n, _, _, p in context.LABELS if n == label), None)
+    if label in ("deaths", "pedestrians killed", "cyclists killed"):
+        pattern = r"killed|death|fatal|injury_crash"  # a crash record lists only non-zero deaths: absent means none
+    return pattern is None or any(re.search(pattern, k) for _, k, _ in fc.paths)
+
+
+def claim_errors(fc: context.FactCheck, text: str) -> list[str]:
+    """The number checker's objections to a source's sentence, with the ones a crash record cannot decide said so:
+    a label this receipt has no field for, a dollar figure that is not a crash cost (a budget, a grant), and the
+    people in one crash set against five years of crashes."""
+    incident = bool(INCIDENT.search(text))
+    start = window_start(fc)
+    early = [y for y in map(int, re.findall(r"\b(?:19|20)\d\d\b", text)) if start and y < start]
+    out = []
+    for e in fc.text(text):
+        if re.fullmatch(r"number (?:19|20)\d\d is not in the dossier", e):
+            continue  # a year places a fact; it is not a count
+        m = MISMATCH.match(e)
+        if m:
+            n, label = m.groups()
+            if early:
+                e = f"{n}: the record does not show {early[0]} (its window starts in {start})"
+            elif AREA.search(text):
+                e = f"{n}: the record does not show this area (it counts crashes within {context.CRASH_RADIUS_M:g} m of the corner)"
+            elif label == "dollars" and not COST.search(text):
+                e = f"{n}: the record does not show this sum (it holds crash costs, not budgets or grants)"
+            elif SEVERITY.search(text) and not any(re.search(r"serious|severe|ksi", k, re.I) for _, k, _ in fc.paths):
+                e = f"{n}: the record does not show serious injuries apart from other injuries"
+            elif label == "sites" and not fc._bound(text):
+                e = f"{n}: the record does not show this set of places (its sites are a program's study sites)"
+            elif incident and label in PEOPLE_LABELS:
+                e = (f"{n}: the record does not show the people in one crash (it counts all crashes within "
+                     f"{context.CRASH_RADIUS_M:g} m over {context.YEARS} years)")
+            elif not _record_has(fc, label):
+                e = f"{n}: the record does not show {label}"
+        out.append(e)
+    return list(dict.fromkeys(out))
+
+
+LOWER = re.compile(r"\b(?:at least|more than|over|upwards of)\s+$", re.I)
+UPPER = re.compile(r"\b(?:fewer than|less than|under|at most|up to)\s+$", re.I)
+LOWER_AFTER, UPPER_AFTER = re.compile(r"^\s*(?:or more\b|\+)", re.I), re.compile(r"^\s*or (?:fewer|less)\b", re.I)
+CRITERION = re.compile(r"\b(?:where|with|having|that had|that have)\s+(?:[\w-]+\s+){0,2}(?:at least|more than|over|"
+                       r"fewer than|less than|under|at most|up to)?\s*$", re.I)
+
+
+def resolve_bounds(fc: context.FactCheck, text: str) -> str:
+    """"At least 106 crashes" is a bound, not a count: it holds where the record's count for what it names is 106 or
+    more (the sentence is rewritten with that count, so the checker tests the label); "intersections where five or
+    more were killed" is a threshold that defines a group, so it is no count at all."""
+    for m in reversed(list(re.finditer(r"\d[\d,]*(?:\.\d+)?", text))):
+        head, tail = text[max(0, m.start() - 40):m.start()], text[m.end():m.end() + 12]
+        low, up = LOWER.search(head) or LOWER_AFTER.match(tail), UPPER.search(head) or UPPER_AFTER.match(tail)
+        if not (low or up) or YEAR.fullmatch(m.group(0)):
+            continue
+        if CRITERION.search(head):
+            text = text[:m.start()] + "several" + text[m.end():]
+            continue
+        n = float(m.group(0).replace(",", ""))
+        for v in sorted(fc.known, reverse=bool(up)):
+            if (v >= n if low else v <= n) and v == int(v):
+                probe = text[:m.start()] + f"{v:g}" + text[m.end():]
+                if not any(c in e for e in claim_errors(fc, probe) for c in DIFFERS):
+                    text = probe
+                    break
+    return text
+
+
+def window_start(fc: context.FactCheck) -> int | None:
+    """The first year of the record's window (its 'since' date), when the receipt states one."""
+    return int(fc.since[:4]) if fc.since else None
+
+
+def checked_numbers(fc: context.FactCheck, text: str) -> list[str]:
+    """The numbers in a sentence the record actually tests: a different value in their place would be refused as
+    not the record's number. A number that merely appears somewhere in the record (a time, an address, a coincidence)
+    tests nothing, so a sentence with none of these is not 'consistent', only uncheckable."""
+    out = []
+    for m in re.finditer(r"\d[\d,]*(?:\.\d+)?", text):
+        if YEAR.fullmatch(m.group(0)):
+            continue
+        probe = text[:m.start()] + "987654" + text[m.end():]
+        if text[max(0, m.start() - 2):m.start()].rstrip().endswith("$"):  # a crash cost, scaled as written
+            scale = {"million": 1e6, "thousand": 1e3}.get((re.match(r"\s*(million|thousand)", text[m.end():]) or
+                                                          [None, ""])[1], 1)
+            v = float(m.group(0).replace(",", "")) * scale
+            if COST.search(text) and any(abs(x - v) <= 0.05 * max(v, 1) for x in fc.by_label["dollars"]):
+                out.append(m.group(0))
+            continue
+        if text[m.end():m.end() + 2].lstrip().startswith("%"):
+            if fc._bound(text) and "is not a share or change" in " ".join(fc.text(probe)):
+                out.append(m.group(0))  # a share of something the sentence names that the record holds
+            continue
+        if any(c in e for e in claim_errors(fc, probe) for c in DIFFERS):
+            out.append(m.group(0))
+    return out
+
+
 def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list[str], list[str]]:
     """A source's sentence against a receipt, decided by the number checker: 'differs' only when the record has a
     different value for what the sentence names (the source may count another window or area: the verdict says so,
-    never "false"); 'cannot be checked' when the record has nothing on it (a victim's age, a corridor-wide total).
-    The model-read check (T20b) refuses about a quarter of true claims, so it never decides a verdict: what it
-    objects to is returned as flags."""
+    never "false"); 'cannot be checked' when the record has nothing on it (a victim's age, a corridor-wide total, a
+    grant, the people in one crash) or when no number in it is one the record tests; 'consistent' only when at least
+    one of its numbers was tested and matched. The model-read check (T20b) refuses about a quarter of true claims, so
+    it never decides a verdict: what it objects to is returned as flags."""
     overstated = engineer.wording(text)
-    errs = context.FactCheck(data).text(engineer.strip_places(text, places))
+    fc = context.FactCheck(data)
+    t = resolve_bounds(fc, words_to_digits(re.sub(r"\s+per\s?cent\b", "%", engineer.strip_places(text, places), flags=re.I)))
+    errs = claim_errors(fc, t)
     flags = [] if errs else engineer.model_read_errors(text, data, client)
     if any(c in e for e in errs for c in DIFFERS):
         return "differs from the record", (errs + overstated)[:6], flags
@@ -449,6 +576,9 @@ def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list
         return "cannot be checked against this record", (errs + overstated)[:6], flags
     if overstated:
         return "overstates what the record can show", overstated[:6], flags
+    if not checked_numbers(fc, t):
+        return ("cannot be checked against this record",
+                ["no number in the sentence is a count this record holds, so nothing in it was tested"], flags)
     return "consistent with the record", [], flags
 
 
@@ -498,6 +628,47 @@ def nearest_corner(city: str | None, lat: float, lon: float) -> tuple[dict, floa
     return j, context.metres(lat, lon, j["lat"], j["lon"])
 
 
+SMALL_RECEIPTS = ("check_claim", "program_record")  # kept whole in results; a corner's record is rebuilt from the cache
+
+
+def replay_record(case: dict) -> dict:
+    """The record a finished case's investigate call built, rebuilt from the cache by the same call with the same
+    address (by tool name: root_cause, test_programs, choose_fixes, who_must_act, ...)."""
+    import os
+    desk = Desk(case.get("city"))
+    inv = next(t for t in core_tools(desk) if t.name == "investigate")
+    replay, SETTINGS.replay = SETTINGS.replay, True
+    pinned = os.environ.get("NML_ASOF")
+    if run_asof(case):
+        os.environ["NML_ASOF"] = run_asof(case)  # the window the run queried, not today's
+    try:
+        for s in case.get("trace") or []:
+            if s.get("tool") == "investigate" and not s.get("error"):
+                if "error" not in inv.fn(**{**s["args"], "draft_letter": False}):
+                    break
+    finally:
+        SETTINGS.replay = replay
+        if pinned is None:
+            os.environ.pop("NML_ASOF", None)
+        else:
+            os.environ["NML_ASOF"] = pinned
+    return {r["tool"]: r["data"] for r in desk.receipts.values() if isinstance(r["data"], dict)}
+
+
+def run_asof(case: dict) -> str | None:
+    """The as-of date a case's record was read at: saved with the case, or (runs before it was saved) the end of the
+    window its findings state ("since 2021-11-02" is a five-year window to 2026-11-02)."""
+    if case.get("asof"):
+        return case["asof"]
+    import datetime as dt
+    text = " ".join(f.get("text", "") for f in ((case.get("final") or {}).get("findings") or []) if isinstance(f, dict))
+    m = re.search(r"since ((?:19|20)\d\d-\d\d-\d\d)", text)
+    if not m:
+        return None
+    d = dt.date.fromisoformat(m.group(1))
+    return d.replace(year=d.year + context.YEARS).isoformat()
+
+
 def _places(desk: Desk):
     d = engineer.Desk()
     d.places |= desk.places
@@ -523,6 +694,7 @@ def run_case(task: str, city: str, client, letter_client=None, model_check_clien
             "trace": [{"turn": s.turn, "tool": s.tool, "args": {k: v for k, v in (s.arguments or {}).items() if k != "findings"},
                        "error": (s.result or {}).get("error") if isinstance(s.result, dict) else None,
                        "errors": (s.result or {}).get("errors") if isinstance(s.result, dict) else None} for s in run.steps],
-            "receipts": {k: {kk: vv for kk, vv in v.items() if kk != "data"} for k, v in desk.receipts.items()},
-            "corner": (rep.get("junction") or {}).get("name"),
+            "receipts": {k: (v if v["tool"] in SMALL_RECEIPTS else {kk: vv for kk, vv in v.items() if kk != "data"})
+                         for k, v in desk.receipts.items()},
+            "corner": (rep.get("junction") or {}).get("name"), "asof": config_asof().isoformat(),
             "letter": ((rep.get("findings") or {}).get("draft_request") or {}).get("letter")}

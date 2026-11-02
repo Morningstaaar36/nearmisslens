@@ -63,9 +63,16 @@ def test_claim_reading_numbers():
 
 def test_desk_numbers():
     from nearmisslens.bench import desk_stats
-    c = desk_stats(_load("experiment_T21c.json"))
-    _has(f"published {c['published']}, and all {c['verified']} of their quotes")
-    _has(f"${c['usd_per_case']:.3f} a case")
+    c, d = desk_stats(_load("experiment_T21c.json")), desk_stats(_load("experiment_T21d.json"))
+    _has(f"published {c['published'] + d['published']}, and all {c['verified'] + d['verified']} of their quotes")
+    _has(f"${c['usd_per_case']:.3f} and ${d['usd_per_case']:.3f} a case")
+    _has(f"| **{d['published']} of {d['cases']}** | **{d['verified']} of {d['quotes']}** |")
+    from nearmisslens.baseline_desk import summary
+    b = summary(_load("experiment_T24.json"))
+    _has(f"{b['quotes_absent']} of the {b['quotes_verified'] + b['quotes_absent']} quotes")
+    assert b["consistent"] == 0
+    _has(f"None of the {b['number_findings']} sentences")
+    _has(f"| {b['consistent']} / {b['differs']} / {b['not_checkable']} |")
     for run in ("T21", "T21b"):
         st = desk_stats(_load(f"experiment_{run}.json"))
         _has(f"| {st['published']} of {st['cases']} |")

@@ -56,7 +56,7 @@ def run_desk(spec_id: str, client, letter_client, fresh: bool = False) -> dict:
             if sp.get("inbox_record_source"):
                 url, text = inbox.record(r, city)
                 pages[k] = {url: text}
-        if k < len(done) and done[k].get("task") == task:
+        if k < len(done) and done[k].get("task") in (task, orchestrator.redact(task)):
             out.append(done[k])  # resumed: this case already ran under this spec
             continue
         try:
@@ -69,8 +69,8 @@ def run_desk(spec_id: str, client, letter_client, fresh: bool = False) -> dict:
         r["kind"] = case["kind"]
         out.append(r)
         print(case["kind"], case["city"], "finished", r.get("finished"), r.get("stopped"), "usd", r.get("usd"), flush=True)
-        path.write_text(portable(json.dumps({"id": spec_id, **limits, "model_check": bool(check_client),
-                                             "cases": out}, indent=1, default=str)))
+        path.write_text(orchestrator.redact(portable(json.dumps(  # no licence plate is kept, even from an input
+            {"id": spec_id, **limits, "model_check": bool(check_client), "cases": out}, indent=1, default=str))))
     return {"id": spec_id, "cases": out}
 
 

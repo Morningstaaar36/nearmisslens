@@ -165,7 +165,7 @@ def desk_page(root: Path) -> None:
     run's totals so earlier, weaker runs stay visible."""
     from .bench import desk_stats
     from .evaluate import RESULTS_DIR
-    runs = [json.loads(p.read_text()) for p in (RESULTS_DIR / "bench" / f"experiment_{k}.json" for k in ("T21", "T21b", "T21c"))
+    runs = [json.loads(p.read_text()) for p in (RESULTS_DIR / "bench" / f"experiment_{k}.json" for k in ("T21", "T21b", "T21c", "T21d"))
             if p.exists()]
     if not runs:
         return
@@ -174,8 +174,49 @@ def desk_page(root: Path) -> None:
             "trace", "receipts")
     from .orchestrator import redact
     cases = [{k: c.get(k) for k in keep} for c in res.get("cases", [])]
-    blob = redact(json.dumps({"run": res.get("id"), "runs": [desk_stats(r) for r in runs], "cases": cases}, default=str))
+    review = {"checked": 0, "changed": 0}
+    for c in cases:
+        c["rechecks"] = rechecks(c)
+        for f in (c.get("final") or {}).get("findings") or []:
+            r = c["rechecks"].get(f.get("receipt"))
+            if r:
+                r["published"] = published_verdict(f.get("text", ""))
+                review["checked"] += 1
+                review["changed"] += r["published"] != r["verdict"]
+    blob = redact(json.dumps({"run": res.get("id"), "runs": [desk_stats(r) for r in runs], "cases": cases,
+                              "review": review}, default=str))
     (root / "desk.json").write_text(blob)  # no licence plate is published, even one a 311 report printed
+
+
+def published_verdict(text: str) -> str | None:
+    """The verdict a published finding states, read from its words ("contradicted" was the name before T21d)."""
+    from .orchestrator import VERDICT_WORDS
+    low = text.lower()
+    if "contradict" in low:
+        return "differs from the record"
+    return next((v for v, ws in VERDICT_WORDS.items() if any(w in low for w in ws)), None)
+
+
+def rechecks(case: dict) -> dict:
+    """Each claim the case checked, verdict by the current claim check on the record the case read (rebuilt from the
+    cache), keyed by the receipt the published finding cites, so a verdict our later fixes changed is shown changed."""
+    from .orchestrator import Desk, _places, claim_verdict, replay_record
+    steps = [s for s in case.get("trace") or [] if s.get("tool") == "check_claim" and not s.get("error")]
+    rids = sorted((k for k, v in (case.get("receipts") or {}).items() if v.get("tool") == "check_claim"),
+                  key=lambda k: int(k[1:]))
+    try:
+        rec = replay_record(case) if steps else {}
+    except Exception:
+        return {}
+    places = _places(Desk(case.get("city")))
+    places.places.add((case.get("corner") or "").split(",")[0])
+    out = {}
+    for rid, st in zip(rids, steps):
+        tool = ((case.get("receipts") or {}).get(st["args"].get("receipt")) or {}).get("tool")
+        if tool in rec:
+            v, why, _ = claim_verdict(st["args"]["text"], rec[tool], places)
+            out[rid] = {"claim": st["args"]["text"], "verdict": v, "reasons": why[:2]}
+    return out
 
 
 def check(docs: Path = DOCS) -> list[str]:

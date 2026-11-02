@@ -209,9 +209,9 @@ def test_the_model_read_check_flags_but_never_decides_a_verdict(monkeypatch):
 
 
 def test_licence_plates_are_never_published(monkeypatch):
-    assert O.has_plate("Blue Mazda mx5 with CA plate 9WHE045 blocking driveway")
+    assert O.has_plate("Blue Mazda mx5 with CA plate 7ABC123 blocking driveway")
     assert not O.has_plate("The plate glass window at 1600 Broadway") and not O.has_plate("a licence to operate")
-    assert "9WHE045" not in O.redact("with CA plate 9WHE045 blocking")
+    assert "7ABC123" not in O.redact("with CA plate 7ABC123 blocking")
     desk, t = _tools(monkeypatch, CRASHES)
-    out = t["check_findings"]("s", [{"text": "A car with plate 9WHE045 blocked it.", "receipt": "D1"}], SRC)
+    out = t["check_findings"]("s", [{"text": "A car with plate 7ABC123 blocked it.", "receipt": "D1"}], SRC)
     assert "licence plate" in " ".join(out["problems"])

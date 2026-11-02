@@ -105,3 +105,4 @@ p.letter{max-width:70ch;white-space:pre-wrap}
 button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:underline}
 button.linkish:focus-visible{outline:3px solid var(--warn)}
 button.planlink{margin-top:8px;font-size:14px;padding:6px 10px}
+.status.recheck { white-space: normal; display: inline; }

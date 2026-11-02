@@ -10,7 +10,13 @@
 
 Nothing is published until code has checked every number against the record and every quote against its page.
 
-**On 12 fresh real cases (T21c, registered before it ran), the desk published 11, and all 25 of their quotes were found on the page they cite. It cost $0.126 a case on the Meta API.** The first version published 4 of 12. What we changed in between, and what a review of the published cases still found wrong, is below.
+**On 24 fresh real cases in two runs registered before they ran (T21c and T21d), the desk published 23, and all 51 of their quotes were found on the page they cite. It cost $0.126 and $0.063 a case on the Meta API.** The first version published 4 of 12.
+
+**Muse Spark alone, with the same web search on the same inputs (T24), shows what the checks add:**
+- 26 of the 73 quotes it cited from pages we could read are not on those pages.
+- None of the 55 sentences it wrote with numbers about the case states a count the city's crash record could test.
+
+What we changed between runs, and what reviews of the published cases still found wrong, is below.
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the live desk's cases, with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
@@ -26,7 +32,11 @@ The input was one sentence: *find a news report from the last two weeks about a 
    - turn calming here in 2021, a program whose citywide drop began before the work, so it cannot be credited;
    - leading pedestrian intervals as the fix the city's own record supports;
    - NYC DOT as the road owner.
-3. **The claims.** The article says at least 106 crashes injured 77 people there since 2021. The record within 100 m over five years has 113 crashes, so the article's count is for another area or period. The desk now says "differs from the record" and states the record's frame. It does not say "false".
+3. **The claims.** The article says there have been at least 106 crashes there since 2021, and 30 in 2025.
+   - The record within 100 m over five years has 113 crashes, which fits "at least 106".
+   - It has 28 in 2025, so that count differs from the record; another area or data date can explain the gap.
+
+   The desk published "contradicted" for both. The first is wrong: our check then read "at least" as an exact count. The corrected check gives "consistent" for the first and "differs from the record" for the second, and states the record's frame (see the T21d review below).
 4. **The letter.** Muse Spark Open drafted the letter to NYC DOT, copied to the council member and community board, and code checked every number in it.
 5. **The gate.** The draft passed on the first `finish`, after two dry runs with `check_findings`.
 
@@ -41,6 +51,7 @@ Each run is 12 fresh real cases: a news report per city, an official statement p
 | T21 | first version | 4 of 12 | (the gate refused the rest) | $0.083 | not met |
 | T21b | intersections in several written forms; unreadable pages published as unverified | 5 of 12 | 5 of 13 | $0.079 | not met |
 | T21c | the failure study's fixes (below) | **11 of 12** | **25 of 25** | $0.126 | **met** |
+| T21d | verdicts from the number checker only, stating the record's frame; licence plates refused | **12 of 12** | **26 of 26** | $0.063 | **met** |
 
 **What the failure study of T21 and T21b found, and what fixed it.** Each fix is a small adapter around a known model weakness:
 - **The model wrote quotes from memory.** For example, it gave a victim's age as 47 where the page says 30. Fix: a `read_page` tool returns the exact text the citation gate checks, and quotes must come from it.
@@ -55,7 +66,27 @@ Each run is 12 fresh real cases: a news report per city, an official statement p
 - In 2 more, "contradicted" was too strong for a source counting another area or period.
 - One licence plate printed in a 311 report was read out by the photo reader.
 
-Verdicts are now decided by the number checker alone and state the record's frame, and plates are refused by the gate and redacted on the site. T21d tests this on fresh cases.
+Verdicts are now decided by the number checker alone and state the record's frame, and plates are refused by the gate and redacted on the site. T21d tested this on fresh cases and published all 12.
+
+**What a review of T21d's 14 published claim verdicts found** (post hoc; the hand audit is pending):
+- 9 are right.
+- 5 are wrong: "two women are dead" and a $1.2 million grant were called consistent, and a victim's age, "9 KSI" and a citywide count of 116 intersections were called differing.
+
+  The cause was our code: a number that matched anything in the record, or nothing, passed as consistent, and a label the receipt did not hold was compared with zero.
+
+A claim is now consistent only when a number in it was tested, meaning a different value would have been refused. The people in one crash, a grant, serious injuries, a corridor or citywide figure, and a period before the record's window are said to be beyond what the record can check. Rechecked in replay, all 5 come out "cannot be checked" (tests in `tests/test_claim_verdicts.py`). Fixing this changes the tool the agent sees, so no live run has published the corrected verdicts yet. The site shows the current verdict next to each published one.
+
+**Muse Spark alone (T24, registered before it ran).** The same 12 inputs as T21c went to Muse Spark 1.3 with Meta's `web_search` and only a `finish` tool that accepts anything. Code scored its output after the run:
+
+| | Muse Spark alone | the desk (T21c) |
+|---|---|---|
+| cases finished | 11 of 12 | 11 of 12 |
+| quotes not on a page that could be read | 26 of 73 (36%) | 0 (the gate refuses them) |
+| quotes on pages that could not be read | 43 | 0 |
+| sentences with numbers: a count the record tests and matches / differs / cannot be checked | 0 / 1 / 54 | every record number checked against its receipt |
+| Meta $ a case | $0.091 | $0.126 |
+
+Muse Spark alone is cheaper and writes more. But a third of the quotes it cites from pages we could read are not on those pages, and it never states the corner's numbers from the city's record, because it has no way to get them. The desk's extra $0.035 a case pays for both. We corrected the baseline's scoring after the run and before this write-up; the details are in BENCH_PREREG.
 
 ## The problem
 
@@ -157,7 +188,7 @@ Each Meta model does the part it is good at (reading, searching, planning, draft
 
 | Meta model | What it does | The check | Result |
 |---|---|---|---|
-| Muse Spark 1.3 with `web_search` and tool search | Runs the desk on real inputs from the live web (T21–T21c) | Publish gate: every number against its receipt, every quote against its page | 11 of 12 fresh cases published, 25 of 25 quotes found on their page, $0.126 a case (T21c, rule met; the first version published 4 of 12) |
+| Muse Spark 1.3 with `web_search` and tool search | Runs the desk on real inputs from the live web (T21–T21d) | Publish gate: every number against its receipt, every quote against its page | 23 of 24 fresh cases published, 51 of 51 quotes found on their page, $0.063–$0.126 a case (T21c and T21d, rules met; the first version published 4 of 12). Without the desk's tools and gate (T24), 26 of 73 of its readable quotes are not on their page |
 | Muse Spark (low effort) | Reads residents' 311 photos on the desk | None beyond refusing dark or unreadable images; shown as "a model observation, not a checked fact" | 4 photos read in T21c; not scored |
 | Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts by the number checker and the model-read check | 34 run, 26 finished, 37 refused attempts kept; on the site, 131 claims shown (55 flagged by the model-read check) and 44 struck through by today's stricter checker ($2.95) |
 | Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |

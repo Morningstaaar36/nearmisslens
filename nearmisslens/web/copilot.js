@@ -85,6 +85,9 @@ async function showDesk() {
   try { d = await getJSON("data/desk.json"); } catch (err) { failed(err, "the desk"); return; }
   const badge = s => s === "verified" ? '<span class="status go">quote found in the page</span>' :
     s === "unreadable" ? '<span class="status">page could not be read here: quote unverified</span>' : "";
+  // a claim verdict as the current check gives it on the same record: a verdict a later fix changed is shown changed
+  const recheck = r => r ? ` <span class="status recheck${/consistent/.test(r.verdict) ? " go" : ""}">current check: ${esc(r.verdict)}` +
+    (r.reasons && r.reasons.length ? ` (${esc(r.reasons[0])})` : "") + `</span>` : "";
   const card = c => {
     const f = c.final || {};
     return `<details class="agency"${c.finished ? " open" : ""}><summary><b>${esc(c.kind)} · ${esc(c.city)}</b> ` +
@@ -94,7 +97,7 @@ async function showDesk() {
       (f.summary ? `<p>${esc(f.summary)}</p>` : "") +
       ((f.findings || []).length ? `<ul class="claims">${f.findings.map(x => `<li>${esc(x.text)} <span class="legend">${
         /^https?:/.test(x.receipt || "") ? "from the source page" : esc(x.receipt) + (((c.receipts || {})[x.receipt] || {}).tool ? " · " + esc(c.receipts[x.receipt].tool) : "")
-      }</span></li>`).join("")}</ul>` : "") +
+      }</span>${recheck((c.rechecks || {})[x.receipt])}</li>`).join("")}</ul>` : "") +
       ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${safeUrl(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
       (c.letter ? `<details><summary>The drafted letter (Muse Spark Open, number-checked)</summary><p class="letter">${esc(c.letter)}</p></details>` : "") +
       `<details><summary>What the agent did, step by step</summary><ol class="legend">` +
@@ -107,7 +110,9 @@ async function showDesk() {
   $("out").innerHTML = `<p class="where">Live desk · run ${esc(d.run)}</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
     `<p class="lede">Each case started from a real input: a news report or official statement found on the live web, or a resident's 311 report with a photo. ` +
     `Muse Spark planned the work, searched, opened the source and investigated the corner with the checked tools; Muse Spark Open drafted the letter. ` +
-    `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons.</p>` +
+    `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons. ` +
+    (d.review && d.review.checked ? `Next to each checked claim is the verdict the current claim check gives on the same record: ` +
+      `${d.review.changed} of the ${d.review.checked} published verdicts change under the fixes made after this run's review.` : "") + `</p>` +
     (runs ? `<table class="plan"><tr><th>run</th><th>published</th><th>quotes verified on their page</th><th>Meta $ per case</th><th>time per case</th></tr>${runs}</table>` : "") +
     d.cases.map(card).join("");
 }

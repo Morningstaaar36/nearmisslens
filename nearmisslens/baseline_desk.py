@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import time
 
-from . import context, engineer, orchestrator
+from . import orchestrator
 from .agent import Tool, run_agent
 from .config import MODELS, SETTINGS, portable
 from .evaluate import RESULTS_DIR
@@ -41,34 +41,47 @@ def run_case(task: str, client, budget_usd: float = 0.30, max_turns: int = 8) ->
             "usd": round(run.usd, 4), "seconds": round(time.time() - t0, 1)}
 
 
-def score(case: dict, corner: str | None) -> dict:
-    """Quotes: verified / absent / unreadable on their page. Findings with numbers: consistent with the corner's
-    record, differing from it (the record has another value for what the sentence names), or not checkable."""
+def score(case: dict, desk_case: dict) -> dict:
+    """Quotes: verified / absent / unreadable on their page. Findings with numbers, by the desk's own claim check
+    against the record the desk case built (rebuilt from the cache, in the window that run read): consistent when a
+    number in it was tested and matched against any of the corner's receipts, differing when the crash record has
+    another value for what it names, else not checkable."""
     f = case.get("final") or {}
     quotes = [orchestrator.quote_check(s.get("quote", ""), s.get("url", "")) for s in f.get("sources") or []]
-    data = {}
-    if corner:
-        replay = SETTINGS.replay
-        SETTINGS.replay = True
-        try:
-            rep = engineer.plan(corner)
-            data = {k: v for k, v in rep["findings"].items() if isinstance(v, dict)}
-        except Exception:
-            data = {}
-        finally:
-            SETTINGS.replay = replay
-    places = orchestrator._places(orchestrator.Desk())
-    if corner:
-        places.places.add(corner.split(",")[0])
+    try:
+        rec = orchestrator.replay_record(desk_case) if desk_case.get("corner") else {}
+    except Exception:
+        rec = {}
+    places = orchestrator._places(orchestrator.Desk(desk_case.get("city")))
+    if desk_case.get("corner"):
+        places.places.add(desk_case["corner"].split(",")[0])
     verdicts = []
     for text in f.get("findings") or []:
-        if not orchestrator.numbers_in(text) or not data:
+        if not orchestrator.numbers_in(text) or not rec:
             continue
-        errs = context.FactCheck(data).text(engineer.strip_places(text, places))
-        kind = ("differs" if any(c in e for e in errs for c in orchestrator.DIFFERS)
-                else "not checkable" if errs else "consistent")
-        verdicts.append({"text": text, "verdict": kind, "reasons": errs[:3]})
-    return {"quotes": quotes, "findings": verdicts}
+        got = {t: orchestrator.claim_verdict(text, rec[t], places)[:2] for t in RECEIPTS if t in rec}
+        if any(v == "consistent with the record" for v, _ in got.values()):
+            kind, why = "consistent", []
+        elif got.get("choose_fixes", ("",))[0] == "differs from the record":
+            kind, why = "differs", got["choose_fixes"][1]
+        else:
+            kind, why = "not checkable", next(iter(got.values()), ("", []))[1]
+        verdicts.append({"text": text, "verdict": kind, "reasons": why[:3]})
+    return {"quotes": quotes, "findings": verdicts, "record": bool(rec)}
+
+
+RECEIPTS = ("choose_fixes", "test_programs", "root_cause")  # the corner's crash record, program record, patterns
+
+
+def rescore(spec_id: str, desk_run: str) -> dict:
+    """Score a finished baseline run again with the current scoring code (the models' answers are not rerun)."""
+    desk = json.loads((RESULTS_DIR / "bench" / f"experiment_{desk_run}.json").read_text())
+    path = RESULTS_DIR / "bench" / f"experiment_{spec_id}.json"
+    res = json.loads(path.read_text())
+    for c, dc in zip(res["cases"], desk["cases"]):
+        c["score"] = score(c, dc)
+    path.write_text(orchestrator.redact(portable(json.dumps(res, indent=1, default=str))))
+    return res
 
 
 def run(spec_id: str, client, desk_run: str) -> dict:
@@ -82,10 +95,11 @@ def run(spec_id: str, client, desk_run: str) -> dict:
             out.append(done[k])
             continue
         r = run_case(dc["task"], client)
-        r.update(kind=dc.get("kind"), city=dc.get("city"), desk_corner=dc.get("corner"), score=score(r, dc.get("corner")))
+        r.update(kind=dc.get("kind"), city=dc.get("city"), desk_corner=dc.get("corner"), score=score(r, dc))
         out.append(r)
         print(dc.get("kind"), dc.get("city"), "finished", r["finished"], "usd", r["usd"], flush=True)
-        path.write_text(portable(json.dumps({"id": spec_id, "desk_run": desk_run, "cases": out}, indent=1, default=str)))
+        path.write_text(orchestrator.redact(portable(json.dumps({"id": spec_id, "desk_run": desk_run, "cases": out},
+                                                                indent=1, default=str))))
     return {"id": spec_id, "cases": out}
 
 

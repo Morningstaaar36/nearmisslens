@@ -1208,8 +1208,12 @@ def desk_stats(res: dict) -> dict:
           "refused": sum(1 for c in cases for t in c.get("trace") or [] if t.get("tool") == "finish" and t.get("error")),
           "quotes": len(srcs), "verified": ver, "with_crash_count": crash_count,
           "stopped": dict(Counter(str(c.get("stopped")) for c in cases if not c.get("finished")))}
+    from .orchestrator import has_plate
+    quotes_rule = res.get("id") in ("T21c", "T21d")  # registered from T21c on: at least 80% of published quotes verified
+    st["plates_published"] = sum(1 for c in pub if has_plate(json.dumps(c.get("final") or {})))
     st["rule_met"] = (len(cases) == 12 and len(pub) >= 9 and usd <= 0.25
-                      and (res.get("id") != "T21c" or (srcs and ver / len(srcs) >= 0.8)))
+                      and (not quotes_rule or bool(srcs and ver / len(srcs) >= 0.8))
+                      and (res.get("id") != "T21d" or st["plates_published"] == 0))
     return st
 
 
@@ -1222,16 +1226,17 @@ def _desk_rows(res: dict) -> list[str]:
 
 
 def _t21_section() -> list[str]:
-    """T21, T21b and T21c: the desk on live real-world cases."""
-    runs = [r for r in (_load(f"experiment_{k}.json") for k in ("T21", "T21b", "T21c")) if r]
+    """T21 to T21d: the desk on live real-world cases."""
+    runs = [r for r in (_load(f"experiment_{k}.json") for k in ("T21", "T21b", "T21c", "T21d")) if r]
     if not runs:
         return []
-    L = ["## T21–T21c The desk on live real-world cases", "",
-         "Registered in BENCH_PREREG.md (T21, T21b, T21c). A Muse Spark orchestrator with Meta web_search, tool search "
+    L = ["## T21–T21d The desk on live real-world cases", "",
+         "Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator with Meta web_search, tool search "
          "over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse "
          "Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement "
          "per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 "
-         "published at no more than $0.25 a case (T21c: and at least 80% of published quotes verified on their page).", "",
+         "published at no more than $0.25 a case (T21c and T21d: and at least 80% of published quotes verified on their "
+         "page; T21d: and no licence plate written out in a published finding).", "",
          "| run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes "
          "verified on their page | Meta $ per case | time per case | rule |",
          "|---|---|---|---|---|---|---|---|"]
@@ -1293,13 +1298,17 @@ def _t24_section() -> list[str]:
             f"| quotes absent from a page that could be read | {s['quotes_absent']} of {readable} | 0 (refused by the gate) |",
             f"| quotes on pages that could not be read | {s['quotes_unreadable']} | 0 |",
             f"| findings with a number about the corner: consistent with the record / differs / not checkable | "
-            f"{s['consistent']} / {s['differs']} / {s['not_checkable']} (of {nums}) | all consistent (by construction) |",
+            f"{s['consistent']} / {s['differs']} / {s['not_checkable']} (of {nums}) | every record number passed the "
+            "number gate against the receipt it cites |",
             f"| Meta $ per case | ${s['usd_per_case']:.3f} | $0.126 |", "",
             "Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings "
             "differing from the record): " + ("supported." if (readable and s['quotes_absent'] / readable >= 0.2)
                                              or (nums and s['differs'] / nums >= 0.2) else "not supported.")
-            + " 'Differs' means not the record's number within 100 m over five years; a source counting another area or "
-            "period is not therefore wrong.", ""]
+            + " 'Consistent' needs a number the record tests: a different value in its place would be refused. 'Differs' "
+            "means not the record's number within 100 m over five years for what the sentence names; a source counting "
+            "another area or period is not therefore wrong. Scored by `baseline_desk.score` with the corner's record "
+            "rebuilt in the window its desk run read (the scoring was corrected after the run and before this was "
+            "written up; see BENCH_PREREG.md).", ""]
 
 
 def _t22_section() -> list[str]:

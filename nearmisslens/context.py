@@ -270,6 +270,21 @@ NEG = re.compile(r"\bnot\b[^.;]{0,25}\bany\b|\b(no|none|never|not a single|not a
 COUNT_WORDS = re.compile(r"crash|\bsites?\b|evaluat|studied|killed|death|died|injur|hurt", re.I)
 
 
+def _dates_named(facts, key: str) -> list[str]:
+    """Every ISO date held under `key` anywhere in the facts."""
+    out = []
+    if isinstance(facts, dict):
+        for k, v in facts.items():
+            if k == key and isinstance(v, str) and re.match(r"(19|20)\d\d-\d\d-\d\d", v):
+                out.append(v[:10])
+            else:
+                out += _dates_named(v, key)
+    elif isinstance(facts, list):
+        for v in facts:
+            out += _dates_named(v, key)
+    return out
+
+
 def _paths(facts) -> list[tuple[tuple, str, float]]:
     """Every numeric value in the facts with its path and the name of the field holding it."""
     out = []
@@ -355,7 +370,7 @@ def _named(facts) -> list[tuple[str, tuple]]:
 NOT_A_COUNT = re.compile(r"\s*-?\s*(?:years?[- ]old|yrs?[- ]old|-year|a\.?m\.?\b|p\.?m\.?\b|o'clock|mph|km/h|miles?\b|"
                          r"feet\b|ft\b|meters?\b|metres?\b|minutes?\b|hours?\b|seconds?\b|days?\b|weeks?\b|"
                          r"months?\b|(?:st|nd|rd|th)\b|:\d\d)", re.I)
-NOT_A_COUNT_BEFORE = re.compile(r"(?:\bage[ds]?|\baged|\bblock of|\bno\.|#)\s*$", re.I)
+NOT_A_COUNT_BEFORE = re.compile(r"(?:\bage[ds]?|\baged|\bblock of|\bno\.|#|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?)\s*$", re.I)  # "October 19" is a date
 
 
 class FactCheck:
@@ -373,11 +388,13 @@ class FactCheck:
             json.dumps(facts, default=str))}
         self.paths = _paths(facts)
         self.named = _named(facts)
+        self.since = min(_dates_named(facts, "since"), default=None)  # the record window's first day, if stated
         self.unknown = _not_recorded(facts)  # labels the record does not cover: no number or "none" may be claimed
         fields = _labelled(facts)
         self.by_label = {}
         for name, before, after, pattern in LABELS:
-            vals = [v for k, vs in fields.items() if pattern and re.search(pattern, k) for v in vs]
+            vals = [v for k, vs in fields.items() if pattern and re.search(pattern, k)
+                    and (name == "dollars" or not re.search(r"usd|harm|cost", k)) for v in vs]  # a count is not a cost
             if name == "dollars":  # "$8.8 million" and "$561,000" both name a dollar field
                 vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
             if name == "deaths":  # "no one was killed" is about everyone: the total, not any one mode's count
@@ -514,9 +531,11 @@ class FactCheck:
                 named = next((name for name, before, after, _ in LABELS if self.by_label.get(name) and name != "dollars"
                               and ((before and re.search(before, head, re.I)) or (after and re.search(after, clause, re.I)))),
                              None)
+                has = sorted(set(self.by_label.get(named) or []), reverse=True)[:3] if named != "crashes" else []
                 bad.append(f"{t}: the record does not show {named}" if named in self.unknown else
-                           f"{t} is not the record's number of {named} (the record has "
-                           f"{', '.join(f'{x:g}' for x in sorted(set(self.by_label[named]), reverse=True)[:3])})" if named
+                           f"{t} is not the record's number of {named}" +
+                           (f" (the record has {', '.join(f'{x:g}' for x in has)})" if has else
+                            " for what this sentence names") if named
                            else f"number {t} is not in the dossier")
                 continue
             if len(t) == 4 and t[:2] in ("19", "20"):

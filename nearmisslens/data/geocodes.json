@@ -323,6 +323,12 @@
 "name": "Bell Boulevard & 48 Avenue",
 "city": "nyc"
 },
+"48th street & northern boulevard": {
+"lat": 40.7536331,
+"lon": -73.9145488,
+"name": "Northern Boulevard & 48th Street",
+"city": "nyc"
+},
 "4th avenue & pike street": {
 "lat": 47.6102141,
 "lon": -122.3367371,
@@ -455,6 +461,18 @@
 "name": "75 Street & Roosevelt Avenue",
 "city": "nyc"
 },
+"7th street & minna street": {
+"lat": 37.7787847,
+"lon": -122.4104014,
+"name": "7th Street & Minna Street",
+"city": "sf"
+},
+"7th street & mission street": {
+"lat": 37.7792109,
+"lon": -122.4109356,
+"name": "7th Street & Mission Street",
+"city": "sf"
+},
 "7th street northwest & florida avenue northwest": {
 "lat": 38.916278,
 "lon": -77.0219109,
@@ -533,6 +551,12 @@
 "name": "East Houston Street & Allen Street",
 "city": "nyc"
 },
+"allerton avenue & holland avenue": {
+"lat": 40.8654681,
+"lon": -73.8654022,
+"name": "Allerton Avenue & Holland Avenue",
+"city": "nyc"
+},
 "allerton avenue & olinville avenue": {
 "lat": 40.865407983269,
 "lon": -73.8683689789427,
@@ -574,6 +598,18 @@
 "lon": -73.8077420094613,
 "name": "Sutphin Boulevard & Archer Avenue",
 "city": "nyc"
+},
+"arguello boulevard & fulton street": {
+"lat": 37.7742984,
+"lon": -122.4583894,
+"name": "Arguello Boulevard & Fulton Street",
+"city": "sf"
+},
+"arkansas avenue northwest & iowa avenue northwest": {
+"lat": 38.9473396,
+"lon": -77.0307693,
+"name": "Iowa Avenue Northwest & Arkansas Avenue Northwest",
+"city": "dc"
 },
 "ascan avenue & manse street": {
 "lat": 40.7104130053089,
@@ -1529,6 +1565,12 @@
 "name": "Franklin Avenue & Fulton Street",
 "city": "nyc"
 },
+"franklin street & pine street": {
+"lat": 37.7892115,
+"lon": -122.423798,
+"name": "Franklin Street & Pine Street",
+"city": "sf"
+},
 "frederick douglass boulevard & west 125 street": {
 "lat": 40.8101728946813,
 "lon": -73.951165486529,
@@ -1678,6 +1720,12 @@
 "lon": -74.0858751187572,
 "name": "Hylan Boulevard & Quintard Street",
 "city": "nyc"
+},
+"jackson street & stockton street": {
+"lat": 37.7958275,
+"lon": -122.408269,
+"name": "Jackson Street & Stockton Street",
+"city": "sf"
 },
 "jamaica avenue & springfield boulevard": {
 "lat": 40.71850275396,
@@ -1882,6 +1930,12 @@
 "lon": -76.9727817,
 "name": "Pennsylvania Avenue Southeast & Prout Street Southeast",
 "city": "dc"
+},
+"rainier avenue south & south henderson street": {
+"lat": 47.5233212,
+"lon": -122.2699864,
+"name": "Rainier Avenue South & South Henderson Street",
+"city": "seattle"
 },
 "reservoir avenue & west kingsbridge road": {
 "lat": 40.8680173014926,
