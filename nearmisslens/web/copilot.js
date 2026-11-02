@@ -53,9 +53,11 @@ async function boot() {
     (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
     `Records as of ${date(INDEX.asof)}.` +
     (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
-    ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>`;
+    ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>` +
+    (LIVE !== null ? ` <button class="quiet planlink" id="checklink">Check a claim yourself</button>` : "");
   if (INDEX.plan) $("planlink").onclick = () => showPlan();
   $("desklink").onclick = () => showDesk();
+  if (LIVE !== null) $("checklink").onclick = () => showCheck();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -70,11 +72,70 @@ async function boot() {
   listCorners(INDEX.corners);
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
   if (r.corner === "desk") { showDesk(); return; }
+  if (r.corner === "check" && LIVE !== null) { showCheck(); return; }
   if (hit) openCorner(hit);
   else if (INDEX.plan) showPlan();  // a city opens on its action plan
 }
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
+
+async function showCheck() {
+  // the live desk on your own input: a link, a claim, a source's text or a resident's report, in a registry city
+  let cities = [];
+  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* listed below */ }
+  $("out").innerHTML = `<p class="where">Check a claim · live</p><h2 class="corner">Give the desk something real</h2>` +
+    `<p class="lede">A news link, an official's claim, or a resident's report. Muse Spark finds and reads the source, ` +
+    `investigates the corner with the checked tools and tests each number against the city's own crash record; code ` +
+    `refuses any quote not on its page and any number not in the record. A case takes a few minutes; one runs at a time, ` +
+    `under a daily budget.</p>` +
+    `<form id="checkform" class="search ask"><textarea id="checkin" maxlength="2000" rows="3" ` +
+    `placeholder="https://… a news story, or: The council says this corner had 30 crashes last year"></textarea>` +
+    `<label for="checkcity">City</label> <select id="checkcity">${cities.map(c =>
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
+    `<label><input type="checkbox" id="checkreport"> it is a resident's report</label> ` +
+    `<input id="checkaddr" maxlength="200" placeholder="where (for a report)"> ` +
+    `<input id="checkphoto" maxlength="500" placeholder="photo URL (optional)"> <button>Check</button></form>` +
+    `<div id="checkout"></div>`;
+  if (!cities.length) { $("checkout").innerHTML = `<p class="legend">No city can be checked on this server.</p>`; return; }
+  $("checkform").onsubmit = async ev => {
+    ev.preventDefault();
+    const report = $("checkreport").checked;
+    const body = {input: $("checkin").value, city: $("checkcity").value, kind: report ? "report" : null,
+                  address: report ? $("checkaddr").value : null, photo: report ? $("checkphoto").value : null};
+    $("checkout").innerHTML = `<p class="busy">Starting…</p>`;
+    let job;
+    try {
+      job = (await getJSON(`${LIVE}check`, {method: "POST", headers: {"Content-Type": "application/json"},
+                                           body: JSON.stringify(body)})).job;
+    } catch (e) { $("checkout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+    for (;;) {
+      await new Promise(r => setTimeout(r, 4000));
+      let rec;
+      try { rec = await getJSON(`${LIVE}check/${encodeURIComponent(job)}`); }
+      catch (e) { $("checkout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+      if (rec.status === "running") { $("checkout").innerHTML = `<p class="busy">Working on it… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "failed") { $("checkout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
+      $("checkout").innerHTML = checkResult(rec.result);
+      return;
+    }
+  };
+}
+
+function checkResult(r) {
+  if (r.status === "unsupported_city" || r.status === "error") return `<p class="legend">${esc(r.reason)}</p>`;
+  const head = r.status === "published"
+    ? `<h3>${esc(r.corner || "")}: published</h3><p>${esc(r.summary)}</p>`
+    : `<h3>Not published</h3><p class="legend">${esc(r.reason)}. The gate refuses a case it cannot check; nothing here is a finding.</p>`;
+  const claims = (r.claims || []).length ? `<h4>Claims checked against the record</h4><ul>` + r.claims.map(c =>
+    `<li>“${esc(c.claim)}”: <b>${esc(c.verdict)}</b>${c.frame ? ` <span class="legend">(${esc(c.frame)})</span>` : ""}</li>`).join("") + `</ul>` : "";
+  const finds = (r.findings || []).length ? `<h4>Findings</h4><ul>` + r.findings.map(f =>
+    `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("") + `</ul>` : "";
+  const srcs = (r.sources || []).length ? `<h4>Sources</h4><ul>` + r.sources.map(s =>
+    `<li><a href="${safeUrl(s.url)}" rel="noopener">${esc(s.url)}</a> (${esc(s.quote_check || "unchecked")}): “${esc(s.quote)}”</li>`).join("") + `</ul>` : "";
+  const letter = r.letter ? `<h4>Draft letter (review it; nothing is sent)</h4><pre class="letter">${esc(r.letter)}</pre>` : "";
+  return head + claims + finds + srcs + letter +
+    `<p class="legend">Records as of ${esc(r.asof || "")}; $${esc((r.cost_usd || {}).meta)} of Meta API, ${esc(r.turns)} turns, ${Math.round(r.seconds || 0)} s.</p>`;
+}
 
 async function showDesk() {
   // the desk: Muse Spark took a real-world input, searched the live web, worked the case with the checked tools and
