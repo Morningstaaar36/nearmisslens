@@ -109,13 +109,20 @@ def test_desk_numbers():
 def test_corner_watch_numbers():
     s = _load("experiment_T23.json")["summary"]
     _has(f"{s['frames']} frames from the traffic cameras at {s['with_daylight']} of the {s['cameras']} camera corners")
-    _has(f"within ±1 person in {s['pack_within_1']} of {s['pack_checks']} sampled frames")
     assert s["pack_rule_met"] and not s["ranking_reported"]
     _has("packed counts: met; ranking: not reported (rule)")
-    _has(f"Only {s['with_rate']} cameras saw the 20 people a rate needs")
-    f = s["features"]
-    _has(f"Of {sum(f.values())} layout answers, {f['present']} are present, {f['absent']} absent and {f['unsure']} unsure")
-    _has(f"The run cost ${s['usd']:.2f} of Meta API")
+    _has(f"only {s['with_rate']} cameras saw the 20 people a rate needs")
+    b = _load("experiment_T23b.json")["summary"]
+    rows = [r for r in _load("experiment_T23b.json")["rows"] if r.get("pack_check")]
+    diffs = [c["video"] - c["image"] for r in rows for c in r["pack_check"]]
+    assert b["pack_rule_met"] and not b["ranking_reported"] and all(d <= 0 for d in diffs)  # "every disagreement ... fewer"
+    _has(f"used {b['frames']} frames")
+    _has(f"within ±1 person in {b['pack_within_1']} of {b['pack_checks']} sampled frames (rule met)")
+    _has(f"{b['with_rate']} cameras saw at least 20 people")
+    _has(f"{b['with_rate']} of 20 cameras")
+    f = b["features"]
+    _has(f"Of {sum(f.values())} layout answers in T23b, {f['present']} are present, {f['absent']} absent and {f['unsure']} unsure")
+    _has(f"cost ${s['usd']:.2f} and ${b['usd']:.2f} of Meta API")
 
 
 def test_calibrated_rank_and_unknown_control_counts():

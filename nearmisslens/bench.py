@@ -1268,8 +1268,10 @@ def _t21_section() -> list[str]:
     return L
 
 
-def _or_rule(v) -> str:
-    return "not reported (rule)" if v is None else str(v)
+def _or_rule(v, reported: bool = True, n: int | None = None) -> str:
+    if v is None:
+        return "not reported (rule)"
+    return str(v) if reported else f"{v} (on {n} corners; not a finding: the rule needs 20)"
 
 
 def _t23_section(run: str = "T23") -> list[str]:
@@ -1291,8 +1293,8 @@ def _t23_section(run: str = "T23") -> list[str]:
             f"| layout answers | present {s['features']['present']}, absent {s['features']['absent']}, unsure {s['features']['unsure']} |",
             f"| corners with an exposure rate (at least 20 people seen) | {s['with_rate']}; ranking reported: "
             f"{'yes' if s['ranking_reported'] else 'no (fewer than 20)'} |",
-            f"| Spearman, crash rank vs crashes per person seen | {_or_rule(s['spearman_crash_vs_exposure'])} |",
-            f"| crash top 10 not in the exposure top 10 | {_or_rule(s['crash_top10_leaving_exposure_top10'])} |",
+            f"| Spearman, crash rank vs crashes per person seen | {_or_rule(s['spearman_crash_vs_exposure'], s['ranking_reported'], s['with_rate'])} |",
+            f"| crash top 10 not in the exposure top 10 | {_or_rule(s['crash_top10_leaving_exposure_top10'], s['ranking_reported'], s['with_rate'])} |",
             f"| frames at SAM's 16-object cap (cars) | {s['capped_frames']} |",
             f"| Meta API cost | ${s.get('usd')} |", ""]
 

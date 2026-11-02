@@ -178,9 +178,9 @@ The sentence says what the record shows since the denial, and the number checker
 
 **Exposure.** Injury crashes per 1,000 people seen, with no rate below 20 people, so a camera that saw nobody is never "riskiest". The ranking is reported only if at least 20 cameras have a rate.
 
-**Result (Seattle, `validation/BENCH.md`).** The run used one morning's frames, 06:00–07:42 Seattle time, because the collector could not run all day (a deviation recorded before the run). Packed counts met their rule (68 of 68 sampled frames within ±1), but most sampled frames had no one in them, so the check is weak. Only 2 of 34 cameras saw 20 people, so the ranking is not reported. Spark's layout answers were downgraded to "unsure" when SAM did not back them: 8 of 35 "present" and 44 of 126 "absent". In a spot-check of three frames by eye, the counts were within one person and one car.
+**Result (Seattle, `validation/BENCH.md`).** T23 used one morning's frames (06:00–07:42), because the collector could not run all day, a deviation recorded before the run; only 2 of 34 cameras saw 20 people. T23b, registered before its frames were collected, used 811 midday frames. Packed counts met their rule (58 of 68 sampled frames within ±1), but every disagreement was the video counting fewer, so busy corners are undercounted. 15 cameras saw 20 people, short of the 20 cameras the ranking needs, so it is not reported. Spark's layout answers were downgraded to "unsure" when SAM did not back them (8 of 37 "present" and 47 of 130 "absent" in T23b).
 
-**Limits.** The counts have not been compared with a hand count. A morning hour says nothing about afternoon use. SAM's "curb extension" detections likely include ordinary curbs, so "absent" is rarely confirmed for it.
+**Limits.** The counts have not been compared with a hand count. A spot-check found cameras that show a lot or a bridge approach rather than the crossing: there a people count is not the corner's exposure, and "absent" means "not in view". A camera needs a check that the crossing is in view before its counts are used. Packed counts need a correction from the image-mode sample where a corner is busy. SAM's "curb extension" detections likely include ordinary curbs.
 
 ## Related work
 

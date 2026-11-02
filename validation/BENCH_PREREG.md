@@ -739,3 +739,23 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Everything else as registered for T23:** method, metrics, the 20-person minimum for a rate and both rules. Packed counts are credited if at least 80% of sampled frames agree within ±1; the exposure ranking is reported as a finding only if at least 20 cameras have a rate.
 - **Results file:** `validation/results/bench/experiment_T23b.json`. T23's results file is not changed.
 - **Not covered:** a hand count (pending, as for T23), and afternoon or evening use.
+
+### T23b result (2026-11-03)
+- **Ran:** 34 of 40 cameras, 811 frames from 19:04 to 23:03 UTC (11:04 to 15:03 Seattle time), 23–24 per camera; only frames stamped after the registration were used. Meta API cost $1.28, $0.038 per camera (the run's own ledger sum, `corner_watch.run_usd`).
+- **Packed counts: rule met.** 58 of 68 sampled frames (85%) agree within ±1 person (mean difference 0.51).
+  - 36 of the 68 had a person in either mode. 48 agree exactly.
+  - In all 20 that differ, the packed video counts fewer people than image mode: 10 by one, 7 by two, 2 by three, 1 by five. It never counts more, so packed counts are low, more so in busy frames.
+- **Exposure ranking: not reported (rule).** 15 cameras saw at least 20 people, short of the 20 cameras the rule needs. The summary's Spearman (0.62) and top-10 change (2) are computed on those 15 and are not findings.
+  - People per frame averaged 0.84, at most 12 in a frame; 2 cameras saw no one.
+  - Because packed counts are low, the rates (crashes per 1,000 people seen) are high, most where a corner is busy.
+- **Layout answers:** 170: 29 present, 83 absent, 58 unsure. Muse Spark said present 37 times and SAM 3.1 confirmed 29; it said absent 130 times and SAM found nothing in 83; 3 were unsure.
+- **SAM's 16-object cap:** no person count reached it (the most was 12). 18 frames hit 16 cars, so those car counts are lower bounds.
+- **Spot-check by eye** of the mid frame (21:08 UTC), against the per-frame counts rebuilt from the cached SAM responses at no cost:
+  - **5th Ave & Pike St:** SAM counted 1 person and 1 car; I see about 5 people and 3 cars. The packed video undercounts this busy frame, as the sampled checks above show. Spark's crosswalk "present" is on the zebra and is right.
+  - **4th Ave S & Spokane Viaduct**, first by crashes per person: the camera looks mostly at an industrial lot, not at the crossing, so its people are not the corner's pedestrians. Its five "absent" layout answers mean "not in view".
+  - **15th Ave W & W Emerson St:** SAM counted 14 cars and 1 person; I see well over 20 cars and about 1 person. Car counts are lower bounds there, from the cap and missed vehicles. The "absent" answers again mean "not in view": the frame shows a bridge approach, not a crossing.
+- **What this changes** (post hoc, for any later run, not applied to T23b):
+  - A count is exposure only where the camera shows the crossing. Each camera needs a check that the intersection is in view before its people count is used.
+  - "Absent" should need the crossing in view; otherwise it is "not in view".
+  - Packed counts need a correction from the image-mode sample, or image mode, where a corner is busy.
+- **Not covered, still pending:** the hand count. Frames are not published.

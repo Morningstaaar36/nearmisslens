@@ -596,6 +596,20 @@ Registered in BENCH_PREREG.md (T23). 34 of 40 Seattle camera corners had dayligh
 | frames at SAM's 16-object cap (cars) | 6 |
 | Meta API cost | $1.2662 |
 
+## T23b Corner Watch: what the city's cameras show at its most dangerous corners (midday)
+
+Registered in BENCH_PREREG.md (T23b). 34 of 40 Seattle camera corners had daylight frames (811 frames). SAM 3.1 counted people and cars from frames packed into one video per camera; Muse Spark answered layout questions and SAM 3.1 had to agree. Frames from 20261102T190000Z on; the review is under T23b in BENCH_PREREG.md.
+
+| measure | value |
+|---|---|
+| packed-video count within ±1 of image mode | 58 of 68 sampled frames (mean difference 0.51); rule (at least 80%): met |
+| layout answers | present 29, absent 83, unsure 58 |
+| corners with an exposure rate (at least 20 people seen) | 15; ranking reported: no (fewer than 20) |
+| Spearman, crash rank vs crashes per person seen | 0.621 (on 15 corners; not a finding: the rule needs 20) |
+| crash top 10 not in the exposure top 10 | 2 (on 15 corners; not a finding: the rule needs 20) |
+| frames at SAM's 16-object cap (cars) | 18 |
+| Meta API cost | $1.2811 |
+
 ## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs
 
 Registered in BENCH_PREREG.md (T24). The 12 inputs of T21c, Muse Spark 1.3 with Meta web_search and nothing else; its output scored by the desk's own checks after the run.
