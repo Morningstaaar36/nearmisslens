@@ -65,3 +65,23 @@ def test_mined_mechanisms_and_photo_readings_stay_in_their_city():
     assert miner.corner_mechanisms("broadway_3_avenue", res=res, ds={"corners": []}, city="seattle") == []
     assert engineer.site_check(engineer.Desk(), "bruckner_boulevard_hunts_point_avenue", "seattle") is None
     assert engineer.site_check(engineer.Desk(), "bruckner_boulevard_hunts_point_avenue", "nyc") is not None
+
+
+def test_no_filler_addressee_and_no_assumed_modes():
+    from nearmisslens import engineer, letter
+    assert letter._salutation([]) == "To the road owner (not identified in the city's open records),"
+    assert not letter._records({"injury_crashes": 3}, "pedestrian")
+    assert engineer.crash_sentence("A & B", {"injury_crashes": 3, "since": "2021-10-30", "pedestrian_injured": 2}) == \
+        "A & B had 3 injury crashes in police records since 2021-10-30."
+
+
+def test_a_failed_source_marks_the_report_partial_and_says_so():
+    from nearmisslens import engineer
+    desk = engineer.Desk()
+    desk.dossiers[(1.0, 2.0)] = {"street": {"error": "RuntimeError: Overpass unavailable"}, "crashes": {"crashes": 1}}
+    rep = engineer._report("q", "A & B", 1.0, 2.0, desk, [], 0.0, "deterministic")
+    assert rep["partial"] and rep["failed_sources"] == ["street: RuntimeError: Overpass unavailable"]
+    assert engineer.text({**rep, "source": "saved"}).splitlines()[:2] == [
+        f"SAVED REPORT (records as of {rep['asof']}), not a live run.",
+        "PARTIAL: these sources could not be read, so the findings below leave them out: "
+        "street: RuntimeError: Overpass unavailable"]

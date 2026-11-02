@@ -29,7 +29,7 @@ def _report(city: str, slug: str) -> dict:
     p = SETTINGS.runs_dir / "engineer" / city / f"{slug}.json"
     if not p.exists():
         raise ValueError(f"no saved case for {slug!r} in {city}; run nml pages")
-    return json.loads(p.read_text())
+    return {**json.loads(p.read_text()), "source": "saved"}  # built earlier, as of its asof date; not a live run
 
 
 def _extra(name: str, key: str, slug: str) -> dict | None:

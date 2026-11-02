@@ -434,9 +434,9 @@ def _basis(owner: dict) -> str:
 
 
 def crash_sentence(name: str, cr: dict) -> str:
-    """The record's headline, stating only the counts the city's dataset records (older summaries without
-    'recorded' come from datasets that record pedestrians, cyclists and deaths)."""
-    rec = cr.get("recorded") or {"injured_by_mode": ["cyclist", "pedestrian"], "killed": True}
+    """The record's headline, stating only the counts the city's dataset records; a summary that does not say which
+    it records gets the injury-crash total alone."""
+    rec = cr.get("recorded") or {"injured_by_mode": [], "killed": False}
     killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed")) or cr.get("any_killed", 0)
     parts = [f"{n} {m}{'' if n == 1 else 's'} injured" for m in ("pedestrian", "cyclist") if m in rec["injured_by_mode"]
              for n in [cr.get(f'{m}_injured', 0)]]
@@ -530,7 +530,11 @@ def _report(query: str, name: str, lat: float, lon: float, desk: Desk, claims: l
     errors = check_claims(claims, desk, REQUIRED)
     if (extra or {}).get("summary"):
         errors += check_summary(extra["summary"], desk)
+    from .config import SETTINGS
+    failed = sorted({f"{k}: {v['error']}" for d in desk.dossiers.values() for k, v in d.items()
+                     if isinstance(v, dict) and "error" in v})
     return {"query": query, "junction": {"name": name, "lat": lat, "lon": lon}, "asof": asof().isoformat(),
+            "source": "replay" if SETTINGS.replay else "live", "partial": bool(failed), "failed_sources": failed,
             "mode": mode, "claims": claims, "claim_errors": errors, "receipts": desk.receipts,
             "findings": {r["tool"]: desk.data[r["id"]] for r in desk.receipts},
             "seconds": round(time.perf_counter() - t0, 2), **(extra or {})}
@@ -746,8 +750,14 @@ def agent_cases(city: str, client, top: int = 20, out_dir=None, budget_usd: floa
 
 def text(report: dict) -> str:
     """The report as plain text for the terminal."""
-    lines = [f"{report['junction']['name']}  (records as of {report['asof']}, {report['seconds']} s, "
-             f"{report['mode']})", ""]
+    lines = []
+    if report.get("source") == "saved":
+        lines.append(f"SAVED REPORT (records as of {report['asof']}), not a live run.")
+    if report.get("partial"):
+        lines.append("PARTIAL: these sources could not be read, so the findings below leave them out: "
+                     + "; ".join(report.get("failed_sources") or []))
+    lines += [f"{report['junction']['name']}  (records as of {report['asof']}, {report['seconds']} s, "
+              f"{report['mode']})", ""]
     for c in report["claims"]:
         lines.append(f"- {c['text']}  [{c['receipt']}]")
     lines += ["", "Receipts:"]

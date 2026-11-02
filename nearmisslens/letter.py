@@ -21,9 +21,9 @@ from .config import MODELS
 
 
 def offices(lat: float, lon: float) -> list[dict]:
-    """Who can request the work at this point: the registry's office adapters (district boundaries) that cover it;
-    without any, the letter is addressed to the city council member in general."""
-    return opendata.offices_at(lat, lon) or [{"office": "your city council member", "role": "council", "source": None}]
+    """Who can request the work at this point: the registry's office adapters (district boundaries) that cover it.
+    Without any, there is none: the letter never invents an addressee."""
+    return opendata.offices_at(lat, lon)
 
 
 def _plain(name: str) -> str:
@@ -41,14 +41,15 @@ def _salutation(parties: list[dict]) -> str:
     if parties and all(p.get("party") and not p.get("salutation") for p in parties):
         names = [short_agency(p["party"]) for p in parties]
         return "Dear colleagues at " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
-    names = [p.get("salutation") or p.get("party") or p.get("office") for p in parties] or ["Council Member"]
+    if not parties:
+        return "To the road owner (not identified in the city's open records),"
+    names = [p.get("salutation") or p.get("party") or p.get("office") for p in parties]
     return "Dear " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
 
 
 def _records(cr: dict, mode: str) -> bool:
-    """Whether the crash dataset records injuries for this mode (older summaries without 'recorded' did)."""
-    rec = cr.get("recorded")
-    return True if rec is None else mode in (rec.get("injured_by_mode") or [])
+    """Whether the crash dataset records injuries for this mode; a summary that does not say is "not recorded"."""
+    return mode in ((cr.get("recorded") or {}).get("injured_by_mode") or [])
 
 
 def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = None, audience: str = "resident") -> dict:
@@ -76,7 +77,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
     ev = (measured or {}).get("local_evidence") or {}
     return {
         "junction": brief["junction"].split(",")[0], "audience": audience, "addressed_to": addressed,
-        "to": "; ".join(o.get("party") or o.get("office") for o in addressed),
+        "to": "; ".join(o.get("party") or o.get("office") for o in addressed) or "the road owner (not identified in the city's open records)",
         "copy_to": "; ".join(o["office"] for o in offices_) if audience == "agency" else None,
         "salutation": salutation, "road_owners": owners,
         "period": f"the {d.get('years')} years from {since.day} {since:%B %Y}" if since else None,
@@ -86,7 +87,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
         # a count the city's dataset does not record is "not recorded", never zero (Seattle records only a total)
         "pedestrians_injured": cr.get("pedestrian_injured", 0) if _records(cr, "pedestrian") else None,
         "cyclists_injured": cr.get("cyclist_injured", 0) if _records(cr, "cyclist") else None,
-        "recorded": cr.get("recorded") or {"injured_by_mode": ["cyclist", "pedestrian"], "killed": True},
+        "recorded": cr.get("recorded") or {"injured_by_mode": [], "killed": False, "note": "not stated by the dataset"},
         "people_killed": killed,
         "city_priority_location": bool(pl.get("designated")),
         "latest_recorded_safety_project": {k: projects[-1][k] for k in ("name", "year")} if projects else None,
