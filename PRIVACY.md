@@ -27,6 +27,7 @@ stores, where, and about whom.
 
 ## The desk, the 311 inbox and Corner Watch
 
+- **Checks you run** (`nml check`, or the web's "Check a claim") are saved on the machine that runs them, under `runs/checks/`: your input, the case and the letter. On the web, a job's result is kept for 24 hours under a random id, with no caller identity, IP address or request log.
 - **The desk** reads public web pages it finds with Meta's `web_search` and keeps their visible text in the local
   cache, to check that every quote it publishes is on the page. It fetches only public `http(s)` addresses, with its
   own named user agent; a site that refuses automated readers is respected, and its quote is shown as unverified.
