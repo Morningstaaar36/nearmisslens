@@ -17,6 +17,25 @@ A falsification gate is a deterministic test, inside the tool an agent uses to f
 | "These crashes share a mechanism" | Every pattern the agent proposes is tested, Holm-corrected over all of them, then checked once on later years its tools never show | `miner.agent_arm` (code runs the test after the agent's `propose`) |
 | "The aerial photo shows a bike lane here" | SAM 3.1 must find it within 15 m of Muse Spark's point; an attribute acts only if it beats the common answer against city map layers | `sitecheck.decide`, `engineer.site_check` |
 | A sentence in an answer to a free question | It must cite a receipt of the corner's case and use that receipt's numbers; "caused" and "failed" are refused | `askeng.ask`, the engineer's finish gate |
+| A quote from a web page the desk found | The quote must be on the page as fetched here (or the page is marked unreadable and the quote unverified); at least one quote per case must be verified | `orchestrator.quote_check`, inside the desk's `finish` |
+| A fact from the source ("the driver was 52") | Its numbers must be on the page it cites | `orchestrator` gate |
+| "The record contradicts this claim" | The verdict comes from the number checker, never from a model; "differs" only when the record holds another value for what the sentence names, with the record's frame stated | `orchestrator.claim_verdict`, saved as a receipt the finding must match |
+| A licence plate in a finding, summary or quote | Refused; redacted on the site | `orchestrator.has_plate`, `pages.desk_page` |
+
+## The desk: adapters for known model weaknesses
+
+The desk (`orchestrator.py`) gives Muse Spark 1.3 the planning, searching and reading, and gives code the numbers, quotes and causal credit. Each failure the registered runs exposed got a small adapter, and the next registered run measured it:
+
+| Weakness seen | Adapter | Measured |
+|---|---|---|
+| Quotes written from memory (a victim's age 47 where the page says 30) | `read_page` returns the exact text the citation gate checks | T21c: 25 of 25 published quotes found on their page (T21b: 5 of 13) |
+| A finding cites the receipt next to the one holding its number | `investigate` lists claims with receipt ids; the gate names the receipt that holds the numbers | refused finish calls 28 (T21) → 3 (T21c) |
+| Probing the gate one sentence at a time until the turn limit | `check_findings` dry-runs the whole draft; at most 6 claim checks | turn-limit stops 3 (T21b) → 1 (T21c) |
+| Geocoding a house number or a business as "the corner" | snap to the nearest screened corner within 150 m, else refuse; one intersection per case | T21c: every case on a named intersection |
+| A model-read objection treated as a contradiction (found in review) | verdicts decided by the number checker; model-read objections shown as flags | T21d (registered) |
+| A licence plate read out from a 311 photo (found in review) | the photo reader is told not to; the gate refuses plates; the site redacts | T21d (registered) |
+
+What the gates do not check is whether a finding is the right one to make; that is what the pending hand audit is for. T24 measures what reaches the reader when Muse Spark works the same inputs with web search alone.
 
 ## The causal gate
 
