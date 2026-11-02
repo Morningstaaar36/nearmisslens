@@ -995,6 +995,26 @@
    "provenance": {
     "found_by": "seed (written by hand)"
    }
+  },
+  {
+   "id": "sf-311-open311",
+   "kind": "inbox",
+   "city": "sf",
+   "place": "San Francisco",
+   "endpoint": "https://mobile311.sfgov.org/open311/v2/requests.json",
+   "services": [
+    "Parking and traffic sign repair",
+    "Street defect",
+    "Blocked pedestrian walkway",
+    "Curb or sidewalk issues",
+    "Blocked driveway and illegal parking",
+    "Streetlights"
+   ],
+   "source": "San Francisco 311 (Open311 GeoReport v2)",
+   "terms": "DataSF, Public Domain Dedication and License (PDDL)",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
   }
  ],
  "cities": [

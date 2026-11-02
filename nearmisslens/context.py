@@ -286,6 +286,31 @@ def _paths(facts) -> list[tuple[tuple, str, float]]:
     return out
 
 
+def _not_recorded(facts) -> set[str]:
+    """Labels the record cannot speak to: a mode missing from a "recorded" block (Seattle records injuries only as a
+    total), or a count field present as null."""
+    out: set[str] = set()
+
+    def walk(o):
+        if isinstance(o, dict):
+            rec = o.get("recorded")
+            if isinstance(rec, dict) and isinstance(rec.get("injured_by_mode"), list):
+                for mode in ("pedestrian", "cyclist"):
+                    if mode not in rec["injured_by_mode"]:
+                        out.add(f"{mode}s injured")
+            for k, v in o.items():
+                if v is None and isinstance(k, str):
+                    for name, _b, _a, pattern in LABELS:
+                        if pattern and name != "dollars" and re.search(pattern, k.lower()):
+                            out.add(name)
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(facts)
+    return out
+
+
 def _labelled(facts) -> dict[str, list[float]]:
     """Every numeric value in the facts by the name of the field holding it."""
     out: dict[str, list[float]] = {}
@@ -338,6 +363,7 @@ class FactCheck:
             json.dumps(facts, default=str))}
         self.paths = _paths(facts)
         self.named = _named(facts)
+        self.unknown = _not_recorded(facts)  # labels the record does not cover: no number or "none" may be claimed
         fields = _labelled(facts)
         self.by_label = {}
         for name, before, after, pattern in LABELS:
@@ -431,6 +457,9 @@ class FactCheck:
             after = sentence[m.end():m.end() + 45]
             for name, before, pat_after, pattern in LABELS:
                 if pat_after and name not in ("crashes", "sites") and re.search(pat_after, after, re.I):
+                    if name in self.unknown:
+                        bad.append(f"says no {name}, but the record does not show {name} at all")
+                        break
                     if not any(abs(v) < 1e-9 for v in self.by_label[name]):
                         bad.append(f"says no {name}, but the record has {max(self.by_label[name]):g}")
                     break
@@ -476,6 +505,9 @@ class FactCheck:
             tail = re.split(r"[,;]", tail, 1)[0]  # the number's own clause: "129 injury crashes, about 26 a year"
             for name, before, after, pattern in LABELS:
                 if (before and re.search(before, head, re.I)) or (after and re.search(after, tail, re.I)):
+                    if name in self.unknown:
+                        bad.append(f"{t}: the record does not show {name}")
+                        break
                     if name in ("crashes", "injury crashes") and panel._decimals(t) and not PER_YEAR.search(tail):
                         bad.append(f"{t} is a rate or share written as a count of crashes")
                         break

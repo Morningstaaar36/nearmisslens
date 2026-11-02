@@ -44,6 +44,12 @@ def _salutation(parties: list[dict]) -> str:
     return "Dear " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
 
 
+def _records(cr: dict, mode: str) -> bool:
+    """Whether the crash dataset records injuries for this mode (older summaries without 'recorded' did)."""
+    rec = cr.get("recorded")
+    return True if rec is None else mode in (rec.get("injured_by_mode") or [])
+
+
 def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = None, audience: str = "resident") -> dict:
     """The facts a letter may use, with the figures already rounded the way a letter writes them. who is
     jurisdiction.who_must_act's result: the agency letter goes to its owners and copies its requesters."""
@@ -76,7 +82,10 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
         "agency": (opendata.city(d.get("city")) or {}).get("agency") or "the city's transportation department",
         "years": d.get("years"), "records_since": cr.get("since"), "crashes": cr.get("crashes"),
         "injury_crashes": cr.get("injury_crashes"),
-        "pedestrians_injured": cr.get("pedestrian_injured", 0), "cyclists_injured": cr.get("cyclist_injured", 0),
+        # a count the city's dataset does not record is "not recorded", never zero (Seattle records only a total)
+        "pedestrians_injured": cr.get("pedestrian_injured", 0) if _records(cr, "pedestrian") else None,
+        "cyclists_injured": cr.get("cyclist_injured", 0) if _records(cr, "cyclist") else None,
+        "recorded": cr.get("recorded") or {"injured_by_mode": ["cyclist", "pedestrian"], "killed": True},
         "people_killed": killed,
         "city_priority_location": bool(pl.get("designated")),
         "latest_recorded_safety_project": {k: projects[-1][k] for k in ("name", "year")} if projects else None,

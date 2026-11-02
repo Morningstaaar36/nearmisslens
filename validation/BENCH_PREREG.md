@@ -473,3 +473,23 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - claims shown per dollar after today's recheck (number checker).
 - **Rule:** credited if the governed finish rate is at least 32 of 35, no case repeats an identical call more than once, and the cost per finished case is not higher than the baseline's.
 - **Budget:** about $3 on Baseten.
+
+## T21 The desk on live real-world cases (registered 2026-11-02, before any desk case was run)
+
+- **Question:** can a Muse Spark orchestrator, given only a real-world prompt, work a case from the live world to a published, checked brief, and at what cost?
+  - Its tools: Meta `web_search`, tool search over the city's registry datasets, the engineer's checked tools, a photo reader, a Muse Spark Open letter writer on Baseten, and the claim checker.
+- **Code:** `nearmisslens/orchestrator.py` and `nearmisslens/inbox.py`; tests in `tests/test_orchestrator.py` (committed with this text).
+- **Cases (12):**
+  - one news case per city (New York, Seattle, DC, San Francisco): "find a 2026 report of a pedestrian or cyclist hit at a named intersection, investigate it, check the report";
+  - one claim case per city: "find a 2026 official statement crediting a street-safety program or project, and check it against the city's record";
+  - the 4 most crash-exposed distinct addresses in this week's San Francisco 311 street reports with photos, from `inbox.triage`.
+- **Model:** `muse-spark-1.3` with low reasoning effort, governor on, $0.40 budget and 16 turns per case. Letters by Muse Spark Open on Baseten.
+- **Metrics:**
+  - cases published;
+  - publish-gate refusals, and among them citation-gate refusals (a quote not in its page);
+  - claim verdicts (consistent / contradicted / not in the public record);
+  - letters drafted;
+  - dollars and seconds per case;
+  - tool calls by kind.
+- **Rule:** credited if at least 9 of 12 cases publish and the average cost is at most $0.25 per case. Every published quote is in its page and every finding passes the gate, by construction.
+- **Not covered:** whether the published findings are right beyond what the gates check. 12 findings will be sampled for your hand review, marked pending until then.

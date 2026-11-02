@@ -105,13 +105,16 @@ def replay_items(response: dict) -> list[dict]:
         elif kind == "message":
             text = "".join(c.get("text", "") for c in o.get("content", []) or [] if c.get("type") == "output_text")
             items.append({"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": text}]})
+        elif kind in ("web_search_call", "tool_search_call", "tool_search_output"):  # server tools: replayed as given
+            items.append({k: v for k, v in o.items() if k != "results"} if kind == "web_search_call" else o)
     return items
 
 
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
               budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000,
               summaries: bool = False, escalate_after: int | None = None, required: tuple[str, ...] = (),
-              governor: bool = False, max_nudges: int = 2) -> AgentRun:
+              governor: bool = False, max_nudges: int = 2, server_tools: list[dict] | None = None,
+              include: tuple[str, ...] = (), on_response=None) -> AgentRun:
     """Function-calling loop on the Responses API with stateless replay: every turn resends the whole conversation,
     with the model's reasoning as encrypted reasoning items, and nothing is stored on the server. The cache key is the
     full request, so a run replays exactly and runs with different data never share a turn.
@@ -122,7 +125,8 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
     not run again but answered "already done"; every tool result says which `required` tools are still missing; a
     reply with no tool call gets a nudge (up to max_nudges) instead of ending the run; and a client that forces a tool
     after N calls (open weights on Baseten) forces the next missing required tool rather than finish."""
-    specs = [t.spec() for t in tools]
+    # tools named "namespace.function" are declared inside a namespace in server_tools (deferred, loaded by tool search)
+    specs = [t.spec() for t in tools if "." not in t.name] + list(server_tools or [])
     by_name = {t.name: t for t in tools}
     run = AgentRun()
     conversation: list = [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": task}]}]
@@ -133,7 +137,7 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
         reasoning = {"effort": effort, **({"summary": "auto"} if summaries else {})}
         payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": reasoning,
                    "max_output_tokens": max_output_tokens, "store": False,
-                   "include": ["reasoning.encrypted_content"], "input": list(conversation)}
+                   "include": ["reasoning.encrypted_content", *include], "input": list(conversation)}
         if governor and hasattr(client, "force_finish_after"):  # tells to_chat which tool to force when it forces one
             missing = [t for t in required if t not in called]
             payload["x_next_tool"] = missing[0] if missing else "finish"
@@ -161,6 +165,8 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             break
         run.usd += cost(resp)[0]
         run.turns = turn
+        if on_response is not None:
+            on_response(resp)
         for o in resp.get("output", []):
             if o.get("type") == "reasoning":
                 text = " ".join(x.get("text", "") for x in o.get("summary") or [] if isinstance(x, dict)).strip()

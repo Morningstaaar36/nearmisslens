@@ -193,3 +193,12 @@ def test_no_one_killed_means_the_total_across_modes():
     assert fc.text("No one was killed here.") and fc.text("There were no deaths.") and fc.text("There were 0 deaths.")
     assert not fc.text("1 person was killed.") and not fc.text("No pedestrians were killed.")
     assert not fc.text("Backplates would save $1.3 million a year.")
+
+
+def test_a_count_the_city_does_not_record_is_not_zero():
+    from nearmisslens.context import FactCheck
+    fc = FactCheck({"crashes": 350, "injury_crashes": 108, "pedestrians_injured": None,
+                    "recorded": {"injured_by_mode": [], "killed": True}})
+    assert fc.text("No pedestrians were injured here.")        # Seattle records injuries only as a total
+    assert fc.text("0 pedestrians were injured.")
+    assert not fc.text("The corner had 108 injury crashes.")
