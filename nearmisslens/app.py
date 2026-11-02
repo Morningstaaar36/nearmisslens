@@ -5,6 +5,9 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
     GET  /data/...          the static site's files (docs/data: index, evidence, one report per corner, photos)
     POST /engineer          {"address": "..."} -> the deterministic engineer report (no model, a request-cap)
     POST /letter            {"name", "lat", "lon"} -> a drafted, number-checked request letter (Muse Spark Open)
+    GET  /cities            the registry's cities and whether each can be checked
+    POST /check             {"input", "city", "kind"?, "photo"?, "address"?} -> {"job": id}: the desk on one input
+    GET  /check/<id>        {"status": "running" | "done" | "failed", "seconds", "result"?}
 
 Public mode (NML_PUBLIC=1): global daily caps on requests and model dollars (budget.DailyBudget), no illustration,
 no caller identity kept, places outside the registered cities refused, errors in plain words."""
@@ -28,6 +31,7 @@ DOCS = ROOT / "docs"
 MAX_BODY = 4096
 LETTER_RESERVE_USD = 0.03
 ASK_RESERVE_USD = 0.05
+CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one desk case's Meta cap, reserved first
 
 
 class BadRequest(ValueError):
@@ -119,6 +123,13 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
     html = page("live").encode()
     public = os.environ.get("NML_PUBLIC") == "1"
     budget = DailyBudget()
+    from . import check
+    from .jobs import Busy, Jobs, Paused
+    desk_client = MetaClient(SETTINGS)
+    jobs = Jobs(lambda q: check.check(q["input"], q["city"], kind=q.get("kind"), photo=q.get("photo"),
+                                      address=q.get("address"), budget_usd=CHECK_BUDGET_USD, client=desk_client,
+                                      letter_client=memo_client, model_check_client=desk_client),
+                budget if public else None, CHECK_BUDGET_USD)
 
     class H(BaseHTTPRequestHandler):
         def _send(self, code: int, body: bytes, ctype: str):
@@ -139,6 +150,11 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             if u.path in ("/copilot.js", "/copilot.css"):
                 return self._send(200, (WEB / u.path[1:]).read_bytes(),
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
+            if u.path == "/cities":
+                return self._json(200, {"cities": check.cities()})
+            if u.path.startswith("/check/"):
+                rec = jobs.status(u.path.rsplit("/", 1)[1])
+                return self._json(200, rec) if rec else self._json(404, {"error": "no such check (kept 24 hours)"})
             if u.path.startswith("/data/"):
                 p = static_file(u.path)
                 if p:
@@ -176,6 +192,20 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                         if public:
                             budget.settle(LETTER_RESERVE_USD, spent)
                     return self._json(200, {k: out.get(k) for k in ("letter", "rejected_drafts", "checker_errors", "usd")})
+                if path == "/check":
+                    q = {k: (q.get(k) or None) for k in ("input", "city", "kind", "photo", "address")}
+                    if not all(isinstance(v, (str, type(None))) for v in q.values()):
+                        raise BadRequest("every field must be text")
+                    try:
+                        check.validate(q["input"] or "", q["city"] or "", q["kind"], q["photo"])
+                    except LookupError as e:
+                        return self._json(422, {"error": str(e)})
+                    try:
+                        return self._json(202, {"job": jobs.submit(q)})
+                    except Busy as e:
+                        return self._json(409, {"error": str(e)})
+                    except Paused as e:
+                        return self._json(429, {"error": str(e)})
                 if path == "/ask":
                     from . import askeng
                     city, slug, text = question(q)

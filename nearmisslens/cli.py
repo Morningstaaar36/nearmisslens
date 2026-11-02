@@ -482,6 +482,43 @@ def cmd_add_city(args) -> int:
     return 0 if "crash" in cov["kinds"] else 1
 
 
+def _letter_client():
+    """Muse Spark Open on Baseten when its key is set, else hosted Muse Spark: a letter never needs a second key."""
+    import os
+    from .meta_client import MetaClient
+    if os.environ.get("BASETEN_API_KEY"):
+        from .openclient import OpenWeightsClient
+        return OpenWeightsClient()
+    return MetaClient(SETTINGS)
+
+
+def cmd_check(args) -> int:
+    from . import check
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    r = check.check(args.input, args.city, kind="source" if args.as_source else args.kind, photo=args.photo,
+                    address=args.address, letter=not args.no_letter, budget_usd=args.budget, client=client,
+                    letter_client=None if args.no_letter else _letter_client(), model_check_client=client)
+    if args.json:
+        from pathlib import Path
+        Path(args.json).write_text(json.dumps(r, indent=1, default=str))
+    print(f"{r['status']}: {r.get('corner') or ''} {('- ' + r['reason']) if r.get('reason') else ''}".strip())
+    for f in r.get("findings") or []:
+        print(f"  - {f.get('text')} [{f.get('receipt')}]")
+    if r.get("saved"):
+        print(f"report: {r['saved']}/report.md  (${(r.get('cost_usd') or {}).get('meta')} Meta API)")
+    return {"published": 0, "abstained": 2, "unsupported_city": 2}.get(r["status"], 1)
+
+
+def cmd_cities(_args) -> int:
+    from . import check
+    for c in check.cities():
+        what = "checkable" if c["checkable"] else "no crash data registered: run nml discover LAT LON"
+        print(f"{c['id']:<10} {c['name']:<18} {what}; has {', '.join(c['has']) or 'nothing'}"
+              + (f"; missing {', '.join(c['missing'])}" if c["missing"] else ""))
+    return 0
+
+
 def cmd_voice_studio(args) -> int:
     from . import voicestudio
     return voicestudio.serve(args.port)
@@ -583,6 +620,18 @@ def main(argv: list[str] | None = None) -> int:
     br.add_argument("--no-memo", action="store_true")
     br.add_argument("--meta", action="store_true", help="memo on the Meta API instead of Muse Spark Open (Baseten)")
     br.add_argument("--letter", action="store_true", help="also draft a checked letter to the council member and community board")
+    ck = sub.add_parser("check", help="check a claim, a source or a resident's report against a registry city's record "
+                        "(paid: Muse Spark); e.g. nml check https://example.org/story --city CITY_ID")
+    ck.add_argument("input", help="a URL, a claim in your own words, or (with --as-source) the source's own text")
+    ck.add_argument("--city", required=True, help="a registry city id (nml cities lists them)")
+    ck.add_argument("--kind", choices=["url", "find", "source", "report"], help="default: url for a link, else find")
+    ck.add_argument("--as-source", action="store_true", help="the input text is itself the source (cited as input:text)")
+    ck.add_argument("--photo", help="report: a public photo URL")
+    ck.add_argument("--address", help="report: where it is")
+    ck.add_argument("--no-letter", action="store_true")
+    ck.add_argument("--budget", type=float, default=0.50, help="Meta $ cap for this case (default 0.50)")
+    ck.add_argument("--json", help="also write the result here")
+    sub.add_parser("cities", help="each registry city and what it supports (free)")
     ac = sub.add_parser("add-city", help="add a city to the registry (data only) and list what it has and lacks; "
                         "e.g. nml add-city boston --name Boston --bbox 42.23 -71.19 42.40 -70.99 --agency 'the Boston "
                         "Transportation Department (BTD)'")
@@ -678,7 +727,7 @@ def run_command(args) -> int:
             "verifier": cmd_verifier, "fetch": cmd_fetch,
             "demo": cmd_demo, "results": cmd_results,
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
-            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "citywide": cmd_citywide, "treatments": cmd_treatments,
+            "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
             "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
