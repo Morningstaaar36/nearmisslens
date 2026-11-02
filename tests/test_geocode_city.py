@@ -56,3 +56,12 @@ def test_a_lookup_found_in_another_city_is_refused(monkeypatch):
 def test_every_saved_entry_is_keyed_by_its_own_city():
     for k, v in brief.gazetteer().items():
         assert k.split("|", 1)[0] == v["city"], k
+
+
+def test_mined_mechanisms_and_photo_readings_stay_in_their_city():
+    from nearmisslens import engineer, miner
+    res = {"spec": {**miner.SPEC, "city": "nyc"}, "runs": [{"corner": "broadway_3_avenue", "null": False, "arm": "grid",
+                                                         "confirmed": []}]}
+    assert miner.corner_mechanisms("broadway_3_avenue", res=res, ds={"corners": []}, city="seattle") == []
+    assert engineer.site_check(engineer.Desk(), "bruckner_boulevard_hunts_point_avenue", "seattle") is None
+    assert engineer.site_check(engineer.Desk(), "bruckner_boulevard_hunts_point_avenue", "nyc") is not None

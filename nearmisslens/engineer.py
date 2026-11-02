@@ -122,25 +122,32 @@ def choose_fixes(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     return data, rid
 
 
-def mechanisms(desk: Desk, slug: str) -> tuple[dict, str] | None:
-    """Crash mechanisms at the corner that held up on sealed later years (NML-Bench T15), or None where none were mined."""
+def _city_name(city: str | None) -> str:
+    from . import opendata
+    return next((c["name"] for c in opendata.load_cities() if c["id"] == city), city or "another city")
+
+
+def mechanisms(desk: Desk, slug: str, city: str | None) -> tuple[dict, str] | None:
+    """Crash mechanisms at the corner that held up on sealed later years (NML-Bench T15), or None where none were mined.
+    T15 mined one city; a corner with the same name in another city gets nothing from it."""
     from . import miner
     t0 = time.perf_counter()
     try:
-        found = miner.corner_mechanisms(slug)
+        found = miner.corner_mechanisms(slug, city=city)
     except (FileNotFoundError, KeyError, ValueError):
         return None
     if not found:
         return None
     data = {"split": miner.SPEC["split"], "mechanisms": found}
-    rid = desk.record("mechanisms", data, ["NML-Bench T15 (validation/BENCH.md)"] + list(miner.SPEC.get("sources", [])),
+    rid = desk.record("mechanisms", data, [f"NML-Bench T15 (validation/BENCH.md; mined in {_city_name(city)} only)"]
+                      + list(miner.SPEC.get("sources", [])),
                       [f"explored on crashes before {miner.SPEC['split']}, confirmed once on crashes after it",
                        "Holm correction over every pattern tested", "arms: Muse Spark Open, exhaustive grid, greedy"],
                       t0, f"{len(found)} mechanisms held up on later years")
     return data, rid
 
 
-def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
+def site_check(desk: Desk, slug: str, city: str | None) -> tuple[dict, str] | None:
     """What the aerial photo shows at the corner (NML-Bench T16): Muse Spark's answer confirmed by SAM 3.1 per
     attribute, and whether that attribute is reliable enough (its registered rule) to change a recommendation."""
     from . import sitecheck
@@ -150,6 +157,8 @@ def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
     if not p.exists():
         return None
     res = json.loads(p.read_text())
+    if (res.get("spec") or {}).get("city") != city:  # T16 read one city's photos; a same-named corner elsewhere is not it
+        return None
     row = next((r for r in res.get("rows", []) if r["slug"] == slug and r.get("answers")), None)
     if not row:
         return None
@@ -160,7 +169,8 @@ def site_check(desk: Desk, slug: str) -> tuple[dict, str] | None:
     from .config import SETTINGS
     src = SETTINGS.runs_dir / "site" / slug / "aerial.txt"  # the imagery the photo came from (brief.aerial writes it)
     photo = src.read_text().strip() if src.exists() else "aerial photo"
-    rid = desk.record("site_check", data, [photo, "Muse Spark (Meta API)", "SAM 3.1"],
+    rid = desk.record("site_check", data, [photo, "Muse Spark (Meta API)", "SAM 3.1",
+                                           f"NML-Bench T16 ({_city_name(city)} only)"],
                       ["present only when SAM 3.1 finds it within 15 m of Muse Spark's point",
                        "an attribute changes a recommendation only if its accuracy against city map layers met the "
                        "registered rule and beat always giving the more common answer (NML-Bench T16, change 1)"], t0,
@@ -334,7 +344,8 @@ def refresh(report: dict) -> dict:
     report = {**report, "findings": findings}
     rec = {t: (report["findings"][t], by_tool[t]) for t in REQUIRED + ("draft_request",)}
     desk = Desk()
-    mk = mechanisms(desk, slug(report["junction"]["name"]))
+    here = context.city_of(report["junction"]["lat"], report["junction"]["lon"])
+    mk = mechanisms(desk, slug(report["junction"]["name"]), here)
     receipts = [r for r in report["receipts"] if r["tool"] != "mechanisms"]
     findings = {k: v for k, v in report["findings"].items() if k != "mechanisms"}
     if mk:
@@ -344,10 +355,10 @@ def refresh(report: dict) -> dict:
         rec["mechanisms"] = (mk[0], rid)
     receipts = [r for r in receipts if r["tool"] != "site_check"]
     findings.pop("site_check", None)
-    sc = site_check(Desk(), slug(report["junction"]["name"]))
+    sc = site_check(Desk(), slug(report["junction"]["name"]), here)
     if sc:
         sdesk = Desk()
-        sc = site_check(sdesk, slug(report["junction"]["name"]))
+        sc = site_check(sdesk, slug(report["junction"]["name"]), here)
         rid = _next_rid(receipts)
         receipts.append({**sdesk.receipts[0], "id": rid})
         findings["site_check"] = sc[0]
@@ -551,7 +562,7 @@ def investigate(desk: Desk, query: str, name: str, lat: float, lon: float, t0: f
     desk.places.add(name.split(",")[0])
     rec = {"root_cause": root_cause(desk, lat, lon), "test_programs": test_programs(desk, lat, lon),
            "choose_fixes": choose_fixes(desk, lat, lon)}
-    mk = mechanisms(desk, slug(name))
+    mk = mechanisms(desk, slug(name), context.city_of(lat, lon))
     if mk:
         rec["mechanisms"] = mk
     rec["who_must_act"] = who_must_act(desk, lat, lon, name)

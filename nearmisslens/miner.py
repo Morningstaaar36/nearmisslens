@@ -459,13 +459,14 @@ def words(pattern_key: str) -> str:
     return " and ".join(parts)
 
 
-def corner_mechanisms(slug: str, res: dict | None = None, ds: dict | None = None) -> list[dict]:
+def corner_mechanisms(slug: str, res: dict | None = None, ds: dict | None = None, city: str | None = None) -> list[dict]:
     """The mechanisms confirmed at a corner by any T15 arm, merged by crash overlap, each with who found it, the
-    explore and sealed shares, and the agent's sentence when it found it."""
+    explore and sealed shares, and the agent's sentence when it found it. Only in the city T15 mined: a corner with the
+    same name elsewhere gets nothing."""
     from .evaluate import RESULTS_DIR
     p = RESULTS_DIR / "bench" / "experiment_T15.json"
     res = res or (json.loads(p.read_text()) if p.exists() else None)
-    if not res:
+    if not res or res.get("spec", SPEC)["city"] != city:
         return []
     rows = [r for r in res["runs"] if r["corner"] == slug and not r["null"]]
     if not rows:
