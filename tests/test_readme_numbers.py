@@ -82,3 +82,15 @@ def test_desk_numbers():
     for run in ("T21", "T21b"):
         st = desk_stats(_load(f"experiment_{run}.json"))
         _has(f"| {st['published']} of {st['cases']} |")
+
+
+def test_corner_watch_numbers():
+    s = _load("experiment_T23.json")["summary"]
+    _has(f"{s['frames']} frames from the traffic cameras at {s['with_daylight']} of the {s['cameras']} camera corners")
+    _has(f"within ±1 person in {s['pack_within_1']} of {s['pack_checks']} sampled frames")
+    assert s["pack_rule_met"] and not s["ranking_reported"]
+    _has("packed counts: met; ranking: not reported (rule)")
+    _has(f"Only {s['with_rate']} cameras saw the 20 people a rate needs")
+    f = s["features"]
+    _has(f"Of {sum(f.values())} layout answers, {f['present']} are present, {f['absent']} absent and {f['unsure']} unsure")
+    _has(f"The run cost ${s['usd']:.2f} of Meta API")

@@ -1,0 +1,2681 @@
+{
+ "city": "seattle",
+ "cameras": 40,
+ "with_daylight": 34,
+ "rows": [
+  {
+   "id": "CMR-0160",
+   "name": "4th Ave S & Spokane Viaduct",
+   "lat": 47.5715738165183,
+   "lon": -122.334194746373,
+   "url": "https://www.seattle.gov/trafficcams/images/4_S_Spokane_EW.jpg",
+   "injury_crashes": 27,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 1.5,
+   "vehicles_per_frame": 1.1,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 1
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "absent",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 15,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 1
+  },
+  {
+   "id": "CMR-0287",
+   "name": "Rainier Ave S & S Othello St",
+   "lat": 47.5369578783704,
+   "lon": -122.270274016104,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Othello.jpg",
+   "injury_crashes": 17,
+   "pedestrian_injury_crashes": 6,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  },
+  {
+   "id": "CMR-0071",
+   "name": "Aurora Ave N & N 105th St EW",
+   "lat": 47.7050512140763,
+   "lon": -122.34469412927,
+   "url": "https://www.seattle.gov/trafficcams/images/Aurora_N_105_EW.jpg",
+   "injury_crashes": 16,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.9,
+   "vehicles_per_frame": 8.8,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 2,
+     "image": 2
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 2,
+     "image": 1
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       1350,
+       500
+      ],
+      [
+       1500,
+       580
+      ],
+      [
+       1650,
+       670
+      ],
+      [
+       1800,
+       770
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 9,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 2
+  },
+  {
+   "id": "CMR-0272",
+   "name": "MLK Jr Way S & S Orcas St",
+   "lat": 47.5512302715191,
+   "lon": -122.288095734492,
+   "url": "https://www.seattle.gov/trafficcams/images/MLK_S_Orcas_NS.jpg",
+   "injury_crashes": 14,
+   "pedestrian_injury_crashes": 4,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.1,
+   "vehicles_per_frame": 3.5,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       145,
+       490
+      ],
+      [
+       210,
+       510
+      ],
+      [
+       268,
+       540
+      ],
+      [
+       118,
+       470
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "present",
+     "points": [
+      [
+       346,
+       613
+      ],
+      [
+       387,
+       572
+      ],
+      [
+       431,
+       541
+      ]
+     ]
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 1,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 3
+  },
+  {
+   "id": "CMR-0095",
+   "name": "Corson Ave S & S Bailey St / S Michigan St",
+   "lat": 47.5462500030823,
+   "lon": -122.326153219037,
+   "url": "https://www.seattle.gov/trafficcams/images/Corson_S_Bailey_EW.jpg",
+   "injury_crashes": 13,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  },
+  {
+   "id": "CMR-0127",
+   "name": "MLK Way & S Othello St EW",
+   "lat": 47.5371848895509,
+   "lon": -122.281168319882,
+   "url": "https://www.seattle.gov/trafficcams/images/MLK_S_Othello_EW.jpg",
+   "injury_crashes": 13,
+   "pedestrian_injury_crashes": 5,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 9,
+   "people_per_frame": 0.22,
+   "vehicles_per_frame": 2.22,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T143032Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       60,
+       460
+      ],
+      [
+       220,
+       450
+      ],
+      [
+       430,
+       440
+      ],
+      [
+       620,
+       430
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "unsure",
+     "points": [
+      [
+       410,
+       200
+      ],
+      [
+       435,
+       200
+      ]
+     ]
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 2,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 4
+  },
+  {
+   "id": "CMR-0285",
+   "name": "Rainier Ave S & S Orcas St",
+   "lat": 47.5511760252476,
+   "lon": -122.277664109778,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Orcas_NS.jpg",
+   "injury_crashes": 13,
+   "pedestrian_injury_crashes": 2,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 9,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 1.56,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T143032Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "unsure",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       165,
+       448
+      ],
+      [
+       376,
+       458
+      ],
+      [
+       595,
+       471
+      ],
+      [
+       904,
+       498
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 5
+  },
+  {
+   "id": "CMR-0309",
+   "name": "5th Ave & Pike St",
+   "lat": 47.6112073735434,
+   "lon": -122.337591981161,
+   "url": "https://www.seattle.gov/trafficcams/images/5_Pike_NS.jpg",
+   "injury_crashes": 13,
+   "pedestrian_injury_crashes": 4,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 9,
+   "people_per_frame": 2.56,
+   "vehicles_per_frame": 3.0,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 1
+    },
+    {
+     "frame": "20261102T143032Z",
+     "video": 0,
+     "image": 1
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       315,
+       360
+      ],
+      [
+       415,
+       325
+      ],
+      [
+       480,
+       345
+      ],
+      [
+       535,
+       405
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       490,
+       380
+      ],
+      [
+       565,
+       370
+      ]
+     ]
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "unsure",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "unsure"
+   },
+   "people_seen": 23,
+   "injury_crashes_per_1000_people_seen": 564.24,
+   "rank_by_crashes": 6,
+   "rank_by_exposure": 1
+  },
+  {
+   "id": "CMR-0316",
+   "name": "Howell St & Minor Ave",
+   "lat": 47.6182737638499,
+   "lon": -122.330999409799,
+   "url": "https://www.seattle.gov/trafficcams/images/Minor_Howell_EW.jpg",
+   "injury_crashes": 13,
+   "pedestrian_injury_crashes": 4,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.4,
+   "vehicles_per_frame": 7.2,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       541,
+       473
+      ],
+      [
+       566,
+       465
+      ],
+      [
+       590,
+       457
+      ],
+      [
+       611,
+       451
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 4,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 7
+  },
+  {
+   "id": "CMR-0019",
+   "name": "1st Ave S & E Marginal Way S",
+   "lat": 47.5480054375079,
+   "lon": -122.334167922253,
+   "url": "https://www.seattle.gov/trafficcams/images/1_S_EMarg_NS.jpg",
+   "injury_crashes": 12,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 7.3,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "absent",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 8
+  },
+  {
+   "id": "CMR-0024",
+   "name": "23rd Ave E & E Cherry St NS",
+   "lat": 47.6082657222401,
+   "lon": -122.302768189568,
+   "url": "https://www.seattle.gov/trafficcams/images/23_E_Cherry_NS.jpg",
+   "injury_crashes": 12,
+   "pedestrian_injury_crashes": 5,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.4,
+   "vehicles_per_frame": 3.5,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       220,
+       550
+      ],
+      [
+       350,
+       538
+      ],
+      [
+       480,
+       528
+      ],
+      [
+       620,
+       519
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 4,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 9
+  },
+  {
+   "id": "CMR-0313",
+   "name": "Broadway & E John St",
+   "lat": 47.619907747612,
+   "lon": -122.320872891674,
+   "url": "https://www.seattle.gov/trafficcams/images/Broadway_E_John_NS.jpg",
+   "injury_crashes": 12,
+   "pedestrian_injury_crashes": 7,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 1.7,
+   "vehicles_per_frame": 6.3,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       260,
+       740
+      ],
+      [
+       385,
+       700
+      ],
+      [
+       545,
+       655
+      ],
+      [
+       705,
+       605
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 17,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 10
+  },
+  {
+   "id": "CMR-0317",
+   "name": "Fairview Ave & Boren Ave",
+   "lat": 47.6185342697586,
+   "lon": -122.33848456777,
+   "url": "https://www.seattle.gov/trafficcams/images/Fairview_Boren_NS.jpg",
+   "injury_crashes": 12,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.4,
+   "vehicles_per_frame": 8.7,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 1
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 1,
+     "image": 1
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       561,
+       457
+      ],
+      [
+       592,
+       438
+      ],
+      [
+       622,
+       416
+      ],
+      [
+       652,
+       397
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "unsure",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 4,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 11
+  },
+  {
+   "id": "CMR-0332",
+   "name": "3rd Ave & Denny Way",
+   "lat": 47.6186020668845,
+   "lon": -122.355453142208,
+   "url": "https://www.seattle.gov/trafficcams/images/3_N_Denny_EW.jpg",
+   "injury_crashes": 12,
+   "pedestrian_injury_crashes": 5,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.3,
+   "vehicles_per_frame": 4.2,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       650,
+       338
+      ],
+      [
+       710,
+       315
+      ],
+      [
+       1330,
+       410
+      ],
+      [
+       1295,
+       380
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       805,
+       361
+      ],
+      [
+       885,
+       354
+      ],
+      [
+       1015,
+       359
+      ],
+      [
+       1145,
+       374
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 3,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 12
+  },
+  {
+   "id": "CMR-0075",
+   "name": "Aurora Ave N & N 145th St EW",
+   "lat": 47.7334976926491,
+   "lon": -122.345090029483,
+   "url": "https://www.seattle.gov/trafficcams/images/Aurora_N_145_1.jpg",
+   "injury_crashes": 11,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.2,
+   "vehicles_per_frame": 5.8,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       411,
+       384
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       457,
+       648
+      ],
+      [
+       424,
+       554
+      ],
+      [
+       537,
+       384
+      ],
+      [
+       834,
+       342
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 2,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 13
+  },
+  {
+   "id": "CMR-0274",
+   "name": "MLK Jr Way S & S Cloverdale St",
+   "lat": 47.5261172507256,
+   "lon": -122.279013422719,
+   "url": "https://www.seattle.gov/trafficcams/images/MLK_S_Cloverdale_NS.jpg",
+   "injury_crashes": 11,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 1.5,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "unsure",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "unsure",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "unsure",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "unsure",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 14
+  },
+  {
+   "id": "CMR-0036",
+   "name": "3rd Ave & Yesler Way",
+   "lat": 47.606087858217,
+   "lon": -122.332909103454,
+   "url": "https://www.seattle.gov/trafficcams/images/3_Yesler_NS.jpg",
+   "injury_crashes": 10,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 2.0,
+   "vehicles_per_frame": 0.5,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       282,
+       423
+      ],
+      [
+       338,
+       423
+      ],
+      [
+       443,
+       423
+      ],
+      [
+       608,
+       423
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 20,
+   "injury_crashes_per_1000_people_seen": 500.0,
+   "rank_by_crashes": 15,
+   "rank_by_exposure": 2
+  },
+  {
+   "id": "CMR-0273",
+   "name": "MLK Jr Way S & S Graham St",
+   "lat": 47.5460584126582,
+   "lon": -122.285452019525,
+   "url": "https://www.seattle.gov/trafficcams/images/MLK_S_Graham_NS.jpg",
+   "injury_crashes": 10,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 2.2,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "unsure",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       100,
+       350
+      ],
+      [
+       450,
+       275
+      ],
+      [
+       1500,
+       525
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       125,
+       270
+      ]
+     ]
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "unsure",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 16
+  },
+  {
+   "id": "CMR-0307",
+   "name": "Broadway & James St",
+   "lat": 47.6111536219956,
+   "lon": -122.320806066186,
+   "url": "https://www.seattle.gov/trafficcams/images/Broadway_E_James_EW.jpg",
+   "injury_crashes": 10,
+   "pedestrian_injury_crashes": 2,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.2,
+   "vehicles_per_frame": 2.9,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 1
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       669,
+       869
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       77,
+       924
+      ],
+      [
+       198,
+       898
+      ],
+      [
+       378,
+       912
+      ],
+      [
+       523,
+       933
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 2,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 17
+  },
+  {
+   "id": "CMR-0335",
+   "name": "Lander St & S Overpass",
+   "lat": 47.5798111393189,
+   "lon": -122.334200813449,
+   "url": "https://www.seattle.gov/trafficcams/images/S_Lander_OP.jpg",
+   "injury_crashes": 10,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  },
+  {
+   "id": "CMR-0010",
+   "name": "15th Ave NW & NW Market St EW",
+   "lat": 47.6685143331236,
+   "lon": -122.376214714437,
+   "url": "https://www.seattle.gov/trafficcams/images/15_NW_Market_2.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 5,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  },
+  {
+   "id": "CMR-0132",
+   "name": "Montlake Blvd NE & NE Pacific St SWC",
+   "lat": 47.6490287279731,
+   "lon": -122.304601684567,
+   "url": "https://www.seattle.gov/trafficcams/images/Montlake_NE_Pacific_2.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.4,
+   "vehicles_per_frame": 10.4,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 1
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 4,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 18
+  },
+  {
+   "id": "CMR-0284",
+   "name": "Rainier Ave S & S Alaska St",
+   "lat": 47.5640950386063,
+   "lon": -122.288185946316,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Alaska_NS.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.1,
+   "vehicles_per_frame": 5.0,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       333,
+       597
+      ],
+      [
+       620,
+       619
+      ],
+      [
+       997,
+       706
+      ],
+      [
+       1470,
+       793
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 1,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 19
+  },
+  {
+   "id": "CMR-0336",
+   "name": "2nd Ave SW & Highland Pk Way SW EW",
+   "lat": 47.5398126595915,
+   "lon": -122.33711134292,
+   "url": "https://www.seattle.gov/trafficcams/images/2_SW_Highland_EW.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 1.7,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       722,
+       680
+      ],
+      [
+       780,
+       654
+      ],
+      [
+       836,
+       625
+      ],
+      [
+       892,
+       600
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 20
+  },
+  {
+   "id": "CMR-0338",
+   "name": "W Marginal Way SW & Highland Pk Way SW - NEC",
+   "lat": 47.5403529965411,
+   "lon": -122.342181431038,
+   "url": "https://www.seattle.gov/trafficcams/images/W_Marg_SW_Highland_NEC.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 6.6,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 21
+  },
+  {
+   "id": "CMR-0349",
+   "name": "Airport Way S & S Lucile St",
+   "lat": 47.5533968880399,
+   "lon": -122.32107501634,
+   "url": "https://www.seattle.gov/trafficcams/images/Airport_S_Lucile.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.2,
+   "vehicles_per_frame": 4.5,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       159,
+       705
+      ],
+      [
+       190,
+       675
+      ],
+      [
+       230,
+       640
+      ],
+      [
+       135,
+       725
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       202,
+       968
+      ],
+      [
+       303,
+       965
+      ],
+      [
+       401,
+       960
+      ],
+      [
+       600,
+       945
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 2,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 22
+  },
+  {
+   "id": "CMR-0471",
+   "name": "Airport Way S & S Holgate St - Fixed",
+   "lat": 47.5861054380567,
+   "lon": -122.32136658351,
+   "url": "https://www.seattle.gov/trafficcams/images/Airport_S_Holgate.jpg",
+   "injury_crashes": 9,
+   "pedestrian_injury_crashes": 3,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  },
+  {
+   "id": "CMR-0013",
+   "name": "15th Ave W & W Emerson St",
+   "lat": 47.6538875432776,
+   "lon": -122.37625660604,
+   "url": "https://www.seattle.gov/trafficcams/images/15_W_Emerson_NS.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 2,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 12.2,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "absent",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 23
+  },
+  {
+   "id": "CMR-0260",
+   "name": "Westlake Ave N & Harrison St",
+   "lat": 47.6245497273624,
+   "lon": -122.342349600654,
+   "url": "https://www.seattle.gov/trafficcams/images/Westlake_N_Harrison_NS.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.3,
+   "vehicles_per_frame": 3.3,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 1
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       1020,
+       340
+      ],
+      [
+       1120,
+       340
+      ],
+      [
+       1020,
+       360
+      ],
+      [
+       1240,
+       360
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "unsure",
+     "points": [
+      [
+       1210,
+       272
+      ]
+     ]
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 3,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 24
+  },
+  {
+   "id": "CMR-0263",
+   "name": "23rd Ave & E Union St NS",
+   "lat": 47.6129414136427,
+   "lon": -122.302710373442,
+   "url": "https://www.seattle.gov/trafficcams/images/23_Union.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.6,
+   "vehicles_per_frame": 2.3,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       174,
+       688
+      ],
+      [
+       429,
+       601
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       678,
+       574
+      ],
+      [
+       898,
+       560
+      ],
+      [
+       1136,
+       541
+      ],
+      [
+       1799,
+       653
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 6,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 25
+  },
+  {
+   "id": "CMR-0280",
+   "name": "Rainier Ave S & S McClellan St",
+   "lat": 47.5783500445387,
+   "lon": -122.298150713097,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_McClellan_NS.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.1,
+   "vehicles_per_frame": 5.6,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       335,
+       908
+      ],
+      [
+       500,
+       914
+      ],
+      [
+       650,
+       934
+      ],
+      [
+       800,
+       952
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 1,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 26
+  },
+  {
+   "id": "CMR-0286",
+   "name": "Rainier Ave S & S Graham St",
+   "lat": 47.546026624252,
+   "lon": -122.275988663552,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Graham_EW.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.1,
+   "vehicles_per_frame": 3.7,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "unsure",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       290,
+       425
+      ],
+      [
+       320,
+       470
+      ],
+      [
+       390,
+       560
+      ],
+      [
+       470,
+       640
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 1,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 27
+  },
+  {
+   "id": "CMR-0352",
+   "name": "Delridge Wy SW & SW Orchard St",
+   "lat": 47.5379548167829,
+   "lon": -122.361096517181,
+   "url": "https://www.seattle.gov/trafficcams/images/Delridge_SW_Orchard_NEC.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.3,
+   "vehicles_per_frame": 3.4,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       232,
+       388
+      ],
+      [
+       326,
+       369
+      ],
+      [
+       429,
+       347
+      ],
+      [
+       534,
+       333
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 3,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 28
+  },
+  {
+   "id": "CMR-0437",
+   "name": "Lake City Way NE & NE 82nd St",
+   "lat": 47.6867017586708,
+   "lon": -122.313301855141,
+   "url": "https://www.seattle.gov/trafficcams/images/LCW_NE_82.jpg",
+   "injury_crashes": 8,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 6.6,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "present",
+     "points": [
+      [
+       370,
+       890
+      ],
+      [
+       1550,
+       705
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       600,
+       750
+      ],
+      [
+       800,
+       750
+      ],
+      [
+       1050,
+       750
+      ],
+      [
+       1250,
+       750
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "present",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 29
+  },
+  {
+   "id": "CMR-0082",
+   "name": "Aurora Ave N & N Winona St",
+   "lat": 47.6827723734034,
+   "lon": -122.34448441424,
+   "url": "https://www.seattle.gov/trafficcams/images/Aurora_N_Winona.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 11.6,
+   "capped_frames": 1,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "unsure",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 30
+  },
+  {
+   "id": "CMR-0136",
+   "name": "Rainier Ave S & S Dearborn St",
+   "lat": 47.595873882117,
+   "lon": -122.311529602467,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Dearborn_NS.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.5,
+   "vehicles_per_frame": 9.7,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 1,
+     "image": 1
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       560,
+       455
+      ]
+     ]
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "absent",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "unsure"
+   },
+   "people_seen": 5,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 31
+  },
+  {
+   "id": "CMR-0269",
+   "name": "MLK Jr Way & E Yesler Way",
+   "lat": 47.6016561533033,
+   "lon": -122.296767841218,
+   "url": "https://www.seattle.gov/trafficcams/images/MLK_E_Yesler_NS.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 2,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.1,
+   "vehicles_per_frame": 5.0,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       620,
+       890
+      ],
+      [
+       860,
+       880
+      ],
+      [
+       1100,
+       845
+      ],
+      [
+       1350,
+       830
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "present",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 1,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 32
+  },
+  {
+   "id": "CMR-0288",
+   "name": "Rainier Ave S & S Rose St",
+   "lat": 47.529130115378,
+   "lon": -122.269987052353,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_Rose_NS.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 1,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 1.7,
+   "vehicles_per_frame": 3.1,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "absent",
+     "points": []
+    },
+    "high_visibility_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "absent",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "absent",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 17,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 33
+  },
+  {
+   "id": "CMR-0290",
+   "name": "Rainier Ave S & 57th Ave S",
+   "lat": 47.5202643966723,
+   "lon": -122.26158231719,
+   "url": "https://www.seattle.gov/trafficcams/images/Rainier_S_57_NS.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 0,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 10,
+   "people_per_frame": 0.0,
+   "vehicles_per_frame": 6.3,
+   "capped_frames": 0,
+   "pack_check": [
+    {
+     "frame": "20261102T140906Z",
+     "video": 0,
+     "image": 0
+    },
+    {
+     "frame": "20261102T142020Z",
+     "video": 0,
+     "image": 0
+    }
+   ],
+   "frame_read": "20261102T150113Z",
+   "spark": {
+    "curb_extension": {
+     "answer": "unsure",
+     "points": [
+      [
+       200,
+       730
+      ]
+     ]
+    },
+    "high_visibility_crosswalk": {
+     "answer": "present",
+     "points": [
+      [
+       134,
+       946
+      ],
+      [
+       215,
+       900
+      ],
+      [
+       294,
+       844
+      ],
+      [
+       352,
+       797
+      ]
+     ]
+    },
+    "pedestrian_outside_crosswalk": {
+     "answer": "absent",
+     "points": []
+    },
+    "pedestrian_refuge": {
+     "answer": "absent",
+     "points": []
+    },
+    "vehicle_in_crosswalk": {
+     "answer": "absent",
+     "points": []
+    }
+   },
+   "features": {
+    "high_visibility_crosswalk": "unsure",
+    "curb_extension": "unsure",
+    "pedestrian_refuge": "absent",
+    "vehicle_in_crosswalk": "unsure",
+    "pedestrian_outside_crosswalk": "absent"
+   },
+   "people_seen": 0,
+   "injury_crashes_per_1000_people_seen": null,
+   "rank_by_crashes": 34
+  },
+  {
+   "id": "CMR-0292",
+   "name": "15th Ave W & W Armory Way",
+   "lat": 47.6376608647405,
+   "lon": -122.37614275829,
+   "url": "https://www.seattle.gov/trafficcams/images/15_W_Armory.jpg",
+   "injury_crashes": 7,
+   "pedestrian_injury_crashes": 2,
+   "window_months": 60,
+   "radius_m": 50.0,
+   "frames": 0,
+   "note": "no daylight frame"
+  }
+ ],
+ "summary": {
+  "cameras": 40,
+  "with_daylight": 34,
+  "frames": 337,
+  "pack_checks": 68,
+  "pack_within_1": 68,
+  "pack_mean_abs_diff": 0.12,
+  "pack_rule_met": true,
+  "features": {
+   "present": 27,
+   "absent": 82,
+   "unsure": 61
+  },
+  "with_rate": 2,
+  "ranking_reported": false,
+  "spearman_crash_vs_exposure": null,
+  "crash_top10_leaving_exposure_top10": null,
+  "capped_frames": 6,
+  "usd": 1.2662
+ }
+}

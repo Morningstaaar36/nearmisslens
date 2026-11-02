@@ -324,7 +324,7 @@ def cmd_cameras(args) -> int:
         out = corner_watch.watch(client, args.city, picks)
         out["summary"] = corner_watch.summarize(out)
         rows = [json.loads(x) for x in SETTINGS.ledger.read_text().splitlines() if x.strip()] if SETTINGS.ledger.exists() else []
-        out["summary"]["usd"] = round(sum(r["usd"] for r in rows if r["t"] >= start and str(r.get("what", "")).startswith("corner")), 4)
+        out["summary"]["usd"] = corner_watch.run_usd(rows, start)
         (RESULTS_DIR / "bench" / "experiment_T23.json").write_text(portable(json.dumps(out, indent=1, default=str)))
         print(json.dumps(out["summary"], indent=1))
     return 0

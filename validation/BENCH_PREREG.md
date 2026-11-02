@@ -711,3 +711,23 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Frames used** (counted on disk before the run): 337 of 373. 34 of the 40 cameras have 9–10 frames each (31 have 10, 3 have 9); 6 have none.
 - **Everything else is as registered.**
 - **Expected consequence:** few people per camera at that hour. Fewer than 20 cameras may get an exposure rate, in which case the ranking is "not reported (rule)".
+
+### T23 result (2026-11-03)
+- **Ran:** 34 of the 40 cameras had frames after both filters (337 frames, 06:00–07:42 Seattle time, as in the deviation above). Meta API cost $1.27, $0.037 per camera.
+- **Packed counts: rule met.** 68 of 68 sampled frames agree within ±1 person (mean difference 0.12).
+  - The test is weak: the sampled frames are each camera's first two, the earliest and darkest, and only 11 of the 68 had a person in either mode.
+  - Of those 11, 3 agree exactly and 8 differ by one. In 7 of the 8, the packed video counts one person fewer.
+- **Exposure ranking: not reported (rule).** Only 2 cameras saw at least 20 people: 5th Ave & Pike St (23) and 3rd Ave & Yesler Way (20). Spearman and the top-10 change are not computed. People per frame averaged 0.45, at most 6 in a frame, and 10 of the 34 cameras saw no one. At this hour the counts say nothing about which corners are used most.
+- **Layout answers:** 170 (34 cameras × 5 features). 27 present, 82 absent and 61 unsure.
+  - Muse Spark said present 35 times, and SAM 3.1 found the feature near its points in 27. The other 8 became unsure.
+  - It said absent 126 times, and SAM found nothing in 82. The other 44 became unsure, 19 of them "curb extension", where SAM's detections likely include ordinary curbs.
+  - A "present" without a matching SAM detection cannot be recorded, by rule.
+- **SAM's 16-object cap:** no person count came near it (the most was 6). 6 frames hit 16 cars, one at each of 6 cameras, so those car counts are lower bounds.
+- **Cost total fixed after the run:** the run summed only ledger entries labelled "corner …" and so missed SAM's entries ("sam video corner …", "sam image corner …"). It saved $0.0137. The saved value is now the ledger total for the run's 331 entries, $1.2662 (`corner_watch.run_usd`, tested).
+- **Spot-check by eye**, of the mid frame at 15:01 UTC, against the per-frame counts rebuilt from the cached SAM responses at no cost:
+  - **5th Ave & Pike St:** SAM counted 4 people and 5 cars. I see 3 people and 5 cars.
+    - Spark's crosswalk points fall on bare pavement, not on the crosswalk the cars are crossing, so "unsure" was correct.
+    - Two cars are on the crosswalk, but Spark pointed elsewhere, so "vehicle in crosswalk" is unsure: a miss, not a false answer.
+  - **3rd Ave & Yesler Way:** SAM counted 3 people and 0 cars. I see 3 people, a bus (not a "car") and one distant car, so the cars are undercounted by one. The crosswalk "present" is right, with Spark's points on the stripes.
+  - **Aurora Ave N & N 105th St:** SAM counted 0 people and 6 cars. I see no one and about 7 cars. The crosswalk "present" is right.
+- **Not covered, still pending:** the hand count. Frames are not published.

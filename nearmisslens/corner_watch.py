@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -182,6 +183,13 @@ def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
     for k, r in enumerate(by_exposure, 1):
         r["rank_by_exposure"] = k
     return {"city": city, "cameras": len(picks), "with_daylight": len(seen), "rows": rows}
+
+
+def run_usd(ledger_rows: list[dict], start: float) -> float:
+    """Meta $ of a watch run from the ledger: Spark's looks ("corner look ...") and SAM's requests ("sam video corner
+    ...", "sam image corner ...") since `start`."""
+    lab = re.compile(r"^(sam (video|image) )?corner ")
+    return round(sum(r["usd"] for r in ledger_rows if r["t"] >= start and lab.match(str(r.get("what", "")))), 4)
 
 
 def summarize(out: dict) -> dict:

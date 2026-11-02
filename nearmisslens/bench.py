@@ -1268,6 +1268,10 @@ def _t21_section() -> list[str]:
     return L
 
 
+def _or_rule(v) -> str:
+    return "not reported (rule)" if v is None else str(v)
+
+
 def _t23_section() -> list[str]:
     """T23: Corner Watch on the city's traffic cameras."""
     r = _load("experiment_T23.json")
@@ -1277,15 +1281,16 @@ def _t23_section() -> list[str]:
     return ["## T23 Corner Watch: what the city's cameras show at its most dangerous corners", "",
             f"Registered in BENCH_PREREG.md (T23). {s['with_daylight']} of {s['cameras']} Seattle camera corners had "
             f"daylight frames ({s['frames']} frames). SAM 3.1 counted people and cars from frames packed into one video "
-            "per camera; Muse Spark answered layout questions and SAM 3.1 had to agree.", "",
+            "per camera; Muse Spark answered layout questions and SAM 3.1 had to agree. The deviation (frames from about "
+            "1 h 40 min of early morning only), the spot-check and the review are under T23 in BENCH_PREREG.md.", "",
             "| measure | value |", "|---|---|",
             f"| packed-video count within ±1 of image mode | {s['pack_within_1']} of {s['pack_checks']} sampled frames "
             f"(mean difference {s['pack_mean_abs_diff']}); rule (at least 80%): {'met' if s['pack_rule_met'] else 'not met'} |",
             f"| layout answers | present {s['features']['present']}, absent {s['features']['absent']}, unsure {s['features']['unsure']} |",
             f"| corners with an exposure rate (at least 20 people seen) | {s['with_rate']}; ranking reported: "
             f"{'yes' if s['ranking_reported'] else 'no (fewer than 20)'} |",
-            f"| Spearman, crash rank vs crashes per person seen | {s['spearman_crash_vs_exposure']} |",
-            f"| crash top 10 not in the exposure top 10 | {s['crash_top10_leaving_exposure_top10']} |",
+            f"| Spearman, crash rank vs crashes per person seen | {_or_rule(s['spearman_crash_vs_exposure'])} |",
+            f"| crash top 10 not in the exposure top 10 | {_or_rule(s['crash_top10_leaving_exposure_top10'])} |",
             f"| frames at SAM's 16-object cap (cars) | {s['capped_frames']} |",
             f"| Meta API cost | ${s.get('usd')} |", ""]
 

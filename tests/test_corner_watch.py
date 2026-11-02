@@ -54,3 +54,12 @@ def test_summary_scores_packing_and_ranks_only_rated_corners():
     assert s["pack_checks"] == 25 and s["pack_within_1"] == 16 and not s["pack_rule_met"]
     assert s["ranking_reported"] and s["spearman_crash_vs_exposure"] == -1.0
     assert s["crash_top10_leaving_exposure_top10"] == 10 and s["features"]["present"] == 25
+
+
+def test_run_cost_counts_sam_and_spark_entries_of_the_run_only():
+    rows = [{"t": 5, "usd": 0.02, "what": "sam video corner CMR-1 'person'"},
+            {"t": 5, "usd": 0.0025, "what": "sam image corner CMR-1 'zebra crosswalk'"},
+            {"t": 5, "usd": 0.001, "what": "corner look CMR-1"},
+            {"t": 5, "usd": 0.5, "what": "desk T21e case 3"},
+            {"t": 1, "usd": 0.02, "what": "sam video corner CMR-1 'car'"}]
+    assert W.run_usd(rows, 2) == 0.0235

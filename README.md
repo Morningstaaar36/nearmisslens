@@ -128,6 +128,8 @@ In Seattle most estimates rest on a pavement-friction study whose sites were cho
 - **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
 - **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded in the city's open datasets there now, and pedestrians were injured there in the records since 2021. The city has since installed thousands of leading pedestrian intervals elsewhere (1,651 in the window our causal gate measured), so these corners stand out. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
 
+**Seattle's own cameras (Corner Watch, T23).** SAM 3.1 counted people and cars in 337 frames from the traffic cameras at 34 of the 40 camera corners with the most injury crashes, and Muse Spark answered five layout questions per corner that SAM 3.1 had to confirm. The frames cover only 06:00–07:42 on one morning: the collector could not run all day, and that deviation was recorded before any frame was sent to a model. Packed-video counts agreed with image mode within ±1 person in 68 of 68 sampled frames, so packing is credited, though most sampled frames had no one in them. Only 2 cameras saw the 20 people a rate needs, so the crashes-per-person ranking is not reported (rule). Of 170 layout answers, 27 are present, 82 absent and 61 unsure. The run cost $1.27 of Meta API. Frames stay on this machine.
+
 ## Who would use this
 
 - **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for any city with open crash data. It is meant to replace the pulling of records and looking up of CMFs, not the engineer's site visit.
@@ -282,7 +284,8 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T20 / T20b | Does model reading plus code checking beat the regex checker? | not met / met |
   | T21 / T21b / T21c | Does the desk publish at least 9 of 12 real cases at no more than $0.25 each? | not met / not met / met |
   | T22 | Does a loop governor make the open-weights agent finish more often? | not met |
-  | T21d, T23 | Honest verdicts on fresh cases; Corner Watch on city cameras | registered, results in BENCH.md |
+  | T21d | Honest verdicts on fresh cases | registered, results in BENCH.md |
+  | T23 | Do a city's own cameras give usable counts, and does counting people change which corners rank worst? | packed counts: met; ranking: not reported (rule), too few people seen |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.

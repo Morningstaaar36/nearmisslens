@@ -582,6 +582,20 @@ Registered in BENCH_PREREG.md (T22). The same corners, model and budget; the gov
 
 Registered rule (at least 32 of 35 finished, no repeated identical call, no higher cost per finished case): not met. The nudge removed stops without a tool call, but runs now hit the turn or budget limit, and the number checker became stricter between the two runs, so the comparison is not clean.
 
+## T23 Corner Watch: what the city's cameras show at its most dangerous corners
+
+Registered in BENCH_PREREG.md (T23). 34 of 40 Seattle camera corners had daylight frames (337 frames). SAM 3.1 counted people and cars from frames packed into one video per camera; Muse Spark answered layout questions and SAM 3.1 had to agree. The deviation (frames from about 1 h 40 min of early morning only), the spot-check and the review are under T23 in BENCH_PREREG.md.
+
+| measure | value |
+|---|---|
+| packed-video count within ±1 of image mode | 68 of 68 sampled frames (mean difference 0.12); rule (at least 80%): met |
+| layout answers | present 27, absent 82, unsure 61 |
+| corners with an exposure rate (at least 20 people seen) | 2; ranking reported: no (fewer than 20) |
+| Spearman, crash rank vs crashes per person seen | not reported (rule) |
+| crash top 10 not in the exposure top 10 | not reported (rule) |
+| frames at SAM's 16-object cap (cars) | 6 |
+| Meta API cost | $1.2662 |
+
 ## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs
 
 Registered in BENCH_PREREG.md (T24). The 12 inputs of T21c, Muse Spark 1.3 with Meta web_search and nothing else; its output scored by the desk's own checks after the run.
