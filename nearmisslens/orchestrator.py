@@ -50,7 +50,8 @@ def page_text(url: str) -> str:
     from .config import SETTINGS
     if SETTINGS.replay:
         return ""
-    try:
+    try:  # our own, honest user agent: a site that refuses automated readers is respected, and its quote is
+        # published marked unverified rather than fetched another way
         with httpx.Client(headers=context.UA, timeout=30, follow_redirects=True) as c:
             r = c.get(url)
         text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", r.text, flags=re.S | re.I)
@@ -67,9 +68,21 @@ def _norm(s: str) -> str:
     return " ".join(re.sub(r"[^a-z0-9]+", " ", (s or "").lower()).split())
 
 
-def quote_in_page(quote: str, url: str) -> bool:
+READABLE = 1500  # characters of visible text below which a page did not load (blocked, script-only or a file)
+
+
+def quote_check(quote: str, url: str) -> str:
+    """'verified' (the quote is in the page), 'absent' (the page loaded and the quote is not in it) or 'unreadable'
+    (the page could not be read here, so the quote is published marked unverified, never refused for that alone)."""
+    text = page_text(url)
+    if len(text) < READABLE:
+        return "unreadable"
     q = _norm(quote)
-    return len(q) >= 12 and q in _norm(page_text(url))
+    return "verified" if len(q) >= 12 and q in _norm(text) else "absent"
+
+
+def quote_in_page(quote: str, url: str) -> bool:
+    return quote_check(quote, url) == "verified"
 
 
 class Desk:
@@ -127,7 +140,16 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
     txt, num = {"type": "string"}, {"type": "number"}
 
     def investigate(address: str, draft_letter: bool):
-        rep = engineer.plan(address, letter_client=letter_client if draft_letter else None)
+        from . import brief
+        last = None
+        for variant in brief.address_variants(address):  # "Bay Pkwy and Cropsey Ave" -> "Bay Parkway & Cropsey Avenue"
+            try:
+                rep = engineer.plan(variant, letter_client=letter_client if draft_letter else None)
+                break
+            except ValueError as e:
+                last = e
+        else:
+            raise last
         desk.report = rep
         desk.places.add(rep["junction"]["name"].split(",")[0])
         ids = {}
@@ -165,9 +187,12 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
             t = engineer.strip_places(f.get("text", ""), _places(desk))
             errors += [f"finding {k}: {e}" for e in context.FactCheck(d["data"]).text(t)
                        + engineer.conditional_fix_errors(t, d["data"]) + engineer.wording(t)]
+        checked = []
         for k, s in enumerate(sources, 1):
-            if not quote_in_page(s.get("quote", ""), s.get("url", "")):
-                errors.append(f"source {k}: the quote is not in the page at {s.get('url')}")
+            state = quote_check(s.get("quote", ""), s.get("url", ""))
+            if state == "absent":
+                errors.append(f"source {k}: the quote is not in the page at {s.get('url')} (copy it exactly)")
+            checked.append({**s, "quote_check": state})
         errors += [f"summary: {e}" for e in engineer.wording(summary)]
         numbered = [f for f in findings if re.search(r"\d", f.get("text", ""))]
         if len(numbered) < 3:  # a publishable case states the record's numbers, not just that a case exists
@@ -177,7 +202,7 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
             errors.append("no source: cite the page the input came from, with an exact quote")
         if errors:
             return {"error": "refused by the publish gate", "errors": errors[:12]}
-        desk.final = {"summary": summary, "findings": findings, "sources": sources}
+        desk.final = {"summary": summary, "findings": findings, "sources": checked}
         return {"ok": True}
 
     def view_photo(url: str, question: str):
@@ -258,7 +283,8 @@ def run_case(task: str, city: str, client, letter_client=None, model_check_clien
             "stopped": run.stopped, "turns": run.turns, "usd": round(run.usd, 4), "seconds": round(time.time() - t0, 1),
             "refusals": run.refusals, "web": desk.web,
             "trace": [{"turn": s.turn, "tool": s.tool, "args": {k: v for k, v in (s.arguments or {}).items() if k != "findings"},
-                       "error": (s.result or {}).get("error") if isinstance(s.result, dict) else None} for s in run.steps],
+                       "error": (s.result or {}).get("error") if isinstance(s.result, dict) else None,
+                       "errors": (s.result or {}).get("errors") if isinstance(s.result, dict) else None} for s in run.steps],
             "receipts": {k: {kk: vv for kk, vv in v.items() if kk != "data"} for k, v in desk.receipts.items()},
             "corner": (rep.get("junction") or {}).get("name"),
             "letter": ((rep.get("findings") or {}).get("draft_request") or {}).get("letter")}

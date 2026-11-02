@@ -47,3 +47,17 @@ def test_publish_gate_refuses_a_quote_not_in_the_page_and_a_wrong_number(monkeyp
 
 def test_quote_matching_ignores_punctuation_and_case():
     assert O._norm("Hit at “Broadway”, E. Pine!") == "hit at broadway e pine"
+
+
+def test_unreadable_pages_publish_unverified_and_loaded_pages_must_hold_the_quote(monkeypatch):
+    monkeypatch.setattr(O, "page_text", lambda url: "" if "blocked" in url else "x " * 900 + "the pedestrian was hit at the corner")
+    assert O.quote_check("The pedestrian was hit at the corner", "https://ok.example") == "verified"
+    assert O.quote_check("Three pedestrians died here yesterday", "https://ok.example") == "absent"
+    assert O.quote_check("anything at all here", "https://blocked.example") == "unreadable"
+
+
+def test_address_variants_reach_the_geocoders_format():
+    from nearmisslens.brief import address_variants
+    v = address_variants("16th St and L St NW, Washington, DC")
+    assert "16th Street Northwest & L Street Northwest, Washington, DC" in v
+    assert "Aurora Avenue North & North 97th Street, Seattle" in address_variants("Aurora Ave N near N 97th St, Seattle")

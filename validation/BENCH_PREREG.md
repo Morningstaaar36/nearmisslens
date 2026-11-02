@@ -493,3 +493,27 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - tool calls by kind.
 - **Rule:** credited if at least 9 of 12 cases publish and the average cost is at most $0.25 per case. Every published quote is in its page and every finding passes the gate, by construction.
 - **Not covered:** whether the published findings are right beyond what the gates check. 12 findings will be sampled for your hand review, marked pending until then.
+
+### T21 and T22 results (2026-11-02)
+- **T21:** 4 of 12 cases published, so the rule (at least 9) was **not met**. Average cost was about $0.08 per case on the Meta API.
+  - **Main cause:** the citation gate refused quotes from pages our fetcher could not read. About half the cited pages were blocked to automated readers (nyc.gov, sf.gov) or needed JavaScript (data portals).
+  - **Second cause:** intersections written as "Street A and Street B" with abbreviations failed to geocode.
+  - The gate's reasons were not saved in the trace.
+- **T22:** 24 of 35 governed cases finished, against 26 of 34 in the baseline, so the rule was **not met**. Cost was $2.90 on Baseten.
+  - **What improved:** stops on a message with no tool call went from 3 to 0.
+  - **What did not:** 4 runs hit the turn limit and 2 the budget, and looping did not fall (23 vs 21 cases with three or more calls to one tool).
+  - **Confound:** the number checker became much stricter between the baseline run and this one, so the comparison is not clean.
+
+## T21b The desk with the T21 failures fixed, on fresh cases (registered 2026-11-02, before any T21b case)
+
+- **Changes after T21, all post hoc and named here:**
+  - intersections are tried in several written forms (`brief.address_variants`);
+  - a quote is refused only when its page loaded and the quote is not in it;
+  - a page that could not be read (refused to automated readers, script-only, or a file) is published with its quote marked unverified. We do not fetch it any other way;
+  - the gate's reasons are saved in the trace.
+- **Cases (12, fresh):**
+  - one news case per city, for reports from September or October 2026;
+  - one official-statement case per city, for a 2025 or 2026 statement about a named project's or program's results;
+  - the San Francisco 311 street reports ranked 5–8 by crash exposure in this week's inbox (distinct addresses).
+- **Everything else as in T21:** model, budget, turns, letters.
+- **Rule:** at least 9 of 12 cases publish and the average cost is at most $0.25 per case. Reported along with the share of published quotes verified against their page.

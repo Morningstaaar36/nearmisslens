@@ -14,6 +14,7 @@ from __future__ import annotations
 import io
 import json
 import math
+import re
 from pathlib import Path
 
 import cv2
@@ -58,6 +59,37 @@ def save_gazetteer(extra: list[dict] | None = None) -> int:
         table[_key(e["name"])] = e
     GEOCODES.write_text(json.dumps(dict(sorted(table.items())), indent=0))
     return len(table)
+
+
+ABBREV_FULL = {"st": "Street", "ave": "Avenue", "av": "Avenue", "blvd": "Boulevard", "rd": "Road", "pkwy": "Parkway",
+               "dr": "Drive", "pl": "Place", "ln": "Lane", "ct": "Court", "hwy": "Highway", "expy": "Expressway",
+               "sq": "Square", "ter": "Terrace", "way": "Way", "n": "North", "s": "South", "e": "East", "w": "West"}
+QUADRANT = {"nw": "Northwest", "ne": "Northeast", "sw": "Southwest", "se": "Southeast"}
+
+
+def address_variants(address: str) -> list[str]:
+    """The ways a person writes an intersection, rewritten the way the geocoder needs it ('Street A & Street B, City'
+    with OpenStreetMap's full names): 'and'/'at'/'near' become '&', abbreviations are spelled out, and a quadrant
+    written on one street (DC's 'NW') is carried to the other. The original comes first."""
+    out = [address]
+    head, _, rest = address.partition(",")
+    rest = rest.strip()
+    parts = re.split(r"\s+(?:and|at|near|&|/)\s+", head.strip(), maxsplit=1, flags=re.I)
+    if len(parts) != 2:
+        return out
+
+    def full(street: str, quad: str | None) -> str:
+        words = [ABBREV_FULL.get(w.lower().strip("."), w) for w in street.split()]
+        q = next((QUADRANT[w.lower().strip(".")] for w in words if w.lower().strip(".") in QUADRANT), None)
+        words = [w for w in words if w.lower().strip(".") not in QUADRANT]
+        return " ".join(words + ([q or quad] if (q or quad) else []))
+    quad = next((QUADRANT[w.lower().strip(".")] for p in parts for w in p.split() if w.lower().strip(".") in QUADRANT), None)
+    for a, b in ((parts[0], parts[1]), (parts[1], parts[0])):
+        for f in (lambda s: s.strip(), lambda s: full(s, None), lambda s: full(s, quad)):
+            v = f"{f(a)} & {f(b)}" + (f", {rest}" if rest else "")
+            if v not in out:
+                out.append(v)
+    return out
 
 
 def geocode(address: str) -> tuple[float, float, str]:

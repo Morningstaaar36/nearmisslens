@@ -749,6 +749,12 @@
 "name": "Victory Boulevard & Baron Boulevard",
 "city": "nyc"
 },
+"bay parkway & cropsey avenue": {
+"lat": 40.5972788,
+"lon": -73.9986557,
+"name": "Cropsey Avenue & Bay Parkway",
+"city": "nyc"
+},
 "bay parkway & shore parkway": {
 "lat": 40.5964418079517,
 "lon": -73.9995104945307,
@@ -916,6 +922,12 @@
 "lon": -73.9954372446764,
 "name": "Canal Street & Manhattan Br Approach",
 "city": "nyc"
+},
+"charles j. brenham place & market street": {
+"lat": 37.7804885,
+"lon": -122.4125281,
+"name": "Charles J. Brenham Place & Market Street",
+"city": "sf"
 },
 "chrystie street & grand street": {
 "lat": 40.718144476603,
