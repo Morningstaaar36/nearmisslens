@@ -23,7 +23,8 @@ from .config import ROOT
 from .cost import token_usd
 from .meta_client import output_text
 
-MODEL = "muse-spark-1.3-contributor"
+from .config import MODELS
+MODEL = MODELS["reader"]
 FIELDS = ("kind_limit", "precondition", "trend_bias")
 TEXT_FIELDS = ("cmName", "cmDesc", "priorCondition", "areaType", "trafficControl", "crashType", "crashSeverityKABCO",
                "intersecType", "roadwayType", "comments", "potentialBias", "title", "abstract")

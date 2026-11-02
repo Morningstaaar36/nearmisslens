@@ -699,7 +699,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1189,4 +1189,70 @@ def _t20_section() -> list[str]:
     L += ["", f"T20 registered rule: {'met' if a['rule']['met'] else 'not met'} (false refusals rose too much, mostly "
               f"through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack "
               f"success, false refusal at most 5 points higher): {'met' if b['rule']['met'] else 'not met'}.", ""]
+    return L
+
+
+def _desk_rows(res: dict) -> list[str]:
+    cases = res.get("cases") or []
+    pub = [c for c in cases if c.get("finished")]
+    usd = [c.get("usd") or 0 for c in cases]
+    srcs = [s for c in pub for s in ((c.get("final") or {}).get("sources") or [])]
+    ver = sum(1 for s in srcs if s.get("quote_check") == "verified")
+    refused = sum(1 for c in cases for t in c.get("trace") or [] if t.get("tool") == "finish" and t.get("error"))
+    L = [f"| {res['id']} | {len(pub)}/{len(cases)} | {refused} | "
+         + (f"{ver}/{len(srcs)}" if srcs and any("quote_check" in s for s in srcs) else "n/a")
+         + f" | ${sum(usd) / max(len(cases), 1):.3f} | {sum(c.get('seconds') or 0 for c in cases) / max(len(cases), 1):.0f} s |"]
+    return L
+
+
+def _t21_section() -> list[str]:
+    """T21 and T21b: the desk on live real-world cases."""
+    a, b = _load("experiment_T21.json"), _load("experiment_T21b.json")
+    if not a:
+        return []
+    L = ["## T21 and T21b The desk on live real-world cases", "",
+         "Registered in BENCH_PREREG.md (T21, T21b). A Muse Spark orchestrator with Meta web_search, tool search over the "
+         "city's registry datasets, the engineer's checked tools, a photo reader and a Muse Spark Open letter writer, "
+         "behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco "
+         "311 street reports with photos near high-crash places.", "",
+         "| run | published | publish-gate refusals | published quotes verified in their page | Meta $ per case | time per case |",
+         "|---|---|---|---|---|---|"]
+    L += _desk_rows(a) + (_desk_rows(b) if b else [])
+    L += ["", "T21 rule (at least 9 of 12 published, at most $0.25 per case): not met; the citation gate refused quotes from "
+              "pages our fetcher could not read, and some intersections failed to geocode. T21b fixes both (post hoc, "
+              "registered before it ran)" + (f": {'met' if b and sum(c.get('finished') for c in b['cases']) >= 9 else 'not met'}." if b else "."), ""]
+    for c in ((b or a).get("cases") or [])[:12]:
+        f = c.get("final") or {}
+        L.append(f"- **{c.get('kind')} / {c.get('city')}:** {'published' if c.get('finished') else 'not published (' + str(c.get('stopped')) + ')'}"
+                 + (f"; {c.get('corner', '').split(',')[0]}" if c.get("corner") else "")
+                 + (f"; {f.get('summary', '')[:160]}" if f else ""))
+    L.append("")
+    return L
+
+
+def _t22_section() -> list[str]:
+    """T22: the loop governor for the open-weights agent."""
+    import glob
+    from .config import SETTINGS
+    rows = {}
+    for name in ("agent", "agent_v2"):
+        reps = [json.loads(open(f).read()) for f in glob.glob(str(SETTINGS.runs_dir / "engineer" / name / "*" / "*.json"))]
+        if reps:
+            stops = {}
+            for r in reps:
+                stops[r.get("stopped")] = stops.get(r.get("stopped"), 0) + 1
+            rows[name] = (len(reps), sum(bool(r.get("finished")) for r in reps), stops, sum(r.get("usd") or 0 for r in reps))
+    if len(rows) < 2:
+        return []
+    L = ["## T22 Adapter A1: a loop governor for the open-weights agent", "",
+         "Registered in BENCH_PREREG.md (T22). The same corners, model and budget; the governor answers repeated calls "
+         "with 'already done', says which required tools are missing, nudges a model that stops without a tool call, "
+         "and forces the next missing tool instead of finish.", "",
+         "| run | cases | finished | stops | Baseten $ |", "|---|---|---|---|---|"]
+    for name, label in (("agent", "baseline"), ("agent_v2", "governed")):
+        n, fin, stops, usd = rows[name]
+        L.append(f"| {label} | {n} | {fin} | {', '.join(f'{k} {v}' for k, v in sorted(stops.items(), key=lambda x: str(x[0])))} | ${usd:.2f} |")
+    L += ["", "Registered rule (at least 32 of 35 finished, no repeated identical call, no higher cost per finished case): "
+              "not met. The nudge removed stops without a tool call, but runs now hit the turn or budget limit, and the number "
+              "checker became stricter between the two runs, so the comparison is not clean.", ""]
     return L

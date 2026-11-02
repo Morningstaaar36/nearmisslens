@@ -21,7 +21,8 @@ import time
 from . import context, engineer, opendata, treatments
 from .agent import Tool, run_agent
 
-MODEL = "muse-spark-1.3"
+from .config import MODELS
+MODEL = MODELS["orchestrator"]
 GEO_KINDS = ("crash", "project", "designation", "crash_detail")
 INSTRUCTIONS = (
     "You work for a city's street-safety team. Given a real-world input (a news story, a statement, a resident's "
@@ -227,7 +228,7 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
             img = cv2.resize(img, (int(w * 1280 / max(h, w)), int(h * 1280 / max(h, w))))
         schema = _obj({"shows": txt, "answer": {"type": "string", "enum": ["yes", "no", "unsure"]},
                        "who_is_at_risk": {"type": "array", "items": txt}}, ["shows", "answer", "who_is_at_risk"])
-        model = "muse-spark-1.3-contributor"
+        model = MODELS["vision"]
         inst = ("Describe what this street photo shows in one sentence, then answer the question yes, no or unsure "
                 "(unsure if the photo does not show it clearly), and list who it puts at risk.")
         url_ = sam_api.png_data_url(img)

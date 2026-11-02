@@ -52,7 +52,7 @@ def camera_list(a: dict) -> list[dict]:
     return out
 
 
-def pick(city: str, n: int = 40, radius_m: float = 50.0, years: int = 5) -> list[dict]:
+def pick(city: str, n: int = 40, radius_m: float = 50.0, years: int = context.YEARS) -> list[dict]:
     """The n cameras at the intersections with the most injury crashes within radius_m in the last `years` years of
     the city's crash table; one camera per intersection (the first listed)."""
     a = adapter(city)

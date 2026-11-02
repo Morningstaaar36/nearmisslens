@@ -20,7 +20,8 @@ from .cost import token_usd
 from .meta_client import output_text
 from .redteam import get_path, receipt_view
 
-MODEL = "muse-spark-1.3-contributor"
+from .config import MODELS
+MODEL = MODELS["reader"]
 KINDS = ["count", "share", "change", "money", "year", "none"]
 SCHEMA = {"type": "object", "additionalProperties": False, "required": ["assertions", "causal_or_certain", "untied"],
           "properties": {

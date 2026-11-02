@@ -1,0 +1,66 @@
+{
+ "id": "T21b",
+ "registered": "validation/BENCH_PREREG.md, T21b",
+ "cases": [
+  {
+   "kind": "news",
+   "city": "nyc",
+   "task": "Find a news report from September or October 2026 about a pedestrian or cyclist hit at a named intersection in New York City. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "seattle",
+   "task": "Find a news report from September or October 2026 about a pedestrian or cyclist hit at a named intersection in Seattle. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "dc",
+   "task": "Find a news report from September or October 2026 about a pedestrian or cyclist hit at a named intersection in Washington DC. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "sf",
+   "task": "Find a news report from September or October 2026 about a pedestrian or cyclist hit at a named intersection in San Francisco. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "claim",
+   "city": "nyc",
+   "task": "Find a 2025 or 2026 statement by New York City's transportation department or an elected official about the safety results of a named street project or program. Check the claim against the city's own record (program_record), and investigate one intersection the project covers."
+  },
+  {
+   "kind": "claim",
+   "city": "seattle",
+   "task": "Find a 2025 or 2026 statement by Seattle's transportation department or an elected official about the safety results of a named street project or program. Check the claim against the city's own record (program_record), and investigate one intersection the project covers."
+  },
+  {
+   "kind": "claim",
+   "city": "dc",
+   "task": "Find a 2025 or 2026 statement by Washington DC's transportation department or an elected official about the safety results of a named street project or program. Check the claim against the city's own record (program_record), and investigate one intersection the project covers."
+  },
+  {
+   "kind": "claim",
+   "city": "sf",
+   "task": "Find a 2025 or 2026 statement by San Francisco's transportation department or an elected official about the safety results of a named street project or program. Check the claim against the city's own record (program_record), and investigate one intersection the project covers."
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 4
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 5
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 6
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 7
+  }
+ ]
+}

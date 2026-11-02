@@ -280,6 +280,19 @@ def cmd_engineer(args) -> int:
     return 0 if not rep["claim_errors"] else 1
 
 
+def cmd_desk(args) -> int:
+    from . import desk_runs
+    from .meta_client import MetaClient
+    from .openclient import OpenWeightsClient
+    if args.spec == "T22":
+        reps = desk_runs.run_governed(OpenWeightsClient())
+        print(f"{len(reps)} governed cases, {sum(bool(r.get('finished')) for r in reps)} finished")
+        return 0
+    res = desk_runs.run_desk(args.spec, MetaClient(SETTINGS), OpenWeightsClient())
+    print(f"{sum(bool(c.get('finished')) for c in res['cases'])} of {len(res['cases'])} published")
+    return 0
+
+
 def cmd_cameras(args) -> int:
     import time as _t
     from . import cameras
@@ -531,6 +544,8 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
+    dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b) or the governed agent (T22); paid unless --replay")
+    dk.add_argument("spec")
     cm = sub.add_parser("cameras", help="Corner Watch: pick the city's camera corners by injury crashes; collect frames (free)")
     cm.add_argument("action", choices=["pick", "once", "collect"])
     cm.add_argument("city")
@@ -605,7 +620,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

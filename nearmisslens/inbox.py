@@ -41,7 +41,8 @@ def fetch(a: dict, days: int = 7, pages: int = 6) -> list[dict]:
     return out
 
 
-def triage(city: str, reports: list[dict], radius_m: float = 50.0, years: int = 5, min_injury_crashes: int = 5) -> list[dict]:
+def triage(city: str, reports: list[dict], radius_m: float = 50.0, years: int = context.YEARS,
+           min_injury_crashes: int = 5) -> list[dict]:
     """Street reports with a photo near places with injury crashes, the most dangerous first."""
     a = adapter(city)
     org = treatments.origin(city)
@@ -62,8 +63,9 @@ def triage(city: str, reports: list[dict], radius_m: float = 50.0, years: int = 
     return sorted(out, key=lambda x: -x["injury_crashes_within_50m"])
 
 
-def task(r: dict) -> str:
+def task(r: dict, city: str) -> str:
+    place = (opendata.city(city) or {}).get("name", city)
     return (f"A resident filed a 311 report on {r['requested_datetime'][:10]} ({r['service_name']}): "
-            f"\"{r.get('description') or ''}\" at {r['address']}, San Francisco (lat {r['lat']}, lon {r['long']}); "
+            f"\"{r.get('description') or ''}\" at {r['address']}, {place} (lat {r['lat']}, lon {r['long']}); "
             f"photo: {r['media_url']}. Look at the photo, investigate the nearest intersection, say how urgent this is "
             "given the crash record there, and draft the work order to the agency that owns the road.")

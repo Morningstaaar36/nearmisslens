@@ -146,6 +146,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
             shutil.rmtree(root / legacy)
     from .app import evidence
     (root / "evidence.json").write_text(json.dumps(evidence(), indent=0, default=str))
+    desk_page(root)
     (docs / "index.html").write_text(page("static", live))
     for name in ("copilot.js", "copilot.css"):
         shutil.copyfile(WEB / name, docs / name)
@@ -157,6 +158,20 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     return {"corners": len(index), "letters": sum(r["letter"] for r in index), "mb": round(size / 1e6, 1),
             "claim_errors": sum(r["claim_errors"] for r in index),
             "path": str(docs.relative_to(ROOT)) if docs.is_relative_to(ROOT) else str(docs)}
+
+
+def desk_page(root: Path) -> None:
+    """The live desk's cases (the latest registered desk run, NML-Bench T21b, else T21) for the site."""
+    from .evaluate import RESULTS_DIR
+    for name in ("experiment_T21b.json", "experiment_T21.json"):
+        p = RESULTS_DIR / "bench" / name
+        if p.exists():
+            res = json.loads(p.read_text())
+            keep = ("kind", "city", "task", "finished", "stopped", "final", "corner", "letter", "usd", "seconds", "turns",
+                    "web", "trace")
+            cases = [{k: c.get(k) for k in keep} for c in res.get("cases", [])]
+            (root / "desk.json").write_text(json.dumps({"run": res.get("id"), "cases": cases}, default=str))
+            return
 
 
 def check(docs: Path = DOCS) -> list[str]:

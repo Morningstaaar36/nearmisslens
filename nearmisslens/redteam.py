@@ -19,7 +19,8 @@ from . import context, engineer
 from .cost import token_usd
 from .meta_client import output_text
 
-DEV_MODEL = "muse-spark-1.3-contributor"
+from .config import MODELS
+DEV_MODEL = MODELS["reader"]
 TYPES = {
     "wrong_label": "a number from the receipt attached to the wrong thing (e.g. injured counted as killed, all crashes "
                    "as injury crashes, the citywide share as this corner's share)",

@@ -1,0 +1,25 @@
+{
+ "note": "What Corner Watch asks Muse Spark to look for in a camera frame (description) and the noun phrase SAM 3.1 segments to confirm it.",
+ "features": {
+  "high_visibility_crosswalk": [
+   "crosswalks painted with wide parallel bars (zebra or ladder)",
+   "zebra crosswalk"
+  ],
+  "curb_extension": [
+   "a sidewalk bulb-out that narrows the roadway at the corner",
+   "curb extension"
+  ],
+  "pedestrian_refuge": [
+   "a raised island in the middle of a crossing",
+   "traffic island"
+  ],
+  "vehicle_in_crosswalk": [
+   "a vehicle stopped on top of a crosswalk",
+   "car on crosswalk"
+  ],
+  "pedestrian_outside_crosswalk": [
+   "a person crossing the road away from the crosswalk",
+   "person crossing street"
+  ]
+ }
+}

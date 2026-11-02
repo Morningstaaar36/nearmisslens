@@ -73,3 +73,8 @@ def since(years: int):
         return a.replace(year=a.year - years)
     except ValueError:  # 29 February
         return a.replace(year=a.year - years, day=28)
+
+
+# the Meta models each part uses, in one place (Muse Spark on the Meta Model API; Muse Spark Open on Baseten)
+MODELS = {"orchestrator": "muse-spark-1.3", "reader": "muse-spark-1.3-contributor", "vision": "muse-spark-1.3-contributor",
+          "open": "meta-models/muse-spark-open-1026", "sam": "sam-3.1", "image": "muse-image-1.0"}

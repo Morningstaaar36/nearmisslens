@@ -1,0 +1,66 @@
+{
+ "id": "T21",
+ "registered": "validation/BENCH_PREREG.md, T21",
+ "cases": [
+  {
+   "kind": "news",
+   "city": "nyc",
+   "task": "Find a 2026 news report about a pedestrian or cyclist hit at a named intersection in New York City. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "seattle",
+   "task": "Find a 2026 news report about a pedestrian or cyclist hit at a named intersection in Seattle. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "dc",
+   "task": "Find a 2026 news report about a pedestrian or cyclist hit at a named intersection in Washington DC. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "sf",
+   "task": "Find a 2026 news report about a pedestrian or cyclist hit at a named intersection in San Francisco. Open it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "claim",
+   "city": "nyc",
+   "task": "Find a 2026 statement by New York City's transportation department or a local official that credits a street-safety program or project with reducing crashes. Check the claim against the city's own record (program_record), and investigate one intersection the statement names or that the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "seattle",
+   "task": "Find a 2026 statement by Seattle's transportation department or a local official that credits a street-safety program or project with reducing crashes. Check the claim against the city's own record (program_record), and investigate one intersection the statement names or that the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "dc",
+   "task": "Find a 2026 statement by Washington DC's transportation department or a local official that credits a street-safety program or project with reducing crashes. Check the claim against the city's own record (program_record), and investigate one intersection the statement names or that the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "sf",
+   "task": "Find a 2026 statement by San Francisco's transportation department or a local official that credits a street-safety program or project with reducing crashes. Check the claim against the city's own record (program_record), and investigate one intersection the statement names or that the program covers."
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 0
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 1
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 2
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 3
+  }
+ ]
+}

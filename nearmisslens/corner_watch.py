@@ -25,15 +25,10 @@ from .config import SETTINGS
 from .cost import token_usd
 from .meta_client import output_text
 
-SPARK = "muse-spark-1.3-contributor"
+from .config import MODELS
+SPARK = MODELS["vision"]
 DARK = 55.0  # mean grey level below which a frame is too dark to read (night)
-FEATURES = {
-    "high_visibility_crosswalk": ("crosswalks painted with wide parallel bars (zebra or ladder)", "zebra crosswalk"),
-    "curb_extension": ("a sidewalk bulb-out that narrows the roadway at the corner", "curb extension"),
-    "pedestrian_refuge": ("a raised island in the middle of a crossing", "traffic island"),
-    "vehicle_in_crosswalk": ("a vehicle stopped on top of a crosswalk", "car on crosswalk"),
-    "pedestrian_outside_crosswalk": ("a person crossing the road away from the crosswalk", "person crossing street"),
-}
+FEATURES = {k: tuple(v) for k, v in json.loads((Path(__file__).resolve().parent / "data" / "corner_features.json").read_text())["features"].items()}
 _item = {"type": "object", "additionalProperties": False, "required": ["answer", "points"],
          "properties": {"answer": {"type": "string", "enum": ["present", "absent", "unsure"]},
                         "points": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}}}}
