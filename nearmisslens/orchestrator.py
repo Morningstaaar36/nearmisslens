@@ -257,11 +257,14 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         desk.claim_checks += 1
         if desk.claim_checks > MAX_CLAIM_CHECKS:
             return {"error": f"{MAX_CLAIM_CHECKS} claims checked already: write the findings and run check_findings"}
-        verdict, reasons = claim_verdict(text, d["data"], _places(desk), model_check_client)
-        rid = desk.receipt("check_claim", {"claim": text, "verdict": verdict, "reasons": reasons, "against": receipt})
+        verdict, reasons, flags = claim_verdict(text, d["data"], _places(desk), model_check_client)
         asof = (desk.report or {}).get("asof")
-        return {"verdict": verdict, "reasons": reasons, "receipt": rid,
-                **({"record_as_of": asof, "caution": "a crash after this date is not in the record yet"} if asof else {}),
+        frame = (f"the record counts police-reported crashes within {context.CRASH_RADIUS_M:g} m of this corner over "
+                 f"{context.YEARS} years to {asof or 'its as-of date'}; a source counting another area or period can differ")
+        rid = desk.receipt("check_claim", {"claim": text, "verdict": verdict, "reasons": reasons, "flags": flags,
+                                           "against": receipt, "frame": frame})
+        return {"verdict": verdict, "reasons": reasons, **({"model_read_flags": flags} if flags else {}),
+                "receipt": rid, "record_frame": frame,
                 "note": f"a finding about this claim cites {rid} and states the verdict"}
 
     def program_record(city: str, countermeasure: str):
@@ -313,6 +316,9 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 errors.append(f"source {k}: the quote is not in the page at {s.get('url')} (copy it exactly)")
             checked.append({**s, "quote_check": state})
         errors += [f"summary: {e}" for e in engineer.wording(summary)]
+        texts = [summary] + [f.get("text", "") for f in findings] + [s.get("quote", "") for s in sources]
+        if any(has_plate(t) for t in texts):
+            errors.append("a licence plate is written out: never publish one (choose another quote, or leave it out)")
         if record_numbers < 3:  # a publishable case states the record's numbers, not just that a case exists
             errors.append(f"only {record_numbers} findings give a number from the record (years do not count); give at "
                           "least 3, citing their D receipts (investigate lists them: crashes, what they have in "
@@ -356,7 +362,8 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                        "who_is_at_risk": {"type": "array", "items": txt}}, ["shows", "answer", "who_is_at_risk"])
         model = MODELS["vision"]
         inst = ("Describe what this street photo shows in one sentence, then answer the question yes, no or unsure "
-                "(unsure if the photo does not show it clearly), and list who it puts at risk.")
+                "(unsure if the photo does not show it clearly), and list who it puts at risk. Never read out a licence "
+                "plate, a name or anything else that identifies a person or a vehicle.")
         url_ = sam_api.png_data_url(img)
         req = {"model": model, "q": question, "img": context.hashlib.sha256(url_.encode()).hexdigest()}
         payload = {"model": model, "reasoning": {"effort": "low"}, "max_output_tokens": 1500, "instructions": inst,
@@ -397,14 +404,28 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
 
 MAX_CLAIM_CHECKS = 6  # claims checked per case: enough for a source's numbers, too few to probe the gate with
 YEAR = re.compile(r"\b(19|20)\d\d\b")
-CONTRADICTS = ("but the record has", "is not the record's number", "written as a count", "model-read check:")
+DIFFERS = ("but the record has", "is not the record's number", "written as a count")
 UNTESTABLE = ("is not in the dossier", "not covered", "is not a share or change", "the record does not show",
               "does not show")
 VERDICT_WORDS = {"consistent with the record": ("consistent", "matches", "agrees"),
-                 "contradicted by the record": ("contradict", "does not match", "differs"),
+                 "differs from the record": ("differs", "does not match", "different"),
                  "cannot be checked against this record": ("cannot be checked", "not in the public record",
                                                            "not in the record", "cannot be tested", "untestable"),
                  "overstates what the record can show": ("overstate",)}
+
+
+PLATE = re.compile(r"\b(?:plate|licen[cs]e(?:\s+plate)?|tag)\b(?:\s+(?:number|no\.?|#))?\s*:?\s*([A-Z0-9][A-Z0-9 -]{3,8}[A-Z0-9])\b",
+                   re.I)
+
+
+def has_plate(text: str) -> bool:
+    """A licence plate written out ("CA plate 9WHE045"): never published, even when the source printed it."""
+    return any(re.search(r"\d", m.group(1)) for m in PLATE.finditer(text or ""))
+
+
+def redact(text: str) -> str:
+    return PLATE.sub(lambda m: m.group(0).replace(m.group(1), "[plate removed]") if re.search(r"\d", m.group(1))
+                     else m.group(0), text or "")
 
 
 def numbers_in(text: str) -> set[str]:
@@ -413,19 +434,22 @@ def numbers_in(text: str) -> set[str]:
     return {n.replace(",", "").rstrip(".").removesuffix(".0") for n in re.findall(r"\d[\d,]*(?:\.\d+)?", t)}
 
 
-def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list[str]]:
-    """A source's sentence against a receipt: contradicted only when the record has a different value for what the
-    sentence names; 'cannot be checked' when the record has nothing on it (a victim's age, a corridor-wide total)."""
+def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list[str], list[str]]:
+    """A source's sentence against a receipt, decided by the number checker: 'differs' only when the record has a
+    different value for what the sentence names (the source may count another window or area: the verdict says so,
+    never "false"); 'cannot be checked' when the record has nothing on it (a victim's age, a corridor-wide total).
+    The model-read check (T20b) refuses about a quarter of true claims, so it never decides a verdict: what it
+    objects to is returned as flags."""
     overstated = engineer.wording(text)
     errs = context.FactCheck(data).text(engineer.strip_places(text, places))
-    errs = errs or engineer.model_read_errors(text, data, client)
-    if any(c in e for e in errs for c in CONTRADICTS):
-        return "contradicted by the record", (errs + overstated)[:6]
+    flags = [] if errs else engineer.model_read_errors(text, data, client)
+    if any(c in e for e in errs for c in DIFFERS):
+        return "differs from the record", (errs + overstated)[:6], flags
     if errs:
-        return "cannot be checked against this record", (errs + overstated)[:6]
+        return "cannot be checked against this record", (errs + overstated)[:6], flags
     if overstated:
-        return "overstates what the record can show", overstated[:6]
-    return "consistent with the record", []
+        return "overstates what the record can show", overstated[:6], flags
+    return "consistent with the record", [], flags
 
 
 def verdict_errors(text: str, check: dict) -> list[str]:

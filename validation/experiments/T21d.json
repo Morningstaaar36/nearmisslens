@@ -1,0 +1,71 @@
+{
+ "id": "T21d",
+ "registered": "validation/BENCH_PREREG.md, T21d",
+ "budget_usd": 0.5,
+ "max_turns": 22,
+ "model_check": true,
+ "inbox_date": "2026-11-02",
+ "inbox_record_source": true,
+ "cases": [
+  {
+   "kind": "news",
+   "city": "nyc",
+   "task": "Find a news report published between September 1 and October 14, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in New York City. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "seattle",
+   "task": "Find a news report published between September 1 and October 14, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Seattle. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "dc",
+   "task": "Find a news report published between September 1 and October 14, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Washington DC. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "sf",
+   "task": "Find a news report published between September 1 and October 14, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in San Francisco. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "claim",
+   "city": "nyc",
+   "task": "Find a statement from 2023 or later by a New York City council member, the mayor's office or an advocacy group that names a specific intersection or corridor as dangerous or as safer after a project. Read it, check its numbers against the city's record, ask program_record about any program it credits, and investigate one intersection it names."
+  },
+  {
+   "kind": "claim",
+   "city": "seattle",
+   "task": "Find a statement from 2023 or later by a Seattle council member, the mayor's office or an advocacy group that names a specific intersection or corridor as dangerous or as safer after a project. Read it, check its numbers against the city's record, ask program_record about any program it credits, and investigate one intersection it names."
+  },
+  {
+   "kind": "claim",
+   "city": "dc",
+   "task": "Find a statement from 2023 or later by a Washington DC council member, the mayor's office or an advocacy group that names a specific intersection or corridor as dangerous or as safer after a project. Read it, check its numbers against the city's record, ask program_record about any program it credits, and investigate one intersection it names."
+  },
+  {
+   "kind": "claim",
+   "city": "sf",
+   "task": "Find a statement from 2023 or later by a San Francisco council member, the mayor's office or an advocacy group that names a specific intersection or corridor as dangerous or as safer after a project. Read it, check its numbers against the city's record, ask program_record about any program it credits, and investigate one intersection it names."
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 12
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 13
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 14
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 15
+  }
+ ]
+}

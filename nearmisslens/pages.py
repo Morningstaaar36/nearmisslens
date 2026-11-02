@@ -161,17 +161,21 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
 
 
 def desk_page(root: Path) -> None:
-    """The live desk's cases (the latest registered desk run, NML-Bench T21b, else T21) for the site."""
+    """The live desk for the site: the latest registered desk run's cases (T21c, else T21b, else T21), with every
+    run's totals so earlier, weaker runs stay visible."""
+    from .bench import desk_stats
     from .evaluate import RESULTS_DIR
-    for name in ("experiment_T21b.json", "experiment_T21.json"):
-        p = RESULTS_DIR / "bench" / name
-        if p.exists():
-            res = json.loads(p.read_text())
-            keep = ("kind", "city", "task", "finished", "stopped", "final", "corner", "letter", "usd", "seconds", "turns",
-                    "web", "trace")
-            cases = [{k: c.get(k) for k in keep} for c in res.get("cases", [])]
-            (root / "desk.json").write_text(json.dumps({"run": res.get("id"), "cases": cases}, default=str))
-            return
+    runs = [json.loads(p.read_text()) for p in (RESULTS_DIR / "bench" / f"experiment_{k}.json" for k in ("T21", "T21b", "T21c"))
+            if p.exists()]
+    if not runs:
+        return
+    res = runs[-1]
+    keep = ("kind", "city", "task", "finished", "stopped", "final", "corner", "letter", "usd", "seconds", "turns", "web",
+            "trace", "receipts")
+    from .orchestrator import redact
+    cases = [{k: c.get(k) for k in keep} for c in res.get("cases", [])]
+    blob = redact(json.dumps({"run": res.get("id"), "runs": [desk_stats(r) for r in runs], "cases": cases}, default=str))
+    (root / "desk.json").write_text(blob)  # no licence plate is published, even one a 311 report printed
 
 
 def check(docs: Path = DOCS) -> list[str]:

@@ -121,7 +121,7 @@ def test_years_do_not_count_as_record_numbers_and_one_quote_must_be_verified(mon
 def test_claim_verdicts_are_receipts_and_findings_must_state_them(monkeypatch):
     desk, t = _tools(monkeypatch, CRASHES)
     r = t["check_claim"]("There were 45 injury crashes at the corner.", "D1")
-    assert r["verdict"] == "contradicted by the record"
+    assert r["verdict"] == "differs from the record" and "within" in r["record_frame"]
     r2 = t["check_claim"]("The victim was 30 years old.", "D1")
     assert r2["verdict"] == "cannot be checked against this record"
     base = [{"text": "The corner had 40 injury crashes.", "receipt": "D1"},
@@ -129,7 +129,7 @@ def test_claim_verdicts_are_receipts_and_findings_must_state_them(monkeypatch):
             {"text": "The record shows 40 injury crashes at the corner.", "receipt": "D1"}]
     wrong = base + [{"text": "The report's 45 injury crashes is consistent with the record.", "receipt": r["receipt"]}]
     assert "check found" in " ".join(t["check_findings"]("s", wrong, SRC)["problems"])
-    right = base + [{"text": "The report's 45 injury crashes is contradicted by the record.", "receipt": r["receipt"]}]
+    right = base + [{"text": "The report's 45 injury crashes differs from the record.", "receipt": r["receipt"]}]
     assert t["check_findings"]("s", right, SRC)["would_publish"]
 
 
@@ -199,3 +199,19 @@ def test_a_photo_is_never_fetched_in_replay(monkeypatch):
     from nearmisslens.config import SETTINGS
     monkeypatch.setattr(SETTINGS, "replay", True)
     assert O.image_bytes("https://example.com/a.jpg") is None
+
+
+def test_the_model_read_check_flags_but_never_decides_a_verdict(monkeypatch):
+    desk, t = _tools(monkeypatch, CRASHES)
+    monkeypatch.setattr(O.engineer, "model_read_errors", lambda text, data, client: ["model-read check: no field x"])
+    r = t["check_claim"]("The corner had 40 injury crashes.", "D1")
+    assert r["verdict"] == "consistent with the record" and r["model_read_flags"]
+
+
+def test_licence_plates_are_never_published(monkeypatch):
+    assert O.has_plate("Blue Mazda mx5 with CA plate 9WHE045 blocking driveway")
+    assert not O.has_plate("The plate glass window at 1600 Broadway") and not O.has_plate("a licence to operate")
+    assert "9WHE045" not in O.redact("with CA plate 9WHE045 blocking")
+    desk, t = _tools(monkeypatch, CRASHES)
+    out = t["check_findings"]("s", [{"text": "A car with plate 9WHE045 blocked it.", "receipt": "D1"}], SRC)
+    assert "licence plate" in " ".join(out["problems"])

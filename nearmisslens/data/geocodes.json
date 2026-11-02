@@ -107,6 +107,12 @@
 "name": "168 Street & 93 Avenue",
 "city": "nyc"
 },
+"16th street & julian avenue": {
+"lat": 37.764977,
+"lon": -122.420901,
+"name": "16th Street & Julian Avenue",
+"city": "sf"
+},
 "170 street & jamaica avenue": {
 "lat": 40.707170825663,
 "lon": -73.7897497246031,
@@ -196,6 +202,12 @@
 "lon": -73.9456504266111,
 "name": "23 Street & Jackson Avenue",
 "city": "nyc"
+},
+"23rd street & mission street": {
+"lat": 37.7538439,
+"lon": -122.4186155,
+"name": "23rd Street & Mission Street",
+"city": "sf"
 },
 "243 street & francis lewis boulevard": {
 "lat": 40.6652806192992,
@@ -310,6 +322,18 @@
 "lon": -73.7671645165052,
 "name": "Bell Boulevard & 48 Avenue",
 "city": "nyc"
+},
+"4th avenue & pike street": {
+"lat": 47.6102141,
+"lon": -122.3367371,
+"name": "4th Avenue & Pike Street",
+"city": "seattle"
+},
+"4th street & howard street": {
+"lat": 37.7832509,
+"lon": -122.4027076,
+"name": "Howard Street & 4th Street",
+"city": "sf"
 },
 "5 avenue & 56 street": {
 "lat": 40.6417452469536,
@@ -833,6 +857,12 @@
 "name": "Beverley Road & Nostrand Avenue",
 "city": "nyc"
 },
+"bladensburg road northeast & south dakota avenue northeast": {
+"lat": 38.9252301,
+"lon": -76.9652031,
+"name": "Bladensburg Road Northeast & South Dakota Avenue Northeast",
+"city": "dc"
+},
 "blake avenue & pennsylvania avenue": {
 "lat": 40.6678335023913,
 "lon": -73.8948312611268,
@@ -897,6 +927,12 @@
 "lat": 40.8768772274137,
 "lon": -73.9064960099633,
 "name": "Broadway & West 230 Street",
+"city": "nyc"
+},
+"broadway & west 96th street": {
+"lat": 40.7946143,
+"lon": -73.9716646,
+"name": "Broadway & West 96th Street",
 "city": "nyc"
 },
 "bruckner boulevard & east 138 street": {
@@ -1774,6 +1810,12 @@
 "lon": -73.7532381725102,
 "name": "Springfield Boulevard & Merrick Boulevard",
 "city": "nyc"
+},
+"mission street & precita avenue": {
+"lat": 37.7467824,
+"lon": -122.4191289,
+"name": "Mission Street & Precita Avenue",
+"city": "sf"
 },
 "morani street & victory boulevard": {
 "lat": 40.6080546654827,

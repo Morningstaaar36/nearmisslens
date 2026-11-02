@@ -92,7 +92,9 @@ async function showDesk() {
       ` <span class="legend">${c.turns || 0} steps, ${Math.round(c.seconds || 0)} s, $${Number(c.usd || 0).toFixed(2)}</span></summary>` +
       `<p class="legend">Input: ${esc(c.task)}</p>` +
       (f.summary ? `<p>${esc(f.summary)}</p>` : "") +
-      ((f.findings || []).length ? `<ul class="claims">${f.findings.map(x => `<li>${esc(x.text)} <span class="legend">${esc(x.receipt)}</span></li>`).join("")}</ul>` : "") +
+      ((f.findings || []).length ? `<ul class="claims">${f.findings.map(x => `<li>${esc(x.text)} <span class="legend">${
+        /^https?:/.test(x.receipt || "") ? "from the source page" : esc(x.receipt) + (((c.receipts || {})[x.receipt] || {}).tool ? " · " + esc(c.receipts[x.receipt].tool) : "")
+      }</span></li>`).join("")}</ul>` : "") +
       ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${safeUrl(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
       (c.letter ? `<details><summary>The drafted letter (Muse Spark Open, number-checked)</summary><p class="letter">${esc(c.letter)}</p></details>` : "") +
       `<details><summary>What the agent did, step by step</summary><ol class="legend">` +
@@ -101,10 +103,13 @@ async function showDesk() {
       `</ol></details></details>`;
   };
   const pub = d.cases.filter(c => c.finished).length;
+  const runs = (d.runs || []).map(r => `<tr><td>${esc(r.id)}</td><td>${r.published} of ${r.cases}</td><td>${r.quotes ? r.verified + " of " + r.quotes : "n/a"}</td><td>$${Number(r.usd_per_case).toFixed(3)}</td><td>${r.seconds_per_case} s</td></tr>`).join("");
   $("out").innerHTML = `<p class="where">Live desk · run ${esc(d.run)}</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
     `<p class="lede">Each case started from a real input: a news report or official statement found on the live web, or a resident's 311 report with a photo. ` +
     `Muse Spark planned the work, searched, opened the source and investigated the corner with the checked tools; Muse Spark Open drafted the letter. ` +
-    `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons.</p>` + d.cases.map(card).join("");
+    `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons.</p>` +
+    (runs ? `<table class="plan"><tr><th>run</th><th>published</th><th>quotes verified on their page</th><th>Meta $ per case</th><th>time per case</th></tr>${runs}</table>` : "") +
+    d.cases.map(card).join("");
 }
 
 async function showPlan() {

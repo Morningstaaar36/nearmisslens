@@ -568,3 +568,39 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - packed counts are credited as a substitute for image mode if at least 80% of sampled frames agree within ±1 person;
   - the exposure ranking is reported as a finding only if at least 20 cameras have a rate.
 - **Not covered:** whether the counts match a hand count. 20 frames will be listed for your hand count, marked pending until then. Frames are never published.
+
+### T21b and T21c results (2026-11-02)
+- **T21b:** 5 of 12 published, so the rule was **not met**. $0.079 per case, 283 s per case.
+  - 5 of the 13 published quotes were verified on their page.
+  - Of the 7 unpublished cases, 4 were escalated after three refusals and 3 hit the turn limit.
+  - It ran the code from before the T21c changes; the failure study is summarised under T21c.
+- **T21c:** 11 of 12 published, $0.126 per case, and all 25 published quotes verified on their page: the registered rule was **met**.
+  - 10 of the 11 published cases state the corner's injury-crash count.
+  - Publish-gate refusals fell to 3, from 28 in T21 and 23 in T21b.
+  - One case (a DC statement) hit the turn limit.
+  - It took 360 s per case, most of it in data fetches inside `investigate` (OpenStreetMap servers).
+- **Post-hoc review of the 11 published T21c cases** (not the hand audit; that is still pending):
+  - **Wrong claim verdicts in 2 cases:**
+    - San Francisco news: two sentences about murder charges were called "contradicted by the record".
+    - San Francisco 311 at Howard & 4th: a sentence the number checker passes elsewhere in the case was called "contradicted".
+
+    The cause was our code: the desk treated any objection from the model-read check as a contradiction, although T20b measured that check refusing about a quarter of true claims.
+  - **"Contradicted" was too strong in 2 more:**
+    - NYC news: Streetsblog's "106 crashes since 2021" counts another area or period than our 100 m, five-year record.
+    - NYC claim: the Council's "LPIs cut pedestrian casualties 13%" against our −17% (−22% to −11%).
+  - **One licence plate was published:** the 311 report printed it, and the photo reader read it out. On the site it is now redacted.
+
+## T21d The desk with honest claim verdicts, on fresh cases (registered 2026-11-02, before any T21d case)
+
+- **Changes after the T21c review, post hoc and named here:**
+  - **Verdicts:** a claim verdict is decided by the number checker alone.
+    - "Differs from the record" (renamed from "contradicted") is used only when the record holds a different value for what the sentence names. The verdict states the record's frame (100 m, five years, as-of date), because a source counting another area or period can differ without being false.
+    - What the model-read check objects to is returned as flags, as on the site.
+  - **Plates:** the photo reader is told never to read out a licence plate or anything that identifies a person or vehicle, and the publish gate refuses any finding, summary or quote that writes out a licence plate.
+- **Cases (12, fresh):**
+  - one news case per city, for reports published September 1 to October 14, 2026;
+  - one case per city for a statement (council member, mayor's office or advocacy group, 2023 or later) that names a dangerous or improved intersection or corridor;
+  - San Francisco 311 street reports ranked 13–16 in the 2026-11-02 inbox snapshot.
+- **Everything else as in T21c:** model, budget, turns, model-read flags, Open311 record as the source.
+- **Rule:** the same as T21c (at least 9 of 12 published, at most $0.25 per case, at least 80% of published quotes verified), plus no published finding that writes out a licence plate.
+- **Also reported:** a post-hoc review of every published claim verdict, listed for your hand audit.
