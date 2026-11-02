@@ -88,6 +88,7 @@ def test_a_corner_where_nobody_was_seen_gets_no_exposure_rate(monkeypatch, tmp_p
     monkeypatch.setattr(W.cameras, "adapter", lambda city: {"id": "cams"})
     monkeypatch.setattr(W, "frames", lambda cam, a: [tmp_path / f"{cam}.jpg"])
     monkeypatch.setattr(W, "daylight", lambda paths: paths)
+    monkeypatch.setattr(W, "in_hours", lambda paths, a: paths)
     monkeypatch.setattr(W, "count_video", lambda c, cam, paths, concept, work: [0] if cam == "empty" or concept == "car" else [30])
     monkeypatch.setattr(W, "count_image", lambda c, p, concept: 0)
     monkeypatch.setattr(W, "look", lambda c, p: {})

@@ -25,6 +25,12 @@ def test_dark_frames_are_left_out_by_rule(tmp_path):
     assert W.daylight([dark, light]) == [light]
 
 
+
+def test_frames_outside_the_registry_daylight_hours_are_left_out(tmp_path):
+    night, morning = tmp_path / "20261102T084500Z.jpg", tmp_path / "20261102T153000Z.jpg"
+    assert W.in_hours([night, morning], {"collect_utc_hours": [14, 1]}) == [morning]
+
+
 @pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
 def test_packing_puts_a_black_frame_between_snapshots(tmp_path):
     paths = []

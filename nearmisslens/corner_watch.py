@@ -13,6 +13,7 @@ What the city gains: crash counts ignore how many people use a corner. Counting 
 crashes per person crossing", and the frame shows whether the fix the evidence supports is already there."""
 from __future__ import annotations
 
+import datetime as dt
 import json
 import subprocess
 from pathlib import Path
@@ -53,6 +54,14 @@ def daylight(paths: list[Path]) -> list[Path]:
         if img is not None and brightness(img) >= DARK:
             out.append(p)
     return out
+
+
+def in_hours(paths: list[Path], a: dict) -> list[Path]:
+    """Frames whose UTC stamp (file name, %Y%m%dT%H%M%SZ) lies inside the registry's daylight hours; a night frame
+    lit well enough to pass the brightness rule is still left out."""
+    hours = cameras.daylight_utc_hours(a)
+    return [p for p in paths if cameras.in_window(
+        hours, dt.datetime.strptime(p.stem, "%Y%m%dT%H%M%SZ").replace(tzinfo=dt.timezone.utc))]
 
 
 def pack(paths: list[Path], out: Path) -> list[int]:
@@ -139,7 +148,7 @@ def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
     work = Path(SETTINGS.data_dir) / "cameras" / a["id"] / "work"
     rows = []
     for cam in picks:
-        paths = daylight(frames(cam["id"], a))
+        paths = daylight(in_hours(frames(cam["id"], a), a))
         if not paths:
             rows.append({**cam, "frames": 0, "note": "no daylight frame"})
             continue
