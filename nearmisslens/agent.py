@@ -110,22 +110,33 @@ def replay_items(response: dict) -> list[dict]:
 
 def run_agent(client: MetaClient, model: str, instructions: str, task: str, tools: list[Tool], max_turns: int,
               budget_usd: float, effort: str = "medium", tag: str = "agent", max_output_tokens: int = 8000,
-              summaries: bool = False, escalate_after: int | None = None) -> AgentRun:
+              summaries: bool = False, escalate_after: int | None = None, required: tuple[str, ...] = (),
+              governor: bool = False, max_nudges: int = 2) -> AgentRun:
     """Function-calling loop on the Responses API with stateless replay: every turn resends the whole conversation,
     with the model's reasoning as encrypted reasoning items, and nothing is stored on the server. The cache key is the
     full request, so a run replays exactly and runs with different data never share a turn.
     A finish call whose result carries an error does not end the run; the model sees the error and can correct it.
     summaries asks for reasoning summaries (kept in run.thoughts). escalate_after stops the run with "escalated" after
-    that many refused finish calls, so a person decides (Meta's verifiable-agent pattern)."""
+    that many refused finish calls, so a person decides (Meta's verifiable-agent pattern).
+    governor (adapter A1, for models that loop or stop early, measured in NML-Bench T22): a repeated identical call is
+    not run again but answered "already done"; every tool result says which `required` tools are still missing; a
+    reply with no tool call gets a nudge (up to max_nudges) instead of ending the run; and a client that forces a tool
+    after N calls (open weights on Baseten) forces the next missing required tool rather than finish."""
     specs = [t.spec() for t in tools]
     by_name = {t.name: t for t in tools}
     run = AgentRun()
     conversation: list = [{"type": "message", "role": "user", "content": [{"type": "input_text", "text": task}]}]
+    done: dict[str, object] = {}  # governor: tool+arguments already run -> its result
+    nudges = 0
+    called: set[str] = set()
     for turn in range(1, max_turns + 1):
         reasoning = {"effort": effort, **({"summary": "auto"} if summaries else {})}
         payload = {"model": model, "instructions": instructions, "tools": specs, "reasoning": reasoning,
                    "max_output_tokens": max_output_tokens, "store": False,
                    "include": ["reasoning.encrypted_content"], "input": list(conversation)}
+        if governor and hasattr(client, "force_finish_after"):  # tells to_chat which tool to force when it forces one
+            missing = [t for t in required if t not in called]
+            payload["x_next_tool"] = missing[0] if missing else "finish"
         request = {k: v for k, v in payload.items() if k != "include"}
 
         def cost(resp):
@@ -159,6 +170,13 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
         calls = _function_calls(resp)
         if not calls:
             run.final_text = _message_text(resp)
+            if governor and nudges < max_nudges:
+                nudges += 1
+                missing = [t for t in required if t not in called]
+                conversation.append({"type": "message", "role": "user", "content": [{"type": "input_text", "text":
+                    "Continue with a tool call. " + (f"Still needed: {', '.join(missing)}." if missing else
+                                                     "Every required tool has run: call finish with claims citing receipts.")}]})
+                continue
             run.stopped = "final_message"
             break
         outputs = []
@@ -170,13 +188,23 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             except json.JSONDecodeError:
                 args = {}
             t = time.time()
-            if name not in by_name:
+            key = f"{name} {json.dumps(args, sort_keys=True)}"
+            if governor and name != "finish" and key in done:
+                result = {"note": "already done with these arguments; use the earlier result instead of calling again"}
+            elif name not in by_name:
                 result = {"error": f"unknown tool {name}"}
             else:
                 try:
                     result = by_name[name].fn(**args)
                 except Exception as e:
                     result = {"error": f"{type(e).__name__}: {e}"}
+                if isinstance(result, dict) and "error" not in result:
+                    done[key] = True
+                    called.add(name)
+            if governor and isinstance(result, dict) and name != "finish":
+                missing = [x for x in required if x not in called]
+                result = {**result, "next": (f"still needed: {', '.join(missing)}" if missing else
+                                             "all required tools have run: call finish with claims citing receipts")}
             run.steps.append(Step(turn, name, args, result, round(time.time() - t, 2)))
             outputs.append({"type": "function_call_output", "call_id": call["call_id"], "output": tool_output(result)})
             if name == "finish":

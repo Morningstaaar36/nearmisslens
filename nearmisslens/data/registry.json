@@ -976,6 +976,25 @@
    "provenance": {
     "found_by": "seed (written by hand)"
    }
+  },
+  {
+   "id": "seattle-sdot-cameras",
+   "kind": "camera",
+   "city": "seattle",
+   "place": "Seattle",
+   "list_url": "https://web.seattle.gov/Travelers/api/Map/Data?zoomId=13&type=2",
+   "image_base": "https://www.seattle.gov/trafficcams/images/",
+   "operator": "sdot",
+   "refresh_s": 300,
+   "collect_utc_hours": [
+    14,
+    1
+   ],
+   "source": "Seattle Department of Transportation traffic cameras (Seattle Traveler map)",
+   "terms": "public images on the city's traveler map; no licence published. Kept on this machine; the site publishes counts and a few frames with people blurred",
+   "provenance": {
+    "found_by": "seed (written by hand)"
+   }
   }
  ],
  "cities": [

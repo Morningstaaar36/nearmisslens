@@ -280,6 +280,23 @@ def cmd_engineer(args) -> int:
     return 0 if not rep["claim_errors"] else 1
 
 
+def cmd_cameras(args) -> int:
+    import time as _t
+    from . import cameras
+    from .evaluate import RESULTS_DIR
+    path = RESULTS_DIR / "bench" / f"cameras_{args.city}_picks.json"
+    if args.action == "pick" or not path.exists():
+        picks = cameras.pick(args.city, args.n)
+        path.write_text(json.dumps(picks, indent=1))
+        print(f"{len(picks)} cameras at the intersections with the most injury crashes: {path}")
+    picks = json.loads(path.read_text())
+    if args.action == "once":
+        print(json.dumps(cameras.collect_once(picks, cameras.adapter(args.city))))
+    elif args.action == "collect":
+        cameras.collect(args.city, picks, args.every, _t.time() + 3600 * args.hours, log=lambda s: print(s, flush=True))
+    return 0
+
+
 def cmd_agent_cases(args) -> int:
     from . import engineer
     reps = engineer.agent_cases(args.city, _memo_client(True), top=args.top)
@@ -514,6 +531,12 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
+    cm = sub.add_parser("cameras", help="Corner Watch: pick the city's camera corners by injury crashes; collect frames (free)")
+    cm.add_argument("action", choices=["pick", "once", "collect"])
+    cm.add_argument("city")
+    cm.add_argument("--n", type=int, default=40)
+    cm.add_argument("--every", type=int, default=600, help="seconds between rounds (never faster than the city refreshes)")
+    cm.add_argument("--hours", type=float, default=24.0)
     ag = sub.add_parser("agent-cases", help="Muse Spark Open writes its own case for a city's top corners (paid; saved cases are reused)")
     ag.add_argument("city")
     ag.add_argument("--top", type=int, default=20)
@@ -582,7 +605,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

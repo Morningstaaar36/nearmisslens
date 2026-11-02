@@ -69,6 +69,8 @@ def to_chat(payload: dict, model: str = MODEL, force_after: int = FORCE_FINISH_A
         committed = any(i.get("type") == "function_call" and i.get("name") == "commit_design"
                         for i in payload.get("input", []))
         step = "commit_design" if "commit_design" in names and not committed else "finish"
+        if payload.get("x_next_tool") in names:  # the governor's choice: the next missing required tool (adapter A1)
+            step = payload["x_next_tool"]
         choice = ({"type": "function", "function": {"name": step}} if calls >= force_after and step in names
                   else "required")
         body |= {"tools": tools, "tool_choice": choice}

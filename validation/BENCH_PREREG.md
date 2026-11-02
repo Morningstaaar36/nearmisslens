@@ -453,3 +453,23 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 ### T20b result (2026-11-02)
 - regex 17/157 accepted, 45/89 refused; model 2/157, 24/89; both 1/157, 55/89; 114 attack claims dropped (spec did not check out).
 - **Rule met:** the model arm's attack success (1.3%) is under half the regex arm's (10.8%), and its false refusal (27%) is lower than the regex arm's (51%), not higher.
+
+## T22 Adapter A1: a loop governor for the open-weights agent (registered 2026-11-02, before any governed run)
+
+- **Question:** does the governor fix Muse Spark Open's looping and early stops on Baseten without letting more wrong claims through?
+- **The governor:**
+  - an identical repeated call is not rerun;
+  - every tool result says which required tools are missing;
+  - a reply with no tool call gets a nudge;
+  - Baseten's forced step forces the next missing tool instead of `finish`.
+- **Code:** `agent.run_agent(governor=True)` and `openclient.to_chat`; tests in `tests/test_agent.py` (committed with this text).
+- **Design:** the same 35 corners as the first agent run (top 20 New York, top 5 each in Seattle, DC and San Francisco), the same model (`meta-models/muse-spark-open-1026`), the same budget per case ($0.15) and the same finish gate. Governed runs are saved in `runs/engineer/agent_v2/`. The baseline is the first run (`runs/engineer/agent/`, 34 cases saved).
+- **Metrics:**
+  - finish rate;
+  - cases with a repeated identical call;
+  - stops by kind (final message, escalated, budget, max turns);
+  - refused finishes per case;
+  - dollars per finished case;
+  - claims shown per dollar after today's recheck (number checker).
+- **Rule:** credited if the governed finish rate is at least 32 of 35, no case repeats an identical call more than once, and the cost per finished case is not higher than the baseline's.
+- **Budget:** about $3 on Baseten.

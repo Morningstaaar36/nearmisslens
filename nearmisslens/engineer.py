@@ -623,7 +623,7 @@ def _compact(data: dict, limit: int = 6000) -> str:
 
 
 def run(query: str, client, model: str = "muse-spark-open", letter_client=None, budget_usd: float = 0.10,
-        model_check_client=None) -> dict:
+        model_check_client=None, governor: bool = False) -> dict:
     """The agent engineer: the model picks the steps and writes the claims; finish is the gate."""
     from .agent import Tool, run_agent
     from .panel import _obj
@@ -687,7 +687,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
              _obj({"summary": txt, "claims": claim}, ["summary", "claims"]), finish),
     ]
     r = run_agent(client, model, INSTRUCTIONS, f"Task: {query}", tools, 16, budget_usd, effort="low",
-                  tag=f"engineer {query[:40]}", escalate_after=3)
+                  tag=f"engineer {query[:40]}", escalate_after=3, required=("locate",) + REQUIRED, governor=governor)
     j = next((rec for rec in reversed(desk.receipts) if rec["tool"] in ("choose_fixes", "root_cause")), None)
     d = next(iter(desk.dossiers.items()), None)
     lat, lon = d[0] if d else (None, None)
@@ -700,7 +700,7 @@ def run(query: str, client, model: str = "muse-spark-open", letter_client=None, 
     return rep
 
 
-def agent_cases(city: str, client, top: int = 20, out_dir=None, budget_usd: float = 0.15) -> list[dict]:
+def agent_cases(city: str, client, top: int = 20, out_dir=None, budget_usd: float = 0.15, governor: bool = False) -> list[dict]:
     """The agent's own case for the city's top corners (worst first), each saved next to the fixed-order case; a
     saved agent case is reused, so a rerun only pays for corners not yet done."""
     from .config import SETTINGS
@@ -714,7 +714,7 @@ def agent_cases(city: str, client, top: int = 20, out_dir=None, budget_usd: floa
         if path.exists():
             done.append(json.loads(path.read_text()))
             continue
-        rep = run(f"Investigate {row['name']}, {name}", client, budget_usd=budget_usd)
+        rep = run(f"Investigate {row['name']}, {name}", client, budget_usd=budget_usd, governor=governor)
         path.write_text(json.dumps(rep, indent=0, default=str))
         print(f"  {row['name']}: {rep.get('turns')} turns, ${rep.get('usd')}, finished {rep.get('finished')}, "
               f"refused {len(rep['refused_attempts'])}", flush=True)
