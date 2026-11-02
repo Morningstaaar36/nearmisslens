@@ -704,3 +704,10 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - Re-checked in replay, both wrong verdicts now come out "cannot be checked".
   - **Known limit:** a claim is read one sentence at a time, so a period set by the sentence before ("over the last three years ... 6 injury collisions occurred") is not carried over.
 - **T24 re-scored after the T21e changes** (same answers, current claim check; geocoder lookups from the live run now answered from the request cache in replay, so one more desk case's record rebuilds): 60 number findings, 0 consistent, 1 differing, 59 not checkable. The quotes are unchanged.
+
+### T23 deviation (2026-11-03, before any frame is sent to a model)
+- **Collection window:** the collector was stopped at 15:42 UTC on 2026-11-02, because the machine could not stay on overnight. This gives about 1 hour 40 minutes of Seattle's early morning (14:00–15:42 UTC, 06:00–07:42 Seattle time, around sunrise), not a full day.
+- **Daylight hours:** frames are also limited to the registry's daylight UTC hours (`cameras.daylight_utc_hours`, 14:00–01:00 UTC for Seattle). This drops the 36 night frames from 08:45 UTC (00:45 Seattle time, lit by streetlights) that the brightness rule let through.
+- **Frames used** (counted on disk before the run): 337 of 373. 34 of the 40 cameras have 9–10 frames each (31 have 10, 3 have 9); 6 have none.
+- **Everything else is as registered.**
+- **Expected consequence:** few people per camera at that hour. Fewer than 20 cameras may get an exposure rate, in which case the ranking is "not reported (rule)".
