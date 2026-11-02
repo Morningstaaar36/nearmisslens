@@ -1,6 +1,7 @@
 """The README's headline numbers are the committed results' numbers (validation/results/bench/*.json), so a rebuild that
 changes a result fails here until the prose follows."""
 import json
+import re
 
 from nearmisslens.config import ROOT
 
@@ -12,8 +13,26 @@ def _load(name):
     return json.loads((BENCH / name).read_text())
 
 
+def _says(text: str) -> bool:
+    """The phrase as written, not inside a longer word or number: '21 of 21' does not match '121 of 21' or '21 of 210',
+    and '$0.12' does not match '$0.126'."""
+    lead = r"(?<!\w)(?<!\d\.)" if text[:1].isalnum() else ""
+    tail = r"(?!\w)(?!\.\d)" if text[-1:].isalnum() else ""
+    return re.search(lead + re.escape(text) + tail, README) is not None
+
+
 def _has(text: str):
-    assert text in README, f"README does not say {text!r}"
+    assert _says(text), f"README does not say {text!r}"
+
+
+def test_a_number_must_match_exactly():
+    global README
+    saved, README = README, "published 121 of 21 at $0.126 a case; 68 of 68."
+    try:
+        assert not _says("21 of 21") and not _says("$0.12") and not _says("68 of 6")
+        assert _says("121 of 21") and _says("$0.126") and _says("68 of 68")
+    finally:
+        README = saved
 
 
 def test_city_plan_numbers():
@@ -30,8 +49,8 @@ def test_city_plan_numbers():
     _has(f"At {len(_load('plan_nyc.json')['requests']['rerequests'])} corners, a leading pedestrian interval")
     for city in ("seattle", "dc", "sf"):
         s = _load(f"plan_{city}.json")["summary"]
-        assert f"| {round(s['textbook_crashes_avoided_per_year'])} |" in README or \
-            f"| {round(s['textbook_crashes_avoided_per_year'])}\n" in README, city
+        assert _says(f"| {round(s['textbook_crashes_avoided_per_year'])} |") or \
+            _says(f"| {round(s['textbook_crashes_avoided_per_year'])}\n"), city
 
 
 def test_red_team_and_applicability_numbers():
