@@ -731,3 +731,11 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - **3rd Ave & Yesler Way:** SAM counted 3 people and 0 cars. I see 3 people, a bus (not a "car") and one distant car, so the cars are undercounted by one. The crosswalk "present" is right, with Spark's points on the stripes.
   - **Aurora Ave N & N 105th St:** SAM counted 0 people and 6 cars. I see no one and about 7 cars. The crosswalk "present" is right.
 - **Not covered, still pending:** the hand count. Frames are not published.
+
+## T23b Corner Watch at midday (registered 2026-11-03, 01:00 Dhaka, 19:00 UTC on 2026-11-02, before any of its frames is collected)
+
+- **Why:** T23's frames covered only 06:00–07:42 Seattle time, too few people were seen, and its ranking was not reported (rule). T23b repeats T23 at the hours when people are on the street.
+- **Frames:** the same 40 cameras (`cameras_seattle_picks.json`, unchanged), collected every 10 minutes from 19:00 UTC to about 23:00 UTC on 2026-11-02 (11:00 to about 15:00 Seattle time). Only frames stamped at or after 19:00 UTC are used (`nml cameras watch seattle --since 20261102T190000Z --run T23b`), so none of T23's frames is reused. The same two filters apply: the registry's daylight UTC hours and `config.DARK_MEAN`.
+- **Everything else as registered for T23:** method, metrics, the 20-person minimum for a rate and both rules. Packed counts are credited if at least 80% of sampled frames agree within ±1; the exposure ranking is reported as a finding only if at least 20 cameras have a rate.
+- **Results file:** `validation/results/bench/experiment_T23b.json`. T23's results file is not changed.
+- **Not covered:** a hand count (pending, as for T23), and afternoon or evening use.
