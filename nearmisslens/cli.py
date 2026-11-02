@@ -321,11 +321,11 @@ def cmd_cameras(args) -> int:
         from .meta_client import MetaClient
         client = MetaClient(SETTINGS)
         start = _t.time()
-        out = corner_watch.watch(client, args.city, picks)
+        out = corner_watch.watch(client, args.city, picks, from_stamp=args.since)
         out["summary"] = corner_watch.summarize(out)
         rows = [json.loads(x) for x in SETTINGS.ledger.read_text().splitlines() if x.strip()] if SETTINGS.ledger.exists() else []
         out["summary"]["usd"] = corner_watch.run_usd(rows, start)
-        (RESULTS_DIR / "bench" / "experiment_T23.json").write_text(portable(json.dumps(out, indent=1, default=str)))
+        (RESULTS_DIR / "bench" / f"experiment_{args.run}.json").write_text(portable(json.dumps(out, indent=1, default=str)))
         print(json.dumps(out["summary"], indent=1))
     return 0
 
@@ -576,6 +576,8 @@ def main(argv: list[str] | None = None) -> int:
     cm.add_argument("--n", type=int, default=40)
     cm.add_argument("--every", type=int, default=600, help="seconds between rounds (never faster than the city refreshes)")
     cm.add_argument("--hours", type=float, default=24.0)
+    cm.add_argument("--since", default=None, help="watch: use only frames stamped at or after this UTC stamp (e.g. 20261102T190000Z)")
+    cm.add_argument("--run", default="T23", help="watch: the registered run id; results go to experiment_<run>.json")
     ag = sub.add_parser("agent-cases", help="Muse Spark Open writes its own case for a city's top corners (paid; saved cases are reused)")
     ag.add_argument("city")
     ag.add_argument("--top", type=int, default=20)

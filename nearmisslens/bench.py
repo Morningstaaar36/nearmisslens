@@ -701,7 +701,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t24_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1272,17 +1272,19 @@ def _or_rule(v) -> str:
     return "not reported (rule)" if v is None else str(v)
 
 
-def _t23_section() -> list[str]:
-    """T23: Corner Watch on the city's traffic cameras."""
-    r = _load("experiment_T23.json")
+def _t23_section(run: str = "T23") -> list[str]:
+    """T23 and its reruns: Corner Watch on the city's traffic cameras."""
+    r = _load(f"experiment_{run}.json")
     if not r:
         return []
     s = r["summary"]
-    return ["## T23 Corner Watch: what the city's cameras show at its most dangerous corners", "",
-            f"Registered in BENCH_PREREG.md (T23). {s['with_daylight']} of {s['cameras']} Seattle camera corners had "
+    return [f"## {run} Corner Watch: what the city's cameras show at its most dangerous corners" + (" (midday)" if run != "T23" else ""), "",
+            f"Registered in BENCH_PREREG.md ({run}). {s['with_daylight']} of {s['cameras']} Seattle camera corners had "
             f"daylight frames ({s['frames']} frames). SAM 3.1 counted people and cars from frames packed into one video "
-            "per camera; Muse Spark answered layout questions and SAM 3.1 had to agree. The deviation (frames from about "
-            "1 h 40 min of early morning only), the spot-check and the review are under T23 in BENCH_PREREG.md.", "",
+            "per camera; Muse Spark answered layout questions and SAM 3.1 had to agree. " + (
+                "The deviation (frames from about 1 h 40 min of early morning only), the spot-check and the review are under "
+                "T23 in BENCH_PREREG.md." if run == "T23" else f"Frames from {r.get('since')} on; the review is under {run} in "
+                "BENCH_PREREG.md."), "",
             "| measure | value |", "|---|---|",
             f"| packed-video count within ±1 of image mode | {s['pack_within_1']} of {s['pack_checks']} sampled frames "
             f"(mean difference {s['pack_mean_abs_diff']}); rule (at least 80%): {'met' if s['pack_rule_met'] else 'not met'} |",

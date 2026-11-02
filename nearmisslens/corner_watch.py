@@ -143,13 +143,18 @@ def confirm(answer: dict, dets: list, near_px: float = 40.0) -> str:
     return "unsure"
 
 
-def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
+def since(paths: list[Path], stamp: str | None) -> list[Path]:
+    """Frames stamped at or after `stamp` (%Y%m%dT%H%M%SZ), so a registered run uses only the frames collected for it."""
+    return [p for p in paths if stamp is None or p.stem >= stamp]
+
+
+def watch(client, city: str, picks: list[dict], sample_images: int = 2, from_stamp: str | None = None) -> dict:
     """Counts, features and the exposure ranking for every picked camera with daylight frames."""
     a = cameras.adapter(city)
     work = Path(SETTINGS.data_dir) / "cameras" / a["id"] / "work"
     rows = []
     for cam in picks:
-        paths = daylight(in_hours(frames(cam["id"], a), a))
+        paths = daylight(in_hours(since(frames(cam["id"], a), from_stamp), a))
         if not paths:
             rows.append({**cam, "frames": 0, "note": "no daylight frame"})
             continue
@@ -182,7 +187,7 @@ def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
         r["rank_by_crashes"] = k
     for k, r in enumerate(by_exposure, 1):
         r["rank_by_exposure"] = k
-    return {"city": city, "cameras": len(picks), "with_daylight": len(seen), "rows": rows}
+    return {"city": city, "cameras": len(picks), "with_daylight": len(seen), "since": from_stamp, "rows": rows}
 
 
 def run_usd(ledger_rows: list[dict], start: float) -> float:
