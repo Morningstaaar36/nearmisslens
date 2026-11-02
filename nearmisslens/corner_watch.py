@@ -25,9 +25,9 @@ from .config import SETTINGS
 from .cost import token_usd
 from .meta_client import output_text
 
-from .config import MODELS
+from .config import DARK_MEAN as DARK, MODELS
 SPARK = MODELS["vision"]
-DARK = 55.0  # mean grey level below which a frame is too dark to read (night)
+MIN_PEOPLE_SEEN = 20  # people counted over all frames below which a crashes-per-person rate is not computed
 FEATURES = {k: tuple(v) for k, v in json.loads((Path(__file__).resolve().parent / "data" / "corner_features.json").read_text())["features"].items()}
 _item = {"type": "object", "additionalProperties": False, "required": ["answer", "points"],
          "properties": {"answer": {"type": "string", "enum": ["present", "absent", "unsure"]},
@@ -149,17 +149,25 @@ def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
                  for i, p in list(enumerate(paths))[:sample_images]]
         mid = paths[len(paths) // 2]
         ans = look(client, mid)
-        feats = {k: confirm(ans.get(k) or {}, sam_api.segment_image(client, cv2.imread(str(mid)), FEATURES[k][1],
-                                                                  f"corner {cam['id']}") if (ans.get(k) or {}).get(
-            "answer") == "present" else []) for k in FEATURES}
+        img = cv2.imread(str(mid))
+        feats = {}
+        for k in FEATURES:  # SAM looks whenever Spark commits (present or absent): absent needs both to find nothing
+            a_k = ans.get(k) or {}
+            dets = sam_api.segment_image(client, img, FEATURES[k][1], f"corner {cam['id']}") \
+                if a_k.get("answer") in ("present", "absent") else []
+            feats[k] = confirm(a_k, dets)
         rows.append({**cam, "frames": len(paths), "people_per_frame": round(float(np.mean(people)), 2),
                      "vehicles_per_frame": round(float(np.mean(cars)), 2), "capped_frames": sum(c >= 16 for c in cars),
                      "pack_check": check, "frame_read": mid.stem, "spark": ans, "features": feats})
     seen = [r for r in rows if r.get("frames")]
-    for r in seen:
-        r["injury_crashes_per_1000_people_seen"] = round(1000 * r["injury_crashes"] / max(r["people_per_frame"] * r["frames"], 1), 2)
+    for r in seen:  # too few people seen gives no rate (never "riskiest" for having nobody in view)
+        people = r["people_per_frame"] * r["frames"]
+        r["people_seen"] = round(people)
+        r["injury_crashes_per_1000_people_seen"] = round(1000 * r["injury_crashes"] / people, 2) \
+            if people >= MIN_PEOPLE_SEEN else None
     by_crash = sorted(seen, key=lambda r: -r["injury_crashes"])
-    by_exposure = sorted(seen, key=lambda r: -r["injury_crashes_per_1000_people_seen"])
+    by_exposure = sorted((r for r in seen if r["injury_crashes_per_1000_people_seen"] is not None),
+                         key=lambda r: -r["injury_crashes_per_1000_people_seen"])
     for k, r in enumerate(by_crash, 1):
         r["rank_by_crashes"] = k
     for k, r in enumerate(by_exposure, 1):

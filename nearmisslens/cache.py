@@ -11,6 +11,18 @@ class ReplayMiss(KeyError):
     pass
 
 
+def atomic_write(path: Path, data: bytes | str) -> None:
+    """Write through a uniquely named temporary file and rename, so parallel workers never see half a file."""
+    import os
+    import tempfile
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
+    with os.fdopen(fd, "wb") as f:
+        f.write(data.encode() if isinstance(data, str) else data)
+    os.replace(tmp, path)
+
+
 def request_key(namespace: str, request: dict) -> str:
     blob = json.dumps({"ns": namespace, "req": request}, sort_keys=True, default=str).encode()
     return hashlib.sha256(blob).hexdigest()
@@ -52,8 +64,4 @@ class Cache:
         return None
 
     def put(self, namespace: str, key: str, value) -> None:
-        p = self._path(namespace, key)
-        p.parent.mkdir(parents=True, exist_ok=True)
-        tmp = p.with_suffix(".tmp")
-        tmp.write_bytes(gzip.compress(json.dumps(value).encode()))
-        tmp.replace(p)
+        atomic_write(self._path(namespace, key), gzip.compress(json.dumps(value).encode()))

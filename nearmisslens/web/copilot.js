@@ -6,6 +6,7 @@ const MODE = meta("nml-mode") === "live" ? "live" : "static";
 const LIVE = MODE === "live" ? "" : (meta("nml-live").startsWith("https://") ? meta("nml-live").replace(/\/?$/, "/") : null);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u ?? "")) ? esc(u) : "#";  // never a javascript: or data: link
 const usd = v => v == null ? "n/a" : v >= 1e8 ? `$${Math.round(v / 1e6)} million` : v >= 1e6 ? `$${(v / 1e6).toFixed(1)} million` : `$${Math.round(v).toLocaleString("en-US")}`;
 const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
 const pct = v => `${Math.round(100 * v)}%`;
@@ -92,7 +93,7 @@ async function showDesk() {
       `<p class="legend">Input: ${esc(c.task)}</p>` +
       (f.summary ? `<p>${esc(f.summary)}</p>` : "") +
       ((f.findings || []).length ? `<ul class="claims">${f.findings.map(x => `<li>${esc(x.text)} <span class="legend">${esc(x.receipt)}</span></li>`).join("")}</ul>` : "") +
-      ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${esc(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
+      ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${safeUrl(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
       (c.letter ? `<details><summary>The drafted letter (Muse Spark Open, number-checked)</summary><p class="letter">${esc(c.letter)}</p></details>` : "") +
       `<details><summary>What the agent did, step by step</summary><ol class="legend">` +
       (c.web || []).map(w => `<li>web: ${esc((w.action || {}).type)} ${esc((w.action || {}).query || (w.action || {}).url || "")}</li>`).join("") +
@@ -160,7 +161,7 @@ async function showPlan() {
 
 function listCorners(rows) {
   $("corners").innerHTML = rows.map(c => `<li><button data-slug="${esc(c.slug)}"><span class="rank">${c.rank}</span>` +
-    `<span>${c.plan_gap ? '<span class="gapdot" title="no recorded safety work in ${INDEX.years} years"></span>' : ""}${esc(c.name)}</span>` +
+    `<span>${c.plan_gap ? `<span class="gapdot" title="no recorded safety work in ${INDEX.years} years"></span>` : ""}${esc(c.name)}</span>` +
     `<span class="n">${c.injury_crashes}</span></button></li>`).join("");
   for (const b of $("corners").querySelectorAll("button"))
     b.onclick = () => openCorner(INDEX.corners.find(c => c.slug === b.dataset.slug));

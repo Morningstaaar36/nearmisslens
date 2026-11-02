@@ -29,6 +29,7 @@ from scipy.stats import binomtest
 
 from . import citywide, context, engineer, opendata, rootcause
 from .config import ASOF_FILE, ROOT, SETTINGS
+from .config import MODELS
 
 SPEC = json.loads((ROOT / "validation" / "experiments" / "T15.json").read_text())
 EMPTY = rootcause.EMPTY | {"not applicable", "unspecified", "other*", "none"}
@@ -316,7 +317,7 @@ def agent_arm(ds: dict, pool: Pool, corner: dict, client, blind_id: str, max_pro
                   _obj({"findings": {"type": "array", "items": finding, "maxItems": max_props}}, ["findings"]), propose)]
     if hasattr(client, "force_finish_after"):
         client.force_finish_after = max(client.force_finish_after, 2 + max_queries + 2)
-    run = run_agent(client, "muse-spark-open", INSTRUCTIONS, f"Corner {blind_id}.", tools, 16, budget_usd,
+    run = run_agent(client, MODELS["open_label"], INSTRUCTIONS, f"Corner {blind_id}.", tools, 16, budget_usd,
                     effort="low", tag=f"miner {blind_id}", escalate_after=3)
     props = [f["pattern"] for f in final.get("findings", [])]
     out = score_arm(ds, pool, corner["ids"], props, props)

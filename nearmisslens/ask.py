@@ -15,8 +15,9 @@ from .agent import MEDIA_KEY, Tool, run_agent
 from .config import resolve
 from .meta_client import MetaClient
 from .voice import USERS
+from .config import MODELS
 
-MODEL = "muse-wonder-1.0"
+MODEL = MODELS["large"]
 MAX_TURNS = 10
 BUDGET_USD = 0.25
 VERDICTS = ("supported", "not_observed", "unclear")
@@ -122,7 +123,7 @@ def answer(client: MetaClient, complaint: str, facts: dict, memo_md: str, cmf: p
     record: list = []
     ts, _ = tools(facts, memo_md, cmf, frames_dir, checked=checked, record=record)
     run = run_agent(client, model, INSTRUCTIONS, f"Complaint: {complaint}", ts, MAX_TURNS, budget_usd, effort=effort,
-                    tag=tag, summaries=model.startswith("muse-wonder"), escalate_after=3)
+                    tag=tag, summaries=model == MODELS["large"], escalate_after=3)
     final = next((r for r in reversed(record) if not r["errors"]), record[-1] if record else None)
     if not checked and record:
         final = record[-1]

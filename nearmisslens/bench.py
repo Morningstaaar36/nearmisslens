@@ -3,6 +3,8 @@ validation/BENCH_PREREG.md: T3 hotspot persistence and T7 fix test with a random
 from __future__ import annotations
 
 import itertools
+import re
+from collections import Counter
 import json
 from pathlib import Path
 
@@ -1192,36 +1194,58 @@ def _t20_section() -> list[str]:
     return L
 
 
-def _desk_rows(res: dict) -> list[str]:
+def desk_stats(res: dict) -> dict:
+    """A desk run's numbers: published, refusals, verified quotes, cost and time, and whether its rule was met."""
     cases = res.get("cases") or []
     pub = [c for c in cases if c.get("finished")]
-    usd = [c.get("usd") or 0 for c in cases]
-    srcs = [s for c in pub for s in ((c.get("final") or {}).get("sources") or [])]
-    ver = sum(1 for s in srcs if s.get("quote_check") == "verified")
-    refused = sum(1 for c in cases for t in c.get("trace") or [] if t.get("tool") == "finish" and t.get("error"))
-    L = [f"| {res['id']} | {len(pub)}/{len(cases)} | {refused} | "
-         + (f"{ver}/{len(srcs)}" if srcs and any("quote_check" in s for s in srcs) else "n/a")
-         + f" | ${sum(usd) / max(len(cases), 1):.3f} | {sum(c.get('seconds') or 0 for c in cases) / max(len(cases), 1):.0f} s |"]
-    return L
+    srcs = [s for c in pub for s in ((c.get("final") or {}).get("sources") or []) if "quote_check" in s]
+    ver = sum(1 for s in srcs if s.get("quote_check") == "verified")  # T21 published only verified quotes (no field)
+    usd = sum(c.get("usd") or 0 for c in cases) / max(len(cases), 1)
+    crash_count = sum(1 for c in pub if any(re.search(r"\d+ injury crashes", f.get("text", ""))
+                                            for f in (c.get("final") or {}).get("findings") or []))
+    st = {"id": res.get("id"), "cases": len(cases), "published": len(pub), "usd_per_case": round(usd, 4),
+          "seconds_per_case": round(sum(c.get("seconds") or 0 for c in cases) / max(len(cases), 1)),
+          "refused": sum(1 for c in cases for t in c.get("trace") or [] if t.get("tool") == "finish" and t.get("error")),
+          "quotes": len(srcs), "verified": ver, "with_crash_count": crash_count,
+          "stopped": dict(Counter(str(c.get("stopped")) for c in cases if not c.get("finished")))}
+    st["rule_met"] = (len(cases) == 12 and len(pub) >= 9 and usd <= 0.25
+                      and (res.get("id") != "T21c" or (srcs and ver / len(srcs) >= 0.8)))
+    return st
+
+
+def _desk_rows(res: dict) -> list[str]:
+    st = desk_stats(res)
+    rule = "met" if st["rule_met"] else ("not met" if st["cases"] == 12 else f"running ({st['cases']} of 12)")
+    return [f"| {st['id']} | {st['published']}/{st['cases']} | {st['with_crash_count']} | {st['refused']} | "
+            + (f"{st['verified']}/{st['quotes']}" if st["quotes"] else "n/a")
+            + f" | ${st['usd_per_case']:.3f} | {st['seconds_per_case']} s | {rule} |"]
 
 
 def _t21_section() -> list[str]:
-    """T21 and T21b: the desk on live real-world cases."""
-    a, b = _load("experiment_T21.json"), _load("experiment_T21b.json")
-    if not a:
+    """T21, T21b and T21c: the desk on live real-world cases."""
+    runs = [r for r in (_load(f"experiment_{k}.json") for k in ("T21", "T21b", "T21c")) if r]
+    if not runs:
         return []
-    L = ["## T21 and T21b The desk on live real-world cases", "",
-         "Registered in BENCH_PREREG.md (T21, T21b). A Muse Spark orchestrator with Meta web_search, tool search over the "
-         "city's registry datasets, the engineer's checked tools, a photo reader and a Muse Spark Open letter writer, "
-         "behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco "
-         "311 street reports with photos near high-crash places.", "",
-         "| run | published | publish-gate refusals | published quotes verified in their page | Meta $ per case | time per case |",
-         "|---|---|---|---|---|---|"]
-    L += _desk_rows(a) + (_desk_rows(b) if b else [])
-    L += ["", "T21 rule (at least 9 of 12 published, at most $0.25 per case): not met; the citation gate refused quotes from "
-              "pages our fetcher could not read, and some intersections failed to geocode. T21b fixes both (post hoc, "
-              "registered before it ran)" + (f": {'met' if b and sum(c.get('finished') for c in b['cases']) >= 9 else 'not met'}." if b else "."), ""]
-    for c in ((b or a).get("cases") or [])[:12]:
+    L = ["## T21–T21c The desk on live real-world cases", "",
+         "Registered in BENCH_PREREG.md (T21, T21b, T21c). A Muse Spark orchestrator with Meta web_search, tool search "
+         "over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse "
+         "Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement "
+         "per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 "
+         "published at no more than $0.25 a case (T21c: and at least 80% of published quotes verified on their page).", "",
+         "| run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes "
+         "verified on their page | Meta $ per case | time per case | rule |",
+         "|---|---|---|---|---|---|---|---|"]
+    for r in runs:
+        L += _desk_rows(r)
+    L.append("")
+    for r in runs:
+        st = desk_stats(r)
+        if st["stopped"]:
+            L.append(f"- **{r['id']} not published:** " + ", ".join(f"{k} {v}" for k, v in sorted(st["stopped"].items())))
+    L.append("")
+    last = runs[-1]
+    L.append(f"Cases in {last['id']}:")
+    for c in (last.get("cases") or [])[:12]:
         f = c.get("final") or {}
         L.append(f"- **{c.get('kind')} / {c.get('city')}:** {'published' if c.get('finished') else 'not published (' + str(c.get('stopped')) + ')'}"
                  + (f"; {c.get('corner', '').split(',')[0]}" if c.get("corner") else "")

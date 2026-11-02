@@ -14,6 +14,7 @@ from pathlib import Path
 from . import engineer
 from .config import SETTINGS
 from .evaluate import RESULTS_DIR
+from .config import MODELS
 
 INSTRUCTIONS = (
     "You answer a city traffic engineer's or a resident's question about one street corner, using only the receipts "
@@ -119,7 +120,7 @@ def ask(city: str, slug: str, question: str, client, budget_usd: float = 0.05, g
                                                                                        ["answer", "claims"]), finish)]
     if hasattr(client, "force_finish_after"):
         client.force_finish_after = max(client.force_finish_after, 8)
-    run = run_agent(client, "muse-spark-open", INSTRUCTIONS,
+    run = run_agent(client, MODELS["open_label"], INSTRUCTIONS,
                     f"Corner: {rep['junction']['name']}. Question: {question[:500]}", tools, 10, budget_usd,
                     effort="low", tag=f"ask {slug[:30]}", escalate_after=3)
     refused = [{"text": c.get("text"), "errors": [e for e in a["errors"] if e.startswith(f"claim {k}:")]}

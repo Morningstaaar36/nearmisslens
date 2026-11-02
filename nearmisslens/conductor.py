@@ -20,9 +20,10 @@ from .calibrate import Calibration
 from .cost import sam_video_usd, token_usd
 from .meta_client import MetaClient, output_text
 from .segments import Detection
+from .config import MODELS
 
-AGENT_MODEL = "muse-wonder-1.0"
-LOOK_MODEL = "muse-spark-1.3-contributor"
+AGENT_MODEL = MODELS["large"]
+LOOK_MODEL = MODELS["reader"]
 DEFAULT_CONCEPTS = ("car", "scooter")
 
 

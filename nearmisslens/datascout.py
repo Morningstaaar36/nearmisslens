@@ -17,8 +17,9 @@ import re
 
 from . import context, opendata, panel
 from .agent import Tool, run_agent
+from .config import MODELS
 
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 QUERIES = ("traffic crashes", "collisions", "motor vehicle crashes", "traffic collisions")
 MAX_CANDIDATES = 6
 

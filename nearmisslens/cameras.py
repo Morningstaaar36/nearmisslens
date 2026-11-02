@@ -3,7 +3,7 @@
 The camera list comes from the city's traveler map (no key). The cameras watched are the ones at intersections with the
 most injury crashes in the city's own crash table, so every frame is of a corner that matters. Frames are fetched no
 faster than the city refreshes them, kept only on this machine, and used for counts and for what the corner looks
-like now: the site publishes counts and a few frames with people blurred, not a feed.
+like now: the site publishes counts and model answers only, never a frame (and so never a person).
 
 Nothing here is a model: models read the frames in `corner_watch.py`, under the checks there."""
 from __future__ import annotations
@@ -34,8 +34,9 @@ def camera_list(a: dict) -> list[dict]:
     d.mkdir(parents=True, exist_ok=True)
     path = d / "list.json"
     if not path.exists() or time.time() - path.stat().st_mtime > 86400:
-        if SETTINGS.replay and path.exists():
-            pass
+        if SETTINGS.replay:
+            if not path.exists():
+                raise FileNotFoundError(f"no saved camera list in {d}; run without replay first")
         else:
             with httpx.Client(headers=context.UA, timeout=60) as c:
                 r = c.get(a["list_url"])

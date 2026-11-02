@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 
 from . import brief, citywide, context, harm, jurisdiction, opendata, rootcause, treatments
 from .config import asof
+from .config import MODELS
 
 SCALE_ORDER = ("low-cost", "reconstruction")
 
@@ -264,14 +265,21 @@ def refreshed_fixes(report: dict) -> dict | None:
 
 def model_read_errors(text: str, data: dict, client) -> list[str]:
     """The second gate (NML-Bench T20b): Muse Spark reads the claim into assertions, code checks each against the
-    receipt. Without a client, or when the reading is not available (replay without it), the claim is not refused."""
+    receipt. Without a client, or when a replay has no saved reading, the claim is not refused; any other failure
+    (API error, unreadable answer, budget) is reported as "check unavailable", never passed silently."""
     if client is None:
         return []
     from . import claimcheck
+    from .cache import ReplayMiss
+    from .cost import BudgetExceeded
     try:
         return [f"model-read check: {e}" for e in claimcheck.verify(text, data, claimcheck.parse(client, text, data, "gate"))]
-    except Exception:
+    except ReplayMiss:
         return []
+    except BudgetExceeded:
+        raise
+    except Exception as e:
+        return [f"model-read check unavailable ({type(e).__name__})"]
 
 
 def recheck_agent(agent: dict, current: dict, model_client=None) -> tuple[list[dict], list[dict]]:
@@ -285,6 +293,9 @@ def recheck_agent(agent: dict, current: dict, model_client=None) -> tuple[list[d
         tool = tool_of.get(c.get("receipt"))
         data = current["findings"].get(tool) if tool else None
         text = strip_places(c.get("text", ""), desk)
+        if tool is None:  # cites a receipt the agent never received: set apart, not shown as a finding
+            gone.append({**c, "tool": None, "errors": [f"cites no receipt the agent was given ({c.get('receipt')!r})"]})
+            continue
         if data is None:  # a receipt the code's case does not have (e.g. the city screen): kept, not rechecked
             keep.append({**c, "tool": tool, "rechecked": False})
             continue
@@ -622,7 +633,7 @@ def _compact(data: dict, limit: int = 6000) -> str:
     return text if len(text) <= limit else text[:limit] + " ...(truncated)"
 
 
-def run(query: str, client, model: str = "muse-spark-open", letter_client=None, budget_usd: float = 0.10,
+def run(query: str, client, model: str = MODELS["open_label"], letter_client=None, budget_usd: float = 0.10,
         model_check_client=None, governor: bool = False) -> dict:
     """The agent engineer: the model picks the steps and writes the claims; finish is the gate."""
     from .agent import Tool, run_agent

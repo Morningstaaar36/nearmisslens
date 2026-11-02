@@ -19,8 +19,9 @@ import re
 
 from . import context, countermeasures, opendata
 from .agent import Tool, run_agent
+from .config import MODELS
 
-MODEL = "muse-spark-1.3-contributor"  # served by Muse Spark Open when the open-weights client is used
+MODEL = MODELS["reader"]  # served by Muse Spark Open when the open-weights client is used
 QUERIES = ("leading pedestrian interval", "crosswalk", "traffic calming", "speed hump", "pedestrian refuge island",
            "curb extension", "bike lane", "speed camera", "vision zero improvements", "pedestrian safety")
 MIN_DATED = 100

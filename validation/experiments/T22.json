@@ -1,0 +1,23 @@
+{
+ "id": "T22",
+ "registered": "validation/BENCH_PREREG.md, T22",
+ "out_name": "agent_v2",
+ "cities": [
+  {
+   "city": "nyc",
+   "top": 20
+  },
+  {
+   "city": "seattle",
+   "top": 5
+  },
+  {
+   "city": "dc",
+   "top": 5
+  },
+  {
+   "city": "sf",
+   "top": 5
+  }
+ ]
+}

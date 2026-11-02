@@ -20,12 +20,17 @@ def adapter(city: str) -> dict | None:
     return found[0] if found else None
 
 
-def fetch(a: dict, days: int = 7, pages: int = 6) -> list[dict]:
-    """Recent reports (cached per day, so a replay sees the same inbox)."""
+def fetch(a: dict, days: int = 7, pages: int = 6, date: str | None = None) -> list[dict]:
+    """Recent reports, saved once per day: `date` reads that day's snapshot (a registered run names its date, so a
+    replay sees the same inbox); without it, today's (fetched if not yet saved; in replay, the latest saved)."""
     import httpx
     d = Path(SETTINGS.data_dir) / "inbox" / a["id"]
+    path = d / f"{date or dt.date.today().isoformat()}.json"
+    if date:
+        if not path.exists():
+            raise FileNotFoundError(f"no inbox snapshot for {date} in {d}")
+        return json.loads(path.read_text())
     d.mkdir(parents=True, exist_ok=True)
-    path = d / f"{dt.date.today().isoformat()}.json"
     if path.exists() or SETTINGS.replay:
         files = sorted(d.glob("*.json"))
         return json.loads((path if path.exists() else files[-1]).read_text()) if (path.exists() or files) else []
@@ -59,13 +64,25 @@ def triage(city: str, reports: list[dict], radius_m: float = 50.0, years: int = 
         if n >= min_injury_crashes:
             out.append({**{k: r.get(k) for k in ("service_request_id", "service_name", "description", "address",
                                                   "lat", "long", "media_url", "requested_datetime", "status")},
-                        "injury_crashes_within_50m": n, "window_years": years})
-    return sorted(out, key=lambda x: -x["injury_crashes_within_50m"])
+                        "injury_crashes_nearby": n, "radius_m": radius_m, "window_years": years})
+    return sorted(out, key=lambda x: -x["injury_crashes_nearby"])
 
 
-def task(r: dict, city: str) -> str:
+RECORD_FIELDS = ("service_request_id", "requested_datetime", "service_name", "description", "address", "status")
+
+
+def record(r: dict, city: str) -> tuple[str, str]:
+    """The report's own record in the city's feed (GeoReport v2: requests/<id>.json) and its text as saved in the
+    inbox snapshot: the source a desk case on this report cites."""
+    a = adapter(city)
+    url = a["endpoint"].rsplit("/", 1)[0] + f"/requests/{r['service_request_id']}.json"
+    return url, "; ".join(f"{k}: {r.get(k)}" for k in RECORD_FIELDS if r.get(k) is not None)
+
+
+def task(r: dict, city: str, with_record: bool = False) -> str:
     place = (opendata.city(city) or {}).get("name", city)
+    rec = f" The report's record in the city's feed: {record(r, city)[0]} (cite it as the source)." if with_record else ""
     return (f"A resident filed a 311 report on {r['requested_datetime'][:10]} ({r['service_name']}): "
             f"\"{r.get('description') or ''}\" at {r['address']}, {place} (lat {r['lat']}, lon {r['long']}); "
             f"photo: {r['media_url']}. Look at the photo, investigate the nearest intersection, say how urgent this is "
-            "given the crash record there, and draft the work order to the agency that owns the road.")
+            "given the crash record there, and draft the work order to the agency that owns the road." + rec)

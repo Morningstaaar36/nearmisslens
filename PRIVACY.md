@@ -21,6 +21,19 @@ stores, where, and about whom.
   Nominatim and the cities' open-data APIs to answer the request.
 - **Letters** are drafted for you to review and send yourself. NearMissLens sends nothing.
 
+## The desk, the 311 inbox and Corner Watch
+
+- **The desk** reads public web pages it finds with Meta's `web_search` and keeps their visible text in the local
+  cache, to check that every quote it publishes is on the page. It fetches only public `http(s)` addresses, with its
+  own named user agent; a site that refuses automated readers is respected, and its quote is shown as unverified.
+- **311 reports** come from San Francisco's public Open311 feed, which already publishes each report's text, address,
+  time and photo link. The inbox keeps one saved copy per day under `data/inbox/`. A published desk case quotes the
+  report and links its record in the city's feed; it adds no names. Photos are read by Muse Spark and not republished.
+- **Camera frames** come from Seattle's public traffic-camera snapshots, fetched no faster than the city refreshes
+  them. Frames stay on this machine (`data/cameras/`) and are never published: the site shows counts of people and
+  vehicles and the model's answers about the corner's layout. Nothing identifies, tracks or recognises a person; a
+  count is per frame and no one is followed between frames.
+
 ## The drone-video pipeline
 
 - **Anonymous tracks:**

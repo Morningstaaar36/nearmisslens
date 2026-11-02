@@ -540,6 +540,36 @@ Registered in BENCH_PREREG.md (T20, T20b). Muse Spark lists each claim's asserti
 
 T20 registered rule: not met (false refusals rose too much, mostly through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack success, false refusal at most 5 points higher): met.
 
+## T21–T21c The desk on live real-world cases
+
+Registered in BENCH_PREREG.md (T21, T21b, T21c). A Muse Spark orchestrator with Meta web_search, tool search over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 published at no more than $0.25 a case (T21c: and at least 80% of published quotes verified on their page).
+
+| run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes verified on their page | Meta $ per case | time per case | rule |
+|---|---|---|---|---|---|---|---|
+| T21 | 4/12 | 0 | 28 | n/a | $0.083 | 101 s | not met |
+| T21b | 1/5 | 0 | 11 | 0/4 | $0.088 | 314 s | running (5 of 12) |
+
+- **T21 not published:** escalated 7, max_turns 1
+- **T21b not published:** escalated 2, max_turns 2
+
+Cases in T21b:
+- **news / nyc:** not published (escalated); Atlantic Avenue & Hoyt Street
+- **news / seattle:** not published (max_turns); Stone Way North & North 48th Street
+- **news / dc:** not published (max_turns); 15th Street Northwest & M Street Northwest
+- **news / sf:** not published (escalated); Moscow Street & France Avenue
+- **claim / nyc:** published; East 180th Street & Prospect Avenue; NYC DOT February 2026 statement credits East 180th St and Seagirt Blvd redesigns with injury drops; East 180th St and Prospect Ave corner checked with city cras
+
+## T22 Adapter A1: a loop governor for the open-weights agent
+
+Registered in BENCH_PREREG.md (T22). The same corners, model and budget; the governor answers repeated calls with 'already done', says which required tools are missing, nudges a model that stops without a tool call, and forces the next missing tool instead of finish.
+
+| run | cases | finished | stops | Baseten $ |
+|---|---|---|---|---|
+| baseline | 34 | 26 | budget 1, escalated 4, final_message 3, finish_tool 26 | $2.95 |
+| governed | 35 | 24 | budget 2, escalated 5, finish_tool 24, max_turns 4 | $2.90 |
+
+Registered rule (at least 32 of 35 finished, no repeated identical call, no higher cost per finished case): not met. The nudge removed stops without a tool call, but runs now hit the turn or budget limit, and the number checker became stricter between the two runs, so the comparison is not clean.
+
 ## Data agent: adapters found and validated without hand-written code
 
 | place | dataset | validator attempts | records near the test point | latest record |

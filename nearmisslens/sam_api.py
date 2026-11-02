@@ -11,8 +11,9 @@ from .cache import file_sha256
 from .cost import SAM_IMAGE_USD, sam_video_usd
 from .meta_client import MetaClient, output_text
 from .segments import Detection, parse_fast, parse_text
+from .config import MODELS
 
-MODEL = "sam-3.1"
+MODEL = MODELS["sam"]
 METADATA = {"mask_encoding": "one_bit", "include_confidence": "true"}
 
 

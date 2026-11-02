@@ -1,0 +1,71 @@
+{
+ "id": "T21c",
+ "registered": "validation/BENCH_PREREG.md, T21c",
+ "budget_usd": 0.5,
+ "max_turns": 22,
+ "model_check": true,
+ "inbox_date": "2026-11-02",
+ "inbox_record_source": true,
+ "cases": [
+  {
+   "kind": "news",
+   "city": "nyc",
+   "task": "Find a news report published between October 15 and November 2, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in New York City. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "seattle",
+   "task": "Find a news report published between October 15 and November 2, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Seattle. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "dc",
+   "task": "Find a news report published between October 15 and November 2, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Washington DC. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "sf",
+   "task": "Find a news report published between October 15 and November 2, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in San Francisco. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "claim",
+   "city": "nyc",
+   "task": "Find a statement from 2024, 2025 or 2026 by New York City's transportation department or an elected official that credits a named safety program or countermeasure (for example leading pedestrian intervals, speed humps, daylighting or crosswalk upgrades) with fewer crashes or injuries. Read it, check the claim against the city's own record (program_record), and investigate one intersection the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "seattle",
+   "task": "Find a statement from 2024, 2025 or 2026 by Seattle's transportation department or an elected official that credits a named safety program or countermeasure (for example leading pedestrian intervals, speed humps, daylighting or crosswalk upgrades) with fewer crashes or injuries. Read it, check the claim against the city's own record (program_record), and investigate one intersection the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "dc",
+   "task": "Find a statement from 2024, 2025 or 2026 by Washington DC's transportation department or an elected official that credits a named safety program or countermeasure (for example leading pedestrian intervals, speed humps, daylighting or crosswalk upgrades) with fewer crashes or injuries. Read it, check the claim against the city's own record (program_record), and investigate one intersection the program covers."
+  },
+  {
+   "kind": "claim",
+   "city": "sf",
+   "task": "Find a statement from 2024, 2025 or 2026 by San Francisco's transportation department or an elected official that credits a named safety program or countermeasure (for example leading pedestrian intervals, speed humps, daylighting or crosswalk upgrades) with fewer crashes or injuries. Read it, check the claim against the city's own record (program_record), and investigate one intersection the program covers."
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 8
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 9
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 10
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 11
+  }
+ ]
+}

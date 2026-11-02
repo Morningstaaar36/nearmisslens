@@ -12,13 +12,13 @@ from pathlib import Path
 import httpx
 
 from .cache import Cache, request_key
-from .config import SETTINGS
-from .meta_client import IncompleteResponse
+from .config import MODELS, SETTINGS
+from .cost import TOKEN_USD_PER_M
+from .meta_client import IncompleteResponse, output_text
 
 BASE_URL = "https://inference.baseten.co/v1"
-MODEL = "meta-models/muse-spark-open-1026"
-from .cost import TOKEN_USD_PER_M
-PRICE = dict(zip(("input", "output"), TOKEN_USD_PER_M["muse-spark-open"][:2]))  # one price table: cost.py
+MODEL = MODELS["open"]
+PRICE = dict(zip(("input", "output"), TOKEN_USD_PER_M[MODELS["open_label"]][:2]))  # one price table: cost.py
 FORCE_FINISH_AFTER = 6
 
 
@@ -90,7 +90,9 @@ def from_chat(js: dict) -> dict:
         output.append({"type": "message", "role": "assistant",
                        "content": [{"type": "output_text", "text": msg["content"]}]})
     u = js.get("usage") or {}
-    return {"status": "completed", "output": output,
+    cut = js["choices"][0].get("finish_reason") == "length"  # stopped by the token limit: not a complete answer
+    return {"status": "incomplete" if cut else "completed", **({"incomplete_details": {"reason": "max_output_tokens"}}
+                                                                 if cut else {}), "output": output,
             "usage": {"input_tokens": u.get("prompt_tokens", 0), "output_tokens": u.get("completion_tokens", 0),
                       "input_tokens_details": {"cached_tokens": (u.get("prompt_tokens_details") or {}).get("cached_tokens", 0)}}}
 
@@ -114,7 +116,7 @@ class OpenWeightsClient:
         url = os.environ.get("GLIMMER_URL", "").rstrip("/")
         if not url:
             raise RuntimeError("GLIMMER_URL is not set: deploy nearmisslens/glimmer_modal.py and put its URL in .env")
-        return cls(ledger=SETTINGS.runs_dir / "ledger_modal.jsonl", base_url=f"{url}/v1", model="muse-glimmer",
+        return cls(ledger=SETTINGS.runs_dir / "ledger_modal.jsonl", base_url=f"{url}/v1", model=MODELS["glimmer"],
                    key_env="GLIMMER_API_KEY", auth="Bearer", price=None)
 
     def create_response(self, payload: dict) -> dict:
@@ -147,6 +149,9 @@ class OpenWeightsClient:
         self.spent += usd
         with open(self.ledger, "a") as f:
             f.write(json.dumps({"t": time.time(), "model": self.model, "usd": round(usd, 6), "what": what, **u}) + "\n")
+        done = complete(result) if complete else result.get("status") == "completed"
+        if not done or (require_text and not output_text(result).strip()):  # never cache a cut or empty answer
+            raise IncompleteResponse(f"{what}: status={result.get('status')!r}, details={result.get('incomplete_details')}")
         self.cache.put(f"open_{namespace}", k, result)
         return result
 

@@ -14,8 +14,9 @@ from .cache import file_sha256, source_sha
 from .calibrate import metres_per_pixel
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
+from .config import MODELS
 
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 CROP_W, CROP_H = 1280, 720
 PAD_S = 3.0
 

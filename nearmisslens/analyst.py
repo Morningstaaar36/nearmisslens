@@ -23,10 +23,11 @@ from scipy.spatial import cKDTree
 from . import panel
 from . import treatments as T
 from .agent import Tool, run_agent
+from .config import MODELS
 
 RADII = (30, 50, 100)
 IMAGE_PACKAGES = ("pandas==2.2.3", "numpy==2.1.3", "scipy==1.14.1", "statsmodels==0.14.4", "pyarrow==18.1.0")
-MODEL = "muse-spark-1.3-contributor"  # the open-weights client serves it with Muse Spark Open (or Glimmer)
+MODEL = MODELS["reader"]  # the open-weights client serves it with Muse Spark Open (or Glimmer)
 
 INSTRUCTIONS = (
     "You are a careful data analyst for a city transportation department. A street-safety treatment was installed at "

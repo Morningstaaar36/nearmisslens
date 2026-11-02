@@ -1,6 +1,10 @@
 {
  "id": "T21b",
  "registered": "validation/BENCH_PREREG.md, T21b",
+ "budget_usd": 0.4,
+ "max_turns": 16,
+ "model_check": false,
+ "inbox_date": "2026-11-02",
  "cases": [
   {
    "kind": "news",

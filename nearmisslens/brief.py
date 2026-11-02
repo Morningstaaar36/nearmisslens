@@ -24,6 +24,7 @@ import numpy as np
 from . import context, countermeasures, harm, panel, sam_api
 from .agent import Tool, run_agent
 from .config import SETTINGS, portable, resolve
+from .config import MODELS
 
 YEARS = context.YEARS
 OVERPASS_SERVERS = (context.OVERPASS, *context.OVERPASS_MIRRORS)
@@ -389,7 +390,7 @@ def fixes_table(opts: dict, n: int = 8) -> str:
         f"\n\n_Method: {opts.get('method', '')}. Do not add fixes together._"
 
 
-def write_brief(client, facts: dict, tag: str, model: str = "muse-spark-1.3-contributor") -> dict:
+def write_brief(client, facts: dict, tag: str, model: str = MODELS["reader"]) -> dict:
     check = context.FactCheck(facts)
     attempts = []
 

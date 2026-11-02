@@ -517,3 +517,54 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - the San Francisco 311 street reports ranked 5–8 by crash exposure in this week's inbox (distinct addresses).
 - **Everything else as in T21:** model, budget, turns, letters.
 - **Rule:** at least 9 of 12 cases publish and the average cost is at most $0.25 per case. Reported along with the share of published quotes verified against their page.
+
+## T21c The desk after the Nov 2 failure study, on fresh cases (registered 2026-11-02, before any T21c case)
+
+- **Why:** a failure study of T21 and the first five T21b cases found these causes:
+  - the model wrote quotes from memory (15 and 8 refused finish calls);
+  - findings cited the wrong receipt (15 and 8);
+  - findings put the source's numbers on record receipts;
+  - geocodes fell back to house numbers and businesses;
+  - the agent wandered to a second corner and kept probing `check_claim` until the turn limit;
+  - `program_record` was passed city names, not ids, and always answered "untested";
+  - `check_claim` called a claim "contradicted" when the record simply had nothing on it.
+- **Changes, all post hoc and named here** (`nearmisslens/orchestrator.py`, spec `validation/experiments/T21c.json`):
+  - **Reading:** a `read_page` tool returns the text the citation gate checks, and quotes must be copied from it.
+  - **Facts from the source** cite the source's URL, and their numbers must be on that page.
+  - **Record numbers** cite a D receipt. `investigate` lists its code-written claims with their receipts. When a finding's numbers are on a different receipt, the gate names that receipt; it never does this for a finding without numbers.
+  - **Claim verdicts:** `check_claim` saves its verdict as a receipt, and a finding about a claim must state that verdict. "Contradicted" is used only when the record has a different value for what the sentence names; otherwise the verdict is "cannot be checked against this record". The model-read check (T20b) is on. At most 6 claim checks per case.
+  - **Programs:** `program_record` takes the case's city and matches the program by its words. When nothing matches, it lists the programs that have a study.
+  - **Address handling:** an address that is not an intersection goes to the nearest screened corner within 150 m, or is refused. A second corner is refused.
+  - **What the gate counts:** at least 3 findings must give a record number (years do not count), and at least one quote must be verified on its page.
+  - **311 cases:** the report's own record in the city's Open311 feed is the source, quoted from the saved inbox snapshot.
+  - **Limits:** $0.50 and 22 turns per case. `check_findings` (a dry run of the gate) is available.
+- **Cases (12, fresh):**
+  - one news case per city, for reports published October 15 to November 2, 2026;
+  - one statement case per city crediting a named program or countermeasure with fewer crashes;
+  - the San Francisco 311 street reports ranked 9–12 in the 2026-11-02 inbox snapshot (distinct addresses).
+- **Rule:** at least 9 of 12 cases publish, the average cost is at most $0.25 per case, and at least 80% of published quotes are verified on their page.
+- **Also reported:**
+  - the share of published cases that state the corner's injury-crash count;
+  - claim verdicts by kind;
+  - seconds per case, and how much of that is model turns vs data fetches;
+  - refusals by reason.
+- **Not covered:** whether the findings are right beyond what the gates check. Published findings are listed for your hand review, marked pending until then.
+
+## T23 Corner Watch: what the city's cameras show at its most dangerous corners (registered 2026-11-02, before any frame is sent to a model)
+
+- **Question:** can SAM 3.1 and Muse Spark, under checks, measure from the city's own public cameras how many people use a high-crash corner and whether its layout matches the fix the evidence supports? And does counting people change which corners rank worst?
+- **Data:** Seattle SDOT traffic cameras at the 40 camera intersections with the most injury crashes within 50 m (`cameras.pick`, saved in `validation/results/bench/cameras_seattle_picks.json`). Daylight frames are collected every 10 minutes over one day, and frames darker than `config.DARK_MEAN` are left out by rule.
+- **Method** (`nearmisslens/corner_watch.py`):
+  - **Counts:** SAM 3.1 counts people and cars in each camera's frames in one video request, with a black frame between snapshots (adapter A8).
+  - **Packing check:** for 2 frames per camera, the count is repeated in image mode.
+  - **Layout:** Muse Spark (low effort) answers present / absent / unsure for each layout feature in `data/corner_features.json` and points at it. "Present" needs a SAM detection near one of its points, and "absent" needs SAM to find nothing; anything else is "unsure".
+  - **Exposure:** injury crashes per 1,000 people seen. No rate is given when fewer than 20 people are seen.
+- **Metrics:**
+  - agreement between packed-video and image counts (mean absolute difference, and the share within ±1);
+  - the share of feature answers confirmed, absent and unsure;
+  - Spearman correlation between the crash ranking and the exposure ranking, and how many of the crash top 10 leave the exposure top 10;
+  - cost per camera.
+- **Rule:**
+  - packed counts are credited as a substitute for image mode if at least 80% of sampled frames agree within ±1 person;
+  - the exposure ranking is reported as a finding only if at least 20 cameras have a rate.
+- **Not covered:** whether the counts match a hand count. 20 frames will be listed for your hand count, marked pending until then. Frames are never published.

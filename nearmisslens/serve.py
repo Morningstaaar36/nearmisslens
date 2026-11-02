@@ -16,6 +16,7 @@ from .countermeasures import load_cmf
 from .meta_client import MetaClient
 from .runner import as_wav
 from .voice import transcribe
+from .config import MODELS
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>NearMissLens intake</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -62,7 +63,7 @@ async function send(blob){
 </script></main></body></html>"""
 
 
-def serve(audit_name: str, port: int = 8765, model: str = "muse-wonder-1.0") -> int:
+def serve(audit_name: str, port: int = 8765, model: str = MODELS["large"]) -> int:
     client = MetaClient(SETTINGS)
     facts, memo_md = ask.load(audit_name, SETTINGS.runs_dir)
     cmf = load_cmf()

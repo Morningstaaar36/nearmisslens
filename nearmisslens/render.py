@@ -16,8 +16,9 @@ from . import sam_api
 from .calibrate import Calibration, metres_per_pixel
 from .cost import IMAGE_USD
 from .meta_client import MetaClient
+from .config import MODELS
 
-MODEL = "muse-image-1.0"
+MODEL = MODELS["image"]
 CROP_PX = 1024
 ROAD_USERS = ("car", "scooter", "person")
 LABEL = "AI-generated illustration (Muse Image) of a proposed countermeasure - not an engineering design"

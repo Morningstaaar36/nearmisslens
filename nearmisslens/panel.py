@@ -16,10 +16,11 @@ import pandas as pd
 
 from .agent import Tool, run_agent
 from .meta_client import MetaClient
+from .config import MODELS
 
-PROPOSER_MODEL = "muse-spark-1.3-contributor"
-SKEPTIC_MODEL = "muse-spark-1.3-contributor"
-JUDGE_MODEL = "muse-wonder-1.0"
+PROPOSER_MODEL = MODELS["reader"]
+SKEPTIC_MODEL = MODELS["reader"]
+JUDGE_MODEL = MODELS["large"]
 BUDGET_USD = {"proposer": 0.05, "skeptic": 0.05, "judge": 0.8}
 MAX_TURNS = 14
 MAX_OUTPUT_TOKENS = 16000

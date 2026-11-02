@@ -22,6 +22,7 @@ from . import opendata
 from . import treatments as T
 from .config import ROOT, portable
 from .evaluate import RESULTS_DIR
+from .config import MODELS
 
 EXPERIMENTS = ROOT / "validation" / "experiments"
 
@@ -188,7 +189,7 @@ def run(name: str = "T12", programs: int | None = None) -> dict:
     return out
 
 
-def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", only: list[str] | None = None,
+def run_agents(client, name: str = "T12", model_label: str = MODELS["open_label"], only: list[str] | None = None,
                arms: tuple[bool, ...] = (False, True), workers: int = 4, executor: str = "modal") -> dict:
     """The agentic arms: the first fake programs and the real ones, blinded, each analysed ungated and gated. Results
     are saved after every run (experiment_<id>_agents_<model>.json), and a finished run is not repeated."""
@@ -237,7 +238,7 @@ def run_agents(client, name: str = "T12", model_label: str = "muse-spark-open", 
     return done
 
 
-def run_agents_real(client, items: list[tuple[str, str]], name: str = "T12", model_label: str = "muse-spark-open",
+def run_agents_real(client, items: list[tuple[str, str]], name: str = "T12", model_label: str = MODELS["open_label"],
                     workers: int = 3, executor: str = "local") -> dict:
     """The agentic arms on registered real programs in any city (study id, program key), blinded as P23, P24...;
     saved into the same results file as the New York arms."""

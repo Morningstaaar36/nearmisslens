@@ -21,8 +21,10 @@ import httpx
 
 from . import panel
 from .agent import Tool, run_agent
+from .cache import atomic_write
 from .config import SETTINGS
 from .meta_client import MetaClient
+from .config import MODELS
 
 UA = {"User-Agent": "NearMissLens/0.2 (road-safety research; https://github.com/Morningstaaar36/nearmisslens)"}
 OVERPASS = "https://overpass-api.de/api/interpreter"
@@ -66,7 +68,7 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
                 r = c.post(target, data=data) if data is not None else c.get(target, params=params)
             if r.status_code == 200:
                 out = r.json()
-                path.write_text(json.dumps(out))
+                atomic_write(path, json.dumps(out))
                 return out, round(time.time() - t, 2)
             err = f"HTTP {r.status_code}"
             if r.status_code < 500 and r.status_code != 429:  # a bad request will not get better by waiting
@@ -228,7 +230,7 @@ def dossier(lat: float, lon: float, street: bool = True) -> dict:
     return out
 
 
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 INSTRUCTIONS = (
     "You write for a city traffic engineer. From the junction dossier only, write a memo of at most 120 words: what "
     "the street layout is, what the police-reported crash record shows over the period (who was hurt, the main "
@@ -496,7 +498,14 @@ class FactCheck:
                     bad.append(f"{t}% is not a share or change of what this sentence names")
                 continue
             if not any(abs(k - v) <= tol for k in self.known):
-                bad.append(f"number {t} is not in the dossier")
+                head, clause = text[max(0, m.start() - 30):m.start()], re.split(r"[,;]", tail, 1)[0]
+                named = next((name for name, before, after, _ in LABELS if self.by_label.get(name) and name != "dollars"
+                              and ((before and re.search(before, head, re.I)) or (after and re.search(after, clause, re.I)))),
+                             None)
+                bad.append(f"{t}: the record does not show {named}" if named in self.unknown else
+                           f"{t} is not the record's number of {named} (the record has "
+                           f"{', '.join(f'{x:g}' for x in sorted(set(self.by_label[named]))[:4])})" if named
+                           else f"number {t} is not in the dossier")
                 continue
             if len(t) == 4 and t[:2] in ("19", "20"):
                 continue  # years carry no label

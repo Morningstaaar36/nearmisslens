@@ -77,4 +77,9 @@ def since(years: int):
 
 # the Meta models each part uses, in one place (Muse Spark on the Meta Model API; Muse Spark Open on Baseten)
 MODELS = {"orchestrator": "muse-spark-1.3", "reader": "muse-spark-1.3-contributor", "vision": "muse-spark-1.3-contributor",
-          "open": "meta-models/muse-spark-open-1026", "sam": "sam-3.1", "image": "muse-image-1.0"}
+          "open": "meta-models/muse-spark-open-1026", "open_label": "muse-spark-open", "sam": "sam-3.1",
+          "image": "muse-image-1.0", "large": "muse-wonder-1.0", "voice": "muse-voice-transcribe-1.0",
+          "glimmer": "muse-glimmer"}
+
+# a photo or camera frame whose mean grey level is below this is too dark to read: the answer is "unsure" by rule
+DARK_MEAN = 55.0

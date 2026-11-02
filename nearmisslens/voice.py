@@ -10,9 +10,10 @@ from .cache import file_sha256
 from .cost import token_usd, voice_usd
 from .meta_client import MetaClient, output_text
 from .movements import ARMS
+from .config import MODELS
 
-ASR_MODEL = "muse-voice-transcribe-1.0"
-EXTRACT_MODEL = "muse-spark-1.3-contributor"
+ASR_MODEL = MODELS["voice"]
+EXTRACT_MODEL = MODELS["reader"]
 USERS = ("vehicle", "two_wheeler", "pedestrian")
 MOVES = ("left", "right", "through", "u_turn")
 COMPLAINT_SCHEMA = {

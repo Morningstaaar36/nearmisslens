@@ -123,7 +123,29 @@ def verify(claim: str, receipt: dict, parsed: dict, places: tuple[str, ...] = ()
             continue
         if a.get("value") is None or not _close(float(a["value"]), float(rv), a.get("kind") or "count", a.get("field") or ""):
             bad.append(f"{a.get('field')} is {rv:g}; the claim says {a.get('value')}")
+        elif a.get("kind") == "change" and (way := direction(a.get("quote") or claim)) and way != record_direction(
+                float(rv), a.get("field") or ""):
+            bad.append(f"{a.get('field')} is {rv:g}, a {record_direction(float(rv), a.get('field') or '')}; the claim says "
+                       f"a {way}")
     return bad
+
+
+UP = re.compile(r"\b(ros[e]|rise|risen|rising|increas\w*|more|up|higher|grew|grow\w*|jump\w*|doubl\w*)\b", re.I)
+DOWN = re.compile(r"\b(fell|fall\w*|drop\w*|declin\w*|decreas\w*|reduc\w*|fewer|less|lower|down|cut\w*|"
+                  r"shr[ai]nk\w*)\b", re.I)
+
+
+def direction(text: str) -> str | None:
+    """'rise' or 'fall' when the sentence says which way a change went, else None."""
+    up, down = bool(UP.search(text or "")), bool(DOWN.search(text or ""))
+    return "rise" if up and not down else "fall" if down and not up else None
+
+
+def record_direction(rv: float, field: str) -> str:
+    """Which way the record's change went: a ratio below 1 (or a negative percentage change) is a fall."""
+    if re.search(r"pct|percent|change", field) and not re.search(r"crf|ratio|theta", field):
+        return "fall" if rv < 0 else "rise"
+    return "fall" if rv < 1 else "rise"
 
 
 def parse(client, claim: str, receipt: dict, tag: str = "") -> dict:

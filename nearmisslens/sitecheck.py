@@ -20,10 +20,11 @@ from . import brief, context, sam_api
 from .config import ROOT, SETTINGS
 from .cost import token_usd
 from .meta_client import output_text
+from .config import MODELS
 
 SPEC = json.loads((ROOT / "validation" / "experiments" / "T16.json").read_text())
 CATALOG = json.loads((Path(__file__).resolve().parent / "data" / "site_attributes.json").read_text())["attributes"]
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 SIZE, SPAN_M = brief.AERIAL_PX, 2 * brief.AERIAL_RADIUS_M
 M_PER_PX = SPAN_M / SIZE
 ATTRS = list(CATALOG)

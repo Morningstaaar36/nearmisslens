@@ -17,6 +17,7 @@ import re
 from . import context, countermeasures, harm, opendata, panel, treatments
 from .config import asof
 from .agent import Tool, run_agent
+from .config import MODELS
 
 
 def offices(lat: float, lon: float) -> list[dict]:
@@ -151,7 +152,7 @@ def sources(brief: dict, f: dict) -> list[str]:
     return list(dict.fromkeys(out))
 
 
-def draft(client, brief: dict, offices_: list[dict] | None = None, model: str = "muse-spark-1.3-contributor",
+def draft(client, brief: dict, offices_: list[dict] | None = None, model: str = MODELS["reader"],
           tag: str = "letter", who: dict | None = None, audience: str = "resident") -> dict:
     f = facts(brief, offices_, who, audience)
     check = context.FactCheck(f)

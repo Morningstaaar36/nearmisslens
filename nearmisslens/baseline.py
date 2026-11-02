@@ -15,8 +15,9 @@ from .cache import file_sha256, source_sha
 from .config import ROOT, SETTINGS
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
+from .config import MODELS
 
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 WINDOWS = 60
 WINDOW_S = 10.0
 CLIP_WIDTH = 1920

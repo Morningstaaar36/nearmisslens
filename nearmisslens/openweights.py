@@ -14,9 +14,10 @@ import httpx
 from .cache import Cache, request_key
 from .config import SETTINGS
 from .verifier import INSTRUCTIONS, VERDICT_SCHEMA
+from .config import MODELS
 
 BASE_URL = "https://inference.baseten.co/v1"
-MODEL = "meta-models/muse-spark-open-1026"
+MODEL = MODELS["open"]
 PRICE = {"input": 1.25, "output": 4.25}  # $ per 1M tokens (Baseten, same as hosted Spark Standard)
 
 

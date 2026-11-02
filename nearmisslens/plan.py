@@ -198,7 +198,7 @@ def agency_letter(city: str, g: dict, rows: dict[str, dict], records_to: str | N
              "and taken to be yours at the rest because the state's road inventory does not list them)")
     body = (f"In the {facts['years']} years of public police crash records up to {facts['records_to']}, the "
             f"{n} high-crash {'intersection' if n == 1 else 'intersections'} in {c.get('name', city)} where {whose} "
-            f"had {g['injury_crashes_total']:,} injury crashes within 100 m (a crash near two of them counts for each). "
+            f"had {g['injury_crashes_total']:,} injury crashes within {context.CRASH_RADIUS_M:g} m (a crash near two of them counts for each). "
             + (f"At {g['intersections_with_supported_fix']} of {'it' if n == 1 else 'them'}, a low-cost fix the evidence supports would avoid "
                f"about {g['crashes_avoided_per_year_total']} crashes a year, worth about "
                f"{_m(g['harm_avoided_usd_per_year_total'])} a year at the U.S. DOT's values. "

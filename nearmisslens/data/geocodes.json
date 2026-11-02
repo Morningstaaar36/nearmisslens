@@ -65,6 +65,12 @@
 "name": "Cross Island Parkway & 150 Street",
 "city": "nyc"
 },
+"15th street northwest & m street northwest": {
+"lat": 38.905648,
+"lon": -77.0345693,
+"name": "15th Street Northwest & M Street Northwest",
+"city": "dc"
+},
 "160 street & liberty avenue": {
 "lat": 40.7005130307623,
 "lon": -73.7967702321808,
@@ -527,6 +533,12 @@
 "name": "Amsterdam Avenue & West 181 Street",
 "city": "nyc"
 },
+"anza street & arguello boulevard": {
+"lat": 37.7793568,
+"lon": -122.4587569,
+"name": "Anza Street & Arguello Boulevard",
+"city": "sf"
+},
 "archer avenue & merrick boulevard": {
 "lat": 40.7044238610029,
 "lon": -73.7928484899777,
@@ -652,6 +664,12 @@
 "lon": -73.9303176277009,
 "name": "Atlantic Avenue & Utica Avenue",
 "city": "nyc"
+},
+"aurora avenue north & north 97th street": {
+"lat": 47.6996254,
+"lon": -122.3446406,
+"name": "Aurora Avenue North & North 97th Street",
+"city": "seattle"
 },
 "avenue c & coney island avenue": {
 "lat": 40.641382446125,
@@ -1151,6 +1169,12 @@
 "name": "Walton Avenue & East 170 Street",
 "city": "nyc"
 },
+"east 180th street & prospect avenue": {
+"lat": 40.847082,
+"lon": -73.886697,
+"name": "East 180th Street & Prospect Avenue",
+"city": "nyc"
+},
 "east 188 street & east fordham road": {
 "lat": 40.8622104361979,
 "lon": -73.8996426172858,
@@ -1456,6 +1480,12 @@
 "lon": -73.8718205092712,
 "name": "Loring Avenue & Fountain Avenue",
 "city": "nyc"
+},
+"france avenue & moscow street": {
+"lat": 37.7165967,
+"lon": -122.4311674,
+"name": "Moscow Street & France Avenue",
+"city": "sf"
 },
 "franklin avenue & fulton street": {
 "lat": 40.6811369599825,
@@ -1768,6 +1798,12 @@
 "lon": -73.8542988276157,
 "name": "White Plains Road & Nereid Avenue",
 "city": "nyc"
+},
+"north 48th street & stone way north": {
+"lat": 47.6635729,
+"lon": -122.3411772,
+"name": "Stone Way North & North 48th Street",
+"city": "seattle"
 },
 "northern boulevard & parsons boulevard": {
 "lat": 40.764651790935,

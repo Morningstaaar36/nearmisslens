@@ -16,8 +16,9 @@ from .agent import Tool, run_agent
 from .config import SETTINGS
 from .evaluate import RESULTS_DIR
 from .meta_client import MetaClient
+from .config import MODELS
 
-MODEL = "muse-wonder-1.0"
+MODEL = MODELS["large"]
 MAX_TURNS = 16
 BUDGET_USD = 0.6
 INSTRUCTIONS = (
@@ -69,7 +70,7 @@ def run(client: MetaClient, audit_name: str, complaints: list[str], cmf: pd.Data
                       "claims_caught_by_checker": p.get("caught", 0)})
 
     def check_complaint(text: str) -> dict:
-        out = ask.answer(client, text, facts, memo_md, cmf, frames, f"{tag} complaint", model="muse-spark-1.3-contributor",
+        out = ask.answer(client, text, facts, memo_md, cmf, frames, f"{tag} complaint", model=MODELS["reader"],
                          budget_usd=0.02)
         r = out["result"] or {}
         return shown({"verdict": r.get("verdict"), "rank": r.get("rank"), "answer": r.get("answer"),

@@ -7,6 +7,7 @@ import sys
 from .config import SETTINGS, portable, resolve
 from .cost import CostMeter
 from .runlog import metrics_markdown, read_metrics
+from .config import MODELS
 
 
 def cmd_cost(_args) -> int:
@@ -288,7 +289,7 @@ def cmd_desk(args) -> int:
         reps = desk_runs.run_governed(OpenWeightsClient())
         print(f"{len(reps)} governed cases, {sum(bool(r.get('finished')) for r in reps)} finished")
         return 0
-    res = desk_runs.run_desk(args.spec, MetaClient(SETTINGS), OpenWeightsClient())
+    res = desk_runs.run_desk(args.spec, MetaClient(SETTINGS), OpenWeightsClient(), fresh=args.fresh)
     print(f"{sum(bool(c.get('finished')) for c in res['cases'])} of {len(res['cases'])} published")
     return 0
 
@@ -519,7 +520,7 @@ def main(argv: list[str] | None = None) -> int:
     ak.add_argument("text", nargs="?", default="")
     ak.add_argument("--source", choices=["reference", "sam"], default="sam")
     ak.add_argument("--audio", help="a recording in any format ffmpeg reads (Muse Voice Transcribe)")
-    ak.add_argument("--model", default="muse-wonder-1.0")
+    ak.add_argument("--model", default=MODELS["large"])
     ak.add_argument("--serve", action="store_true", help="local web page with a microphone button")
     ak.add_argument("--port", type=int, default=8765)
     cx = sub.add_parser("context", help="what the official record says about a junction (OSM, crashes, city plans)")
@@ -544,8 +545,9 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
-    dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b) or the governed agent (T22); paid unless --replay")
+    dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b, T21c) or the governed agent (T22); paid unless --replay")
     dk.add_argument("spec")
+    dk.add_argument("--fresh", action="store_true", help="run every case again instead of resuming from saved results")
     cm = sub.add_parser("cameras", help="Corner Watch: pick the city's camera corners by injury crashes; collect frames (free)")
     cm.add_argument("action", choices=["pick", "once", "collect"])
     cm.add_argument("city")

@@ -12,8 +12,9 @@ from . import fluid, sam_api, tiling, video
 from .cost import token_usd
 from .meta_client import MetaClient, output_text
 from .segments import parse_text
+from .config import MODELS
 
-MODEL = "muse-spark-1.3-contributor"
+MODEL = MODELS["reader"]
 KINDS = {"two_wheeler": ("scooter", "motorcycle, scooter or moped with its rider"),
          "pedestrian": ("pedestrian", "person walking on foot (not riding)")}
 COUNT_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["points", "count"],
