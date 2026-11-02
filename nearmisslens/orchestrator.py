@@ -202,19 +202,29 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
     def investigate(address: str, draft_letter: bool):
         from . import brief
         letters = letter_client if draft_letter else None
-        snapped = None
+        snapped, rep, point = None, None, None
         if INTERSECTION.search(address.split(",")[0]):
             last = None
-            for variant in brief.address_variants(address):  # "Bay Pkwy and Cropsey Ave" -> "Bay Parkway & Cropsey Avenue"
+            # "Bay Pkwy and Cropsey Ave" -> "Bay Parkway & Cropsey Avenue"; the '&' forms first, because a free-text
+            # search for "22nd and Mission" returns the nearest business, not the intersection
+            for variant in sorted(brief.address_variants(address), key=lambda v: "&" not in v.split(",")[0]):
                 try:
-                    rep = engineer.plan(variant, letter_client=letters)
-                    break
+                    r = engineer.plan(variant, letter_client=letters)
                 except ValueError as e:
                     last = e
-            else:
+                    continue
+                j = r["junction"]
+                if "&" in j["name"].split(",")[0]:  # the geocoder found the two streets' shared node
+                    rep = r
+                    break
+                point = point or (j["lat"], j["lon"])  # a place near it: snapped below to a screened corner, or refused
+            if rep is None and point is None:
                 raise last
         else:  # a street address or a place name: the corner is the nearest screened intersection, or none
             lat, lon, _ = brief.geocode(address)
+            point = (lat, lon)
+        if rep is None:
+            lat, lon = point
             near = nearest_corner(desk.city, lat, lon)
             if near is None or near[1] > SNAP_M:
                 gap = f"; the nearest screened corner is {near[0]['name']} at {near[1]:.0f} m" if near else ""
@@ -449,7 +459,10 @@ INCIDENT = re.compile(r"\b(?:the|a|this|that)\s+(?:[\w,-]+\s+){0,4}?(?:crash|col
 PEOPLE_LABELS = ("deaths", "pedestrians killed", "cyclists killed", "pedestrians injured", "cyclists injured")
 COST = re.compile(r"\b(cost|costs|harm|worth|value|economic)\b", re.I)
 AREA = re.compile(r"\bcorridor\b|\balong\b|\bcity-?wide\b|\bacross (?:the )?city\b|\bhigh[- ]injury network\b|"
-                  r"\bneighbou?rhood\b|\bdistrict\b|\bwards?\b", re.I)
+                  r"\bneighbou?rhood\b|\bdistrict\b|\bwards?\b|\b(?:total )?traffic (?:deaths|fatalities)\b|"
+                  r"\bvision zero (?:report|data|update)\b", re.I)  # a city's own totals are not one corner's
+OTHER_PERIOD = re.compile(r"\b(?:last|past|previous)\s+(?:one|two|three|four|six|seven|eight|nine|ten|1|2|3|4|6|7|8|9|10)"
+                          r"\s+years?\b|\b(?:last|past|this)\s+(?:year|month|week)\b", re.I)  # not the record's five years
 SEVERITY = re.compile(r"\bKSI\b|serious(?:ly)? injur|severe(?:ly)? injur|severe crash", re.I)
 MISMATCH = re.compile(r"^(\S+) is not the record's number of (.+?)(?: \(the record has.*| for what this sentence names)?$")
 
@@ -482,6 +495,9 @@ def claim_errors(fc: context.FactCheck, text: str) -> list[str]:
             n, label = m.groups()
             if early:
                 e = f"{n}: the record does not show {early[0]} (its window starts in {start})"
+            elif OTHER_PERIOD.search(text):
+                e = (f"{n}: the record does not show {OTHER_PERIOD.search(text).group(0)} "
+                     f"(it counts {context.YEARS} years to its as-of date)")
             elif AREA.search(text):
                 e = f"{n}: the record does not show this area (it counts crashes within {context.CRASH_RADIUS_M:g} m of the corner)"
             elif label == "dollars" and not COST.search(text):
@@ -567,7 +583,9 @@ def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list
     it never decides a verdict: what it objects to is returned as flags."""
     overstated = engineer.wording(text)
     fc = context.FactCheck(data)
-    t = resolve_bounds(fc, words_to_digits(re.sub(r"\s+per\s?cent\b", "%", engineer.strip_places(text, places), flags=re.I)))
+    t = engineer.strip_places(text, places)
+    t = re.sub(r"\bcollisions?\b", lambda m: "crashes" if m.group(0).endswith("s") else "crash", t, flags=re.I)
+    t = resolve_bounds(fc, words_to_digits(re.sub(r"\s+per\s?cent\b", "%", t, flags=re.I)))
     errs = claim_errors(fc, t)
     flags = [] if errs else engineer.model_read_errors(text, data, client)
     if any(c in e for e in errs for c in DIFFERS):

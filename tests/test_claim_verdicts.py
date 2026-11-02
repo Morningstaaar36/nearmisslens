@@ -79,3 +79,9 @@ def test_a_redacted_quote_still_matches_its_page(monkeypatch):
     monkeypatch.setattr(O, "text_of", lambda url, known=None: page)
     quote = O.redact("license plate 9ABC123 is blocking the driveway")
     assert "9ABC123" not in quote and O.quote_check(quote, "https://x") == "verified"
+
+
+def test_collisions_are_crashes_and_other_periods_are_not_the_record(verdict):
+    assert verdict("56 injury collisions occurred at this intersection.") == "consistent with the record"
+    assert verdict("Over the last three years, there have been 56 injury collisions.") == "cannot be checked against this record"
+    assert verdict("There were 25 total traffic fatalities last year.") == "cannot be checked against this record"

@@ -683,3 +683,24 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Rule (in the spec):** at least 9 of 12 published, at most $0.25 per case, at least 80% of published quotes verified on their page, and no published licence plate.
 - **Also reported:** a post-hoc review of every published claim verdict, the same as for T21d.
   - **Hypothesis:** at most 1 in 10 published claim verdicts is found wrong, against 5 of 14 in T21d. Reported either way. It is still a review, not the hand audit.
+
+### T21e result (2026-11-02)
+- **10 of 12 published** at $0.122 per case and 416 s per case, with 2 publish-gate refusals. All 21 published quotes were verified on their page, the 10 published cases all state the corner's injury-crash count, and no plate was published: the registered rule was **met**.
+  - Seattle news stopped at its $0.50 budget.
+  - The Seattle statement case hit the turn limit.
+- **Post-hoc review of the 12 published claim verdicts** (not the hand audit):
+  - **10 are right.** Among them are:
+    - a 2014–2026 corridor count and a 2015–2020 count, both "cannot be checked" (another period);
+    - one crash's victims, "cannot be checked";
+    - a source's "25 crashes within 200 feet in 2024" and "13 in 2025" at Bowery & Kenmare, "differs from the record", with the record's 100 m frame stated.
+  - **2 are wrong.** A city's own totals, "25 total traffic fatalities last year" (DC) and "a Vision Zero report recorded 25 traffic deaths in 2025" (San Francisco), were called "differs" against one corner's record.
+  - **The hypothesis (at most 1 in 10 wrong) was not met:** 2 of 12 (17%), against 5 of 14 (36%) in T21d.
+- **A wrong corner in one 311 case:** the report said "22nd and Mission". The first written form tried was a free-text search, which returned a club on 22nd Street, and that club's name became the case's corner. The published numbers are those for that point, 7 injury crashes, not for the intersection.
+- **Changes after T21e** (post hoc, before any further run):
+  - A city's traffic-death totals and Vision Zero report figures are another area, so "cannot be checked".
+  - "Collisions" are read as crashes.
+  - "Over the last three years" or "this year" is another period, so "cannot be checked".
+  - The desk tries the "A & B" forms of an intersection first and accepts a geocoder result only if it is an intersection. Otherwise it goes to the nearest screened corner within 150 m, or refuses.
+  - Re-checked in replay, both wrong verdicts now come out "cannot be checked".
+  - **Known limit:** a claim is read one sentence at a time, so a period set by the sentence before ("over the last three years ... 6 injury collisions occurred") is not carried over.
+- **T24 re-scored after the T21e changes** (same answers, current claim check; geocoder lookups from the live run now answered from the request cache in replay, so one more desk case's record rebuilds): 60 number findings, 0 consistent, 1 differing, 59 not checkable. The quotes are unchanged.

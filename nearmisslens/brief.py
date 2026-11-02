@@ -102,8 +102,13 @@ def geocode(address: str) -> tuple[float, float, str]:
     if known:
         return known["lat"], known["lon"], f"{known['name']}, {address.split(',', 1)[1].strip()}" \
             if "," in address else known["name"]
-    if SETTINGS.replay:
-        raise ValueError(f"{address!r} is not in the offline set; run without replay to look it up")
+    try:  # in replay, a lookup made in the live run is answered from the request cache; anything else is refused
+        return _lookup(address)
+    except FileNotFoundError:
+        raise ValueError(f"{address!r} is not in the offline set; run without replay to look it up") from None
+
+
+def _lookup(address: str) -> tuple[float, float, str]:
     from . import opendata
     country = (json.loads(opendata.REGISTRY.read_text()).get("geocoder") or {}).get("countrycodes", "")
     streets = address.split(",")[0]

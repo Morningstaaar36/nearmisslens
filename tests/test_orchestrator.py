@@ -215,3 +215,17 @@ def test_licence_plates_are_never_published(monkeypatch):
     desk, t = _tools(monkeypatch, CRASHES)
     out = t["check_findings"]("s", [{"text": "A car with plate 7ABC123 blocked it.", "receipt": "D1"}], SRC)
     assert "licence plate" in " ".join(out["problems"])
+
+
+def test_a_geocoded_business_is_never_the_corner(monkeypatch):
+    """'22nd and Mission' once geocoded to a club on 22nd Street, which became the case's corner (T21e)."""
+    biz = {"junction": {"name": "Polish Club of San Francisco, 3040, 22nd Street", "lat": 37.7553, "lon": -122.4190},
+           "receipts": [], "findings": {}, "claims": []}
+    monkeypatch.setattr(O.engineer, "plan", lambda address, letter_client=None:
+                        biz if "and" in address.split(",")[0] else (_ for _ in ()).throw(ValueError("no node")))
+    monkeypatch.setattr(O, "nearest_corner", lambda city, lat, lon: ({"name": "Mission Street & 22nd Street", "lat": 37.7554,
+                                                                      "lon": -122.4189}, 30.0))
+    monkeypatch.setattr(O.engineer, "investigate", lambda desk, q, name, lat, lon, letter_client=None: {**REPORT, "junction": {"name": name}})
+    t = {x.name: x.fn for x in O.core_tools(O.Desk("sf"))}
+    out = t["investigate"]("22nd and Mission, San Francisco", False)
+    assert out["corner"] == "Mission Street & 22nd Street" and out["snapped"]["metres"] == 30

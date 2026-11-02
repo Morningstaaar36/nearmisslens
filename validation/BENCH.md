@@ -540,9 +540,9 @@ Registered in BENCH_PREREG.md (T20, T20b). Muse Spark lists each claim's asserti
 
 T20 registered rule: not met (false refusals rose too much, mostly through bugs in the checking code). T20b registered rule (model arm at most half the regex arm's attack success, false refusal at most 5 points higher): met.
 
-## T21–T21d The desk on live real-world cases
+## T21–T21e The desk on live real-world cases
 
-Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator with Meta web_search, tool search over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 published at no more than $0.25 a case; from T21c on, at least 80% of published quotes verified on their page; from T21d on, no licence plate written out in a published finding (each run's rule is in its spec).
+Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d, T21e). A Muse Spark orchestrator with Meta web_search, tool search over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 published at no more than $0.25 a case; from T21c on, at least 80% of published quotes verified on their page; from T21d on, no licence plate written out in a published finding (each run's rule is in its spec).
 
 | run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes verified on their page | Meta $ per case | time per case | rule |
 |---|---|---|---|---|---|---|---|
@@ -550,24 +550,26 @@ Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator
 | T21b | 5/12 | 1 | 23 | 5/13 | $0.079 | 283 s | not met |
 | T21c | 11/12 | 10 | 3 | 25/25 | $0.126 | 360 s | met |
 | T21d | 12/12 | 12 | 4 | 26/26 | $0.063 | 281 s | met |
+| T21e | 10/12 | 10 | 2 | 21/21 | $0.122 | 416 s | met |
 
 - **T21 not published:** escalated 7, max_turns 1
 - **T21b not published:** escalated 4, max_turns 3
 - **T21c not published:** max_turns 1
+- **T21e not published:** budget 1, max_turns 1
 
-Cases in T21d:
-- **news / nyc:** published; Allerton Avenue & Holland Avenue; ABC7 reported Oct 10 2026 crash at Allerton and Holland avenues; city records show 22 injury crashes; LPI passed causal gate; backplates fix supported condition
-- **news / seattle:** published; Aurora Avenue North & North 97th Street; Police report of a cyclist seriously injured at Aurora Avenue North and North 97th Street was investigated against city crash records, with a request letter dra
-- **news / dc:** published; Bladensburg Road Northeast & South Dakota Avenue Northeast; An October 10, 2026 report describes a July 27, 2026 fatal pedestrian hit-and-run at Bladensburg Road and South Dakota Avenue NE; the corner record, program ass
-- **news / sf:** published; Anza Street & Arguello Boulevard; Streetsblog SF reported Sept 30, 2026 that a tow-truck driver killed an 80-year-old pedestrian at Arguello and Anza; city records show 5 injury crashes in 5 yea
-- **claim / nyc:** published; Northern Boulevard & 48th Street; 2025 advocacy statement names Northern Boulevard and 48th Street as dangerous; police records show high injury burden with two-wheeler and yield patterns, turn 
-- **claim / seattle:** published; Rainier Avenue South & South Henderson Street; A 2023 Seattle council statement named Rainier Avenue S as a dangerous corridor and discussed signal programs, checked against city crash records for Rainier Av
-- **claim / dc:** published; Iowa Avenue Northwest & Arkansas Avenue Northwest; A 2023 Ward 4 councilmember dispatch names Iowa and Arkansas NW among dangerous intersections and describes signal and median work; city crash records show 5 in
-- **claim / sf:** published; Arguello Boulevard & Fulton Street; Walk SF in 2024 named Arguello and Fulton as a known dangerous intersection after a fatality, and city records show continued injury crashes there.
-- **311 / sf:** published; 7th Street & Mission Street; Red-zone driveway block near 7th and Mission, a corner with 35 recent injury crashes and $2.4M yearly harm, so parking enforcement is urgent and a signal study 
-- **311 / sf:** published; Franklin Street & Pine Street; Cracked crosswalk with pothole at Franklin and Pine needs urgent paving repair, in an area with recent injury crashes; work order directed to SFMTA.
-- **311 / sf:** published; 7th Street & Minna Street; Parking complaint at 591 Minna St near 7th and Minna needs prompt SFMTA citation and signal study. Harm at $3M/year. Work order — To SFMTA: cite gray SUV in no-
-- **311 / sf:** published; Jackson Street & Stockton Street; Blocked loading-zone report near Jackson and Stockton with moderate crash history; enforcement plus SFMTA study requested.
+Cases in T21e:
+- **news / nyc:** published; 3rd Avenue & 55th Street; News report of a nurse struck at Third Avenue and 55th Street on Aug 29, 2026, checked against city crash records, with a draft request letter to the road owner
+- **news / seattle:** not published (budget)
+- **news / dc:** published; 16th Street Northwest & L Street Northwest; News report of pedestrian killed at 16th and L Streets NW investigated against city crash records, with request letter to DDOT.
+- **news / sf:** published; Powell Street & Sacramento Street; Request for SFMTA safety study at Powell and Sacramento after July 1, 2026 report of adult and child injured, set against 6 injury crashes in 5 years and city p
+- **claim / nyc:** published; Bowery & Kenmare Street; Crash numbers for Bowery and Kenmare Street were checked against city records and the intersection was investigated.
+- **claim / seattle:** not published (max_turns); Dexter Avenue North & John Street
+- **claim / dc:** published; Florida Avenue Northeast & New York Avenue Northeast; Dave Thomas Circle redesign at Florida and New York Avenues NE reviewed against DC crash records.
+- **claim / sf:** published; Geary Boulevard & Stanyan Street; Review of Geary Boulevard and Stanyan Street using a 2024-or-later source naming Geary and Stanyan with crash counts, checked against city police records near t
+- **311 / sf:** published; 22nd Street & Capp Street; Parking over hydrant and curb ramp near the study corner calls for prompt enforcement plus agency study, given 23 injury crashes in 5 years.
+- **311 / sf:** published; Polish Club of San Francisco; Parking report at 22nd and Mission with photo of truck at red curb by bike racks; intersection has 7 injury crashes with no pattern; SFMTA work order drafted.
+- **311 / sf:** published; 25th Street & Treat Avenue; 311 report at 198 Lucky St reviewed with photo; nearest studied corner is 25th St and Treat Ave with 10 injury crashes in 5 years and no standout pattern; routi
+- **311 / sf:** published; Bryant Street & Morris Street; Sidewalk and curb report at 71 Morris St near Bryant and Morris shows trip and sanitation hazards; the nearest intersection has 34 recent injury crashes with hi
 
 ## T22 Adapter A1: a loop governor for the open-weights agent
 
@@ -589,7 +591,7 @@ Registered in BENCH_PREREG.md (T24). The 12 inputs of T21c, Muse Spark 1.3 with 
 | cases finished | 11 of 12 | 11 of 12 |
 | quotes absent from a page that could be read | 26 of 73 | 0 (refused by the gate) |
 | quotes on pages that could not be read | 43 | 0 |
-| findings with a number about the corner: consistent with the record / differs / not checkable | 0 / 1 / 54 (of 55) | every record number passed the number gate against the receipt it cites |
+| findings with a number about the corner: consistent with the record / differs / not checkable | 0 / 1 / 59 (of 60) | every record number passed the number gate against the receipt it cites |
 | Meta $ per case | $0.091 | $0.126 |
 
 Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings differing from the record): supported. 'Consistent' needs a number the record tests: a different value in its place would be refused. 'Differs' means not the record's number within 100 m over five years for what the sentence names; a source counting another area or period is not therefore wrong. Scored by `baseline_desk.score` with the corner's record rebuilt in the window its desk run read (the scoring was corrected after the run and before this was written up; see BENCH_PREREG.md).

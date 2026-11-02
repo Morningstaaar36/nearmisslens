@@ -64,9 +64,13 @@ def test_claim_reading_numbers():
 def test_desk_numbers():
     from nearmisslens.bench import desk_stats
     c, d = desk_stats(_load("experiment_T21c.json")), desk_stats(_load("experiment_T21d.json"))
-    _has(f"published {c['published'] + d['published']}, and all {c['verified'] + d['verified']} of their quotes")
-    _has(f"${c['usd_per_case']:.3f} and ${d['usd_per_case']:.3f} a case")
-    _has(f"| **{d['published']} of {d['cases']}** | **{d['verified']} of {d['quotes']}** |")
+    runs = [desk_stats(_load(f"experiment_{k}.json")) for k in ("T21c", "T21d", "T21e")]
+    _has(f"On {sum(r['cases'] for r in runs)} fresh real cases")
+    _has(f"published {sum(r['published'] for r in runs)}, and all {sum(r['verified'] for r in runs)} of their quotes")
+    usd = sorted(r["usd_per_case"] for r in runs)
+    _has(f"${usd[0]:.3f} to ${usd[-1]:.3f} a case")
+    for r in runs[1:]:
+        _has(f"| **{r['published']} of {r['cases']}** | **{r['verified']} of {r['quotes']}** |")
     from nearmisslens.baseline_desk import summary
     b = summary(_load("experiment_T24.json"))
     _has(f"{b['quotes_absent']} of the {b['quotes_verified'] + b['quotes_absent']} quotes")

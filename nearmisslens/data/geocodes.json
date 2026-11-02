@@ -113,6 +113,12 @@
 "name": "16th Street & Julian Avenue",
 "city": "sf"
 },
+"16th street northwest & l street northwest": {
+"lat": 38.9037447,
+"lon": -77.0365424,
+"name": "16th Street Northwest & L Street Northwest",
+"city": "dc"
+},
 "170 street & jamaica avenue": {
 "lat": 40.707170825663,
 "lon": -73.7897497246031,
@@ -197,6 +203,12 @@
 "name": "Merrick Boulevard & 228 Street",
 "city": "nyc"
 },
+"22nd street & capp street": {
+"lat": 37.755509,
+"lon": -122.417681,
+"name": "22nd Street & Capp Street",
+"city": "sf"
+},
 "23 street & jackson avenue": {
 "lat": 40.7458181968944,
 "lon": -73.9456504266111,
@@ -214,6 +226,12 @@
 "lon": -73.7356118457787,
 "name": "Francis Lewis Boulevard & 243 Street",
 "city": "nyc"
+},
+"25th street & treat avenue": {
+"lat": 37.7509762,
+"lon": -122.412862,
+"name": "25th Street & Treat Avenue",
+"city": "sf"
 },
 "27 street & queens plaza": {
 "lat": 40.7503820107479,
@@ -291,6 +309,12 @@
 "lat": 40.7499402833933,
 "lon": -73.8824505852871,
 "name": "37 Avenue & 84 Street",
+"city": "nyc"
+},
+"3rd avenue & 55th street": {
+"lat": 40.6449897,
+"lon": -74.0176757,
+"name": "3rd Avenue & 55th Street",
 "city": "nyc"
 },
 "4 avenue & 85 street": {
@@ -917,6 +941,12 @@
 "name": "East Houston Street & Bowery",
 "city": "nyc"
 },
+"bowery & kenmare street": {
+"lat": 40.7203425,
+"lon": -73.9941129,
+"name": "Bowery & Kenmare Street",
+"city": "nyc"
+},
 "brighton beach avenue & ocean parkway": {
 "lat": 40.5763050316014,
 "lon": -73.9685323413963,
@@ -982,6 +1012,12 @@
 "lon": -73.8906388337241,
 "name": "Bruckner Boulevard & Hunts Point Avenue",
 "city": "nyc"
+},
+"bryant street & morris street": {
+"lat": 37.7764744,
+"lon": -122.4019961,
+"name": "Bryant Street & Morris Street",
+"city": "sf"
 },
 "buffalo avenue & fulton street": {
 "lat": 40.679031976178,
@@ -1114,6 +1150,12 @@
 "lon": -73.9882017367061,
 "name": "Delancey Street & Essex Street",
 "city": "nyc"
+},
+"dexter avenue north & john street": {
+"lat": 47.6197321,
+"lon": -122.3424026,
+"name": "Dexter Avenue North & John Street",
+"city": "seattle"
 },
 "draper place & travis avenue": {
 "lat": 40.5933741988416,
@@ -1517,6 +1559,12 @@
 "name": "Flatlands Avenue & Rockaway Parkway",
 "city": "nyc"
 },
+"florida avenue northeast & new york avenue northeast": {
+"lat": 38.9088729,
+"lon": -77.0044967,
+"name": "Florida Avenue Northeast & New York Avenue Northeast",
+"city": "dc"
+},
 "flushing avenue & knickerbocker avenue": {
 "lat": 40.7047169502889,
 "lon": -73.9287377323206,
@@ -1618,6 +1666,12 @@
 "lon": -73.9507358007648,
 "name": "Gates Avenue & Nostrand Avenue",
 "city": "nyc"
+},
+"geary boulevard & stanyan street": {
+"lat": 37.7813295,
+"lon": -122.4563089,
+"name": "Geary Boulevard & Stanyan Street",
+"city": "sf"
 },
 "glenwood road & ralph avenue": {
 "lat": 40.6344827186588,

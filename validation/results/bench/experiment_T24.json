@@ -869,8 +869,44 @@
      "absent",
      "unreadable"
     ],
-    "findings": [],
-    "record": false
+    "findings": [
+     {
+      "text": "On March 1, 2020 a 67-year-old pedestrian was killed at Geary and Taylor by a Public Works pickup truck turning from Taylor onto Geary.",
+      "verdict": "not checkable",
+      "reasons": [
+       "number 67 is not in the dossier"
+      ]
+     },
+     {
+      "text": "SFMTA\u2019s own program record for the Tenderloin daylighting found 14 percent fewer reported collisions at treated intersections.",
+      "verdict": "not checkable",
+      "reasons": [
+       "14% is not a share or change in the record"
+      ]
+     },
+     {
+      "text": "Geary and Taylor streets are city streets under the City and County of San Francisco, with SFMTA responsible for ground transportation management and Public Works maintaining more than 900 miles of streets.",
+      "verdict": "not checkable",
+      "reasons": [
+       "no number in the sentence is a count this record holds, so nothing in it was tested"
+      ]
+     },
+     {
+      "text": "Claim checked: the February 10, 2025 SFMTA statement that daylighting is a proven safety measure to prevent crashes and save lives is a general program claim, not a measured result for Geary and Taylor.",
+      "verdict": "not checkable",
+      "reasons": [
+       "'proven' overstates the record: say 'have in common' for patterns and 'not shown' for programs"
+      ]
+     },
+     {
+      "text": "Claim checked: the statement that studies show daylighting can reduce collisions by 30 percent is an external-study figure, while SFMTA\u2019s own Tenderloin evaluation reported 14 percent fewer reported collisions with some intersections getting worse.",
+      "verdict": "not checkable",
+      "reasons": [
+       "14% is not a share or change in the record"
+      ]
+     }
+    ],
+    "record": true
    }
   },
   {
@@ -991,6 +1027,7 @@
       "text": "The corridor containing that intersection had over 190 reported injury collisions from 2015 to 2020, with one in six involving a pedestrian and two pedestrian fatalities, and it has one of the worst killed-or-seriously-injured rates on the High Injury Network.",
       "verdict": "not checkable",
       "reasons": [
+       "275: the record does not show 2015 (its window starts in 2021)",
        "2: the record does not show 2015 (its window starts in 2021)"
       ]
      },
