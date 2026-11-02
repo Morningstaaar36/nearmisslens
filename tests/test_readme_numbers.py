@@ -75,7 +75,10 @@ def test_desk_numbers():
     b = summary(_load("experiment_T24.json"))
     _has(f"{b['quotes_absent']} of the {b['quotes_verified'] + b['quotes_absent']} quotes")
     assert b["consistent"] == 0
-    _has(f"None of the {b['number_findings']} sentences")
+    _has(f"Of the {b['number_findings']} sentences it wrote with numbers about the case, {b['consistent'] + b['differs']} "
+         f"states a count the city's crash record can test, and it differs from the record; the other "
+         f"{b['not_checkable']} cannot be checked")
+    assert b["differs"] == 1
     _has(f"| {b['consistent']} / {b['differs']} / {b['not_checkable']} |")
     _has(f"| cases finished | {b['finished']} of {b['cases']} | {c['published']} of {c['cases']} |")
     _has(f"| Meta $ a case | ${b['usd_per_case']:.3f} | ${c['usd_per_case']:.3f} |")
@@ -94,3 +97,15 @@ def test_corner_watch_numbers():
     f = s["features"]
     _has(f"Of {sum(f.values())} layout answers, {f['present']} are present, {f['absent']} absent and {f['unsure']} unsure")
     _has(f"The run cost ${s['usd']:.2f} of Meta API")
+
+
+def test_calibrated_rank_and_unknown_control_counts():
+    t14b = _load("experiment_T14b.json")["programs"]
+    ny = {r["part"]: r["null_rank"] for r in t14b if r["study"] == "T11"}
+    _has(f"beats {round(100 * (1 - ny['all sites']))}% of fakes on all sites and "
+         f"{100 * (1 - ny['held-out half']):g}% on the held-out half")
+    import glob
+    from nearmisslens.config import ROOT
+    reps = [json.loads(open(f).read()) for f in glob.glob(str(ROOT / "docs" / "data" / "nyc" / "j" / "*.json"))]
+    unknown = sum(((r.get("findings") or {}).get("choose_fixes") or {}).get("control") == "unknown" for r in reps)
+    _has(f"At {unknown} of the {len(reps)} New York corners on the site")

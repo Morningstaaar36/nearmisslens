@@ -53,7 +53,7 @@ async function boot() {
     (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
     `Records as of ${date(INDEX.asof)}.` +
     (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
-    ` <button class="quiet planlink" id="desklink">Live desk: real cases</button>`;
+    ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>`;
   if (INDEX.plan) $("planlink").onclick = () => showPlan();
   $("desklink").onclick = () => showDesk();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
@@ -80,7 +80,7 @@ async function showDesk() {
   // the desk: Muse Spark took a real-world input, searched the live web, worked the case with the checked tools and
   // published only what the gate accepted; refused attempts and every step are in the trace
   history.replaceState(null, "", `#${CITY}/desk`);
-  busy("Opening the live desk…");
+  busy("Opening the desk's saved runs…");
   let d;
   try { d = await getJSON("data/desk.json"); } catch (err) { failed(err, "the desk"); return; }
   const badge = s => s === "verified" ? '<span class="status go">quote found in the page</span>' :
@@ -107,7 +107,7 @@ async function showDesk() {
   };
   const pub = d.cases.filter(c => c.finished).length;
   const runs = (d.runs || []).map(r => `<tr><td>${esc(r.id)}</td><td>${r.published} of ${r.cases}</td><td>${r.quotes ? r.verified + " of " + r.quotes : "n/a"}</td><td>$${Number(r.usd_per_case).toFixed(3)}</td><td>${r.seconds_per_case} s</td></tr>`).join("");
-  $("out").innerHTML = `<p class="where">Live desk · run ${esc(d.run)}</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
+  $("out").innerHTML = `<p class="where">The desk · saved run ${esc(d.run)} (a replay, not a live endpoint)</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
     `<p class="lede">Each case started from a real input: a news report or official statement found on the live web, or a resident's 311 report with a photo. ` +
     `Muse Spark planned the work, searched, opened the source and investigated the corner with the checked tools; Muse Spark Open drafted the letter. ` +
     `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons. ` +

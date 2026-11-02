@@ -1,6 +1,6 @@
 # NearMissLens
 
-**A street-safety desk run by Meta's models and refereed by code.** Give it something real: a news report of a crash, an official's claim that a safety program worked, a resident's 311 report with a photo, a corner, or a whole city. Muse Spark plans the work and chooses every step.
+**A street-safety desk run by Meta's models and refereed by code.** Give it something real: a news report of a crash, an official's claim that a safety program worked, a resident's 311 report with a photo, a corner, or a whole city. Muse Spark works the case with a fixed set of checked tools: its instructions set the order, and it decides what to search, read, check and write.
 - It finds and reads the source on the live web with Meta's `web_search`.
 - It loads the city's open datasets with tool search.
 - It investigates the intersection with checked tools.
@@ -10,15 +10,15 @@
 
 Nothing is published until code has checked every number against the record and every quote against its page.
 
-**On 36 fresh real cases in three runs registered before they ran (T21c to T21e), the desk published 33, and all 72 of their quotes were found on the page they cite. It cost $0.063 to $0.126 a case on the Meta API.** The first version published 4 of 12.
+**On 36 fresh real cases in three runs registered before they ran (T21c to T21e), the desk published 33, and all 72 of their quotes were found on the page they cite. It cost $0.063 to $0.126 a case on the Meta API.** The first version published 4 of 12. A quote check shows the sentence is on the page, not that it supports the finding, and the hand audit of the published findings is pending.
 
 **Muse Spark alone, with the same web search on the same inputs (T24), shows what the checks add:**
 - 26 of the 73 quotes it cited from pages we could read are not on those pages.
-- None of the 60 sentences it wrote with numbers about the case states a count the city's crash record could test.
+- Of the 60 sentences it wrote with numbers about the case, 1 states a count the city's crash record can test, and it differs from the record; the other 59 cannot be checked.
 
 What we changed between runs, and what reviews of the published cases still found wrong, is below.
 
-**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the live desk's cases, with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
+**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs (a static replay, not a live endpoint), with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
 ![New York's action plan: the largest low-cost estimates add up to 338 fewer crashes a year, the evidence supports 86; tiles for harm, supported corners, road owners, turn calming and denied requests, then the corners where a fix was asked for and turned down](docs/img/plan_nyc.png)
 
@@ -132,7 +132,7 @@ In Seattle most estimates rest on a pavement-friction study whose sites were cho
 
 ## Who would use this
 
-- **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for any city with open crash data. It is meant to replace the pulling of records and looking up of CMFs, not the engineer's site visit.
+- **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for a city in the registry with crash data (New York, Seattle, Washington DC and San Francisco are screened now; adding a city is guided, see "Try it"). It is meant to replace the pulling of records and looking up of CMFs, not the engineer's site visit.
 - **A community board, council office or advocacy group:** a corner's case in plain language, and a letter addressed to the agency that owns the road, with every number checked. In New York that includes the 19 corners where a fix was asked for and turned down.
 - **A city's own safety team:** which of its programs the record backs (leading pedestrian intervals) and which it does not (turn calming), before the same program is proposed again.
 
@@ -154,7 +154,7 @@ The worst of the 304:
 ```
 real input: news report | official claim | 311 report + photo | a corner | a city
    |
-DESK  Muse Spark 1.3 (Meta Model API, Responses, low effort) plans and chooses every step
+DESK  Muse Spark 1.3 (Meta Model API, Responses, low effort) works the case; its instructions set the tool order
    |-- web_search (Meta)        find the source                     -> citation gate: quote must be on the page
    |-- read_page                the page as the gate reads it
    |-- tool search              the city's datasets, one deferred tool per registry entry, each returning its query
@@ -223,7 +223,7 @@ The gate decides whether a city program reduced crashes, and neither the enginee
 | New York speed humps (1,008) and San Francisco continental crosswalks (780) | | **No measurable change** (−0.4% and +4%) |
 | 200 fake programs (random sites and dates) | credits 8.0% | credits 5.5% (3.1–9.6%), above the 2.5% it nominally allows |
 
-A stricter, calibrated version also requires a program to beat 97.5% of fake programs run through the same design. It cut false passes on 100 fresh fakes from 6 to 3, but no longer confirms the leading pedestrian intervals: New York's effect beats 87% of fakes, not 97.5%. The site shows that rank next to each verdict. Read the interval result as consistent evidence across two cities and published studies, not as proof.
+A stricter, calibrated version also requires a program to beat 97.5% of fake programs run through the same design. It cut false passes on 100 fresh fakes from 6 to 3, but no longer confirms the leading pedestrian intervals: New York's effect beats 93% of fakes on all sites and 85.5% on the held-out half, not 97.5%. The site shows that rank next to each verdict. Read the interval result as consistent evidence across two cities and published studies, not as proof.
 
 ## Red-teaming the gate (T18)
 
@@ -260,7 +260,7 @@ uv run nml treatments T11                                  # rerun New York's st
 uv run nml --replay selftest                               # offline self-test
 ```
 
-Each desk run reruns from its registered spec with `nml desk T21c` (paid, live web). Its cached answers replay it offline at the commit it ran, since a later code change changes what the model is shown.
+Each desk run reruns from its registered spec with `nml desk T21c` (paid, live web); it resumes from the saved results unless you add `--fresh`. The San Francisco 311 inbox snapshots the runs used (`data/inbox/`) are not in the repository. Its cached answers replay it offline at the commit it ran, since a later code change changes what the model is shown.
 
 `--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network once the replay cache from the latest GitHub release is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
 
@@ -300,7 +300,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
 - **The causal gate is observational.** Cities choose their sites, and 5.5% of fake programs passed it.
 - **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause.
 - **"No recorded treatment" means none in the city's open datasets.** The state's 2022 work at Bruckner is one example of what they miss.
-- **Signal control comes from OpenStreetMap.** At 42 of the 304 New York corners the street layout could not be fetched before the deadline (the API limited our requests), so their control is unknown and signal-only fixes are not estimated there. The supported totals are low rather than high for that reason.
+- **Signal control comes from OpenStreetMap.** At 25 of the 303 New York corners on the site the street layout could not be fetched before the deadline (the API limited our requests), so their control is unknown and signal-only fixes are not estimated there. The supported totals are low rather than high for that reason.
 - **Matching requests to corners uses street names and the borough.** 255 of 303 corners matched; the rest are left out, not guessed.
 - **US cities only so far.** The method needs geocoded crash records, a log of fixes made or denied, a road-owner layer and local crash costs. Bangladesh's police counted 5,084 road deaths in 2021 where WHO estimates 31,578 ([Dhaka Tribune](https://www.dhakatribune.com/bangladesh/381561/who-road-crashes-claiming-young-lives-in)), and no official geocoded record is public, so Dhaka is the next step, not a claim.
 

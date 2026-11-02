@@ -161,7 +161,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
 
 
 def desk_page(root: Path) -> None:
-    """The live desk for the site: the latest registered desk run's cases (T21c, else T21b, else T21), with every
+    """The desk page for the site (saved runs, replayed): the latest registered desk run's cases (T21c, else T21b, else T21), with every
     run's totals so earlier, weaker runs stay visible."""
     from .bench import desk_stats
     from .evaluate import RESULTS_DIR
