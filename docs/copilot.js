@@ -6,6 +6,7 @@ const MODE = meta("nml-mode") === "live" ? "live" : "static";
 const LIVE = MODE === "live" ? "" : (meta("nml-live").startsWith("https://") ? meta("nml-live").replace(/\/?$/, "/") : null);
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u ?? "")) ? esc(u) : "#";  // never a javascript: or data: link
 const usd = v => v == null ? "n/a" : v >= 1e8 ? `$${Math.round(v / 1e6)} million` : v >= 1e6 ? `$${(v / 1e6).toFixed(1)} million` : `$${Math.round(v).toLocaleString("en-US")}`;
 const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
 const pct = v => `${Math.round(100 * v)}%`;
@@ -51,8 +52,10 @@ async function boot() {
     (s.plan_gap != null ? `<span class="gapdot"></span><b>${s.plan_gap}</b> had at least ${INDEX.gap_min_injury_crashes} injury crashes and no recorded safety work in ${INDEX.years} years. ` : "") +
     (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
     `Records as of ${date(INDEX.asof)}.` +
-    (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "");
+    (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
+    ` <button class="quiet planlink" id="desklink">Live desk: real cases</button>`;
   if (INDEX.plan) $("planlink").onclick = () => showPlan();
+  $("desklink").onclick = () => showDesk();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -66,11 +69,48 @@ async function boot() {
   }
   listCorners(INDEX.corners);
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
+  if (r.corner === "desk") { showDesk(); return; }
   if (hit) openCorner(hit);
   else if (INDEX.plan) showPlan();  // a city opens on its action plan
 }
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
+
+async function showDesk() {
+  // the desk: Muse Spark took a real-world input, searched the live web, worked the case with the checked tools and
+  // published only what the gate accepted; refused attempts and every step are in the trace
+  history.replaceState(null, "", `#${CITY}/desk`);
+  busy("Opening the live desk…");
+  let d;
+  try { d = await getJSON("data/desk.json"); } catch (err) { failed(err, "the desk"); return; }
+  const badge = s => s === "verified" ? '<span class="status go">quote found in the page</span>' :
+    s === "unreadable" ? '<span class="status">page could not be read here: quote unverified</span>' : "";
+  const card = c => {
+    const f = c.final || {};
+    return `<details class="agency"${c.finished ? " open" : ""}><summary><b>${esc(c.kind)} · ${esc(c.city)}</b> ` +
+      (c.finished ? `published` : `not published (${esc(c.stopped)})`) + (c.corner ? ` · ${esc(c.corner.split(",")[0])}` : "") +
+      ` <span class="legend">${c.turns || 0} steps, ${Math.round(c.seconds || 0)} s, $${Number(c.usd || 0).toFixed(2)}</span></summary>` +
+      `<p class="legend">Input: ${esc(c.task)}</p>` +
+      (f.summary ? `<p>${esc(f.summary)}</p>` : "") +
+      ((f.findings || []).length ? `<ul class="claims">${f.findings.map(x => `<li>${esc(x.text)} <span class="legend">${
+        /^https?:/.test(x.receipt || "") ? "from the source page" : esc(x.receipt) + (((c.receipts || {})[x.receipt] || {}).tool ? " · " + esc(c.receipts[x.receipt].tool) : "")
+      }</span></li>`).join("")}</ul>` : "") +
+      ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${safeUrl(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
+      (c.letter ? `<details><summary>The drafted letter (Muse Spark Open, number-checked)</summary><p class="letter">${esc(c.letter)}</p></details>` : "") +
+      `<details><summary>What the agent did, step by step</summary><ol class="legend">` +
+      (c.web || []).map(w => `<li>web: ${esc((w.action || {}).type)} ${esc((w.action || {}).query || (w.action || {}).url || "")}</li>`).join("") +
+      (c.trace || []).map(t => `<li>${esc(t.tool)}${t.error ? ` — <s>${esc(t.error)}</s> ${esc((t.errors || []).slice(0, 3).join("; "))}` : ""}</li>`).join("") +
+      `</ol></details></details>`;
+  };
+  const pub = d.cases.filter(c => c.finished).length;
+  const runs = (d.runs || []).map(r => `<tr><td>${esc(r.id)}</td><td>${r.published} of ${r.cases}</td><td>${r.quotes ? r.verified + " of " + r.quotes : "n/a"}</td><td>$${Number(r.usd_per_case).toFixed(3)}</td><td>${r.seconds_per_case} s</td></tr>`).join("");
+  $("out").innerHTML = `<p class="where">Live desk · run ${esc(d.run)}</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
+    `<p class="lede">Each case started from a real input: a news report or official statement found on the live web, or a resident's 311 report with a photo. ` +
+    `Muse Spark planned the work, searched, opened the source and investigated the corner with the checked tools; Muse Spark Open drafted the letter. ` +
+    `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons.</p>` +
+    (runs ? `<table class="plan"><tr><th>run</th><th>published</th><th>quotes verified on their page</th><th>Meta $ per case</th><th>time per case</th></tr>${runs}</table>` : "") +
+    d.cases.map(card).join("");
+}
 
 async function showPlan() {
   for (const b of $("corners").querySelectorAll("button")) b.setAttribute("aria-current", "false");
@@ -126,7 +166,7 @@ async function showPlan() {
 
 function listCorners(rows) {
   $("corners").innerHTML = rows.map(c => `<li><button data-slug="${esc(c.slug)}"><span class="rank">${c.rank}</span>` +
-    `<span>${c.plan_gap ? '<span class="gapdot" title="no recorded safety work in ${INDEX.years} years"></span>' : ""}${esc(c.name)}</span>` +
+    `<span>${c.plan_gap ? `<span class="gapdot" title="no recorded safety work in ${INDEX.years} years"></span>` : ""}${esc(c.name)}</span>` +
     `<span class="n">${c.injury_crashes}</span></button></li>`).join("");
   for (const b of $("corners").querySelectorAll("button"))
     b.onclick = () => openCorner(INDEX.corners.find(c => c.slug === b.dataset.slug));

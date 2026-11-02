@@ -6012,7 +6012,7 @@
    "kind": "claim"
   },
   {
-   "task": "A resident filed a 311 report on 2026-11-01 (Blocked driveway and illegal parking): \"Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St\" at 3122 23rd St, San Francisco (lat 37.7541117, lon -122.41478343); photo: https://spot-sf-res.cloudinary.com/image/upload/c_limit,h_748,w_364//l_v1793509377:uykrrbfk6e6mwhqrdktz/c_limit,h_748,w_364/fl_layer_apply,g_north_west,x_394/v1793509376/esk4mhijirfriptfhc3p.jpg. Look at the photo, investigate the nearest intersection, say how urgent this is given the crash record there, and draft the work order to the agency that owns the road. The report's record in the city's feed: https://mobile311.sfgov.org/open311/v2/requests/202000249406.json (cite it as the source).",
+   "task": "A resident filed a 311 report on 2026-11-01 (Blocked driveway and illegal parking): \"Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St\" at 3122 23rd St, San Francisco (lat 37.7541117, lon -122.41478343); photo: https://spot-sf-res.cloudinary.com/image/upload/c_limit,h_748,w_364//l_v1793509377:uykrrbfk6e6mwhqrdktz/c_limit,h_748,w_364/fl_layer_apply,g_north_west,x_394/v1793509376/esk4mhijirfriptfhc3p.jpg. Look at the photo, investigate the nearest intersection, say how urgent this is given the crash record there, and draft the work order to the agency that owns the road. The report's record in the city's feed: https://mobile311.sfgov.org/open311/v2/requests/202000249406.json (cite it as the source).",
    "city": "sf",
    "finished": true,
    "final": {
@@ -6024,7 +6024,7 @@
      },
      {
       "receipt": "D1",
-      "text": "The photo shows a Mazda Miata convertible with California plate 9WHE045 parked with its rear over the sidewalk blocking a driveway apron with red curb."
+      "text": "The photo shows a Mazda Miata convertible with California plate [plate removed] parked with its rear over the sidewalk blocking a driveway apron with red curb."
      },
      {
       "receipt": "D4",
@@ -6057,7 +6057,7 @@
     ],
     "sources": [
      {
-      "quote": "description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St",
+      "quote": "description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St",
       "url": "https://mobile311.sfgov.org/open311/v2/requests/202000249406.json",
       "quote_check": "verified"
      }
@@ -6104,7 +6104,7 @@
      "turn": 3,
      "tool": "check_findings",
      "args": {
-      "sources": "{\"items\": [{\"quote\": \"description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St\", \"url\": \"https://mobile311.sfgov.org/open311/v2/requests/202000249406.json\"}]}",
+      "sources": "{\"items\": [{\"quote\": \"description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St\", \"url\": \"https://mobile311.sfgov.org/open311/v2/requests/202000249406.json\"}]}",
       "summary": "Blocked driveway at 3122 23rd St near 23rd and Mission, with 17 injury crashes at the corner valued at $1.2M per year; work order drafted to SFMTA."
      },
      "error": "AttributeError: 'str' object has no attribute 'get'",
@@ -6116,7 +6116,7 @@
      "args": {
       "sources": [
        {
-        "quote": "description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St",
+        "quote": "description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St",
         "url": "https://mobile311.sfgov.org/open311/v2/requests/202000249406.json"
        }
       ],
@@ -6131,7 +6131,7 @@
      "args": {
       "sources": [
        {
-        "quote": "description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St",
+        "quote": "description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St",
         "url": "https://mobile311.sfgov.org/open311/v2/requests/202000249406.json"
        }
       ],
@@ -6146,7 +6146,7 @@
      "args": {
       "sources": [
        {
-        "quote": "description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St",
+        "quote": "description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St",
         "url": "https://mobile311.sfgov.org/open311/v2/requests/202000249406.json"
        }
       ],
@@ -6163,7 +6163,7 @@
      "args": {
       "sources": [
        {
-        "quote": "description: Blue Mazda mx5 with CA plate 9WHE045 blocking driveway at 3120 23rd St",
+        "quote": "description: Blue Mazda mx5 with CA plate [plate removed] blocking driveway at 3120 23rd St",
         "url": "https://mobile311.sfgov.org/open311/v2/requests/202000249406.json"
        }
       ],

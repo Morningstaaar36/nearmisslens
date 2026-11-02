@@ -185,7 +185,8 @@ def check(docs: Path = DOCS) -> list[str]:
         if not p.exists() or "video" in p.parts:
             continue
         text = p.read_text()
-        if "/home/" in text or "/Users/" in text:
+        local = re.sub(r"https?://[^\s\"'<>]+", "", text)  # a web address may contain /home/; a machine path may not
+        if "/home/" in local or "/Users/" in local:
             out.append(f"{p.relative_to(docs)} contains a machine path")
         if '"True"' in text or '"False"' in text:
             out.append(f"{p.relative_to(docs)} holds a true/false value saved as text")
