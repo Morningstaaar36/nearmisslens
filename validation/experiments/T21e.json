@@ -1,0 +1,77 @@
+{
+ "id": "T21e",
+ "registered": "validation/BENCH_PREREG.md, T21e",
+ "rule": {
+  "min_published": 9,
+  "max_usd_per_case": 0.25,
+  "min_verified_quote_share": 0.8,
+  "no_plates": true
+ },
+ "budget_usd": 0.5,
+ "max_turns": 22,
+ "model_check": true,
+ "inbox_date": "2026-11-02",
+ "inbox_record_source": true,
+ "cases": [
+  {
+   "kind": "news",
+   "city": "nyc",
+   "task": "Find a news report published between July 1 and August 31, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in New York City. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "seattle",
+   "task": "Find a news report published between July 1 and August 31, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Seattle. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "dc",
+   "task": "Find a news report published between July 1 and August 31, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in Washington DC. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "news",
+   "city": "sf",
+   "task": "Find a news report published between July 1 and August 31, 2026 about a pedestrian or cyclist hit by a driver at a named intersection in San Francisco. Read it, investigate that intersection, check what the report says against the city's record, and draft the request letter."
+  },
+  {
+   "kind": "claim",
+   "city": "nyc",
+   "task": "Find a news story, report or official statement from 2024 or later that gives crash numbers (crashes, injuries or deaths) for a named intersection in New York City. Read it, check each of its numbers against the city's record, ask program_record about any program it credits, and investigate that intersection."
+  },
+  {
+   "kind": "claim",
+   "city": "seattle",
+   "task": "Find a news story, report or official statement from 2024 or later that gives crash numbers (crashes, injuries or deaths) for a named intersection in Seattle. Read it, check each of its numbers against the city's record, ask program_record about any program it credits, and investigate that intersection."
+  },
+  {
+   "kind": "claim",
+   "city": "dc",
+   "task": "Find a news story, report or official statement from 2024 or later that gives crash numbers (crashes, injuries or deaths) for a named intersection in Washington DC. Read it, check each of its numbers against the city's record, ask program_record about any program it credits, and investigate that intersection."
+  },
+  {
+   "kind": "claim",
+   "city": "sf",
+   "task": "Find a news story, report or official statement from 2024 or later that gives crash numbers (crashes, injuries or deaths) for a named intersection in San Francisco. Read it, check each of its numbers against the city's record, ask program_record about any program it credits, and investigate that intersection."
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 16
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 17
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 18
+  },
+  {
+   "kind": "311",
+   "city": "sf",
+   "inbox_rank": 19
+  }
+ ]
+}

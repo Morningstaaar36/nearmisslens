@@ -165,7 +165,8 @@ def desk_page(root: Path) -> None:
     run's totals so earlier, weaker runs stay visible."""
     from .bench import desk_stats
     from .evaluate import RESULTS_DIR
-    runs = [json.loads(p.read_text()) for p in (RESULTS_DIR / "bench" / f"experiment_{k}.json" for k in ("T21", "T21b", "T21c", "T21d"))
+    from .desk_runs import registered
+    runs = [json.loads(p.read_text()) for p in (RESULTS_DIR / "bench" / f"experiment_{k}.json" for k in registered())
             if p.exists()]
     if not runs:
         return

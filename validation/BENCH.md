@@ -542,7 +542,7 @@ T20 registered rule: not met (false refusals rose too much, mostly through bugs 
 
 ## T21–T21d The desk on live real-world cases
 
-Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator with Meta web_search, tool search over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 published at no more than $0.25 a case (T21c and T21d: and at least 80% of published quotes verified on their page; T21d: and no licence plate written out in a published finding).
+Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator with Meta web_search, tool search over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 published at no more than $0.25 a case; from T21c on, at least 80% of published quotes verified on their page; from T21d on, no licence plate written out in a published finding (each run's rule is in its spec).
 
 | run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes verified on their page | Meta $ per case | time per case | rule |
 |---|---|---|---|---|---|---|---|

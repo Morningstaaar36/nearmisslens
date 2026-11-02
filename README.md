@@ -86,7 +86,7 @@ A claim is now consistent only when a number in it was tested, meaning a differe
 | sentences with numbers: a count the record tests and matches / differs / cannot be checked | 0 / 1 / 54 | every record number checked against its receipt |
 | Meta $ a case | $0.091 | $0.126 |
 
-Muse Spark alone is cheaper and writes more. But a third of the quotes it cites from pages we could read are not on those pages, and it never states the corner's numbers from the city's record, because it has no way to get them. The desk's extra $0.035 a case pays for both. We corrected the baseline's scoring after the run and before this write-up; the details are in BENCH_PREREG.
+Muse Spark alone is cheaper and writes more. But a third of the quotes it cites from pages we could read are not on those pages, and it never states the corner's numbers from the city's record, because it has no way to get them. The desk's extra cost per case pays for both. We corrected the baseline's scoring after the run and before this write-up; the details are in BENCH_PREREG.
 
 ## The problem
 

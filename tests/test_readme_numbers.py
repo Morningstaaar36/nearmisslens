@@ -73,6 +73,8 @@ def test_desk_numbers():
     assert b["consistent"] == 0
     _has(f"None of the {b['number_findings']} sentences")
     _has(f"| {b['consistent']} / {b['differs']} / {b['not_checkable']} |")
+    _has(f"| cases finished | {b['finished']} of {b['cases']} | {c['published']} of {c['cases']} |")
+    _has(f"| Meta $ a case | ${b['usd_per_case']:.3f} | ${c['usd_per_case']:.3f} |")
     for run in ("T21", "T21b"):
         st = desk_stats(_load(f"experiment_{run}.json"))
         _has(f"| {st['published']} of {st['cases']} |")

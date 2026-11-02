@@ -1208,18 +1208,26 @@ def desk_stats(res: dict) -> dict:
           "refused": sum(1 for c in cases for t in c.get("trace") or [] if t.get("tool") == "finish" and t.get("error")),
           "quotes": len(srcs), "verified": ver, "with_crash_count": crash_count,
           "stopped": dict(Counter(str(c.get("stopped")) for c in cases if not c.get("finished")))}
+    from .desk_runs import rule, spec
     from .orchestrator import has_plate
-    quotes_rule = res.get("id") in ("T21c", "T21d")  # registered from T21c on: at least 80% of published quotes verified
+    r = rule(res.get("id"))  # the rule registered in the run's spec
+    try:
+        n_cases = len(spec(res.get("id"))["cases"])
+    except FileNotFoundError:
+        n_cases = len(cases)
     st["plates_published"] = sum(1 for c in pub if has_plate(json.dumps(c.get("final") or {})))
-    st["rule_met"] = (len(cases) == 12 and len(pub) >= 9 and usd <= 0.25
-                      and (not quotes_rule or bool(srcs and ver / len(srcs) >= 0.8))
-                      and (res.get("id") != "T21d" or st["plates_published"] == 0))
+    share = r.get("min_verified_quote_share")
+    st["rule_met"] = (len(cases) == n_cases and len(pub) >= r["min_published"] and usd <= r["max_usd_per_case"]
+                      and (share is None or bool(srcs and ver / len(srcs) >= share))
+                      and (not r.get("no_plates") or st["plates_published"] == 0))
     return st
 
 
 def _desk_rows(res: dict) -> list[str]:
     st = desk_stats(res)
-    rule = "met" if st["rule_met"] else ("not met" if st["cases"] == 12 else f"running ({st['cases']} of 12)")
+    from .desk_runs import spec
+    n = len(spec(st["id"])["cases"])
+    rule = "met" if st["rule_met"] else ("not met" if st["cases"] == n else f"running ({st['cases']} of {n})")
     return [f"| {st['id']} | {st['published']}/{st['cases']} | {st['with_crash_count']} | {st['refused']} | "
             + (f"{st['verified']}/{st['quotes']}" if st["quotes"] else "n/a")
             + f" | ${st['usd_per_case']:.3f} | {st['seconds_per_case']} s | {rule} |"]
@@ -1227,16 +1235,17 @@ def _desk_rows(res: dict) -> list[str]:
 
 def _t21_section() -> list[str]:
     """T21 to T21d: the desk on live real-world cases."""
-    runs = [r for r in (_load(f"experiment_{k}.json") for k in ("T21", "T21b", "T21c", "T21d")) if r]
+    from .desk_runs import registered
+    runs = [r for r in (_load(f"experiment_{k}.json") for k in registered()) if r]
     if not runs:
         return []
-    L = ["## T21–T21d The desk on live real-world cases", "",
-         "Registered in BENCH_PREREG.md (T21, T21b, T21c, T21d). A Muse Spark orchestrator with Meta web_search, tool search "
+    L = [f"## {runs[0]['id']}–{runs[-1]['id']} The desk on live real-world cases", "",
+         f"Registered in BENCH_PREREG.md ({', '.join(r['id'] for r in runs)}). A Muse Spark orchestrator with Meta web_search, tool search "
          "over the city's registry datasets, the engineer's checked tools, a page reader, a photo reader and a Muse "
          "Spark Open letter writer, behind a publish gate. 12 cases each: a news report per city, an official statement "
          "per city, 4 San Francisco 311 street reports with photos near high-crash places. Rule: at least 9 of 12 "
-         "published at no more than $0.25 a case (T21c and T21d: and at least 80% of published quotes verified on their "
-         "page; T21d: and no licence plate written out in a published finding).", "",
+         "published at no more than $0.25 a case; from T21c on, at least 80% of published quotes verified on their page; "
+         "from T21d on, no licence plate written out in a published finding (each run's rule is in its spec).", "",
          "| run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes "
          "verified on their page | Meta $ per case | time per case | rule |",
          "|---|---|---|---|---|---|---|---|"]
@@ -1288,19 +1297,20 @@ def _t24_section() -> list[str]:
         return []
     from .baseline_desk import summary
     s = summary(r)
+    desk = desk_stats(_load(f"experiment_{r.get('desk_run')}.json") or {"id": r.get("desk_run")})
     readable = s["quotes_verified"] + s["quotes_absent"]
     nums = s["number_findings"]
     return ["## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs", "",
             f"Registered in BENCH_PREREG.md (T24). The {s['cases']} inputs of {r.get('desk_run')}, Muse Spark 1.3 with Meta "
             "web_search and nothing else; its output scored by the desk's own checks after the run.", "",
-            "| | Muse Spark alone | the desk (T21c, published) |", "|---|---|---|",
-            f"| cases finished | {s['finished']} of {s['cases']} | 11 of 12 |",
+            f"| | Muse Spark alone | the desk ({desk['id']}, published) |", "|---|---|---|",
+            f"| cases finished | {s['finished']} of {s['cases']} | {desk['published']} of {desk['cases']} |",
             f"| quotes absent from a page that could be read | {s['quotes_absent']} of {readable} | 0 (refused by the gate) |",
             f"| quotes on pages that could not be read | {s['quotes_unreadable']} | 0 |",
             f"| findings with a number about the corner: consistent with the record / differs / not checkable | "
             f"{s['consistent']} / {s['differs']} / {s['not_checkable']} (of {nums}) | every record number passed the "
             "number gate against the receipt it cites |",
-            f"| Meta $ per case | ${s['usd_per_case']:.3f} | $0.126 |", "",
+            f"| Meta $ per case | ${s['usd_per_case']:.3f} | ${desk['usd_per_case']:.3f} |", "",
             "Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings "
             "differing from the record): " + ("supported." if (readable and s['quotes_absent'] / readable >= 0.2)
                                              or (nums and s['differs'] / nums >= 0.2) else "not supported.")

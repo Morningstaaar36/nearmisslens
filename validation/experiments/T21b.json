@@ -1,6 +1,10 @@
 {
  "id": "T21b",
  "registered": "validation/BENCH_PREREG.md, T21b",
+ "rule": {
+  "min_published": 9,
+  "max_usd_per_case": 0.25
+ },
  "budget_usd": 0.4,
  "max_turns": 16,
  "model_check": false,

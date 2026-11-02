@@ -19,6 +19,26 @@ def spec(spec_id: str) -> dict:
     return json.loads((ROOT / "validation" / "experiments" / f"{spec_id}.json").read_text())
 
 
+def registered() -> list[str]:
+    """The registered desk runs, in order (every spec with cases under validation/experiments/T21*.json)."""
+    out = []
+    for p in sorted((ROOT / "validation" / "experiments").glob("T21*.json"), key=lambda p: (len(p.stem), p.stem)):
+        if "cases" in json.loads(p.read_text()):
+            out.append(p.stem)
+    return out
+
+
+def rule(spec_id: str) -> dict:
+    """The run's registered rule; a run without one in its spec is held to the first desk rule."""
+    try:
+        return spec(spec_id).get("rule") or DEFAULT_RULE
+    except FileNotFoundError:
+        return DEFAULT_RULE
+
+
+DEFAULT_RULE = {"min_published": 9, "max_usd_per_case": 0.25}
+
+
 def results_path(spec_id: str):
     return RESULTS_DIR / "bench" / f"experiment_{spec_id}.json"
 

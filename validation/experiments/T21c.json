@@ -1,6 +1,11 @@
 {
  "id": "T21c",
  "registered": "validation/BENCH_PREREG.md, T21c",
+ "rule": {
+  "min_published": 9,
+  "max_usd_per_case": 0.25,
+  "min_verified_quote_share": 0.8
+ },
  "budget_usd": 0.5,
  "max_turns": 22,
  "model_check": true,

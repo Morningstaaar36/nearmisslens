@@ -669,3 +669,17 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - A day of the month ("October 19") is a date, not a count.
 - **Saved results** keep the claim-check and program-record receipts whole, and each case's as-of date, so a case's record can be rebuilt in the window it read.
 - Tests: `tests/test_claim_verdicts.py`.
+
+## T21e The desk with claim verdicts that rest on a tested number, on fresh cases (registered 2026-11-02, before any T21e case)
+- **Changes since T21d:** listed under "Changes after T21d" above. In short:
+  - a claim is consistent only when a number in it was tested;
+  - what a crash record cannot decide is called "cannot be checked", with the reason;
+  - saved results keep the claim-check receipts and each case's as-of date.
+- **Cases (12, fresh;** `validation/experiments/T21e.json`):
+  - one news case per city, for reports published July 1 to August 31, 2026, a window no earlier run used;
+  - one case per city for a news story, report or statement from 2024 or later that gives crash numbers for a named intersection. These are the cases that exercise the claim check;
+  - San Francisco 311 reports ranked 16–19 in the 2026-11-02 inbox snapshot.
+- **Everything else as in T21d:** model, budget ($0.50 and 22 turns a case), model-read flags, the Open311 record as the source.
+- **Rule (in the spec):** at least 9 of 12 published, at most $0.25 per case, at least 80% of published quotes verified on their page, and no published licence plate.
+- **Also reported:** a post-hoc review of every published claim verdict, the same as for T21d.
+  - **Hypothesis:** at most 1 in 10 published claim verdicts is found wrong, against 5 of 14 in T21d. Reported either way. It is still a review, not the hand audit.
