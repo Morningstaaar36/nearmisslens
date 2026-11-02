@@ -2,11 +2,13 @@
 
 The page and the precomputed reports (docs/) ship in the image, so the city's priority corners open instantly. New
 addresses run the deterministic engineer (no model; a daily request cap). Letters come from Muse Spark Open on
-Baseten under a daily dollar cap. Both caps are global and live in a modal.Dict, and at most one container runs, so
+Baseten, and "Check a claim" runs the desk (Muse Spark), one case at a time, both under a daily dollar cap. Records are
+read as of the date in validation/ASOF, the same date as the saved site, so the five-year baselines shipped in
+validation/ are used and a first request never rebuilds a city's baseline. Both caps are global and live in a modal.Dict, and at most one container runs, so
 they cannot be multiplied; no visitor IP or request log is kept. When a cap is reached the page still shows the full
 report and says the letter is paused for the day.
 
-    modal secret create nearmisslens-keys BASETEN_API_KEY=...     # once; keys never leave Modal's secret store
+    modal secret create nearmisslens-keys MODEL_API_KEY=... BASETEN_API_KEY=...   # once; keys stay in Modal's store
     modal serve nearmisslens/modal_web.py                          # a temporary URL while it runs
     modal deploy nearmisslens/modal_web.py                         # the permanent URL (then: nml pages --live URL)"""
 from pathlib import Path
@@ -22,7 +24,8 @@ image = (modal.Image.debian_slim(python_version="3.12")
                       "opencv-python-headless==4.10.0.84", "meta-sam-parser==0.1.0", "modal")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
-               "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "1.00", "NML_DAILY_REQUESTS": "300"})
+               "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "1.00", "NML_DAILY_REQUESTS": "300",
+               "NML_CHECK_BUDGET_USD": "0.50", "NML_ASOF": (ROOT / "validation" / "ASOF").read_text().strip()})
          .add_local_dir(ROOT / "validation", "/app/validation")
          .add_local_dir(ROOT / "docs", "/app/docs", ignore=["video/**", "img/**", "*.md"])
          .add_local_dir(ROOT / "nearmisslens", "/app/nearmisslens", ignore=["**/__pycache__/**"]))
