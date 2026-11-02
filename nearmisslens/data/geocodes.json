@@ -1937,6 +1937,12 @@
 "name": "2nd Avenue & Cherry Street",
 "city": "seattle"
 },
+"seattle|3rd avenue & pine street": {
+"lat": 47.6107454,
+"lon": -122.338721,
+"name": "3rd Avenue & Pine Street",
+"city": "seattle"
+},
 "seattle|4th avenue & pike street": {
 "lat": 47.6102141,
 "lon": -122.3367371,

@@ -131,14 +131,31 @@ def geocode(address: str) -> tuple[float, float, str]:
     finds the area, and for an intersection OpenStreetMap gives the node shared by the two streets nearest to it."""
     if not address or not address.strip():
         raise ValueError("give an address or an intersection, e.g. 'Street A & Street B, City'")
-    known = _entry(gazetteer(), address)
-    if known:
-        return known["lat"], known["lon"], f"{known['name']}, {address.split(',', 1)[1].strip()}" \
-            if "," in address else known["name"]
-    try:  # in replay, a lookup made in the live run is answered from the request cache; anything else is refused
-        return _lookup(address)
-    except FileNotFoundError:
-        raise ValueError(f"{address!r} is not in the offline set; run without replay to look it up") from None
+    errors = []
+    for k, v in enumerate(address_variants(address)):  # as written first, then 'St' -> 'Street', 'and' -> '&' ...
+        known = _entry(gazetteer(), v)
+        if known:
+            return known["lat"], known["lon"], f"{known['name']}, {address.split(',', 1)[1].strip()}" \
+                if "," in address else known["name"]
+        try:  # in replay, a lookup made in the live run is answered from the request cache; anything else is refused
+            return _lookup(v)
+        except FileNotFoundError:
+            if k == 0:
+                raise ValueError(f"{address!r} is not in the offline set; run without replay to look it up") from None
+        except OutsideCoverage:
+            raise
+        except ValueError as e:
+            errors.append(e)
+    raise errors[0]
+
+
+class OutsideCoverage(ValueError):
+    """The place is in no registry city: refused at once, before any slow intersection search."""
+
+
+def _covered() -> str:
+    from . import opendata
+    return ", ".join(c["name"] for c in opendata.load_cities())
 
 
 def _lookup(address: str) -> tuple[float, float, str]:
@@ -152,6 +169,9 @@ def _lookup(address: str) -> tuple[float, float, str]:
     if not js:
         raise ValueError(f"address not found: {address}")
     lat, lon, name = float(js[0]["lat"]), float(js[0]["lon"]), js[0].get("display_name", address)
+    if context.city_of(lat, lon) is None:
+        raise OutsideCoverage(f"{address!r} is outside the cities this copy covers ({_covered()}); add a city with "
+                              "nml add-city")
     if "&" not in streets:
         return lat, lon, name
     a, b = (x.strip() for x in streets.split("&")[:2])

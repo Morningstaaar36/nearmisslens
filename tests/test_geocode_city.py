@@ -97,3 +97,33 @@ def test_a_new_city_is_data_and_its_gaps_are_listed(tmp_path, monkeypatch):
     opendata.save_city({"id": "x", "name": "Xville", "bbox": [1, 1, 2, 2], "agency": "the X DOT", "short_name": "Xville"})
     cov = opendata.coverage("x")
     assert cov["kinds"] == {"crash": ["x-crashes"]} and "office" in cov["missing"] and "crash" not in cov["missing"]
+
+
+def test_an_abbreviated_corner_is_found_by_its_written_out_name(monkeypatch):
+    monkeypatch.setattr(brief, "gazetteer", lambda: {})
+    tried = []
+
+    def lookup(address):
+        tried.append(address)
+        if address != "3rd Avenue & Pine Street, Seattle, WA":
+            raise ValueError(f"no intersection: {address}")
+        return 47.61, -122.34, address
+    monkeypatch.setattr(brief, "_lookup", lookup)
+    assert brief.geocode("3rd Ave & Pine St, Seattle, WA")[:2] == (47.61, -122.34)
+    assert tried[0] == "3rd Ave & Pine St, Seattle, WA"
+    monkeypatch.setattr(brief, "_lookup", lambda a: (_ for _ in ()).throw(ValueError(f"no intersection: {a}")))
+    with pytest.raises(ValueError, match="no intersection: Main St & 1st Ave, Portland"):
+        brief.geocode("Main St & 1st Ave, Portland")
+
+
+def test_a_place_outside_every_city_is_refused_before_the_intersection_search(monkeypatch):
+    calls = []
+
+    def fetch(url, params=None, **k):
+        calls.append(url)
+        return [{"lat": "45.5", "lon": "-122.6", "display_name": "Portland"}], None
+    monkeypatch.setattr(brief.context, "fetch", fetch)
+    monkeypatch.setattr(brief, "gazetteer", lambda: {})
+    with pytest.raises(brief.OutsideCoverage, match="outside the cities this copy covers"):
+        brief.geocode("Main St & 1st Ave, Portland, OR")
+    assert len(calls) == 1  # one place search, no Overpass, no other spellings
