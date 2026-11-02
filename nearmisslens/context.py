@@ -350,6 +350,14 @@ def _named(facts) -> list[tuple[str, tuple]]:
     return out
 
 
+# a number that is an age, a time of day, a speed, a distance, a duration or a house number is not a count the record
+# could hold, so it is never bound to a label such as deaths ("a 30-year-old was killed")
+NOT_A_COUNT = re.compile(r"\s*-?\s*(?:years?[- ]old|yrs?[- ]old|-year|a\.?m\.?\b|p\.?m\.?\b|o'clock|mph|km/h|miles?\b|"
+                         r"feet\b|ft\b|meters?\b|metres?\b|minutes?\b|hours?\b|seconds?\b|days?\b|weeks?\b|"
+                         r"months?\b|(?:st|nd|rd|th)\b|:\d\d)", re.I)
+NOT_A_COUNT_BEFORE = re.compile(r"(?:\bage[ds]?|\baged|\bblock of|\bno\.|#)\s*$", re.I)
+
+
 class FactCheck:
     """Numbers a memo may use: those in the dossier. A number written next to a label (deaths, pedestrians injured,
     injury crashes, crashes, sites, crashes avoided, dollars) must also be the record's value for that label, so "29
@@ -497,6 +505,10 @@ class FactCheck:
                 elif not any(abs(k - abs(v)) <= tol for k in self._percents(sent, self._bound(sent))):
                     bad.append(f"{t}% is not a share or change of what this sentence names")
                 continue
+            if NOT_A_COUNT.match(tail) or NOT_A_COUNT_BEFORE.search(text[max(0, m.start() - 12):m.start()]):
+                if not any(abs(k - v) <= tol for k in self.known):
+                    bad.append(f"number {t} is not in the dossier")
+                continue  # an age, a time, a speed, a distance or an address: never a count from the record
             if not any(abs(k - v) <= tol for k in self.known):
                 head, clause = text[max(0, m.start() - 30):m.start()], re.split(r"[,;]", tail, 1)[0]
                 named = next((name for name, before, after, _ in LABELS if self.by_label.get(name) and name != "dollars"
@@ -504,7 +516,7 @@ class FactCheck:
                              None)
                 bad.append(f"{t}: the record does not show {named}" if named in self.unknown else
                            f"{t} is not the record's number of {named} (the record has "
-                           f"{', '.join(f'{x:g}' for x in sorted(set(self.by_label[named]))[:4])})" if named
+                           f"{', '.join(f'{x:g}' for x in sorted(set(self.by_label[named]), reverse=True)[:3])})" if named
                            else f"number {t} is not in the dossier")
                 continue
             if len(t) == 4 and t[:2] in ("19", "20"):

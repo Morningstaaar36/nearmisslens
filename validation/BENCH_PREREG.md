@@ -604,3 +604,24 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
 - **Everything else as in T21c:** model, budget, turns, model-read flags, Open311 record as the source.
 - **Rule:** the same as T21c (at least 9 of 12 published, at most $0.25 per case, at least 80% of published quotes verified), plus no published finding that writes out a licence plate.
 - **Also reported:** a post-hoc review of every published claim verdict, listed for your hand audit.
+
+## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs (registered 2026-11-02, before any T24 case)
+
+- **Question:** given only Meta's `web_search`, with no record tools and no gate, how often does Muse Spark 1.3 cite a quote that is not on its page, or state a number about the corner that is not the record's?
+- **Code:** `nearmisslens/baseline_desk.py` (`nml alone T24 --inputs T21c`).
+- **Design:**
+  - **Inputs:** the 12 inputs of T21c, verbatim.
+  - **Model and settings:** the same model and effort as the desk, at most 8 turns and $0.30 per case. Its only function tool is `finish`, which accepts anything.
+  - **Quote scoring:** the same citation check as the desk (verified / absent / unreadable).
+  - **Number scoring:** every finding with a number is checked against the receipts the desk built for the same corner, rebuilt from the cache. The labels are:
+    - consistent;
+    - differs: the record holds a different value for what the sentence names, and the source may count another area or period;
+    - not checkable.
+- **Metrics:**
+  - the share of quotes absent from a readable page;
+  - the share of number findings that differ from the record;
+  - the same shares for the desk's published T21c output, which are 0 by construction;
+  - cost per case.
+- **Hypothesis:** at least 20% of the baseline's quotes are absent from their readable page, or at least 20% of its number findings differ from the record. Reported either way.
+- **Caveat:** "differs" here means the number is not the record's within 100 m over five years. A source counting another area or period is not therefore wrong, and the baseline was not told the record's frame. The comparison measures what reaches the reader unchecked, not dishonesty.
+- **Change to the number checker made while building this, before any T24 case and after T21c:** an age, a time, a speed, a distance or a house number is never read as a count, so "a 30-year-old was killed" is not checked as 30 deaths.

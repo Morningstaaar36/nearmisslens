@@ -294,6 +294,14 @@ def cmd_desk(args) -> int:
     return 0
 
 
+def cmd_alone(args) -> int:
+    from . import baseline_desk
+    from .meta_client import MetaClient
+    res = baseline_desk.run(args.spec, MetaClient(SETTINGS), args.inputs)
+    print(baseline_desk.summary(res))
+    return 0
+
+
 def cmd_cameras(args) -> int:
     import time as _t
     from . import cameras
@@ -548,6 +556,9 @@ def main(argv: list[str] | None = None) -> int:
     dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b, T21c) or the governed agent (T22); paid unless --replay")
     dk.add_argument("spec")
     dk.add_argument("--fresh", action="store_true", help="run every case again instead of resuming from saved results")
+    al = sub.add_parser("alone", help="T24: Muse Spark with web_search alone on a desk run's inputs, scored by code (paid)")
+    al.add_argument("spec", nargs="?", default="T24")
+    al.add_argument("--inputs", default="T21c", help="the registered desk run whose inputs it gets")
     cm = sub.add_parser("cameras", help="Corner Watch: pick the city's camera corners by injury crashes; collect frames (free)")
     cm.add_argument("action", choices=["pick", "once", "collect"])
     cm.add_argument("city")
@@ -622,7 +633,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

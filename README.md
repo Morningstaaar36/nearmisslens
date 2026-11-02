@@ -1,10 +1,61 @@
 # NearMissLens
 
-**A safety engineer for city streets that has to show its receipts.** Give it a city or a corner. It ranks the worst corners, works out what their crashes have in common, tests what the city already tried against the city's own crash history, ranks fixes by the strength of the evidence behind them, finds which agencies own the roads, and drafts one request per agency. Each claim cites the receipt behind it, and a claim whose numbers do not match that receipt is refused; our own red team measures how many false claims still get through.
+**A street-safety desk run by Meta's models and refereed by code.** Give it something real: a news report of a crash, an official's claim that a safety program worked, a resident's 311 report with a photo, a corner, or a whole city. Muse Spark plans the work and chooses every step.
+- It finds and reads the source on the live web with Meta's `web_search`.
+- It loads the city's open datasets with tool search.
+- It investigates the intersection with checked tools.
+- It tests the city's programs against the city's own crash record.
+- It ranks fixes by the strength of their evidence and finds who owns the road.
+- Muse Spark Open drafts the letter.
 
-**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/) opens on each city's action plan. It covers New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
+Nothing is published until code has checked every number against the record and every quote against its page.
+
+**On 12 fresh real cases (T21c, registered before it ran), the desk published 11, and all 25 of their quotes were found on the page they cite. It cost $0.126 a case on the Meta API.** The first version published 4 of 12. What we changed in between, and what a review of the published cases still found wrong, is below.
+
+**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the live desk's cases, with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
 ![New York's action plan: the largest low-cost estimates add up to 338 fewer crashes a year, the evidence supports 86; tiles for harm, supported corners, road owners, turn calming and denied requests, then the corners where a fix was asked for and turned down](docs/img/plan_nyc.png)
+
+## One real case, end to end
+
+The input was one sentence: *find a news report from the last two weeks about a pedestrian or cyclist hit at a named intersection in New York City, investigate it, check what it says and draft the request letter.*
+
+1. **The source.** Muse Spark searched the web and found Streetsblog's report that a sanitation truck driver killed a pedestrian crossing Bay Parkway at Cropsey Avenue on October 29, 2026. It read the page with `read_page`, and both published quotes were found on it.
+2. **The corner.** `investigate` built the corner's case from NYPD records:
+   - 51 injury crashes in five years, with 19 pedestrians and 3 cyclists injured;
+   - turn calming here in 2021, a program whose citywide drop began before the work, so it cannot be credited;
+   - leading pedestrian intervals as the fix the city's own record supports;
+   - NYC DOT as the road owner.
+3. **The claims.** The article says at least 106 crashes injured 77 people there since 2021. The record within 100 m over five years has 113 crashes, so the article's count is for another area or period. The desk now says "differs from the record" and states the record's frame. It does not say "false".
+4. **The letter.** Muse Spark Open drafted the letter to NYC DOT, copied to the council member and community board, and code checked every number in it.
+5. **The gate.** The draft passed on the first `finish`, after two dry runs with `check_findings`.
+
+Cost $0.076. It took 18 minutes, nearly all of it waiting for OpenStreetMap's servers. Police crash data lags by days to weeks. The record the desk read did not yet include this death, so the letter's "no deaths were recorded" is true of the record but not of the street; the desk should say so (a limit, below).
+
+## The desk, run after run
+
+Each run is 12 fresh real cases: a news report per city, an official statement per city, and 4 San Francisco 311 reports with photos at high-crash places. Each was registered in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md) before it ran. Every case, every step and every refusal is in `validation/results/bench/experiment_T21*.json` and on the site.
+
+| Run | What changed | Published | Quotes found on their page | Meta $ a case | Rule (at least 9 of 12) |
+|---|---|---|---|---|---|
+| T21 | first version | 4 of 12 | (the gate refused the rest) | $0.083 | not met |
+| T21b | intersections in several written forms; unreadable pages published as unverified | 5 of 12 | 5 of 13 | $0.079 | not met |
+| T21c | the failure study's fixes (below) | **11 of 12** | **25 of 25** | $0.126 | **met** |
+
+**What the failure study of T21 and T21b found, and what fixed it.** Each fix is a small adapter around a known model weakness:
+- **The model wrote quotes from memory.** For example, it gave a victim's age as 47 where the page says 30. Fix: a `read_page` tool returns the exact text the citation gate checks, and quotes must come from it.
+- **Findings cited the wrong receipt.** Fix: `investigate` lists each code-written claim with its receipt, and the gate names the receipt that holds a finding's numbers. It never offers that hint for a finding without numbers.
+- **Facts from the source were mixed with numbers from the record.** Fix: a fact from the source cites the source's URL, and its numbers must be on that page.
+- **Programs were looked up by city name, not city id, so every program came back "untested".** Fix: the program and city are matched by their words.
+- **Geocoding fell back to house numbers and businesses.** Fix: an address goes to the nearest screened corner within 150 m, or is refused, and a case stays on one intersection.
+- **The agent probed the gate one sentence at a time until the turn limit.** Fix: `check_findings` dry-runs the whole draft, and claim checks are capped at 6.
+
+**What a review of T21c's 11 published cases still found** (post hoc; the hand audit is pending):
+- In 2 cases a claim was called "contradicted by the record" when the record could not test it. Our code had let the model-read check decide a verdict, although T20b measured it refusing about a quarter of true claims.
+- In 2 more, "contradicted" was too strong for a source counting another area or period.
+- One licence plate printed in a 311 report was read out by the photo reader.
+
+Verdicts are now decided by the number checker alone and state the record's frame, and plates are refused by the gate and redacted on the site. T21d tests this on fresh cases.
 
 ## The problem
 
@@ -64,7 +115,24 @@ The worst of the 304:
 
 ## How it works
 
-The engineer is a Meta model with six tools. Each tool is plain code over public records with a check inside it, and each returns its data with a **receipt**: the datasets it read, the date the records run to, the checks it ran, and the seconds it took.
+```
+real input: news report | official claim | 311 report + photo | a corner | a city
+   |
+DESK  Muse Spark 1.3 (Meta Model API, Responses, low effort) plans and chooses every step
+   |-- web_search (Meta)        find the source                     -> citation gate: quote must be on the page
+   |-- read_page                the page as the gate reads it
+   |-- tool search              the city's datasets, one deferred tool per registry entry, each returning its query
+   |-- investigate              the engineer's checked tools (below)  -> receipts D1, D2, ...
+   |-- check_claim              a source's number against a receipt  -> verdict saved as a receipt
+   |-- program_record           the causal gate's verdict on the program the source credits
+   |-- view_photo               Muse Spark reads a 311 photo          -> shown as a model observation
+   |-- draft letter             Muse Spark Open (Baseten)             -> every number checked
+   '-- finish                   publish gate: numbers vs receipts, quotes vs pages, site-check and wording rules
+```
+
+The desk follows the LLM-Modulo pattern (Kambhampati et al., 2024): the model generates, sound external critics accept or return structured criticism, and the model revises. The critics are code, never the model grading itself (Huang et al., 2024). The orchestrator's receipts are its ledger (Magentic-One, Fourney et al., 2024).
+
+The engineer behind `investigate` has six tools. Each tool is plain code over public records with a check inside it, and each returns its data with a **receipt**: the datasets it read, the date the records run to, the checks it ran, and the seconds it took.
 
 | Tool | What it reads | The check inside it |
 |---|---|---|
@@ -81,20 +149,22 @@ The agent finishes by submitting its claims, each citing a receipt. The **finish
 - uses wording the record cannot support ("caused", "proves", "certain to", "led to");
 - states a fix that needs a site check as if it were supported.
 
-`nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims (it must call a tool each turn and finish within a turn limit). Without `--agent` the same tools run in a fixed order with claims written by code; that mode needs no model and builds the site.
+`nml desk T21c` reruns a registered desk run (`--replay` serves it from the cache). `nml engineer "ADDRESS" --agent` lets Muse Spark Open choose the steps and write the claims (it must call a tool each turn and finish within a turn limit). Without `--agent` the same tools run in a fixed order with claims written by code; that mode needs no model and builds the site.
 
 ## The model proposes, code checks
 
-Every Meta model use is paired with a check outside the model, and each pair is measured:
+Each Meta model does the part it is good at (reading, searching, planning, drafting, seeing, attacking) and code checks the part it is bad at (numbers, causal credit, citations). Each pairing that changes what is shown is measured; the one that is not (the photo reader) is labelled on the page as a model observation:
 
 | Meta model | What it does | The check | Result |
 |---|---|---|---|
+| Muse Spark 1.3 with `web_search` and tool search | Runs the desk on real inputs from the live web (T21–T21c) | Publish gate: every number against its receipt, every quote against its page | 11 of 12 fresh cases published, 25 of 25 quotes found on their page, $0.126 a case (T21c, rule met; the first version published 4 of 12) |
+| Muse Spark (low effort) | Reads residents' 311 photos on the desk | None beyond refusing dark or unreadable images; shown as "a model observation, not a checked fact" | 4 photos read in T21c; not scored |
 | Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts by the number checker and the model-read check | 34 run, 26 finished, 37 refused attempts kept; on the site, 131 claims shown (55 flagged by the model-read check) and 44 struck through by today's stricter checker ($2.95) |
 | Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |
 | Muse Spark | Reads each claim into checkable assertions: field, value, or "none" (T20, T20b) | Code checks every assertion against the receipt | On a fresh attacker: 1.3% of false claims accepted and 27% of true ones refused, against 10.8% and 51% for the regex checker (registered rule met, T20b) |
 | Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
 | Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies, but the short designs it chose passed 5 of 20 fake programs, about four times the registered design's rate |
-| Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero; as many distinct mechanisms as an exhaustive grid from 43 times fewer tests, but fewer confirmed (rule not met) |
+| Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero and fewer confirmed than the grid (rule not met); 0.72 distinct mechanisms per corner against the grid's 0.64 from 43 times fewer tests, on a measure added after the grid ran (interval −0.07 to +0.23) |
 | Muse Spark Open | Answers free questions about a corner (T17) | Finish gate | Scored by the same checker after the run, so this counts what the checker lets through, not truth (T18 measures that): 0 flagged sentences shown with the gate, 31 without. The price: 38% of questions got no answer that passed |
 | Muse Spark | Finds a new city's crash and program datasets | A validator in the tool | Refused two wrong Seattle mappings; found Seattle's LPI layer, which the gate then measured at −33% |
 | Muse Spark + SAM 3.1 | Reads the aerial photo of each corner (T16) | SAM 3.1 must confirm Spark's point; scored against city map layers | No better than always giving the more common answer, so it changes no recommendation |
@@ -154,7 +224,9 @@ uv run nml treatments T11                                  # rerun New York's st
 uv run nml --replay selftest                               # offline self-test
 ```
 
-`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network once the replay cache (on the GitHub release) is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
+Each desk run reruns from its registered spec with `nml desk T21c` (paid, live web). Its cached answers replay it offline at the commit it ran, since a later code change changes what the model is shown.
+
+`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network once the replay cache from the latest GitHub release is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
 
 **Cities are data, not code.** Each dataset, district map, road inventory, agency and request log is an entry in [`registry.json`](nearmisslens/data/registry.json). Each CMF's limits are in [`fhwa_psc.json`](nearmisslens/data/fhwa_psc.json), and each study is a JSON file in [`validation/studies/`](validation/studies/).
 
@@ -162,10 +234,30 @@ uv run nml --replay selftest                               # offline self-test
 
 - **Registration.** The rules of every test are in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md). Earlier registrations were often committed with their results, so git cannot confirm their order. T18 and T19 were committed and pushed before they ran (commits 89de45b and 28ba1b0), and changes after a run are listed there.
 - **Cases are rechecked.** Every saved case is rewritten by the current code and rechecked before the site is built. Agent cases are rechecked against today's receipts, and a claim that no longer passes is shown struck through with the reason.
+- **The scoreboard.** Every registered test of the current product, met or not:
+
+  | Test | What it asked | Rule |
+  |---|---|---|
+  | T12 | Does the causal gate credit fewer fake programs than a naive before/after? | met (5.5% against 8.0%, above its nominal 2.5%) |
+  | T14 | Does a calibrated gate control false passes and still confirm the LPIs? | (a) met, (b) not met |
+  | T15 | Does a model-proposed search find more confirmed crash mechanisms? | not met |
+  | T16 | Does reading the aerial photo improve on a constant answer? | not met in effect: changes no recommendation |
+  | T17 | Does the gate cut wrong sentences in free answers? | met (38% of questions then get no answer) |
+  | T18 | Does a frozen patch halve a held-out attacker's success? | not met (cut 46%) |
+  | T19 | Does Muse Spark read where a CMF applies as well as the structured fields? | met |
+  | T20 / T20b | Does model reading plus code checking beat the regex checker? | not met / met |
+  | T21 / T21b / T21c | Does the desk publish at least 9 of 12 real cases at no more than $0.25 each? | not met / not met / met |
+  | T22 | Does a loop governor make the open-weights agent finish more often? | not met |
+  | T21d, T23 | Honest verdicts on fresh cases; Corner Watch on city cameras | registered, results in BENCH.md |
+
+  Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.
 
 ## Limits
 
+- **The desk's verdicts are only as good as its gates.** The gates check numbers, quotes and wording, not whether a finding is the right one to make; the review of T21c found two wrong claim verdicts that passed. Every published desk finding is listed for a hand audit, pending.
+- **The crash record lags the news.** Police data arrives days to weeks after a crash, so a crash in the news is often not in the record yet. The desk states the record's as-of date, but a letter can still say "no deaths were recorded" the week of a death.
+- **The desk is slow where OpenStreetMap is slow.** Most of a case's minutes are spent waiting for public map servers, not on the model.
 - **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, one fix per corner, never stacked, and a qualified engineer must review each one.
 - **Regression to the mean is measured, not modelled.** The plan's factor (0.95 in New York) compares the worst corners with the rest within the listed corners. Where the corners were picked by the same records (Seattle, DC, SF), it understates the effect.
 - **The causal gate is observational.** Cities choose their sites, and 5.5% of fake programs passed it.
@@ -177,7 +269,7 @@ uv run nml --replay selftest                               # offline self-test
 
 ## Related work
 
-The causal gate follows road-safety evaluation practice (Hauer, 1997; Gross, Persaud & Lyon, 2010, FHWA-SA-10-032). Its placebo date is a negative-control exposure (Lipsitch et al., 2010), and passing it does not prove parallel trends (Roth, 2022). The agent side is close in spirit to POPPER (Huang et al., ICML 2025), which has agents design falsification experiments. It also responds to evidence that AI analysts' verdicts shift with persona or prompt while their estimates do not (Miao et al., 2026; Alizadeh et al., 2026). The number checker belongs with checking text against relational data (Jo et al., 2019), and attacking it with a model follows Perez et al. (2022). [`docs/METHOD.md`](docs/METHOD.md) has the longer version.
+The causal gate follows road-safety evaluation practice (Hauer, 1997; Gross, Persaud & Lyon, 2010, FHWA-SA-10-032). Its placebo date is a negative-control exposure (Lipsitch et al., 2010), and passing it does not prove parallel trends (Roth, 2022). The agent side is close in spirit to POPPER (Huang et al., ICML 2025), which has agents design falsification experiments. It also responds to evidence that AI analysts' verdicts shift with persona or prompt while their estimates do not (Miao et al., 2026; Alizadeh et al., 2026). The number checker belongs with checking text against relational data (Jo et al., 2019), and attacking it with a model follows Perez et al. (2022). The desk follows LLM-Modulo (Kambhampati et al., ICML 2024): models generate and external, sound critics return criticism. The critics are code, because models do not reliably correct their own reasoning (Huang et al., ICLR 2024). Splitting a claim into checkable parts follows SAFE (Wei et al., 2024) and tool-checked critique (CRITIC, Gou et al., ICLR 2024). The orchestrator with a progress ledger follows Magentic-One (Fourney et al., 2024), and reporting cost next to accuracy follows Kapoor et al. (2024, "AI Agents That Matter"). [`docs/METHOD.md`](docs/METHOD.md) has the longer version.
 
 ## Built during the hackathon
 

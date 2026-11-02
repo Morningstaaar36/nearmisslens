@@ -59,3 +59,13 @@ def test_claim_reading_numbers():
     for arm in ("regex", "model"):
         _has(f"{t[arm]['accepted']} of {t[arm]['false_claims']}")
         _has(f"{t[arm]['refused']} of {t[arm]['true_claims']}")
+
+
+def test_desk_numbers():
+    from nearmisslens.bench import desk_stats
+    c = desk_stats(_load("experiment_T21c.json"))
+    _has(f"published {c['published']}, and all {c['verified']} of their quotes")
+    _has(f"${c['usd_per_case']:.3f} a case")
+    for run in ("T21", "T21b"):
+        st = desk_stats(_load(f"experiment_{run}.json"))
+        _has(f"| {st['published']} of {st['cases']} |")
