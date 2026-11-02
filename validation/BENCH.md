@@ -547,17 +547,26 @@ Registered in BENCH_PREREG.md (T21, T21b, T21c). A Muse Spark orchestrator with 
 | run | published | published with the corner's injury-crash count | publish-gate refusals | published quotes verified on their page | Meta $ per case | time per case | rule |
 |---|---|---|---|---|---|---|---|
 | T21 | 4/12 | 0 | 28 | n/a | $0.083 | 101 s | not met |
-| T21b | 1/5 | 0 | 11 | 0/4 | $0.088 | 314 s | running (5 of 12) |
+| T21b | 5/12 | 1 | 23 | 5/13 | $0.079 | 283 s | not met |
+| T21c | 11/12 | 10 | 3 | 25/25 | $0.126 | 360 s | met |
 
 - **T21 not published:** escalated 7, max_turns 1
-- **T21b not published:** escalated 2, max_turns 2
+- **T21b not published:** escalated 4, max_turns 3
+- **T21c not published:** max_turns 1
 
-Cases in T21b:
-- **news / nyc:** not published (escalated); Atlantic Avenue & Hoyt Street
-- **news / seattle:** not published (max_turns); Stone Way North & North 48th Street
-- **news / dc:** not published (max_turns); 15th Street Northwest & M Street Northwest
-- **news / sf:** not published (escalated); Moscow Street & France Avenue
-- **claim / nyc:** published; East 180th Street & Prospect Avenue; NYC DOT February 2026 statement credits East 180th St and Seagirt Blvd redesigns with injury drops; East 180th St and Prospect Ave corner checked with city cras
+Cases in T21c:
+- **news / nyc:** published; Cropsey Avenue & Bay Parkway; Streetsblog report of Oct 29 2026 pedestrian fatality at Cropsey Avenue and Bay Parkway reviewed against city records, with request letter to NYC DOT drafted.
+- **news / seattle:** published; Aurora Avenue North & North 97th Street; News report posted October 21, 2026 about a cyclist hit on Aurora Ave N at N 97th St was investigated; city records reviewed and request letter drafted.
+- **news / dc:** published; Bladensburg Road Northeast & South Dakota Avenue Northeast; News report about a pedestrian fatality at Bladensburg Road and South Dakota Avenue NE investigated against city crash records, with a request letter drafted.
+- **news / sf:** published; Moscow Street & France Avenue; News report from October 26, 2026 about a pedestrian struck by a driver at Moscow Street and France Avenue in San Francisco, investigated against city crash rec
+- **claim / nyc:** published; Broadway & West 96th Street; A 2026 City Council statement credits turn traffic calming and leading pedestrian intervals with fewer pedestrian casualties; the city's own record does not sup
+- **claim / seattle:** published; 4th Avenue & Pike Street; SDOT's 2024 Vision Zero update credited leading pedestrian intervals with fewer pedestrian hits, the city's own record shows a reduction at treated sites, and t
+- **claim / dc:** not published (max_turns)
+- **claim / sf:** published; 6th Avenue & Fulton Street; SFMTA credited safety work with fewer crashes, including on Fulton Street and through Safe Routes to School; the corner of 6th Avenue and Fulton Street on that 
+- **311 / sf:** published; 23rd Street & Mission Street; Blocked driveway at 3122 23rd St near 23rd and Mission with 17 injury crashes at the corner valued at $1.2M per year; routine parking enforcement plus safety st
+- **311 / sf:** published; 16th Street & Julian Avenue; Illegal red-zone parking reported at 16th St and Julian Ave; photo matches a red SUV at a red curb; corner shows high injury history with pedestrian pattern; wo
+- **311 / sf:** published; Mission Street & Precita Avenue; 311 grass-at-curb report at 3152 Mission St reviewed against Mission and Precita crash record; routine maintenance plus SFMTA study request.
+- **311 / sf:** published; Howard Street & 4th Street; Parking report at 815 Howard St near Howard and 4th rates as routine enforcement given crash record, with work order drafted to SFMTA for a safety study and sit
 
 ## T22 Adapter A1: a loop governor for the open-weights agent
 
@@ -569,6 +578,20 @@ Registered in BENCH_PREREG.md (T22). The same corners, model and budget; the gov
 | governed | 35 | 24 | budget 2, escalated 5, finish_tool 24, max_turns 4 | $2.90 |
 
 Registered rule (at least 32 of 35 finished, no repeated identical call, no higher cost per finished case): not met. The nudge removed stops without a tool call, but runs now hit the turn or budget limit, and the number checker became stricter between the two runs, so the comparison is not clean.
+
+## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs
+
+Registered in BENCH_PREREG.md (T24). The 2 inputs of T21c, Muse Spark 1.3 with Meta web_search and nothing else; its output scored by the desk's own checks after the run.
+
+| | Muse Spark alone | the desk (T21c, published) |
+|---|---|---|
+| cases finished | 2 of 2 | 11 of 12 |
+| quotes absent from a page that could be read | 1 of 11 | 0 (refused by the gate) |
+| quotes on pages that could not be read | 8 | 0 |
+| findings with a number about the corner: consistent with the record / differs / not checkable | 0 / 3 / 10 (of 13) | all consistent (by construction) |
+| Meta $ per case | $0.126 | $0.126 |
+
+Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings differing from the record): supported. 'Differs' means not the record's number within 100 m over five years; a source counting another area or period is not therefore wrong.
 
 ## Data agent: adapters found and validated without hand-written code
 

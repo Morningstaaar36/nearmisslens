@@ -701,7 +701,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t24_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1252,6 +1252,54 @@ def _t21_section() -> list[str]:
                  + (f"; {f.get('summary', '')[:160]}" if f else ""))
     L.append("")
     return L
+
+
+def _t23_section() -> list[str]:
+    """T23: Corner Watch on the city's traffic cameras."""
+    r = _load("experiment_T23.json")
+    if not r:
+        return []
+    s = r["summary"]
+    return ["## T23 Corner Watch: what the city's cameras show at its most dangerous corners", "",
+            f"Registered in BENCH_PREREG.md (T23). {s['with_daylight']} of {s['cameras']} Seattle camera corners had "
+            f"daylight frames ({s['frames']} frames). SAM 3.1 counted people and cars from frames packed into one video "
+            "per camera; Muse Spark answered layout questions and SAM 3.1 had to agree.", "",
+            "| measure | value |", "|---|---|",
+            f"| packed-video count within ±1 of image mode | {s['pack_within_1']} of {s['pack_checks']} sampled frames "
+            f"(mean difference {s['pack_mean_abs_diff']}); rule (at least 80%): {'met' if s['pack_rule_met'] else 'not met'} |",
+            f"| layout answers | present {s['features']['present']}, absent {s['features']['absent']}, unsure {s['features']['unsure']} |",
+            f"| corners with an exposure rate (at least 20 people seen) | {s['with_rate']}; ranking reported: "
+            f"{'yes' if s['ranking_reported'] else 'no (fewer than 20)'} |",
+            f"| Spearman, crash rank vs crashes per person seen | {s['spearman_crash_vs_exposure']} |",
+            f"| crash top 10 not in the exposure top 10 | {s['crash_top10_leaving_exposure_top10']} |",
+            f"| frames at SAM's 16-object cap (cars) | {s['capped_frames']} |",
+            f"| Meta API cost | ${s.get('usd')} |", ""]
+
+
+def _t24_section() -> list[str]:
+    """T24: Muse Spark alone with web_search on the desk's inputs, scored by code."""
+    r = _load("experiment_T24.json")
+    if not r:
+        return []
+    from .baseline_desk import summary
+    s = summary(r)
+    readable = s["quotes_verified"] + s["quotes_absent"]
+    nums = s["number_findings"]
+    return ["## T24 What the desk's tools and gates add: Muse Spark alone on the same inputs", "",
+            f"Registered in BENCH_PREREG.md (T24). The {s['cases']} inputs of {r.get('desk_run')}, Muse Spark 1.3 with Meta "
+            "web_search and nothing else; its output scored by the desk's own checks after the run.", "",
+            "| | Muse Spark alone | the desk (T21c, published) |", "|---|---|---|",
+            f"| cases finished | {s['finished']} of {s['cases']} | 11 of 12 |",
+            f"| quotes absent from a page that could be read | {s['quotes_absent']} of {readable} | 0 (refused by the gate) |",
+            f"| quotes on pages that could not be read | {s['quotes_unreadable']} | 0 |",
+            f"| findings with a number about the corner: consistent with the record / differs / not checkable | "
+            f"{s['consistent']} / {s['differs']} / {s['not_checkable']} (of {nums}) | all consistent (by construction) |",
+            f"| Meta $ per case | ${s['usd_per_case']:.3f} | $0.126 |", "",
+            "Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings "
+            "differing from the record): " + ("supported." if (readable and s['quotes_absent'] / readable >= 0.2)
+                                             or (nums and s['differs'] / nums >= 0.2) else "not supported.")
+            + " 'Differs' means not the record's number within 100 m over five years; a source counting another area or "
+            "period is not therefore wrong.", ""]
 
 
 def _t22_section() -> list[str]:

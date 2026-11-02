@@ -316,6 +316,17 @@ def cmd_cameras(args) -> int:
         print(json.dumps(cameras.collect_once(picks, cameras.adapter(args.city))))
     elif args.action == "collect":
         cameras.collect(args.city, picks, args.every, _t.time() + 3600 * args.hours, log=lambda s: print(s, flush=True))
+    elif args.action == "watch":  # NML-Bench T23 (paid: SAM 3.1 and Muse Spark)
+        from . import corner_watch
+        from .meta_client import MetaClient
+        client = MetaClient(SETTINGS)
+        start = _t.time()
+        out = corner_watch.watch(client, args.city, picks)
+        out["summary"] = corner_watch.summarize(out)
+        rows = [json.loads(x) for x in SETTINGS.ledger.read_text().splitlines() if x.strip()] if SETTINGS.ledger.exists() else []
+        out["summary"]["usd"] = round(sum(r["usd"] for r in rows if r["t"] >= start and str(r.get("what", "")).startswith("corner")), 4)
+        (RESULTS_DIR / "bench" / "experiment_T23.json").write_text(portable(json.dumps(out, indent=1, default=str)))
+        print(json.dumps(out["summary"], indent=1))
     return 0
 
 
@@ -560,7 +571,7 @@ def main(argv: list[str] | None = None) -> int:
     al.add_argument("spec", nargs="?", default="T24")
     al.add_argument("--inputs", default="T21c", help="the registered desk run whose inputs it gets")
     cm = sub.add_parser("cameras", help="Corner Watch: pick the city's camera corners by injury crashes; collect frames (free)")
-    cm.add_argument("action", choices=["pick", "once", "collect"])
+    cm.add_argument("action", choices=["pick", "once", "collect", "watch"])
     cm.add_argument("city")
     cm.add_argument("--n", type=int, default=40)
     cm.add_argument("--every", type=int, default=600, help="seconds between rounds (never faster than the city refreshes)")

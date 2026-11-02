@@ -37,3 +37,14 @@ def test_packing_puts_a_black_frame_between_snapshots(tmp_path):
     cap = cv2.VideoCapture(str(tmp_path / "out" / "c.mp4"))
     n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     assert n == 6
+
+
+def test_summary_scores_packing_and_ranks_only_rated_corners():
+    rows = [{"id": str(k), "frames": 10, "injury_crashes": 50 - k, "rank_by_crashes": k + 1,
+             "injury_crashes_per_1000_people_seen": float(k), "rank_by_exposure": 25 - k,
+             "pack_check": [{"video": 3, "image": 3 + (k % 3 == 0) * 2}], "features": {"a": "present", "b": "unsure"}}
+            for k in range(25)]
+    s = W.summarize({"cameras": 25, "rows": rows})
+    assert s["pack_checks"] == 25 and s["pack_within_1"] == 16 and not s["pack_rule_met"]
+    assert s["ranking_reported"] and s["spearman_crash_vs_exposure"] == -1.0
+    assert s["crash_top10_leaving_exposure_top10"] == 10 and s["features"]["present"] == 25

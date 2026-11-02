@@ -173,3 +173,27 @@ def watch(client, city: str, picks: list[dict], sample_images: int = 2) -> dict:
     for k, r in enumerate(by_exposure, 1):
         r["rank_by_exposure"] = k
     return {"city": city, "cameras": len(picks), "with_daylight": len(seen), "rows": rows}
+
+
+def summarize(out: dict) -> dict:
+    """T23's registered metrics: packed-video vs image counts, feature answers, and how counting people changes the
+    ranking of corners."""
+    from scipy.stats import spearmanr
+    rows = [r for r in out["rows"] if r.get("frames")]
+    checks = [c for r in rows for c in r.get("pack_check") or []]
+    diffs = [abs(c["video"] - c["image"]) for c in checks]
+    feats = [v for r in rows for v in (r.get("features") or {}).values()]
+    rated = [r for r in rows if r.get("injury_crashes_per_1000_people_seen") is not None]
+    rho = (spearmanr([r["rank_by_crashes"] for r in rated], [r["rank_by_exposure"] for r in rated]).statistic
+           if len(rated) >= 3 else None)
+    top = lambda key: {r["id"] for r in sorted(rated, key=lambda r: r[key])[:10]}
+    return {"cameras": out["cameras"], "with_daylight": len(rows), "frames": sum(r["frames"] for r in rows),
+            "pack_checks": len(checks), "pack_within_1": sum(d <= 1 for d in diffs),
+            "pack_mean_abs_diff": round(sum(diffs) / len(diffs), 2) if diffs else None,
+            "pack_rule_met": bool(diffs) and sum(d <= 1 for d in diffs) / len(diffs) >= 0.8,
+            "features": {k: feats.count(k) for k in ("present", "absent", "unsure")},
+            "with_rate": len(rated), "ranking_reported": len(rated) >= 20,
+            "spearman_crash_vs_exposure": round(float(rho), 3) if rho is not None else None,
+            "crash_top10_leaving_exposure_top10": len(top("rank_by_crashes") - top("rank_by_exposure"))
+            if len(rated) >= 10 else None,
+            "capped_frames": sum(r.get("capped_frames", 0) for r in rows)}
