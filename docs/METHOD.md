@@ -166,6 +166,22 @@ The sentence says what the record shows since the denial, and the number checker
 
 **FHWA's yellow-interval page.** It cites CMFs 380 and 384 (8% fewer crashes, 12% fewer injury crashes), which are rated two stars. The code's three-star rule leaves them out and uses the four NCHRP Report 705 records, all measured where the change interval was below ITE practice. That is why the fix needs a timing check.
 
+## Corner Watch: counts and layout from the city's cameras (T23)
+
+**What it measures.** Crash counts ignore how many people use a corner. Corner Watch counts people and cars in a city's own traffic-camera frames, so a corner can be ranked by injury crashes per 1,000 people seen, and it checks whether a layout feature the evidence points to (a high-visibility crosswalk, a curb extension, a pedestrian refuge) is already there.
+
+**Frames.** The cameras are those at the city's camera intersections with the most injury crashes within 50 m (`cameras.pick`). A frame is used only if its UTC time stamp is inside the registry's daylight hours (`cameras.daylight_utc_hours`) and it is brighter than `config.DARK_MEAN`. Both rules are needed: streetlights can make a night frame bright enough to pass the second.
+
+**Counting, with its check.** SAM 3.1 counts each camera's frames in one video request, with a black frame between snapshots so no object carries over. Video mode costs a fraction of image mode per frame. For 2 frames per camera the count is repeated in image mode, and packing is credited only if at least 80% of these agree within ±1. SAM returns at most 16 objects per frame, so a frame at 16 is a lower bound and is counted as capped.
+
+**Layout: one model proposes, the other confirms.** Muse Spark, at low reasoning effort, answers present, absent or unsure for each feature in one frame per corner and points at it. "Present" stands only if SAM 3.1 finds the feature near one of Spark's points, and "absent" only if SAM finds nothing; everything else is "unsure".
+
+**Exposure.** Injury crashes per 1,000 people seen, with no rate below 20 people, so a camera that saw nobody is never "riskiest". The ranking is reported only if at least 20 cameras have a rate.
+
+**Result (Seattle, `validation/BENCH.md`).** The run used one morning's frames, 06:00–07:42 Seattle time, because the collector could not run all day (a deviation recorded before the run). Packed counts met their rule (68 of 68 sampled frames within ±1), but most sampled frames had no one in them, so the check is weak. Only 2 of 34 cameras saw 20 people, so the ranking is not reported. Spark's layout answers were downgraded to "unsure" when SAM did not back them: 8 of 35 "present" and 44 of 126 "absent". In a spot-check of three frames by eye, the counts were within one person and one car.
+
+**Limits.** The counts have not been compared with a hand count. A morning hour says nothing about afternoon use. SAM's "curb extension" detections likely include ordinary curbs, so "absent" is rarely confirmed for it.
+
 ## Related work
 
 **Road-safety evaluation.** The causal gate uses the comparison-group before/after design (Hauer, 1997), not the Empirical Bayes design behind most CMFs (Hauer, Harwood, Council & Griffith, 2002; AASHTO Highway Safety Manual, 2010, ch. 9; Persaud & Lyon, 2007). Sites picked after a bad spell improve on their own (Hauer, 1980). Empirical Bayes corrects for this with safety performance functions; we fit none, so the placebo date and the measured persistence factor only partly substitute. The placebo plays the part of the pre-period comparability test in comparison-group designs (Gross, Persaud & Lyon, 2010, FHWA-SA-10-032).
