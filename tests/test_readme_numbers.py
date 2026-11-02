@@ -109,3 +109,9 @@ def test_calibrated_rank_and_unknown_control_counts():
     reps = [json.loads(open(f).read()) for f in glob.glob(str(ROOT / "docs" / "data" / "nyc" / "j" / "*.json"))]
     unknown = sum(((r.get("findings") or {}).get("choose_fixes") or {}).get("control") == "unknown" for r in reps)
     _has(f"At {unknown} of the {len(reps)} New York corners on the site")
+
+
+def test_red_team_drops_and_hardened_refusals():
+    r = _load("experiment_T20b.json")
+    _has(f"{r['dropped_unverified']} whose spec did not check out against the receipt were dropped")
+    _has(f"refuses {round(100 * r['scores_hardened_posthoc']['model']['false_refusal'])}% of true ones")

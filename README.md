@@ -62,14 +62,14 @@ Each run is 12 fresh real cases: a news report per city, an official statement p
 - **Geocoding fell back to house numbers and businesses.** Fix: an address goes to the nearest screened corner within 150 m, or is refused, and a case stays on one intersection.
 - **The agent probed the gate one sentence at a time until the turn limit.** Fix: `check_findings` dry-runs the whole draft, and claim checks are capped at 6.
 
-**What a review of T21c's 11 published cases still found** (post hoc; the hand audit is pending):
+**What a review of T21c's 11 published cases still found** (post hoc, done within the project and not independent; the hand audit is pending):
 - In 2 cases a claim was called "contradicted by the record" when the record could not test it. Our code had let the model-read check decide a verdict, although T20b measured it refusing about a quarter of true claims.
 - In 2 more, "contradicted" was too strong for a source counting another area or period.
 - One licence plate printed in a 311 report was read out by the photo reader.
 
 Verdicts are now decided by the number checker alone and state the record's frame, and plates are refused by the gate and redacted on the site. T21d tested this on fresh cases and published all 12.
 
-**What a review of T21d's 14 published claim verdicts found** (post hoc; the hand audit is pending):
+**What a review of T21d's 14 published claim verdicts found** (post hoc, done within the project and not independent; the hand audit is pending):
 - 9 are right.
 - 5 are wrong: "two women are dead" and a $1.2 million grant were called consistent, and a victim's age, "9 KSI" and a citywide count of 116 intersections were called differing.
 
@@ -197,7 +197,7 @@ Each Meta model does the part it is good at (reading, searching, planning, draft
 | Muse Spark (low effort) | Reads residents' 311 photos on the desk | None beyond refusing dark or unreadable images; shown as "a model observation, not a checked fact" | 4 photos read in T21c; not scored |
 | Muse Spark Open (Baseten) | Writes the case for the top corners of 4 cities | Finish gate; rechecked against today's receipts by the number checker and the model-read check | 34 run, 26 finished, 37 refused attempts kept; on the site, 131 claims shown (55 flagged by the model-read check) and 44 struck through by today's stricter checker ($2.95) |
 | Muse Spark | Reads each CMF's study record to say where it applies (T19) | The quote must be in the record; scored against hand labels written first | 0.92 accuracy against 0.87 for the structured fields alone (4 more right answers of 75); found 4 limits the hand labels missed, now in the data, though none of the four moves a New York total yet |
-| Muse Spark | Reads each claim into checkable assertions: field, value, or "none" (T20, T20b) | Code checks every assertion against the receipt | On a fresh attacker: 1.3% of false claims accepted and 27% of true ones refused, against 10.8% and 51% for the regex checker (registered rule met, T20b) |
+| Muse Spark | Reads each claim into checkable assertions: field, value, or "none" (T20, T20b) | Code checks every assertion against the receipt | On a fresh attacker: 1.3% of false claims accepted and 27% of true ones refused, against 10.8% and 51% for the regex checker (registered rule met, T20b). The stricter version now in use, hardened after a review, refuses 58% of true ones (post hoc) |
 | Muse Spark and Muse Spark Open | Attack the finish gate with plausible false claims (T18) | Each attack's spec is checked against the receipt; a patch is frozen before a held-out attacker | The gate as registered let 38% of held-out false claims through; the patched gate 21% (the registered halving was not met) |
 | Muse Spark Open | Writes and runs its own analysis code on the city's programs (T12) | Causal gate on held-out sites | Without the gate it missed NYC's LPIs and credited two programs the record does not support; with it, it agreed with the registered studies, but the short designs it chose passed 5 of 20 fake programs, about four times the registered design's rate |
 | Muse Spark Open | Proposes crash mechanisms from earlier years (T15) | Holm correction, then one test on later years it never saw | False finds near zero and fewer confirmed than the grid (rule not met); 0.72 distinct mechanisms per corner against the grid's 0.64 from 43 times fewer tests, on a measure added after the grid ran (interval −0.07 to +0.23) |
@@ -239,6 +239,8 @@ An attacker model reads a real receipt and writes false claims that sound right,
 The patch cut held-out attacks by 46%, short of the registered 50%. One false claim in five still gets past the patched regex gate on a new attacker, mostly claims that something is absent.
 
 **So we let a model read the claims (T20, T20b).** Muse Spark turns each claim into assertions (which receipt field, what value, or "none"), and code checks each one against the receipt; the model never decides whether a claim is true. On the T18 held-out set the registered run failed: it caught 98% of false claims but refused 46% of true ones, mostly through three bugs in our checking code (dates, whole-percent rounding, the confidence level). We fixed those and registered a fresh test on corners and an attacker style never used before:
+
+Of the attacker's false claims, 114 whose spec did not check out against the receipt were dropped before scoring, as in T18.
 
 | T20b, fresh attacker (Muse Spark Open, "advocate" style, corners ranked 31–40, 9 distinct) | False claims accepted | True claims refused |
 |---|---|---|
