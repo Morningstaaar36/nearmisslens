@@ -10,7 +10,7 @@ PAGES = {"https://agency.example/srts": PAGE}
 
 def _x(**k):
     base = {"page": "https://agency.example/srts", "status": "planned or proposed", "cost_usd": None,
-            "cost_covers": "not stated"}
+            "cost_covers": "not stated", "treatment_says": None}
     return {**base, **k}
 
 
@@ -65,3 +65,14 @@ def test_a_saved_page_or_text_file_can_be_read(tmp_path):
     f.write_text("<html><script>x()</script><p>Curb bulbs at Oak St &amp; 3rd Ave</p></html>")
     pages, bad = intake.read_pages([str(f)])
     assert bad == [] and "Curb bulbs at Oak St" in pages["file:agenda.html"] and "x()" not in pages["file:agenda.html"]
+
+
+def test_a_location_list_rests_on_the_list_item_and_the_description_of_the_work():
+    """T30: a page that lists its locations under one description of the work had no project kept."""
+    pages = {"https://agency.example/c35": "The project will upgrade traffic signals with larger signal heads. "
+                                           "Project Locations 6th Avenue & Irving Street 25th Avenue & Clement Street"}
+    x = {"page": "https://agency.example/c35", "intersection": "6th Avenue & Irving Street",
+         "treatment": "signal upgrade", "source_says": "Project Locations 6th Avenue & Irving Street",
+         "treatment_says": "The project will upgrade traffic signals with larger signal heads."}
+    assert intake.check_project(x, pages) is None
+    assert "treatment_says" in intake.check_project({**x, "treatment_says": "New signals everywhere."}, pages)

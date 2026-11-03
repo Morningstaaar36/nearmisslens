@@ -1,0 +1,273 @@
+{
+ "id": "T30",
+ "inputs": [
+  {
+   "id": "seattle_srts",
+   "city": "seattle",
+   "program": "sea_srts_2026",
+   "url": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+   "projects": [
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "N 77th St & Linden Ave N",
+     "treatment": "marked crosswalk and daylighting the intersection",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalk and \u201c daylight \u201d intersection at N 77th St and Linden Ave N near Daniel Bagley Elementary (completed in 2026)",
+     "text": "Marked crosswalk and daylighting the intersection at N 77th St & Linden Ave N"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NE 115th St & 31st Ave NE",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "(north section expected in 2026 or 2027 which includes an all way stop at NE 115th St/31st Ave NE)",
+     "text": "All way stop at NE 115th St & 31st Ave NE"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NE 110th St & 40th Ave NE",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at NE 110th St and 40th Ave NE next to John Rogers Elementary (completed in 2026)",
+     "text": "All way stop at NE 110th St & 40th Ave NE"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NE 143rd St & 24th Ave NE",
+     "treatment": "placemaking and crossing improvements",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Placemaking and crossing improvements at NE 143rd St and 24th Ave NE near Olympic Hills Elementary (led by Home Zones program) (expected in 2026)",
+     "text": "Placemaking and crossing improvements at NE 143rd St & 24th Ave NE"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 65th St & 20th Ave NW",
+     "treatment": "hardened center lines to slow turns",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install hardened center lines to slow turns at NW 65th St and 20th Ave NW leading to Salmon Bay K-8 and Ballard High School (completed in 2026)",
+     "text": "Hardened center lines to slow turns at NW 65th St & 20th Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "62nd Ave NE & NE 65th St",
+     "treatment": "push button flashing beacon and marked crosswalk",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Walkway on 62nd Ave NE and push button flashing beacon and marked crosswalk at 62nd Ave NE and NE 65th St by Sand Point Elementary (completed in 2025)",
+     "text": "Push button flashing beacon and marked crosswalk at 62nd Ave NE & NE 65th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "8th Ave NE & NE 86th St",
+     "treatment": "all way stops and marked crosswalks",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stops and marked crosswalks at 8th Ave NE/NE 86th St and 8th Ave NE/NE 85th St next to St. Catherine School (completed in 2026)",
+     "text": "All way stops and marked crosswalks at 8th Ave NE & NE 86th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "8th Ave NE & NE 85th St",
+     "treatment": "all way stops and marked crosswalks",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stops and marked crosswalks at 8th Ave NE/NE 86th St and 8th Ave NE/NE 85th St next to St. Catherine School (completed in 2026)",
+     "text": "All way stops and marked crosswalks at 8th Ave NE & NE 85th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 65th St & 3rd Ave NW",
+     "treatment": "paint and post curb bulbs",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Paint and post curb bulbs at NW 65th St and 3rd Ave NW leading to West Woodland Elementary and Ballard High School (expected in 2026)",
+     "text": "Paint and post curb bulbs at NW 65th St & 3rd Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "7th Ave S & W Wheeler St",
+     "treatment": "curb ramps",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Curb ramps at 7th Ave S/W Wheeler St at Coe Elementary (completed in 2025)",
+     "text": "Curb ramps at 7th Ave S & W Wheeler St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "6th Ave W & W Smith St",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 6th Ave W/W Smith St at Coe Elementary (expected in 2026)",
+     "text": "All way stop at 6th Ave W & W Smith St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "18th Ave E & E Galer St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 18th Ave E and E Galer St and Stevens Elementary (completed in 2026)",
+     "text": "All way stop at 18th Ave E & E Galer St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "E Harrison & 19th Ave S",
+     "treatment": "marked crosswalk and daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Marked crosswalk and \" daylighting \" at E Harrison and 19th Ave S next to Meany Middle School (completed in 2026)",
+     "text": "Marked crosswalk and daylighting at E Harrison & 19th Ave S"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "13th Ave S & S Massachusetts St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 13th Ave S and S Massachusetts St leading to Beacon Hill Intl' Elementary (completed in 2025)",
+     "text": "All way stop at 13th Ave S & S Massachusetts St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "S Lucile St & 13th Ave S",
+     "treatment": "push button crossing beacon and curb ramps",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Push button crossing beacon and curb ramps at S Lucile St and 13th Ave S leading to Cleveland High School (expected in summer 2026)",
+     "text": "Push button crossing beacon and curb ramps at S Lucile St & 13th Ave S"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Brandon St & Fauntleroy Ave SW",
+     "treatment": "daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "\u201c Daylighting \u201d at SW Brandon St and Fauntleroy Ave SW at Fairmount Park Elementary (completed in 2026)",
+     "text": "Daylighting at SW Brandon St & Fauntleroy Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "41st Ave SW & SW Dakota St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 41st Ave SW and SW Dakota St at Holy Rosary School (completed in 2026)",
+     "text": "All way stop at 41st Ave SW & SW Dakota St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Genesee St & 51st Ave SW",
+     "treatment": "marked crosswalks and daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Marked crosswalks and \" daylighting \" at SW Genesee St and 51st Ave SW next to Genesee Hill Elementary (completed in 2026)",
+     "text": "Marked crosswalks and daylighting at SW Genesee St & 51st Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Myrtle St & 34th Ave SW",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stop at SW Myrtle St and 34th Ave SW at Our Lady of Guadalupe School (expected in 2026)",
+     "text": "All way stop at SW Myrtle St & 34th Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Seward Park Ave S & S Hamlet St",
+     "treatment": "marked crosswalks",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks at Seward Park Ave S/S Hamlet St next to Rainier Beach High School (expected in 2026)",
+     "text": "Marked crosswalks at Seward Park Ave S & S Hamlet St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Beacon Ave S & S 55th St",
+     "treatment": "push button flashing beacons",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons at Beacon Ave S/S 55th St next to Rainier View Elementary (completed in 2026)",
+     "text": "Push button flashing beacons at Beacon Ave S & S 55th St"
+    }
+   ],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0633,
+   "pages": [
+    "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school"
+   ]
+  },
+  {
+   "id": "sf_contract35",
+   "city": "sf",
+   "program": "sf_contract35_signals",
+   "url": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+   "projects": [],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0077,
+   "pages": [
+    "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0"
+   ]
+  },
+  {
+   "id": "control_unreadable",
+   "city": "nyc",
+   "program": null,
+   "url": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "control": "a page that refuses automated readers: reported unreadable, nothing invented",
+   "projects": [],
+   "refused": [],
+   "unreadable": [
+    "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml"
+   ],
+   "usd": 0.0,
+   "pages": []
+  },
+  {
+   "id": "control_offtopic",
+   "city": "chicago",
+   "program": null,
+   "url": "https://en.wikipedia.org/wiki/Wrigley_Field",
+   "control": "a page that names an intersection but lists no safety project",
+   "projects": [],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0198,
+   "pages": [
+    "https://en.wikipedia.org/wiki/Wrigley_Field"
+   ]
+  }
+ ]
+}

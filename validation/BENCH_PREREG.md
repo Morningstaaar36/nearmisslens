@@ -974,6 +974,15 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - at most $0.10 of Meta API a readable page.
 - **Also reported:** projects found beyond the hand lists (the hand lists kept only some items), their status, and the refusals.
 
+### T30 result (2026-11-04)
+- **Rule not met.** 5 of the 16 hand-collected projects found (31%; the rule asked 75%). Both controls gave no project (the NYC page was reported unreadable; the encyclopedia page gave none). $0.036 a readable page.
+- **Seattle:** 21 projects kept (7 planned, 14 completed), none refused; 5 of the 8 hand-collected found. The 3 missed are the last items on a 41,700-character page, and intake cut pages at 40,000 characters.
+- **San Francisco:** no project kept. The page lists its 17 locations as bare names ("Project Locations 6th Avenue & Irving Street 25th Avenue & Clement Street ...") under one description of the work, and the rule that one passage must name both streets *and* the treatment cannot be met by a list.
+
+## T30b Program intake after T30's two fixes (registered 2026-11-04, before any T30b run)
+- **Changes:** pages are read up to 150,000 characters; a project on a location list may rest on two passages, the list item (naming both streets) and the passage that says what will be done at the listed locations, both checked word for word on the page. The instructions ask for every project on long pages.
+- **Inputs and rule:** the same as T30 (`validation/experiments/T30b.json`). These inputs are not fresh: T30b measures the fixes on the pages that showed the problems.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

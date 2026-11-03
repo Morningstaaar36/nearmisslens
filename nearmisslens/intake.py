@@ -19,7 +19,7 @@ from . import orchestrator
 from .agent import Tool, run_agent
 from .brief import same_corner
 
-MAX_PAGE_CHARS = 40_000
+MAX_PAGE_CHARS = 150_000  # T30: a 41,700-character page cut at 40,000 lost its last projects
 STATUS = ("planned or proposed", "completed", "not stated")
 
 INSTRUCTIONS = """You read pages a street-safety agency published and list the projects on them that are each at ONE
@@ -30,8 +30,11 @@ intersection (two named streets that cross). For each project give:
 - status: "planned or proposed", "completed" or "not stated", as the page says;
 - cost_usd: only if the page states a cost for this project alone or for the package it belongs to, else null;
   cost_covers: "this fix only", "a package with other work" or "not stated";
-- source_says: ONE passage copied exactly from the page (at most about 300 characters) that names both streets and
-  the treatment.
+- source_says: ONE passage copied exactly from the page (at most about 300 characters) that names both streets;
+- treatment_says: when source_says does not say what will be done there (a page that lists locations under one
+  description, e.g. "Project Locations: A St & B Ave, C St & D Ave"), the passage copied exactly from the page that
+  says what will be done at the listed locations; otherwise null.
+List every project: long pages often hold dozens, and the last ones count as much as the first.
 Leave out corridor-wide projects with no single intersection, and anything outside the city named in the task.
 Code checks every project: the passage must be on the page word for word and name both streets, and a cost must be in
 the passage. Submit every project in one submit_projects call; you will be told which were refused and why, and may
@@ -74,6 +77,8 @@ def check_project(x: dict, pages: dict[str, str]) -> str | None:
         return f"source_says does not name {', '.join(missing)}"
     if not str(x.get("treatment") or "").strip():
         return "no treatment"
+    if x.get("treatment_says") and orchestrator.quote_check(str(x["treatment_says"]), page, pages) != "verified":
+        return "treatment_says is not on the page word for word"
     return None
 
 
@@ -119,7 +124,7 @@ def extract(sources: list[str], city_name: str, client, budget_usd: float = 0.20
                 bad.append({**{k: x.get(k) for k in ("page", "intersection", "treatment")}, "why": why})
                 continue
             row = {k: x.get(k) for k in ("page", "intersection", "treatment", "status", "cost_usd", "cost_covers",
-                                         "source_says")}
+                                         "source_says", "treatment_says")}
             if row["cost_usd"] and not cost_stated(row):  # a cost the passage does not state is dropped, not guessed
                 row.update(cost_usd=None, cost_covers="not stated", cost_dropped=True)
             kept.append(row)
@@ -133,8 +138,9 @@ def extract(sources: list[str], city_name: str, client, budget_usd: float = 0.20
         "page": {"type": "string"}, "intersection": {"type": "string"}, "treatment": {"type": "string"},
         "status": {"type": "string", "enum": list(STATUS)}, "cost_usd": {"type": ["number", "null"]},
         "cost_covers": {"type": "string", "enum": ["this fix only", "a package with other work", "not stated"]},
-        "source_says": {"type": "string"}},
-        "required": ["page", "intersection", "treatment", "status", "cost_usd", "cost_covers", "source_says"],
+        "source_says": {"type": "string"}, "treatment_says": {"type": ["string", "null"]}},
+        "required": ["page", "intersection", "treatment", "status", "cost_usd", "cost_covers", "source_says",
+                     "treatment_says"],
         "additionalProperties": False}
     tool = Tool("submit_projects", "Submit every single-intersection project on the pages.",
                 {"type": "object", "properties": {"projects": {"type": "array", "items": item}},

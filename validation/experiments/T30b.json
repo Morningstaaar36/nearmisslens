@@ -1,0 +1,37 @@
+{
+ "id": "T30b",
+ "registered": "validation/BENCH_PREREG.md, T30b",
+ "what": "T30 again after its two fixes (pages read in full; a location list's projects may rest on the list item and the passage describing the work)",
+ "inputs": [
+  {
+   "id": "seattle_srts",
+   "city": "seattle",
+   "program": "sea_srts_2026",
+   "url": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school"
+  },
+  {
+   "id": "sf_contract35",
+   "city": "sf",
+   "program": "sf_contract35_signals",
+   "url": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0"
+  },
+  {
+   "id": "control_unreadable",
+   "city": "nyc",
+   "program": null,
+   "url": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "control": "a page that refuses automated readers: reported unreadable, nothing invented"
+  },
+  {
+   "id": "control_offtopic",
+   "city": "chicago",
+   "program": null,
+   "url": "https://en.wikipedia.org/wiki/Wrigley_Field",
+   "control": "a page that names an intersection but lists no safety project"
+  }
+ ],
+ "rule": {
+  "min_recall": 0.75,
+  "max_usd_per_page": 0.1
+ }
+}
