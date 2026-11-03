@@ -10,9 +10,9 @@ def fake_run(finished=True):
     seen = {}
 
     def run(task, city, client, letter_client=None, model_check_client=None, budget_usd=0.5, max_turns=22, pages=None,
-            max_reads=None, sources_name_corner=False):
+            max_reads=None, sources_name_corner=False, required_source=None):
         seen.update(task=task, city=city, pages=pages, letter=letter_client, max_reads=max_reads,
-                    corner_rule=sources_name_corner)
+                    corner_rule=sources_name_corner, required=required_source)
         final = {"summary": "Two crashes; plate ABC1234 seen.", "findings": [{"receipt": "D1", "text": "A finding."}],
                  "sources": [{"url": "input:text", "quote": "a quote", "quote_check": "verified"}]} if finished else None
         return {"finished": finished, "final": final, "stopped": "finish_tool" if finished else "max_turns", "turns": 5,
@@ -132,3 +132,29 @@ def test_the_record_date_is_stated_and_a_death_the_record_lacks_is_flagged():
     assert len(check.record_lag({**base, "letter": "The record shows 12 injury crashes and 1 death."})) == 1
     assert len(check.record_lag({**base, "status": "abstained"})) == 1
     assert "About the record's date" in check.report_md({**base, "record_notes": notes, "kind": "url", "input": "x"})
+
+
+def test_a_check_must_cite_its_own_input(fake_city, tmp_path):
+    """T25's false-claim control: the desk read "text" for "input:text", found nothing, and published a case about
+    another corner from another page. A check now must cite the input it was given."""
+    run, seen = fake_run()
+    check.check("https://example.org/story", "zz", runner=run, out_dir=tmp_path / "a")
+    assert seen["required"] == "https://example.org/story"
+    check.check("The agency says this corner had no crashes.", "zz", kind="source", runner=run, out_dir=tmp_path / "b")
+    assert seen["required"] == check.SOURCE_ID
+    check.check("A claim to find.", "zz", kind="find", runner=run, out_dir=tmp_path / "c")
+    assert seen["required"] is None  # a claim to find has no page of its own
+
+
+def test_a_mistyped_input_id_reads_the_one_text_handed_in_and_the_gate_wants_it_cited():
+    from nearmisslens import orchestrator
+    desk = orchestrator.Desk("zz")
+    desk.pages = {"input:text": "The agency said that First Street and Main Street had zero injury crashes."}
+    ts = {t.name: t for t in orchestrator.core_tools(desk, required_source="input:text")}
+    assert "zero injury crashes" in ts["read_page"].fn("text", "crashes")["text"]
+    other = ts["check_findings"].fn(summary="s", findings=[], sources=[{"url": "https://example.org/x", "quote": "q"}])
+    assert any("must cite the input it was given" in e for e in other["problems"])
+    own = ts["check_findings"].fn(summary="s", findings=[], sources=[
+        {"url": "input:text", "quote": "First Street and Main Street had zero injury crashes"}])
+    assert not any("must cite the input" in e for e in own["problems"])
+    assert orchestrator._same_url("https://www.example.org/a/", "http://example.org/a")

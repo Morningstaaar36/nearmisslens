@@ -817,3 +817,27 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - time per review;
   - a post-hoc review of each memo, done within the project and not the hand audit: is the corner the one proposed, does the verdict follow from the receipts, and does each answer address its objection.
 - **Spend:** at most $3.50 Meta; expected about $0.25 Meta and $0.15 Baseten.
+
+### T25 result (2026-11-03)
+- **Rule met.**
+  - **Real inputs:** all 10 published (the rule needed 8), each at the intersection its input names or, for a claim to find, at the intersection its found source names. The two Chicago news links, the first Chicago cases in any registered run, both published.
+  - **Quotes:** 26 of 26 published quotes verified on their page; no licence plate.
+  - **Off-topic control:** the Wikipedia page was not published.
+  - **False zero-crash statement:** not called consistent.
+  - **Cost and time:** mean $0.056 of Meta API per input ($0.67 in all); mean 458 s per input (Chicago and Seattle 10–18 min, much of it map and data servers).
+- **Post-hoc review** (within the project, not the hand audit):
+  - **The false-claim control met its rule without testing what it was put in for.**
+    - The desk was told to read the statement by its id (`input:text`) and asked for `text`. That read found nothing, so the desk searched the web and published a case about another corner (Market Street & Gough Street) from a law firm's page.
+    - Its one verdict, "differs from the record" for that page's "48 injury crashes" (the record has 60), is about that page, not the statement.
+    - The registered rule (not "consistent") was met as written. The case is still a failure of the kind TESTING.md lists: about a different intersection than its input names.
+  - **20 claim verdicts were published.**
+    - 16 are "cannot be checked" for a victim's age, a time of day or a date, which is right.
+    - 3 are "consistent" for sentences the desk wrote from the record itself (14 injury crashes and 1 death at Kilbourn & Belmont; 41% in darkness at Broadway & E Pine; 1 death at 23rd & L). These are right, but they test the record against itself, not a source.
+    - 1 is the control's "differs" above.
+    - None was found wrong, so the hypothesis (at most 1 in 10 wrong) is met, on verdicts that mostly could not be tested.
+  - **Two cases share a crash.** The DC claim to find found the same crash as the DC link (23rd & L, April 18), the most reported crash in its window. Both are kept, as registered.
+  - **One quote is about another crash.** One San Francisco source quote ("The fifth was a 46-year-old pedestrian ... at Broadway and Kearny") is on the cited page, which names the corner, but describes another crash. The corner rule checks pages, not quotes.
+- **Changes after T25** (post hoc; `nml check` only, so registered desk runs replay as before):
+  - **A check must cite its own input.** A link must be among the published sources, and a text handed in as the source (`input:text`) must be cited with a quote from it; otherwise the gate refuses.
+  - **A mistyped id resolves.** When exactly one text was handed in, a read of a non-web id ("text") reads that text.
+  - Both are tested.

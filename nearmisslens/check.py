@@ -109,7 +109,8 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
     try:
         r = run(task, c["id"], client, letter_client=letter_client if letter else None,
                 model_check_client=model_check_client, budget_usd=budget_usd, max_turns=max_turns, pages=pages,
-                max_reads=MAX_READS, sources_name_corner=True)
+                max_reads=MAX_READS, sources_name_corner=True,
+                required_source=SOURCE_ID if k == "source" else text.strip() if k == "url" else None)
     except Exception as e:  # a failed run is reported as an error, never as a published case
         return {"status": "error", "reason": f"{type(e).__name__}: {e}", "city": c["id"], "input": text, "kind": k,
                 "seconds": round(time.time() - t0, 1)}

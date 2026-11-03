@@ -197,8 +197,15 @@ def dataset_tools(city: str, desk: Desk) -> tuple[dict | None, list[Tool]]:
     return space, tools
 
 
+def _same_url(a: str, b: str) -> bool:
+    """Two spellings of one address: scheme, "www." and a trailing slash aside."""
+    n = lambda u: re.sub(r"^https?://(www\.)?", "", (u or "").strip()).rstrip("/").lower()
+    return n(a) == n(b)
+
+
 def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_client=None,
-               max_reads: int | None = None, sources_name_corner: bool = False) -> list[Tool]:
+               max_reads: int | None = None, sources_name_corner: bool = False,
+               required_source: str | None = None) -> list[Tool]:
     txt, num = {"type": "string"}, {"type": "number"}
 
     def investigate(address: str, draft_letter: bool):
@@ -256,6 +263,8 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         """The page's text exactly as the citation gate reads it: the sentences that mention `find`, else the start.
         With max_reads, the finding phase ends there: reading is capped so a case cannot spend its turns on sources."""
         desk.reads += 1
+        if not re.match(r"https?://", url or "") and url not in desk.pages and len(desk.pages) == 1:
+            url = next(iter(desk.pages))  # a mistyped id ("text" for "input:text"): the one record handed in
         if max_reads is not None and desk.reads > max_reads:
             return {"error": f"{max_reads} pages read already: investigate the intersection the best source names, "
                              "check its numbers and finish with what you have read"}
@@ -337,6 +346,10 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 errors.append(f"source {k}: the page at {s.get('url')} does not name {desk.report['junction']['name']}; "
                               "a quote on its page is not about this corner: cite a page that names it, or leave it out")
             checked.append({**s, "quote_check": state})
+        if required_source and not any(_same_url(c.get("url", ""), required_source) and c["quote_check"] != "absent"
+                                       for c in checked):
+            errors.append(f"the case must cite the input it was given ({required_source}) with an exact quote from it: "
+                          "a check is about its own input, not another page")
         errors += [f"summary: {e}" for e in engineer.wording(summary)]
         texts = [summary] + [f.get("text", "") for f in findings] + [s.get("quote", "") for s in sources]
         if any(has_plate(t) for t in texts):
@@ -723,14 +736,14 @@ def _places(desk: Desk):
 
 def run_case(task: str, city: str, client, letter_client=None, model_check_client=None, budget_usd: float = 0.50,
              max_turns: int = 22, pages: dict | None = None, max_reads: int | None = None,
-             sources_name_corner: bool = False) -> dict:
+             sources_name_corner: bool = False, required_source: str | None = None) -> dict:
     desk = Desk(city)
     desk.pages.update(pages or {})
     desk.final = None
     space, ds_tools = dataset_tools(city, desk)
     server = [{"type": "web_search"}] + ([space, {"type": "tool_search"}] if space else [])
     t0 = time.time()
-    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads, sources_name_corner) + ds_tools,
+    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads, sources_name_corner, required_source) + ds_tools,
                     max_turns, budget_usd, effort="low", tag=f"desk {task[:40]}", escalate_after=3,
                     required=("investigate",), governor=True, server_tools=server,
                     include=("web_search_call.results",), on_response=desk.collect)
