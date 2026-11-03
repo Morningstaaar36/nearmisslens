@@ -312,7 +312,8 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
         light = _text(r, a.get("light_fields", []))
         surface = _text(r, a.get("surface_fields", []))
         dark += "dark" in light
-        dark_lit += "dark" in light and ("lights on" in light or "lighted" in light) and "not" not in light
+        dark_lit += "dark" in light and (("lights on" in light or "lighted" in light) and "not" not in light
+                                         or light.strip() in a.get("lit_values", []))  # the dataset's own word for lit
         wet += any(w in surface for w in ("wet", "ice", "snow", "slush"))
         for f in a.get("factor_fields", []):
             v = str(r.get(f) or "").strip()

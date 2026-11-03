@@ -35,6 +35,12 @@
 "name": "West Lake Street & North Franklin Street",
 "city": "chicago"
 },
+"dc|14th street northeast & tennessee avenue northeast": {
+"lat": 38.8954895,
+"lon": -76.9855061,
+"name": "14th Street Northeast & Tennessee Avenue Northeast",
+"city": "dc"
+},
 "dc|14th street northwest & u street northwest": {
 "lat": 38.917008,
 "lon": -77.031859,
@@ -2181,6 +2187,12 @@
 "lat": 37.7509762,
 "lon": -122.412862,
 "name": "25th Street & Treat Avenue",
+"city": "sf"
+},
+"sf|40th avenue & fulton street": {
+"lat": 37.7718408,
+"lon": -122.5002761,
+"name": "Fulton Street & 40th Avenue",
 "city": "sf"
 },
 "sf|4th street & channel street": {

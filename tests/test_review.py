@@ -277,3 +277,22 @@ def test_a_control_the_map_contradicts_is_confirmed_on_site_and_estimated_as_pro
     assert seen == ["Uncontrolled"] and a["verdict"] == "proceed_after_site_check"
     assert a["parts"][0]["control_check"]["mapped"] == "signal" and "confirm the control on site" in a["reasons"][0]
     assert review.implied_control("Lighting") is None and review.implied_control("Leading Pedestrian Interval") == "Signalized"
+
+
+def test_a_kept_objection_submitted_again_is_not_counted_as_dropped(monkeypatch):
+    """Independent test round 2: the red team resubmits its kept objections with the replacements, and the memo
+    counted them as dropped."""
+    rv = _review_with_receipts()
+    keep = {"objection": "Backplates would do more", "receipt": "D3",
+            "field": "best_alternative.injury_crashes_avoided_per_year", "value": "1.6"}
+
+    def fake_run_agent(client, model, inst, task, tools, *a, **k):
+        tools[0].fn(objections=[keep])
+        out = tools[0].fn(objections=[keep])
+        assert out["kept"] == 1 and out["dropped"] == 0
+
+        class R:
+            usd, stopped = 0.004, "finished"
+        return R()
+    monkeypatch.setattr(review, "run_agent", fake_run_agent)
+    assert review.red_team(rv, FakeOpen())["dropped"] == []

@@ -332,6 +332,8 @@ def red_team(rv: Review, open_client) -> dict:
             field = str(o.get("field") or "")
             v = get_path(d, field) if d is not None else None
             seen = any(k["receipt"] == o.get("receipt") and k["field"] == field for k in kept)
+            if seen and any(k["objection"] == o.get("objection") for k in kept):
+                continue  # the same objection submitted again with its replacements: already kept, not dropped
             if RESTATES.search(field):
                 why = "it rests on the verdict or its reasons, which only restates the decision"
             elif seen:
@@ -559,17 +561,19 @@ def review(text: str, city: str, client=None, letter_client=None, open_client=No
                       "error": (s.result or {}).get("error") if isinstance(s.result, dict) else None,
                       "errors": (s.result or {}).get("errors") if isinstance(s.result, dict) else None}
                      for s in run.steps]}
-    save(out, out_dir)
+    save(out, out_dir, {rid: {"tool": r["tool"], "data": r["data"]} for rid, r in rv.desk.receipts.items()})
     return out
 
 
-def save(out: dict, out_dir: Path | None = None) -> Path:
+def save(out: dict, out_dir: Path | None = None, receipts: dict | None = None) -> Path:
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%S")
     slug = re.sub(r"[^a-z0-9]+", "_", (out.get("corner") or out.get("input") or "").lower()).strip("_")[:40] or "review"
     d = out_dir or SETTINGS.runs_dir / "reviews" / f"{stamp}_{slug}"
     d.mkdir(parents=True, exist_ok=True)
     (d / "result.json").write_text(portable(json.dumps(out, indent=1, default=str)))
     (d / "memo.md").write_text(memo_md(out))
+    if receipts:  # the data behind every receipt id the memo cites, so a number can be checked without a rerun
+        (d / "receipts.json").write_text(orchestrator.redact(portable(json.dumps(receipts, indent=1, default=str))))
     out["saved"] = portable(str(d))
     return d
 

@@ -138,7 +138,7 @@ def condition_errors(text: str, facts: dict) -> list[str]:
     conds = [c.strip() for fx in (facts.get("fixes") or []) + [facts.get("measured_in_this_city") or {}]
              for c in (fx.get("needs_site_check_for") or "").split(";") if c.strip()]
     errors = []
-    for sent in re.split(r"(?<=[.!?])\s+", text):
+    for sent in re.split(r"(?<=[.!?;])\s+", text):  # a clause after ";" stands alone: its own hedge or none
         low = sent.lower()
         for c in conds:
             words = [w for w in re.findall(r"[a-z]{4,}", c.lower())]

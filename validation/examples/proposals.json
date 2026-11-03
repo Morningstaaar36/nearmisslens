@@ -190,7 +190,8 @@
    "source_kind": "agency plan",
    "source_date": "2026",
    "split": "independent2",
-   "asof": "2026-10-31"
+   "asof": "2026-10-31",
+   "test_set_note": "Independent test round 2: the source's side islands, beacons and crosswalk upgrades are for the whole Fulton Street project, not all at 40th Avenue."
   },
   {
    "id": "chicago_9b7df7",
@@ -210,7 +211,8 @@
    "source_kind": "neighborhood commission minutes reporting DDOT's decision",
    "source_date": "2025-02",
    "split": "independent2",
-   "asof": "2026-10-31"
+   "asof": "2026-10-31",
+   "test_set_note": "Independent test round 2: the minutes give the curb extensions to 13th & F St NE, not 14th St NE & Tennessee Ave NE; this row misreads its source."
   },
   {
    "id": "nyc_9df0ad",
@@ -220,7 +222,8 @@
    "source_kind": "agency plan",
    "source_date": "undated",
    "split": "independent2",
-   "asof": "2026-10-31"
+   "asof": "2026-10-31",
+   "test_set_note": "Independent test round 2: the source link returned 404 on 2026-11-03."
   }
  ]
 }

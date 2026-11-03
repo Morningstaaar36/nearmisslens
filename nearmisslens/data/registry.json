@@ -716,6 +716,17 @@
    "crash_type_fields": [
     "dph_col_grp_description"
    ],
+   "factor_fields": ["vz_pcf_description"],
+   "light_fields": ["lighting"],
+   "lit_values": ["dark - street lights"],
+   "surface_fields": ["road_surface"],
+   "time_field": "collision_time",
+   "street_fields": ["primary_rd", "secondary_rd"],
+   "factor_conditions": {
+    "red signal - driver or bicyclist responsibilities": "an entry on yellow or red",
+    "violation of right-of-way - left turn": "a turning movement",
+    "unsafe turn or lane change prohibited": "a turning movement"
+   },
    "provenance": {
     "found_by": "research R15 (agent), adapter written by hand"
    }

@@ -311,7 +311,9 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         desk.claim_checks += 1
         if desk.claim_checks > MAX_CLAIM_CHECKS:
             return {"error": f"{MAX_CLAIM_CHECKS} claims checked already: write the findings and run check_findings"}
-        verdict, reasons, flags = claim_verdict(text, d["data"], _places(desk), model_check_client)
+        verdict, reasons, flags = claim_verdict(text, d["data"], _places(desk), model_check_client,
+                                                corner=((desk.report or {}).get("junction") or {}).get("name"),
+                                                city=opendata.city(desk.city) if desk.city else None)
         asof = (desk.report or {}).get("asof")
         frame = (f"the record counts police-reported crashes within {context.CRASH_RADIUS_M:g} m of this corner over "
                  f"{context.YEARS} years to {asof or 'its as-of date'}; a source counting another area or period can differ")
@@ -675,7 +677,39 @@ def checked_numbers(fc: context.FactCheck, text: str) -> list[str]:
     return out
 
 
-def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list[str], list[str]]:
+MONTH = r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
+SHORT_PERIOD = re.compile(r"\b(?:(?:so far )?this (?:year|month|week)|last (?:year|month|week)|year to date|"
+                          r"in (?:19|20)\d\d|(?:through|since|in|by) " + MONTH + r")\b", re.I)
+WIDER_AREA = re.compile(r"\b(?:city-?wide|borough-?wide|state-?wide|nation-?wide|county-?wide|across the (?:city|"
+                        r"borough|state|country|nation)|in the (?:city|borough|state|country|nation)|"
+                        r"(?:the )?(?:city|borough|state|country|nation)'s)\b", re.I)
+
+
+def other_scope(text: str, corner: str | None, city: dict | None) -> str | None:
+    """Why a sentence counts another area or period than the record (100 m around one corner, five years), or None:
+    a city or borough named, a city-wide word, one of the corner's streets alone (a corridor), or a year, a month or
+    "this year". A sentence that names both of the corner's streets is about the corner, whatever else it names."""
+    streets = [x for x in re.split(r"\s*&\s*", (corner or "").split(",")[0]) if x.strip()]
+    named = [x for x in streets if names_corner(text, x)]
+    if streets and len(named) == len(streets):
+        area = None
+    elif len(named) == 1 and len(streets) > 1:
+        area = f"the whole of {named[0]}"
+    else:
+        own = [n for n in ({(city or {}).get("name"), (city or {}).get("short_name"), *((city or {}).get("aliases")
+                                                                                       or [])} - {None, ""})]
+        hit = next((n for n in own if re.search(r"(?<![A-Za-z])" + re.escape(n) + r"(?![A-Za-z])", text)), None)
+        area = hit or (WIDER_AREA.search(text).group(0) if WIDER_AREA.search(text) else None)
+    period = SHORT_PERIOD.search(text) or OTHER_PERIOD.search(text)
+    if area:
+        return f"the sentence counts {area}, a wider area than the record's {context.CRASH_RADIUS_M:g} m around this corner"
+    if period:
+        return f"the sentence counts another period ({period.group(0)}) than the record's {context.YEARS} years"
+    return None
+
+
+def claim_verdict(text: str, data: dict, places, client=None, corner: str | None = None,
+                  city: dict | None = None) -> tuple[str, list[str], list[str]]:
     """A source's sentence against a receipt, decided by the number checker: 'differs' only when the record has a
     different value for what the sentence names (the source may count another window or area: the verdict says so,
     never "false"); 'cannot be checked' when the record has nothing on it (a victim's age, a corridor-wide total, a
@@ -690,6 +724,9 @@ def claim_verdict(text: str, data: dict, places, client=None) -> tuple[str, list
     errs = claim_errors(fc, t)
     flags = [] if errs else engineer.model_read_errors(text, data, client)
     if any(c in e for e in errs for c in DIFFERS):
+        scope = other_scope(text, corner, city)
+        if scope:  # a city's or a borough's total, or this year's, is not the corner's five-year count
+            return "cannot be checked against this record", ([scope] + errs + overstated)[:6], flags
         return "differs from the record", (errs + overstated)[:6], flags
     if errs:
         return "cannot be checked against this record", (errs + overstated)[:6], flags

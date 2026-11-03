@@ -94,7 +94,7 @@ What happens:
 3. Muse Spark Open (Baseten) red-teams the decision. It is shown every value in the receipts and must rest each objection on one of them; code keeps an objection only if that fact is in the receipt, drops one that rests on the verdict itself, and lets the red team replace dropped ones once. Dropped objections are saved with the reason.
 4. Muse Spark writes the memo, and the gate holds it to the code's verdict, the receipts' numbers and an answer to every kept objection.
 
-The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`. A review cost about $0.03 Meta plus $0.02 Muse Spark Open in development.
+The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`, with `result.json` and `receipts.json` (the data behind every receipt id the memo cites). A review cost about $0.03 Meta plus $0.02 Muse Spark Open in development.
 
 **The real proposals** in `validation/examples/proposals.json` come from agency plans, neighborhood commission resolutions, a community board letter, a petition and a news report. They are split by a fixed hash within each city:
 - `registered`: run by the project as T26;

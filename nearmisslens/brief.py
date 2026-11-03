@@ -383,11 +383,12 @@ def _conditions(d: dict, min_share: float = 0.05) -> frozenset[str]:
 def site_control(d: dict) -> str:
     """The junction's traffic control from the street layout (OpenStreetMap), or 'unknown'."""
     street = d.get("street") or {}
-    if street.get("signals", 0) > 0:
+    near = street.get("signals_at_junction")
+    if street.get("signals", 0) > 0 and near != 0:  # 0: the signals mapped nearby belong to another crossing
         return "Signalized"
     if "error" not in street and street.get("stop_signs", 0) > 0:
         return "Stop-controlled"
-    if "error" not in street and street.get("roads") and not street.get("signals"):
+    if "error" not in street and street.get("roads") and (not street.get("signals") or near == 0):
         return "Uncontrolled"
     return "unknown"
 

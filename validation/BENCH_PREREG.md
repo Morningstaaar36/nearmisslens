@@ -924,12 +924,28 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 ### T28 result (2026-11-03)
 - **Rule met.**
   - 7 of 7 memos published, 7 of 7 about the intersection proposed, every verdict the code's, the red team on all 7.
-  - **Every memo has at least 3 kept objections** (7 of 7; T27: 4 of 7 memos had any). 32 objections kept in all (T27: 13), none resting on the verdict itself; 12 more were dropped by code, all as a second objection on a fact already used.
+  - **Every memo has at least 3 kept objections** (7 of 7; T27: 4 of 7 memos had any). 32 objections kept in all (T27: 13), none resting on the verdict itself. The memos say 12 more were dropped; the second independent test found these were the kept objections submitted again with the replacements, counted as dropped by mistake (fixed after; the saved T28 results are left as run).
   - Mean $0.084 a review (T27: $0.068; the red team's second round costs about $0.01), $0.59 in all; mean 78 s.
 - **Verdicts:** the same as T27 on all 7 proposals (the appraisal code did not change).
 - **Post-hoc review** (ours, after the run):
   - Most objections now argue against the verdict with a fact the memo must face: the Chicago island's "proceed" is challenged by the cheaper beacon that avoids more (0.28 against 0.19 a year) and by the inferred road owner; the Seattle beacons' "proceed after a site check" by the mapped signal and the parked-car crash pattern; the San Francisco "reconsider" by the small sample (1 injury crash in five years).
   - Some are weak: "the cost is not stated" is offered as an objection three times, and two "reconsider" objections only say that harm remains. The fact check keeps them because their facts are right; it cannot tell a strong objection from a weak one.
+
+## Independent test, round 2 (2026-11-03 evening; post hoc, not registered)
+- **Who and what:** a new tester agent that had read only TESTING.md (told not to read the README, BENCH files or the earlier reports) ran the 8 `independent2` inputs live at commit fb63ee4: 3 checks and proposals 18–22. Its report is kept as written: `validation/independent/independent_test_round2_2026-11-03.md`. Cost $0.49.
+- **Before the fix:** the first round-2 tester (stopped by a rate limit) ran only the suburb trap, which then published a Chicago case for a River Forest project (see the T28 changes).
+- **Result:** 4 PASS, 2 PARTIAL, 2 FAIL.
+  - **Held up:** every case and memo was about the right corner (one page named seven intersections); the suburb guard refused River Forest as a check and as a review and blocked three attempts to switch to the Chicago corner with the same street names; all 6 quotes were on their pages; crash counts matched the tester's own queries of DataSF and NYC Open Data; every dollar figure recomputed; every proposal part was registered; no names or plates.
+  - **The two FAILs** were the same fault: a city-wide or borough-wide count for one year ("nine pedestrians killed in San Francisco in 2026"; Brooklyn's 228 injured through June) was tested against the corner's five-year record and called "differs from the record". TESTING.md says such a claim cannot be checked.
+  - **PARTIAL:** at Monterey & Acadia a signal at the next crossing (70–100 m) made the uncontrolled crossing "signalized", and the memo and letter asked for signal fixes there; letters stated a signal-timing condition as fact after a semicolon; at Fulton & 40th the red team agreed with the verdict.
+  - **Also found:** San Francisco's crash adapter left out the lighting, primary collision factor, time and road surface DataSF records, so the receipts said the record lacks them; the memo counted resubmitted objections as dropped; reviews saved no receipt data; three test-set rows have faults (noted in `proposals.json` as `test_set_note`).
+- **Fixed after (each with a test):**
+  - **Claim scope:** a claim that would "differ" is "cannot be checked" when it counts a wider area than the corner (the city or a borough named, a city-wide word, one of the corner's streets alone) or another period (a year, a month, "this year"). A sentence naming both of the corner's streets is still tested.
+  - **Signal control:** a signal counts as the junction's own only within 45 m (a second small map query, or the OpenStreetMap API's map when Overpass is down). Monterey & Acadia now reads as uncontrolled and Mission & 16th as signalized. Saved runs replay unchanged.
+  - **Letters:** each clause after a semicolon needs its own hedge for a site condition.
+  - **San Francisco's crash data:** the lighting, primary collision factor, time, road surface and street fields are mapped in the registry, and a dataset's own word for "dark, street lights on" (`lit_values`) counts as lit. At Mission & 16th: 13 crashes after dark, all coded with street lights on, so lighting is not proposed there.
+  - **Red team:** a kept objection submitted again is not counted as dropped. Reviews save `receipts.json`.
+- **Not fixed:** the red team can still agree with the verdict (Fulton & 40th); letters for a review do not name the proposal they are the work order for.
 
 ## T29 Program review on real program lists (registered 2026-11-03 evening, before any T29 review)
 - **What:** `nml portfolio`. An agency's list of proposed intersection projects goes in; each proposal is reviewed by Before you commit (Muse Spark investigates, code sets the verdict, Muse Spark Open argues against it); code groups the list (build, build after a site check, compare first, decide part by part, not covered by the evidence, reconsider, not reviewed) and ranks each group by injury crashes avoided per dollar, then per year. No model sees the whole list.

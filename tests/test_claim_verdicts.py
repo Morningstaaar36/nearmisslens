@@ -85,3 +85,25 @@ def test_collisions_are_crashes_and_other_periods_are_not_the_record(verdict):
     assert verdict("56 injury collisions occurred at this intersection.") == "consistent with the record"
     assert verdict("Over the last three years, there have been 56 injury collisions.") == "cannot be checked against this record"
     assert verdict("There were 25 total traffic fatalities last year.") == "cannot be checked against this record"
+
+
+CITY = {"id": "zz", "name": "Zedburg", "short_name": "Zedburg", "aliases": ["Northboro", "Zed"]}
+CORNER = "Main Street & 16th Street, Zedburg"
+
+
+@pytest.mark.parametrize("text, want", [
+    # independent test round 2: a city's, a borough's or this year's total is not the corner's five-year count
+    ("There have now been nine pedestrians killed in Zedburg in 2026.", "cannot be checked against this record"),
+    ("A total of 228 pedestrians were hurt through June, and two were killed.", "cannot be checked against this record"),
+    ("Northboro had the second-highest total, with 157 injured and three killed.", "cannot be checked against this record"),
+    ("Sixty injury crashes were reported on Main Street.", "cannot be checked against this record"),
+    ("Citywide, 60 injury crashes were reported.", "cannot be checked against this record"),
+    # the corner itself, whatever else the sentence names, is still tested
+    ("Main Street & 16th Street in Zedburg had 60 injury crashes in five years.", "differs from the record"),
+    ("Main Street & 16th Street in Zedburg had 56 injury crashes in five years.", "consistent with the record"),
+    ("60 injury crashes were reported near the corner.", "differs from the record"),
+])
+def test_a_wider_area_or_another_period_is_not_called_different(text, want):
+    desk = O.Desk("zz")
+    desk.places.add(CORNER.split(",")[0])  # as in a case: the corner investigated is a known place
+    assert O.claim_verdict(text, DATA, O._places(desk), None, corner=CORNER, city=CITY)[0] == want

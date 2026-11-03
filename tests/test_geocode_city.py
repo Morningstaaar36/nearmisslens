@@ -196,6 +196,9 @@ def test_letters_say_only_what_is_checked():
     bad = "The current yellow plus all-red here is shorter than ITE practice."
     good = "Please check on site whether the current yellow plus all-red is shorter than ITE practice."
     assert letter.condition_errors(bad, facts) and not letter.condition_errors(good, facts)
+    # independent test round 2: the hedge of one clause does not cover the next one
+    joined = "This needs a site check for an entry on yellow or red; the current yellow plus all-red is shorter than ITE practice."
+    assert letter.condition_errors(joined, facts)
 
 
 def test_a_town_inside_a_citys_box_is_not_the_city(monkeypatch):

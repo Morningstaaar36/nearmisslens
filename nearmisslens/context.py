@@ -163,6 +163,26 @@ def _osm_from_map(lat: float, lon: float) -> tuple[list[dict], list[dict], float
     return nodes, ways, round(time.time() - t, 2)
 
 
+JUNCTION_SIGNAL_M = 45  # a signal this close is the junction's own; one 70-100 m off belongs to the next crossing
+
+
+def signals_at_junction(lat: float, lon: float) -> int | None:
+    """Traffic signals mapped within JUNCTION_SIGNAL_M of the junction, or None when it cannot be asked (a replay
+    without this request cached, or the map servers down): then the 80 m count stands, as before."""
+    q = f"[out:json][timeout:25];node(around:{JUNCTION_SIGNAL_M},{lat},{lon})[highway=traffic_signals];out ids;"
+    try:
+        js, _ = overpass(q, timeout=25)
+        return len(js.get("elements", []))
+    except (RuntimeError, FileNotFoundError):
+        pass
+    try:  # the OSM API's map of the junction (cached for the street layout already), with each node's position
+        return sum(1 for e in osm_map(lat, lon, 200) if e.get("type") == "node"
+                   and (e.get("tags") or {}).get("highway") == "traffic_signals"
+                   and metres(lat, lon, e["lat"], e["lon"]) <= JUNCTION_SIGNAL_M)
+    except (RuntimeError, FileNotFoundError):
+        return None
+
+
 def osm(lat: float, lon: float) -> dict:
     q = (f"[out:json][timeout:60];("
          f"node(around:{OSM_RADIUS_M},{lat},{lon})[highway~\"traffic_signals|crossing|stop|give_way\"];"
@@ -188,7 +208,8 @@ def osm(lat: float, lon: float) -> dict:
             r["lanes"].add(w["lanes"])
         if w.get("maxspeed"):
             r["maxspeed"].add(w["maxspeed"])
-    return {"seconds": secs, "signals": sum(n.get("highway") == "traffic_signals" for n in nodes),
+    signals = sum(n.get("highway") == "traffic_signals" for n in nodes)
+    return {"seconds": secs, "signals": signals, "signals_at_junction": signals_at_junction(lat, lon) if signals else 0,
             "crossings": sum(n.get("highway") == "crossing" for n in nodes),
             "marked_crossings": sum(n.get("highway") == "crossing" and n.get("crossing") in
                                     ("marked", "traffic_signals", "zebra", "uncontrolled") for n in nodes),
