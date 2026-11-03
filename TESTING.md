@@ -91,7 +91,7 @@ What happens:
    - **decide part by part** (a proposal with several parts, such as an interval and a turn phase, whose parts get different verdicts; each part's verdict is listed).
 
    A device built for another control than the map shows (a beacon where a signal is mapped within 80 m) is estimated as the proposal describes the site, with the control to be confirmed on site. A stated cost is compared with a fix's benefit only when it pays for that fix alone.
-3. Muse Spark Open (Baseten) red-teams the decision. Code keeps an objection only if the fact it cites is in a receipt.
+3. Muse Spark Open (Baseten) red-teams the decision. It is shown every value in the receipts and must rest each objection on one of them; code keeps an objection only if that fact is in the receipt, drops one that rests on the verdict itself, and lets the red team replace dropped ones once. Dropped objections are saved with the reason.
 4. Muse Spark writes the memo, and the gate holds it to the code's verdict, the receipts' numbers and an answer to every kept objection.
 
 The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`. A review cost about $0.03 Meta plus $0.02 Muse Spark Open in development.
@@ -106,3 +106,20 @@ The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`. A review 
 Each check also saves `receipts.json`: the data behind every receipt id a finding cites, so a number can be checked without rerunning.
 
 **What counts as a failure here:** the memo is about a different corner than proposed; a part of the proposal is dropped; a number is not in the receipt it cites; an answer does not address its objection; or the verdict's reason is wrong given the receipts (for example "reconsider: no target crashes" where the record shows them). A town inside a city's bounding box (a suburb) must be refused, not reviewed against the city's records.
+
+## A whole list: program review
+
+For a directorate with a list of proposed projects (a capital program, a Safe Routes to School list, a council's requests):
+
+```bash
+uv run nml portfolio list.txt --city CITY_ID                       # one proposal per line
+uv run nml portfolio list.csv --city CITY_ID --budget-total 500000  # a CSV with a "text" column and, optionally, "cost_usd"
+uv run nml portfolio --example ID                                   # a real list from validation/examples/programs.json
+```
+
+Each proposal is reviewed as above (three at a time). Then code, not a model, groups the list (build; build after a site check; compare first; decide part by part; not covered by the evidence; reconsider; not reviewed) and ranks each group by injury crashes avoided per dollar, then per year. With `--budget-total`, it lists the supported projects that fit, best value first, and the supported ones with no cost to rank. The program is saved as `runs/programs/<time>_<city>/program.md` and `program.json`, beside every proposal's review; an interrupted program resumes from that folder (`--out`) without paying twice. The web page takes 2 to 4 proposals at a time.
+
+The real lists in `validation/examples/programs.json` come from the agencies' own pages, each project with the source's sentence: `registered` lists were run by the project as T29; the `held_out` list (DDOT notices of intent) was never run by the project before review.
+
+**What counts as a failure in a program:** a proposal in the wrong group for its memo's verdict; a supported project missing from the total; a proposal reviewed at another corner; or a ranking that does not follow the numbers in the table.
+

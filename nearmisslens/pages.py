@@ -149,6 +149,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     desk_page(root)
     checks_page(root)
     reviews_page(root)
+    programs_page(root)
     (docs / "index.html").write_text(page("static", live))
     for name in ("copilot.js", "copilot.css"):
         shutil.copyfile(WEB / name, docs / name)
@@ -233,7 +234,7 @@ def reviews_page(root: Path) -> None:
     from .evaluate import RESULTS_DIR
     from .orchestrator import redact
     from . import review
-    run = next((r for r in ("T27", "T26") if (RESULTS_DIR / "bench" / f"experiment_{r}.json").exists()), None)
+    run = next((r for r in ("T28", "T27", "T26") if (RESULTS_DIR / "bench" / f"experiment_{r}.json").exists()), None)
     if run is None:  # the latest registered review run
         return
     res = json.loads((RESULTS_DIR / "bench" / f"experiment_{run}.json").read_text())
@@ -245,6 +246,30 @@ def reviews_page(root: Path) -> None:
             "cases": [{k: c.get(k) for k in keep} for c in res["cases"]],
             "try": [{k: r[k] for k in ("id", "city", "proposal", "source", "split")} for r in rows if r["split"] != "registered"]}
     (root / "reviews.json").write_text(redact(json.dumps(blob, default=str)))
+
+
+def programs_page(root: Path) -> None:
+    """The registered program run (T29) for the site: each real program list, grouped and ranked by code, with the
+    rule as measured."""
+    from .evaluate import RESULTS_DIR
+    from .orchestrator import redact
+    from . import opendata, portfolio
+    path = RESULTS_DIR / "bench" / "experiment_T29.json"
+    if not path.exists():
+        return
+    res = json.loads(path.read_text())
+    sp = json.loads((ROOT / "validation" / "experiments" / "T29.json").read_text())
+    s = portfolio.run_summary(res, sp)
+    names = {c["id"]: c["name"] for c in opendata.load_cities()}
+    blob = {"run": "T29", "registered": sp["registered"], "summary": s,
+            "note": f"Registered in {sp['registered']}. {s['reviewed']} of {s['proposals']} proposals reviewed, "
+                    f"{s['on_proposed_corner']} on the corner proposed; code's program reproduced from the saved "
+                    f"reviews: {'yes' if s['ranking_reproduced'] else 'no'}; mean ${s['mean_usd']:.3f} a proposal. "
+                    f"Rule {'met' if s['rule_met'] else 'not met'}.",
+            "programs": [{"id": p["id"], "city": p["city"], "city_name": names.get(p["city"], p["city"]),
+                          "agency": p.get("agency"), "title": p["title"], "source": p["source"], **p["program"]}
+                         for p in res["programs"]]}
+    (root / "programs.json").write_text(redact(json.dumps(blob, default=str)))
 
 
 def published_verdict(text: str) -> str | None:

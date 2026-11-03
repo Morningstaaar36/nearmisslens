@@ -41,7 +41,7 @@ ENGINEER_WAIT_S = 20.0  # answer in the request when it is quick; otherwise the 
 ENGINEER_SLOTS = 3  # new corners investigated at once (no model; public map and data servers set the pace)
 CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one desk case's Meta cap, reserved first
 PROGRAM_ITEMS = int(os.environ.get("NML_PROGRAM_ITEMS", "4"))  # proposals in one program review on the server
-PROGRAM_REVIEW_USD = 0.30  # each proposal's Meta cap within a program (a review costs about $0.04)
+PROGRAM_REVIEW_USD = 0.20  # each proposal's Meta cap within a program (a review costs about $0.04); 4 reserve $1.00
 
 
 class BadRequest(ValueError):

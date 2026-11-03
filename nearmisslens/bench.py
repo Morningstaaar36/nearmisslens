@@ -703,7 +703,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27")
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27") + _t26_section("T28") + _t29_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1294,7 +1294,12 @@ def _t26_section(run: str = "T26") -> list[str]:
          f"| at least {sp['rule']['min_published']} of {s['inputs']} memos published | {s['published']} | {yes(s['met']['published'])} |",
          f"| every published verdict is the code's | {'yes' if s['verdict_is_codes'] else 'no'} | {yes(s['met']['verdict_is_codes'])} |",
          f"| the red team ran on every published memo | {s['red_team_ran']} of {s['published']} | {yes(s['met']['red_team_on_every_memo'])} |",
-         f"| mean cost at most ${sp['rule']['max_mean_usd']:.2f} (Meta + Muse Spark Open) | ${s['mean_usd']:.3f} | {yes(s['met']['cost'])} |", "",
+         f"| mean cost at most ${sp['rule']['max_mean_usd']:.2f} (Meta + Muse Spark Open) | ${s['mean_usd']:.3f} | {yes(s['met']['cost'])} |",
+         *([f"| every published memo about the intersection proposed | {s['on_proposed_corner']} of {s['published']} | {yes(s['met']['on_proposed_corner'])} |"]
+           if "on_proposed_corner" in s["met"] else []),
+         *([f"| at least 3 kept objections on {sp['rule']['min_memos_with_3_objections']} memos, none on the verdict itself | "
+            f"{s['memos_with_3_objections']} memos; {s['objections_on_the_verdict']} on the verdict | {yes(s['met']['objections'])} |"]
+           if "objections" in s["met"] else []), "",
          f"**Rule: {'met' if s['rule_met'] else 'not met'}.** {s['objections_kept']} objections kept after their facts "
          f"were checked; mean {s['mean_seconds']:.0f} s per review; {s['on_proposed_corner']} of {s['published']} memos "
          f"about the intersection proposed. The post-hoc review is under \"{run} result\" in BENCH_PREREG.md.", "",
@@ -1302,6 +1307,35 @@ def _t26_section(run: str = "T26") -> list[str]:
     for c in r["cases"]:
         usd = sum(float(v or 0) for v in (c.get("cost_usd") or {}).values())
         L.append(f"| {(c.get('input') or '')[:90]} | {c.get('city')} | {c.get('verdict')} | {c.get('corner') or ''} | {usd:.3f} |")
+    return L + [""]
+
+
+def _t29_section() -> list[str]:
+    """T29: program review (nml portfolio) on real program lists."""
+    r = _load("experiment_T29.json")
+    if not r:
+        return []
+    from .portfolio import GROUPS, run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T29.json").read_text())
+    s = run_summary(r, sp)
+    yes = lambda b: "met" if b else "not met"
+    L = ["## T29 Program review: `nml portfolio` on real program lists", "",
+         f"Registered in BENCH_PREREG.md (T29). {s['programs']} program lists from the agencies' own pages "
+         "(`validation/examples/programs.json`, split `registered`); every proposal reviewed by Before you commit, then "
+         "grouped and ranked by code.", "",
+         "| Rule | Measured | |", "|---|---|---|",
+         f"| at least {sp['rule']['min_reviewed_share']:.0%} of the {s['proposals']} proposals reviewed | {s['reviewed']} | {yes(s['met']['reviewed'])} |",
+         f"| every published memo about the intersection proposed | {s['on_proposed_corner']} of {s['reviewed']} | {yes(s['met']['on_proposed_corner'])} |",
+         f"| code's program reproduced from the saved reviews | {'yes' if s['ranking_reproduced'] else 'no'} | {yes(s['met']['ranking_reproduced'])} |",
+         f"| mean cost at most ${sp['rule']['max_mean_usd']:.2f} a proposal | ${s['mean_usd']:.3f} | {yes(s['met']['cost'])} |", "",
+         f"**Rule: {'met' if s['rule_met'] else 'not met'}.** ${s['total_usd']:.2f} in all; {s['objections_kept']} red-team "
+         "objections kept after their facts were checked.", "",
+         "| Program | Proposals | " + " | ".join(label.split(":")[0] for _, label, _ in GROUPS) + " | Not reviewed |",
+         "|---|---|" + "---|" * len(GROUPS) + "---|"]
+    for p in r["programs"]:
+        t = p["program"]["totals"]
+        L.append(f"| {p['title'][:70]} ({p['city']}) | {t['proposals']} | " + " | ".join(str(t[g]) for g, _, _ in GROUPS)
+                 + f" | {t['not_reviewed']} |")
     return L + [""]
 
 
