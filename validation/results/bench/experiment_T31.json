@@ -1,0 +1,155 @@
+{
+ "id": "T31",
+ "tool": [
+  {
+   "city": "dc",
+   "corner": "Stanton Road Southeast & Sheridan Road Southeast",
+   "lat": 38.853485,
+   "lon": -76.983407,
+   "tool_injury_crashes": 38,
+   "circle_injury_crashes": 51,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 229,
+    "kept": 173,
+    "left_out_elsewhere": 56,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "dc",
+   "corner": "Pennsylvania Avenue Southeast & L'Enfant Square Southeast",
+   "lat": 38.8739324,
+   "lon": -76.971409,
+   "tool_injury_crashes": 62,
+   "circle_injury_crashes": 97,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 321,
+    "kept": 176,
+    "left_out_elsewhere": 145,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "Cross Bay Boulevard & Woodhaven Boulevard",
+   "lat": 40.6807003276581,
+   "lon": -73.8446446578818,
+   "tool_injury_crashes": 5,
+   "circle_injury_crashes": 41,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 76,
+    "kept": 13,
+    "left_out_elsewhere": 63,
+    "not_placed": 9
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "Glenwood Road & Ralph Avenue",
+   "lat": 40.6344827186588,
+   "lon": -73.9188516450105,
+   "tool_injury_crashes": 21,
+   "circle_injury_crashes": 21,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 42,
+    "kept": 42,
+    "left_out_elsewhere": 0,
+    "not_placed": 10
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "Elliott Avenue West & West Harrison Street",
+   "lat": 47.6221257,
+   "lon": -122.3626669,
+   "tool_injury_crashes": 19,
+   "circle_injury_crashes": 41,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 87,
+    "kept": 32,
+    "left_out_elsewhere": 55,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "Rainier Avenue South & 25th Avenue South",
+   "lat": 47.5815591,
+   "lon": -122.3005549,
+   "tool_injury_crashes": 36,
+   "circle_injury_crashes": 84,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 198,
+    "kept": 99,
+    "left_out_elsewhere": 99,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "Mission Street & 14th Street",
+   "lat": 37.7682771,
+   "lon": -122.4200052,
+   "tool_injury_crashes": 22,
+   "circle_injury_crashes": 29,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 29,
+    "kept": 22,
+    "left_out_elsewhere": 7,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "16th Street & Julian Avenue",
+   "lat": 37.764977,
+   "lon": -122.420901,
+   "tool_injury_crashes": 5,
+   "circle_injury_crashes": 38,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 38,
+    "kept": 5,
+    "left_out_elsewhere": 33,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Foster Avenue & Pulaski Road",
+   "lat": 41.9755275,
+   "lon": -87.7282337,
+   "tool_injury_crashes": 28,
+   "circle_injury_crashes": 28,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 149,
+    "kept": 149,
+    "left_out_elsewhere": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Milwaukee Avenue & Division Street",
+   "lat": 41.9033638,
+   "lon": -87.6664876,
+   "tool_injury_crashes": 48,
+   "circle_injury_crashes": 66,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 281,
+    "kept": 184,
+    "left_out_elsewhere": 97,
+    "not_placed": 0
+   }
+  }
+ ]
+}
