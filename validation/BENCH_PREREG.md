@@ -901,6 +901,26 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **new: every published memo is about the intersection proposed** (T26: 6 of 7).
 - **Also reported:** each memo's verdict against T26's, and the post-hoc review as for T26.
 
+## T28 The red team, reworked: T26's proposals again (registered 2026-11-03 evening, before any T28 review)
+- **Why:** in T27, 3 of 7 memos had no objection that survived the fact check, and in one the objections restated the verdict (T27's post-hoc review).
+- **Changes since T27** (tested):
+  - **Red team:**
+    - it is shown every value in the receipts as receipt, field and value, and copies the one it rests on;
+    - an objection resting on the verdict or its reasons is dropped (it only restates the decision), as is a second objection on the same fact;
+    - with fewer than 3 objections kept, it is told why the others were dropped and may submit replacements once;
+    - dropped objections are saved with why, and the memo counts them.
+  - **Coverage:** a place refused as outside the city's limits stays refused for the same street names, and a check or review whose input or cited source places the corner in a town inside the city's box but outside its limits is refused (independent round 2's suburb trap; that input now abstains).
+- **Development runs since T27** (not part of this test): proposals 2 (a registered one) and 10 were reviewed once on the new red team to see it work (4 objections kept on each).
+- **Inputs:** the same 7 proposals (the `registered` split). They measure the red team on the cases that showed the problem.
+- **Rule** (`validation/experiments/T28.json`):
+  - at least 6 of 7 memos published;
+  - every verdict the code's;
+  - the red team on every memo;
+  - every published memo about the intersection proposed;
+  - mean cost at most $0.15;
+  - **new: at least 3 kept objections on at least 6 of the published memos, and no kept objection resting on the verdict itself.**
+- **Also reported:** verdicts against T27 (the appraisal code did not change, so a different verdict means the agent registered the proposal differently).
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

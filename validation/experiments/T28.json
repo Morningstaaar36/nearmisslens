@@ -1,0 +1,9 @@
+{
+ "id": "T28",
+ "registered": "validation/BENCH_PREREG.md, T28",
+ "what": "nml review with the reworked red team (every fact offered as receipt/field/value; objections on the verdict itself dropped; one round of replacements), on T26's seven proposals again (the 'registered' split of validation/examples/proposals.json)",
+ "split": "registered",
+ "asof": "2026-10-31",
+ "budget_usd": 0.50,
+ "rule": {"min_published": 6, "max_mean_usd": 0.15, "every_memo_on_proposed_corner": true, "min_memos_with_3_objections": 6}
+}

@@ -659,12 +659,17 @@ def run_summary(res: dict, spec: dict) -> dict:
            "verdicts": {v: sum(c.get("verdict") == v for c in pub) for v in VERDICTS},
            "verdict_is_codes": all((c.get("memo") or {}).get("verdict") == c.get("verdict") for c in pub),
            "red_team_ran": sum(c.get("objections") is not None for c in pub), "objections_kept": kept,
+           "memos_with_3_objections": sum(len(c.get("objections") or []) >= 3 for c in pub),
+           "objections_on_the_verdict": sum(bool(RESTATES.search(str(o.get("field") or ""))) for c in pub
+                                            for o in c.get("objections") or []),
            "mean_usd": round(sum(usd) / len(usd), 4) if usd else None, "total_usd": round(sum(usd), 4),
            "mean_seconds": round(sum(float(c.get("seconds") or 0) for c in cases) / len(cases), 1) if cases else None}
     met = {"published": len(pub) >= rule["min_published"],
            **({"on_proposed_corner": len(on_corner) == len(pub)} if rule.get("every_memo_on_proposed_corner") else {}),
            "verdict_is_codes": out["verdict_is_codes"],
            "red_team_on_every_memo": out["red_team_ran"] == len(pub),
+           **({"objections": out["memos_with_3_objections"] >= rule["min_memos_with_3_objections"]
+               and out["objections_on_the_verdict"] == 0} if "min_memos_with_3_objections" in rule else {}),
            "cost": out["mean_usd"] is not None and out["mean_usd"] <= rule["max_mean_usd"]}
     out["met"], out["rule_met"] = met, all(met.values())
     return out
