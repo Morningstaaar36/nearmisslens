@@ -141,5 +141,89 @@
     "not_placed": 0
    }
   }
- ]
+ ],
+ "independent": "validation/independent/t31b_independent_counts_2026-11-04.json",
+ "comparison": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast",
+   "independent": 32,
+   "tool": 34,
+   "circle": 47,
+   "agree": true
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street",
+   "independent": 26,
+   "tool": 32,
+   "circle": 52,
+   "agree": false
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue",
+   "independent": 12,
+   "tool": 20,
+   "circle": 31,
+   "agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street",
+   "independent": 14,
+   "tool": 0,
+   "circle": 71,
+   "agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South",
+   "independent": 0,
+   "tool": 0,
+   "circle": 51,
+   "agree": true
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street",
+   "independent": 17,
+   "tool": 21,
+   "circle": 35,
+   "agree": false
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street",
+   "independent": 19,
+   "tool": 20,
+   "circle": 25,
+   "agree": true
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue",
+   "independent": 7,
+   "tool": 3,
+   "circle": 14,
+   "agree": false
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue",
+   "independent": 16,
+   "tool": 13,
+   "circle": 23,
+   "agree": false
+  }
+ ],
+ "summary": {
+  "corners": 9,
+  "tool_agree": 3,
+  "circle_agree": 0,
+  "tool_mean_abs_error": 4.7,
+  "circle_mean_abs_error": 22.9,
+  "tool_closer": 9,
+  "rule_met": false
+ }
 }

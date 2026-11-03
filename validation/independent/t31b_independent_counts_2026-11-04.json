@@ -1,0 +1,72 @@
+[
+  {
+    "city": "dc",
+    "corner": "Alabama Avenue Southeast & Stanton Road Southeast",
+    "injury_crashes": 32,
+    "crashes": 116,
+    "method": "DC NEARESTINTKEY=7b9b6129091917f1959c1d610cfbb024 (Alabama Ave SE & Stanton Rd SE) and OFFINTERSECTION<=30 m; injury = any MAJOR/MINOR/FATAL injury field > 0"
+  },
+  {
+    "city": "dc",
+    "corner": "Southeast Freeway & 11th Street Southeast",
+    "injury_crashes": 7,
+    "crashes": 12,
+    "method": "Not an at-grade crossing (11th St SE passes over I-695; DC has no 'Southeast Freeway' street). Counted DC NEARESTINTKEY in the two '11th St SE & Southeast Blvd SE' nodes (4701686106fa72754f7b045984cf0f62, cbeccfda5c67372f33e05ee4545a3faa), OFFINTERSECTION<=30 m, excluding 58 street-only '11TH STREET SE' records placed at one default point (including them: 27 injury / 70 total)"
+  },
+  {
+    "city": "nyc",
+    "corner": "Avenue of the Americas & West 23 Street (Manhattan)",
+    "injury_crashes": 26,
+    "crashes": 45,
+    "method": "on_street_name/cross_street_name are the two streets (either order); injury = persons injured+killed > 0"
+  },
+  {
+    "city": "nyc",
+    "corner": "9 Street & 5 Avenue (Brooklyn, Park Slope)",
+    "injury_crashes": 12,
+    "crashes": 20,
+    "method": "on_street_name/cross_street_name are exactly 9 Street and 5 Avenue (either order), borough BROOKLYN; injury = persons injured+killed > 0"
+  },
+  {
+    "city": "seattle",
+    "corner": "Martin Luther King Jr Way South & South Othello Street",
+    "injury_crashes": 14,
+    "crashes": 39,
+    "method": "ADDRTYPE='I' with INTKEY in (34562 MLK west roadway, 486567 MLK east roadway); injury = MAXSEVERITYDESC Injury/Serious Injury/Fatality (13 by person counts)"
+  },
+  {
+    "city": "seattle",
+    "corner": "South Oregon Street & 35th Avenue South",
+    "injury_crashes": 0,
+    "crashes": 0,
+    "method": "ADDRTYPE='I' with INTKEY=32720; no records in the window (the last one is 2021-04-15)"
+  },
+  {
+    "city": "sf",
+    "corner": "Polk Street & Eddy Street",
+    "injury_crashes": 17,
+    "crashes": null,
+    "method": "primary_rd/secondary_rd are Polk and Eddy (CNN 25176000) and intersection='Intersection <= 20ft'; injury-only dataset, so the total cannot be computed (21 if 'Intersection Rear End <= 150ft' is included)"
+  },
+  {
+    "city": "sf",
+    "corner": "5th Street & Bryant Street",
+    "injury_crashes": 19,
+    "crashes": null,
+    "method": "primary_rd/secondary_rd are 05th and Bryant (CNN 23889000) and intersection='Intersection <= 20ft'; injury-only dataset, so the total cannot be computed (20 if 'Intersection Rear End <= 150ft' is included)"
+  },
+  {
+    "city": "chicago",
+    "corner": "Kilbourn Avenue & Belmont Avenue",
+    "injury_crashes": 7,
+    "crashes": 37,
+    "method": "no cross-street field: geocoded crash point within 30 m of the city centerline node 26381 (41.938928,-87.739498); injury = injuries_total+injuries_fatal > 0"
+  },
+  {
+    "city": "chicago",
+    "corner": "Ridge Avenue & Hollywood Avenue",
+    "injury_crashes": 16,
+    "crashes": 154,
+    "method": "offset junction with 2 centerline nodes 80 m apart (2592 and 98): crash point within 30 m of either node; injury = injuries_total+injuries_fatal > 0 (main node 2592 only: 6/93)"
+  }
+]

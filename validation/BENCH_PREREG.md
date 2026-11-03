@@ -1046,6 +1046,15 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Inputs** (`validation/experiments/T31b.json`): 10 corners none of T31's, drawn with seed 20261105, the same way (2 per screened city, 2 Chicago corners from the test sets).
 - **Method and rule:** T31's. A new counter agent, with T31's instructions, counts them independently.
 
+### T31b result (2026-11-04)
+- **Rule not met.** The tool's count agreed with the independent count at **3 of the 10 fresh corners** (the rule asked 8). One corner (Southeast Freeway & 11th St SE) was not found: the freeway crosses 11th St on a bridge, and the tool reported no intersection, which counts as not agreeing. The independent counts are kept as written: `validation/independent/t31b_independent_counts_2026-11-04.md`.
+- **The error fell about five-fold:** mean absolute error 4.7 injury crashes against the 100 m circle's 22.9 at the 9 corners both counted; the tool was closer at all 9; the circle agreed at none.
+- **Why the rest missed:**
+  - **Seattle, MLK Jr Way S & S Othello St (0 against 14):** the record writes "M L King Jr Wr Way S". A fix made after these counts were saved (initials, "Jr", roadway tags) gives 13 (post hoc, `experiment_T31b_posthoc.json`; not the registered result).
+  - **New York (32 against 26, 20 against 12):** crashes the record gives no street names for are kept as the corner's; the independent counter left them out.
+  - **Chicago and San Francisco:** the counter's own rules (crash points within 30 m in Chicago; San Francisco's "Intersection <= 20ft" without its rear-end class) differ from the tool's (Chicago's "intersection related" flag; San Francisco's mid-block class left out). The counter reports how much its own counts move with these choices (Ridge & Hollywood: 6 to 26 depending on the radius and which of its two junction points counts).
+- **What this shows:** counting a corner's own crashes depends on rules the open data does not settle, so an exact match is the wrong bar for a 15% tolerance; the tool's counts are now within a few crashes of a careful independent count where the old circle was off by tens. The registered rule stays not met.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

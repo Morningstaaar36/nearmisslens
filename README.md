@@ -372,6 +372,8 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T27 | The same after the fixes, with every memo about the intersection proposed? | met (7 of 7, all on the proposed corner) |
   | T28 | The same with the reworked red team: at least 3 kept objections on 6 of 7 memos, none on the verdict itself? | met (7 of 7 memos, 32 objections) |
   | T30 / T30b / T30c | Does intake find at least 75% of the projects collected by hand from an agency's own pages, and nothing on the controls? | not met / not met / met (16 of 16) |
+  | T29 | Does program review review at least 80% of three real program lists, each on its corner, and can code's ranking be rebuilt exactly? | not met (20 of 23 reviewed, all on their corner; tied rows' order followed the threads, fixed after) |
+  | T31 / T31b | Does a corner's own crash count agree with an independent count from the city's data at 8 of 10 corners? | not met / not met (2 and 3 of 10; mean error 13.5 and 4.7 crashes, against the 100 m circle's 30.1 and 22.9) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.
@@ -382,7 +384,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   - The review of T21c found two wrong claim verdicts that passed.
   - **An independent audit** (`validation/independent/`) of 12 published cases found errors in 7 (58%, 95% interval 32–81%). Counting only the findings and claims, not the letters: 4 of 12 (33%, 14–61%).
   - The letter bug and the lighting estimate are fixed, and the saved letters affected carry a correction on the site. No person has audited the cases yet.
-- **Crash counts come from a 100 m circle.** Where intersections are close together, the circle takes in their crashes. Where the dataset codes each crash's streets (San Francisco, New York), the report says how many are coded at the corner itself and a review cannot say "proceed" when most are elsewhere; in Chicago, DC and Seattle the record cannot show it.
+- **Whose crashes a corner's counts are.** The record is read within 100 m, and crashes the city's data places at another intersection, on another street or mid-block are left out (the report says how many). Against an independent count on 10 fresh corners (T31b), the tool was within 4.7 injury crashes on average where the 100 m circle was off by 22.9, but it agreed within 15% at only 3 of 10: how to count a corner's crashes depends on rules the open data does not settle (crashes with no street names, how far from the corner, which junction point). Registered runs before T31 used the whole circle.
 - **The crash record lags the news.** Police data arrives days to weeks after a crash, so a crash in the news is often not in the record yet. The desk states the record's as-of date, but a letter can still say "no deaths were recorded" the week of a death.
 - **The desk is slow where OpenStreetMap is slow.** Most of a case's minutes are spent waiting for public map servers, not on the model.
 - **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, one fix per corner, never stacked, and a qualified engineer must review each one.

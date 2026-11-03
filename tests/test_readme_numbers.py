@@ -193,3 +193,13 @@ def test_t30_numbers():
     _has(f"${s['mean_usd_per_readable_page']:.3f} a page")
     for run in ("T30", "T30b"):
         assert not run_summary(_load(f"experiment_{run}.json"), sp)["rule_met"]
+
+
+def test_t31_numbers():
+    a, b = _load("experiment_T31.json")["summary"], _load("experiment_T31b.json")["summary"]
+    assert not a["rule_met"] and not b["rule_met"]
+    _has(f"not met / not met ({a['tool_agree']} and {b['tool_agree']} of 10; mean error {a['tool_mean_abs_error']} and "
+         f"{b['tool_mean_abs_error']} crashes, against the 100 m circle's {a['circle_mean_abs_error']} and "
+         f"{b['circle_mean_abs_error']})")
+    _has(f"within {b['tool_mean_abs_error']} injury crashes on average where the 100 m circle was off by "
+         f"{b['circle_mean_abs_error']}, but it agreed within 15% at only {b['tool_agree']} of 10")
