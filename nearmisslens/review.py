@@ -28,7 +28,7 @@ from pathlib import Path
 
 from . import countermeasures, engineer, orchestrator
 from .agent import Tool, run_agent
-from .brief import SUPPORTED
+from .brief import SUPPORTED, same_corner  # noqa: F401 (used below)
 from .config import MODELS, SETTINGS, portable
 from .config import asof as config_asof
 
@@ -214,8 +214,19 @@ class Review:
         self.objections: list[dict] | None = None
         self.final: dict | None = None
         self.red_team_usd = 0.0
+        self.dropped: list[dict] = []  # red-team objections code did not keep, with why
         self.off_corner: str | None = None
+        self.outside: str | None = None  # why the proposal is outside the city's limits, when it is
         self.lat_lon: tuple[float, float] | None = None
+
+
+def _last_refusal(run) -> str | None:
+    """The last tool refusal of a run that did not publish, so an abstention says why."""
+    for s in reversed(run.steps):
+        r = s.result if isinstance(s.result, dict) else {}
+        if r.get("error") and s.tool != "red_team":
+            return f"not published; the last refusal: {str(r['error'])[:300]}"
+    return None
 
 
 def _receipt_of(desk, tool: str) -> tuple[str, dict] | None:
@@ -238,6 +249,32 @@ def _compact(desk) -> dict:
             d = {k: v for k, v in d.items() if isinstance(v, (int, float, str, bool)) or k in
                  ("proposed", "best_alternative", "reasons", "over_represented", "owners")}
         out[rid] = {"tool": r["tool"], "data": d}
+    return out
+
+
+RESTATES = re.compile(r"(^|\.)(verdict|verdict_text|reasons?)(\.|$)")
+
+
+def facts(compact: dict, limit: int = 120) -> list[dict]:
+    """Every single value in the red team's receipts as (receipt, field path, value): the objections cite these
+    exactly, so a fact is never lost to a mistyped path. The appraisal's own verdict and reasons are left out: an
+    objection resting on them only restates the decision."""
+    out = []
+
+    def walk(rid, d, path):
+        if len(out) >= limit:
+            return
+        if isinstance(d, dict):
+            for k, v in d.items():
+                walk(rid, v, f"{path}.{k}" if path else str(k))
+        elif isinstance(d, list):
+            for i, v in enumerate(d[:8]):
+                walk(rid, v, f"{path}.{i}" if path else str(i))
+        elif d is not None and d != "" and not RESTATES.search(path):
+            out.append({"receipt": rid, "field": path, "value": d if not isinstance(d, str) else d[:160]})
+    for rid, r in compact.items():
+        if r["tool"] != "red_team":
+            walk(rid, r["data"], "")
     return out
 
 
@@ -271,31 +308,50 @@ meet, a better alternative, cost against benefit, crashes the fix does not touch
 says reconsider or not covered by the evidence, the strongest reasons the agency might still be right to fund it
 (serious harm the record shows, crashes the fix does target, what the evidence cannot see). Do not restate the
 verdict or agree with it: an objection that supports the verdict is useless.
-Each objection must rest on one fact in the receipts: give the receipt id, the field path to it (dots, list
-positions as numbers, e.g. "options.0.evidence" or "proposed.break_even_cost_usd") and its value exactly as it is
-there. Code checks each fact and keeps only those that are right. At most five objections; submit once."""
+Each objection must rest on one fact from the "facts" list: copy its receipt, field and value exactly (the
+receipts are there for context). An objection about the verdict or its reasons themselves is not a fact and is
+dropped. Code checks each fact and keeps only those that are right; it tells you which were dropped and why, and you
+may submit replacements once. Three to five objections, each on a different fact."""
 
 
 def red_team(rv: Review, open_client) -> dict:
     """Muse Spark Open writes the pre-mortem; code keeps the objections whose cited fact is in the receipt."""
     from .redteam import get_path
     full = {rid: r["data"] for rid, r in rv.desk.receipts.items()}
-    kept, dropped = [], []
+    kept, dropped, rounds = [], [], []
 
     def submit(objections: list[dict]):
-        kept.clear()
-        dropped.clear()
+        rounds.append(len(objections))
+        if len(rounds) > 2:
+            return {"error": "submitted twice already: stop"}
+        new = []
         for o in objections[:MAX_OBJECTIONS]:
+            if len(kept) >= MAX_OBJECTIONS:
+                break
             d = full.get(o.get("receipt"))
-            v = get_path(d, o.get("field", "")) if d is not None else None
-            if v is not None and _matches(v, o.get("value")):
-                kept.append({"id": f"O{len(kept) + 1}", **{k: o.get(k) for k in ("objection", "receipt", "field")},
-                             "value": v})
+            field = str(o.get("field") or "")
+            v = get_path(d, field) if d is not None else None
+            seen = any(k["receipt"] == o.get("receipt") and k["field"] == field for k in kept)
+            if RESTATES.search(field):
+                why = "it rests on the verdict or its reasons, which only restates the decision"
+            elif seen:
+                why = "another objection already rests on this fact"
+            elif d is None:
+                why = "no such receipt"
+            elif v is None:
+                why = "the field is not in the receipt"
+            elif not _matches(v, o.get("value")):
+                why = f"the receipt holds {v!r}, not {o.get('value')!r}"
             else:
-                dropped.append({**o, "why": "no such receipt" if d is None else "the field is not in the receipt"
-                                if v is None else f"the receipt holds {v!r}, not {o.get('value')!r}"})
-        if not kept and objections:
-            return {"error": "no objection's fact checked out", "dropped": dropped[:5]}
+                kept.append({"id": f"O{len(kept) + 1}", **{k: o.get(k) for k in ("objection", "receipt")},
+                             "field": field, "value": v})
+                new.append(kept[-1]["id"])
+                continue
+            dropped.append({**o, "why": why})
+        if len(kept) < 3 and len(rounds) == 1:
+            return {"error": f"{len(kept)} objection(s) kept; submit replacements for the dropped ones (each on a "
+                             "different fact from the list, against the verdict)",
+                    "dropped": [{k: x.get(k) for k in ("receipt", "field", "why")} for x in dropped[-5:]]}
         return {"ok": True, "kept": len(kept), "dropped": len(dropped)}
 
     txt = {"type": "string"}
@@ -304,36 +360,15 @@ def red_team(rv: Review, open_client) -> dict:
     tool = Tool("submit", "Submit the objections.", {"type": "object", "properties": {
         "objections": {"type": "array", "items": item}}, "required": ["objections"], "additionalProperties": False},
         submit)
-    task = json.dumps({"proposal": rv.proposal, "receipts": _compact(rv.desk)}, default=str)
+    compact = _compact(rv.desk)
+    task = json.dumps({"proposal": rv.proposal, "appraisal": {k: rv.appraisal.get(k) for k in ("verdict", "parts")}
+                       if rv.appraisal else None, "facts": facts(compact), "receipts": compact}, default=str)
     run = run_agent(open_client, MODELS["open"], RED_TEAM, task, [tool], 4, RED_TEAM_BUDGET_USD, effort="low",
                     tag="review red team")
     rv.red_team_usd += run.usd
     rv.objections = list(kept)
+    rv.dropped = list(dropped)
     return {"kept": list(kept), "dropped": list(dropped), "usd": round(run.usd, 4), "stopped": run.stopped}
-
-
-def _street_words(name: str) -> list[set[str]]:
-    """Each street of an intersection's name as a set of words, abbreviations spelled out and direction words, street
-    types and punctuation set aside: "E 9th St & Rev Q. Zed Ave, Town" -> [{9th}, {reverend, q, zed}]."""
-    from .brief import ABBREV_FULL, QUADRANT
-    drop = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "street", "avenue",
-            "boulevard", "road", "place", "drive", "lane", "court", "parkway", "way", "terrace", "highway",
-            "expressway", "square", "the"}
-    head = name.split(",")[0]
-    out = []
-    for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
-        words = {ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower() for w in re.findall(r"[a-z0-9]+", part.lower())}
-        words = {w for w in words if w not in drop}
-        if words:
-            out.append(words)
-    return out
-
-
-def same_corner(proposed: str, corner: str) -> bool:
-    """Whether the investigated corner is the proposal's intersection: every street the proposal names is one of the
-    corner's streets (word for word, abbreviations and direction words aside)."""
-    want, have = _street_words(proposed), _street_words(corner)
-    return bool(want) and all(any(w <= h or h <= w for h in have) for w in want)
 
 
 def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
@@ -369,6 +404,10 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             return {"error": f"the case is about {corner}, not the proposed intersection ({rv.proposal['address']}). "
                              "A review is only of the intersection proposed: if it cannot be found, stop; never review "
                              "another corner"}
+        outside = orchestrator._outside_errors(desk, [])
+        if outside:  # the proposal is in a town inside the city's box: the city's record says nothing about it
+            rv.outside = outside[0]
+            return {"error": outside[0] + " Stop: this desk cannot review it."}
         j = (desk.report or {}).get("junction") or {}
 
         def fx_for_control(control):
@@ -495,19 +534,22 @@ def review(text: str, city: str, client=None, letter_client=None, open_client=No
         from .openclient import OpenWeightsClient
         open_client = OpenWeightsClient()
     rv = Review(c["id"])
+    rv.desk.task = text  # the proposal as written: a town it names is checked against the city's limits
     run = run_agent(client, orchestrator.MODEL, INSTRUCTIONS, task_for(text, c["name"]),
                     tools(rv, letter_client, open_client, client), max_turns, budget_usd, effort="low",
                     tag=f"review {text[:40]}", escalate_after=3,
                     required=("register_proposal", "investigate", "appraise", "red_team"), governor=True)
     rep = rv.desk.report or {}
     out = {"status": "published" if rv.final else "abstained",
-           "reason": None if rv.final else (f"the proposed intersection could not be found; the agent reached "
+           "reason": None if rv.final else (rv.outside if rv.outside else
+                                             f"the proposed intersection could not be found; the agent reached "
                                              f"{rv.off_corner}, which is not it" if rv.off_corner
-                                             else f"not published ({run.stopped})"),
+                                             else _last_refusal(run) or f"not published ({run.stopped})"),
            "city": c["id"], "city_name": c["name"], "input": orchestrator.redact(text),
            "proposal": rv.proposal, "corner": (rep.get("junction") or {}).get("name"),
            "verdict": (rv.appraisal or {}).get("verdict"), "verdict_text": (rv.appraisal or {}).get("verdict_text"),
            "appraisal": rv.appraisal, "objections": rv.objections,
+           "objections_dropped": [{k: x.get(k) for k in ("objection", "receipt", "field", "why")} for x in rv.dropped],
            "memo": rv.final, "letter": orchestrator.redact(((rep.get("findings") or {}).get("draft_request") or {})
                                                             .get("letter") or "") or None,
            "receipts": {k: {"tool": v["tool"]} for k, v in rv.desk.receipts.items()},
@@ -562,6 +604,9 @@ def memo_md(r: dict) -> str:
             if o["id"] in ans:
                 L.append(f"  - *Answer:* {ans[o['id']].get('answer')} [{ans[o['id']].get('receipt')}]")
         L.append("")
+    if r.get("objections_dropped"):
+        L += [f"*{len(r['objections_dropped'])} more objection(s) were dropped by code: "
+              + "; ".join(sorted({x.get('why', '') for x in r['objections_dropped']}))[:400] + ".*", ""]
     if r.get("letter"):
         L += ["## Draft work order (review it; nothing is sent)", "", r["letter"], ""]
     return "\n".join(L)

@@ -155,6 +155,8 @@ class Desk:
         self.claim_checks = 0
         self.reads = 0
         self.read_texts: list[str] = []  # every page read this case, as the gate reads it
+        self.task = ""  # the task as given, which holds the input itself
+        self.outside: list[str] = []  # addresses refused as outside the city's limits this case
 
     def receipt(self, tool: str, data, query: str | None = None) -> str:
         rid = f"D{len(self.receipts) + 1}"
@@ -219,6 +221,12 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         from . import brief
         letters = letter_client if draft_letter else None
         snapped, rep, point = None, None, None
+        gone = next((o for o in desk.outside if brief.same_corner(o, address)), None)
+        if gone:  # the same street names elsewhere in the city are another corner, not the one refused
+            return {"error": f"{gone!r} was refused as outside {opendata.city(desk.city)['name']}'s limits, so its "
+                             f"crash records do not cover it; {address!r} has the same street names, and any such "
+                             "corner in the city is not the one the input is about. Do not publish a case: say the "
+                             "place is outside the area this desk covers."}
         if INTERSECTION.search(address.split(",")[0]):
             last = None
             # "Bay Pkwy and Cropsey Ave" -> "Bay Parkway & Cropsey Avenue"; the '&' forms first, because a free-text
@@ -226,6 +234,9 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
             for variant in sorted(brief.address_variants(address), key=lambda v: "&" not in v.split(",")[0]):
                 try:
                     r = engineer.plan(variant, letter_client=letters)
+                except brief.OutsideCoverage as e:
+                    desk.outside.append(address)
+                    raise e
                 except ValueError as e:
                     last = e
                     continue
@@ -372,6 +383,8 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 for c in checked):
             errors.append(f"no quote names {desk.report['junction']['name']}: quote the source's sentence that names "
                           "the intersection, so a reader sees the source is about this corner")
+        if sources_name_corner and desk.report:
+            errors += _outside_errors(desk, checked)
         if required_source and not any(_same_url(c.get("url", ""), required_source) and c["quote_check"] != "absent"
                                        for c in checked):
             errors.append(f"the case must cite the input it was given ({required_source}) with an exact quote from it: "
@@ -488,6 +501,27 @@ STREET_WORDS = {"street", "st", "avenue", "ave", "av", "boulevard", "blvd", "roa
                 "lane", "ln", "court", "ct", "way", "parkway", "pkwy", "highway", "hwy", "terrace", "square", "north",
                 "south", "east", "west", "n", "s", "e", "w", "nw", "ne", "sw", "se", "northwest", "northeast", "southwest",
                 "southeast", "the", "of"}
+
+
+def _outside_errors(desk: Desk, checked: list[dict]) -> list[str]:
+    """A case is refused when the address was refused as outside the city's limits earlier in the case, or when the
+    input or a cited page places the corner's streets in a town inside the city's box but outside its limits
+    ("Main Street & Oak Avenue in Elmwood" is not the city's own Main & Oak)."""
+    from . import brief
+    corner = desk.report["junction"]["name"]
+    gone = [o for o in desk.outside if brief.same_corner(o, corner)]
+    if gone:
+        return [f"{gone[0]!r} was refused as outside the city's limits; {corner} only shares its street names: "
+                "do not publish"]
+    texts = [desk.task] + [text_of(c.get("url", ""), desk.pages) or "" for c in checked if c["quote_check"] == "verified"]
+    sents = [x for t in texts for x in re.split(r"(?<=[.!?])\s+|\n+", t) if x and names_corner(x, corner)]
+    city = opendata.city(desk.city) if desk.city else None
+    if not city:
+        return []
+    found = brief.towns_outside("\n".join(sents), city)
+    return [f"the input or its source places {corner.split(',')[0]} in {name} ({shown.split(',')[0]}, outside "
+            f"{city['name']}'s own limits): its crash records do not cover it, and the same street names in "
+            f"{city['name']} are another corner. Do not publish." for name, shown in found[:1]]
 
 
 def names_corner(text: str, corner: str) -> bool:
@@ -766,6 +800,7 @@ def run_case(task: str, city: str, client, letter_client=None, model_check_clien
              claims_from_sources: bool = False, keep_receipt_data: bool = False) -> dict:
     desk = Desk(city)
     desk.pages.update(pages or {})
+    desk.task = task
     desk.final = None
     space, ds_tools = dataset_tools(city, desk)
     server = [{"type": "web_search"}] + ([space, {"type": "tool_search"}] if space else [])

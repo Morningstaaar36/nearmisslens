@@ -80,7 +80,13 @@ def test_the_red_team_keeps_only_objections_whose_fact_checks_out(monkeypatch):
             {"objection": "Backplates would do more", "receipt": "D3", "field": "best_alternative.injury_crashes_avoided_per_year", "value": "1.6"},
             {"objection": "The evidence is weak", "receipt": "D2", "field": "options.0.evidence", "value": "national studies"},
             {"objection": "No such receipt", "receipt": "D9", "field": "x", "value": "1"}])
-        assert res["ok"] and res["kept"] == 1 and res["dropped"] == 2
+        # fewer than three kept: the red team is asked once for replacements, and the kept one stays
+        assert "error" in res and "replacements" in res["error"] and len(res["dropped"]) == 2
+        again = tools[0].fn(objections=[
+            {"objection": "The verdict says proceed", "receipt": "D3", "field": "verdict", "value": "proceed"},
+            {"objection": "Same fact again", "receipt": "D3", "field": "best_alternative.injury_crashes_avoided_per_year", "value": "1.6"}])
+        assert again["ok"] and again["kept"] == 1 and again["dropped"] == 4
+        assert "error" in tools[0].fn(objections=[])  # a third submit is refused
 
         class R:
             usd, stopped = 0.004, "finished"
@@ -89,6 +95,15 @@ def test_the_red_team_keeps_only_objections_whose_fact_checks_out(monkeypatch):
     out = review.red_team(rv, FakeOpen())
     assert [o["id"] for o in out["kept"]] == ["O1"] and out["kept"][0]["value"] == 1.6
     assert "holds 'FHWA-cited'" in out["dropped"][0]["why"] and rv.red_team_usd == 0.004
+    assert "restates the decision" in out["dropped"][2]["why"] and "already rests" in out["dropped"][3]["why"]
+    assert rv.dropped == out["dropped"]
+
+
+def test_the_red_team_is_shown_every_fact_but_the_verdict_itself():
+    rv = _review_with_receipts()
+    fs = review.facts(review._compact(rv.desk))
+    assert any(f["field"] == "best_alternative.injury_crashes_avoided_per_year" for f in fs)
+    assert not any(review.RESTATES.search(f["field"]) for f in fs)
 
 
 def test_the_memo_gate_holds_the_verdict_the_numbers_and_the_answers(monkeypatch):

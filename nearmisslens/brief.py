@@ -191,6 +191,88 @@ def _nominatim(q: str, country: str, city: str | None) -> list:
     return js
 
 
+def _street_words(name: str) -> list[set[str]]:
+    """Each street of an intersection's name as a set of words, abbreviations spelled out and direction words, street
+    types and punctuation set aside: "E 9th St & Rev Q. Zed Ave, Town" -> [{9th}, {reverend, q, zed}]."""
+    drop = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "street", "avenue",
+            "boulevard", "road", "place", "drive", "lane", "court", "parkway", "way", "terrace", "highway",
+            "expressway", "square", "the"}
+    head = name.split(",")[0]
+    out = []
+    for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
+        words = {ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower() for w in re.findall(r"[a-z0-9]+", part.lower())}
+        words = {w for w in words if w not in drop}
+        if words:
+            out.append(words)
+    return out
+
+
+def same_corner(proposed: str, corner: str) -> bool:
+    """Whether the investigated corner is the proposal's intersection: every street the proposal names is one of the
+    corner's streets (word for word, abbreviations and direction words aside)."""
+    want, have = _street_words(proposed), _street_words(corner)
+    return bool(want) and all(any(w <= h or h <= w for h in have) for w in want)
+
+
+SETTLEMENT = {"city", "town", "village", "hamlet", "municipality", "suburb", "borough", "quarter", "neighbourhood",
+              "city_district"}
+# a place named after "in" or after a comma ("Oak Avenue in Elmwood", "Oak Avenue, Elmwood")
+PLACE_AFTER_IN = re.compile(r"(?:\bin[ ]+|,[ ]*)((?:[A-Z][a-z]+|[A-Z]\.)(?:[ -][A-Z][a-z]+){0,3})")
+MONTHS = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+          "November", "December", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+
+
+def places_named(text: str, city: dict) -> list[str]:
+    """Place names a text gives after "in" ("... Oak Avenue in Elmwood"), the city's own names left out."""
+    own = {city["name"], city.get("short_name") or "", *(city.get("aliases") or [])}
+    own = {n.lower() for n in own if n}
+    out = []
+    for m in PLACE_AFTER_IN.finditer(text or ""):
+        name = m.group(1).strip()
+        if name in MONTHS or name.lower() in own or any(name.lower().startswith(o + " ") for o in own):
+            continue
+        if name not in out:
+            out.append(name)
+    return out
+
+
+def place_outside(place: str, city: dict) -> str | None:
+    """The geocoder's description of `place` when it is a town, village or neighbourhood inside the city's bounding
+    box but outside the city's own limits; None when it is in the city, is not a settlement, or cannot be looked up
+    (a lookup that fails never refuses a case)."""
+    from . import opendata
+    country = (json.loads(opendata.REGISTRY.read_text()).get("geocoder") or {}).get("countrycodes", "")
+    s, w, n, e = city["bbox"]
+    try:
+        js, _ = context.fetch("https://nominatim.openstreetmap.org/search",
+                              {"q": place, "format": "jsonv2", "limit": 5, "countrycodes": country,
+                               "viewbox": f"{w},{n},{e},{s}", "bounded": 1})
+    except Exception:
+        return None
+    hit = next((h for h in js or [] if (h.get("addresstype") or h.get("type")) in SETTLEMENT
+                and _same_name(place, h.get("name") or "")), None)
+    if hit is None:
+        return None
+    shown = hit.get("display_name", "")
+    return None if in_city_limits(shown, city) else shown
+
+
+def _same_name(asked: str, found: str) -> bool:
+    n = lambda x: re.sub(r"^(city|town|village|borough) of ", "", " ".join(re.findall(r"[a-z]+", x.lower())))
+    return n(asked) == n(found)
+
+
+def towns_outside(text: str, city: dict, limit: int = 4) -> list[tuple[str, str]]:
+    """(place, its description) for each place the text names that lies inside the city's box but outside its
+    limits: a source about Main St & Oak Ave in a neighbouring town is not about the city's own Main & Oak."""
+    out = []
+    for name in places_named(text, city)[:limit]:
+        shown = place_outside(name, city)
+        if shown:
+            out.append((name, shown))
+    return out
+
+
 class OutsideCoverage(ValueError):
     """The place is in no registry city: refused at once, before any slow intersection search."""
 
@@ -207,6 +289,8 @@ def in_city_limits(display_name: str, city: dict) -> bool:
     if zips:  # "..., <state>, <postcode>, <country>": keep what comes before the state
         parts = parts[:max(zips[-1] - 1, 0)]
     names = {city["name"], city.get("short_name") or city["name"], *(city.get("aliases") or [])}
+    # a county named after the city ("Los Angeles County") is not the city: a town in it is outside the limits
+    parts = [x for x in parts if not re.search(r"\b(County|Parish|Township)$", x)]
     text = ", ".join(parts)
     return any(re.search(r"(?<![A-Za-z])" + re.escape(n) + r"(?![A-Za-z])", text, re.I) for n in names if n)
 
