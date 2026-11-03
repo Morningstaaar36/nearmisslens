@@ -842,3 +842,33 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **A mistyped id resolves.** When exactly one text was handed in, a read of a non-web id ("text") reads that text.
   - Both are tested.
 - **The control again, after the change** (a development run, not part of T25's registered result): the same statement, as the source's text. The desk investigated 6th Street & Mission Street, cited the input text (verified), and called "zero injury crashes in the last five years" **"differs from the record"** (the record has 67 injury crashes since 2021-10-31). $0.026 of Meta API, 31 s.
+
+### T26 result (2026-11-03)
+- **Rule met.**
+  - 7 of 7 memos published (the rule needed 6), every verdict the code's, and the red team ran on all 7.
+  - Mean cost $0.057 per review ($0.40 in all: Meta plus Muse Spark Open); mean 304 s.
+  - Verdicts: 2 proceed, 5 reconsider. The red team's objections that checked out and were kept: 14.
+- **Post-hoc review of each memo** (within the project, not the hand audit):
+
+| Proposal (source) | Verdict | Review |
+|---|---|---|
+| Refuge island, Ashland & Cullerton, Chicago (petition) | proceed | Sensible: the record shows pedestrian injury crashes, and the evidence is national studies. All 5 objections answered. |
+| Leading pedestrian interval, 22nd & L NW, DC (ANC 2A) | reconsider | **Right, and the kind of finding the tool is for:** DC's own signal records list a leading pedestrian interval already at this corner, so the commission asked for something already installed. |
+| Island and left-turn restrictions, E 169th St & Rev James A Polite Ave, Bronx (NYC DOT) | reconsider | **Wrong corner.** The street was not found, and the agent investigated a neighbouring intersection, E 169th St & Prospect Ave. A memo about another corner is a failure. |
+| Flashing beacons, 33rd Ave S & S Myrtle Pl, Seattle (SDOT) | proceed | Sensible but thin: 1 pedestrian injury crash in five years; no objection's fact checked out, so none was answered. |
+| Flashing beacons, 15th Ave S & S Lander St, Seattle (SDOT) | reconsider | **Doubtful.** The verdict rests on OpenStreetMap mapping the corner as signalized, where beacons' evidence is for uncontrolled crossings. That SDOT plans beacons on all four corners suggests the mapping may be wrong. A site check would decide. |
+| Crosswalk, Beacon Ave S & S Webster St, Seattle (SDOT) | reconsider | **Too strong.** No study fits a crosswalk at this site (the only record was measured at school crossings). That is an absence of evidence, not evidence against. |
+| Concrete median island, Turk Blvd & Lyon St, SF (SFCTA) | reconsider | Sensible: the record has no pedestrian injury crashes there in five years (1 injury crash in all). |
+
+- **Answers to objections:** most say "agreed" and restate the receipt. They are responsive, but they argue little.
+- **Changes after T26** (post hoc, tested):
+  - **A review is only of the intersection proposed.** The appraisal refuses a case about any other corner, and the review abstains.
+  - **Intersection names match with or without a period after an initial, and "Rev" is "Reverend"** (the Bronx case's street).
+  - **A new verdict, "not covered by the evidence".** It is for a fix that no crash-modification study fits at this site; the decision then rests on a site study and judgement. "Reconsider" is kept for evidence against:
+    - the record shows none of the targeted crashes;
+    - the fix is already installed;
+    - the city's own record contradicts it;
+    - the cost exceeds the lifetime value of the harm avoided.
+  - **T26 re-scored from its saved appraisals.**
+    - Becomes "not covered by the evidence": the Lander St and Webster St proposals, and the Bronx case (which would now abstain instead, under the first change).
+    - Unchanged: the other four.

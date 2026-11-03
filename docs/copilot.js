@@ -82,7 +82,7 @@ async function boot() {
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
 
-const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", reconsider: "bad"};
+const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", reconsider: "bad"};
 
 function reviewResult(r) {
   // a decision memo: the verdict code set, why, the findings with receipts, the red team's checked objections and the answers

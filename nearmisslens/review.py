@@ -50,8 +50,17 @@ VERDICTS = {
     "proceed": "proceed: the evidence supports this fix here",
     "proceed_after_site_check": "proceed only after a site check confirms what the estimate assumes",
     "compare_alternative": "compare before committing: another supported fix is expected to avoid much more",
+    "outside_evidence": "not covered by the evidence: no crash-modification study fits this fix at this site, so the "
+                        "decision rests on a site study and engineering judgement, not on this record",
     "reconsider": "reconsider: the record or the evidence does not support this fix here as proposed",
 }
+
+
+def _no_target_crashes(reason: str | None) -> bool:
+    """Whether a fix was left unestimated only because the record shows none of the crashes it targets (each of
+    countermeasures.select's reasons then reads "the record has no ..."), rather than because no study fits the site."""
+    parts = [x.strip() for x in (reason or "").split(";") if x.strip()]
+    return bool(parts) and all(x.startswith("the record has no ") for x in parts)
 
 
 def site_fixes() -> list[str]:
@@ -84,8 +93,11 @@ def appraise(fx: dict, countermeasure: str, cost_usd: float | None) -> dict:
         verdict = "reconsider"
         why.append(f"the city's records show {countermeasure} already installed here"
                    + (f" ({placed['year']})" if placed.get("year") else ""))
-    elif me is None:
+    elif me is None and unq and _no_target_crashes(unq.get("reason")):
         verdict = "reconsider"
+        why.append(f"the record shows none of the crashes {countermeasure} targets: {unq['reason']}")
+    elif me is None:
+        verdict = "outside_evidence"  # absence of a fitting study is not evidence against the fix
         why.append(f"no crash-modification evidence for {countermeasure} applies to this site as the record shows it"
                    + (f": {unq['reason']}" if unq and unq.get("reason") else ""))
     elif not me.get("target_crashes_per_year"):

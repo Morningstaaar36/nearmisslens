@@ -28,7 +28,7 @@ FX = {"crashes": {"injury_crashes": 40, "crashes": 90},
     ("Leading Pedestrian Interval", 5000000, "reconsider"),  # costs more than its life benefit
     ("Lighting", None, "proceed_after_site_check"),
     ("Rectangular Rapid Flashing Beacons", None, "reconsider"),  # the city's own record contradicts it
-    ("Roundabouts", None, "reconsider"),  # no evidence fits the site
+    ("Roundabouts", None, "outside_evidence"),  # no study fits the site: not evidence against it
     ("Yellow Change Intervals", None, "reconsider"),  # already installed
 ])
 def test_code_sets_the_verdict(cm, cost, verdict):
@@ -204,3 +204,18 @@ def test_an_initial_matches_with_or_without_its_period():
     pat = brief._directional("Reverend James A Polite Avenue")
     assert re.fullmatch(pat, "Reverend James A. Polite Avenue", re.I) and re.fullmatch(pat, "Reverend James A Polite Avenue", re.I)
     assert brief.address_variants("Rev James A Polite Ave & E 169th St, Bronx")[1].startswith("Reverend James A Polite Avenue")
+
+
+def test_no_target_crashes_is_reconsider_but_no_fitting_study_is_outside_the_evidence():
+    """T26 review: 'reconsider' had lumped 'the record shows none of the crashes it targets' with 'no study fits this
+    site' (a crosswalk where the only record was measured at school crossings). The second is not evidence against."""
+    fx = {**FX, "not_estimated": [
+        {"countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+         "reason": "the record has no pedestrian injury crashes"},
+        {"countermeasure": "Crosswalk Visibility Enhancements",
+         "reason": "CMF 2697 was measured only at school crossings, and this site is not known to be one"},
+        {"countermeasure": "Pedestrian Hybrid Beacons",
+         "reason": "the record has no pedestrian injury crashes; its records are for uncontrolled sites"}]}
+    assert review.appraise(fx, "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas", None)["verdict"] == "reconsider"
+    assert review.appraise(fx, "Crosswalk Visibility Enhancements", None)["verdict"] == "outside_evidence"
+    assert review.appraise(fx, "Pedestrian Hybrid Beacons", None)["verdict"] == "outside_evidence"
