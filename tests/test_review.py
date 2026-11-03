@@ -159,7 +159,7 @@ def test_the_site_gets_the_saved_reviews_and_the_proposals_to_try(monkeypatch, t
     pages.reviews_page(out)
     blob = json.loads((out / "reviews.json").read_text())
     assert blob["summary"]["published"] == 1 and blob["cases"][0]["verdict"] == "proceed"
-    assert blob["try"] and all(t["split"] in ("team", "held_out") for t in blob["try"])
+    assert blob["try"] and all(t["split"] in ("independent", "team", "held_out") for t in blob["try"])
     assert "ABC1234" not in (out / "reviews.json").read_text()
 
 
