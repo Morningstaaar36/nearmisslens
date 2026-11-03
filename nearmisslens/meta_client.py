@@ -15,7 +15,9 @@ RETRY_STATUS = {408, 409, 429, 500, 502, 503, 504}
 
 
 class IncompleteResponse(RuntimeError):
-    pass
+    def __init__(self, message: str, usd: float = 0.0):
+        super().__init__(message)
+        self.usd = usd  # a cut-off response is still paid for
 
 
 class ApiError(RuntimeError):
@@ -128,7 +130,7 @@ class MetaClient:
         status = result.get("status")
         done = complete(result) if complete else status == "completed"
         if not done or (require_text and not output_text(result).strip()):
-            raise IncompleteResponse(f"{what}: status={status!r}, details={result.get('incomplete_details')}")
+            raise IncompleteResponse(f"{what}: status={status!r}, details={result.get('incomplete_details')}", usd)
         self.cache.put(namespace, key, result)
         return result
 

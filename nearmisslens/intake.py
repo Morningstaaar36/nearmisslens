@@ -20,6 +20,7 @@ from .agent import Tool, run_agent
 from .brief import same_corner
 
 MAX_PAGE_CHARS = 150_000  # T30: a 41,700-character page cut at 40,000 lost its last projects
+MAX_OUTPUT_TOKENS = 32_000
 STATUS = ("planned or proposed", "completed", "not stated")
 
 INSTRUCTIONS = """You read pages a street-safety agency published and list the projects on them that are each at ONE
@@ -147,7 +148,8 @@ def extract(sources: list[str], city_name: str, client, budget_usd: float = 0.20
                  "required": ["projects"], "additionalProperties": False}, submit_projects)
     task = json.dumps({"city": city_name, "pages": [{"id": k, "text": v[:MAX_PAGE_CHARS]} for k, v in got.items()]})
     run = run_agent(client, orchestrator.MODEL, INSTRUCTIONS, task, [tool], 4, budget_usd, effort="low",
-                    tag=f"intake {city_name}", required=("submit_projects",))
+                    tag=f"intake {city_name}", required=("submit_projects",),
+                    max_output_tokens=MAX_OUTPUT_TOKENS)  # T30b: a page of 20+ projects passed 8,000 tokens
     projects = [{**x, "text": proposal_text(x)} for x in kept
                 if include_completed or x.get("status") != "completed"]
     return {"projects": projects, "completed_left_out": sum(x.get("status") == "completed" for x in kept)

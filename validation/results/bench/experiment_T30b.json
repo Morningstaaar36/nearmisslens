@@ -1,0 +1,250 @@
+{
+ "id": "T30b",
+ "inputs": [
+  {
+   "id": "seattle_srts",
+   "city": "seattle",
+   "program": "sea_srts_2026",
+   "url": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+   "projects": [],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0,
+   "pages": [
+    "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school"
+   ]
+  },
+  {
+   "id": "sf_contract35",
+   "city": "sf",
+   "program": "sf_contract35_signals",
+   "url": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+   "projects": [
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "6th Avenue & Irving Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "6th Avenue & Irving Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 6th Avenue & Irving Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "25th Avenue & Clement Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "25th Avenue & Clement Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 25th Avenue & Clement Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "25th Avenue & Anza Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "25th Avenue & Anza Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 25th Avenue & Anza Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "30th Avenue & Fulton Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "30th Avenue & Fulton Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 30th Avenue & Fulton Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "36th Avenue & Fulton Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "36th Avenue & Fulton Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 36th Avenue & Fulton Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "29th Street & San Jose Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "29th Street & San Jose Avenue",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 29th Street & San Jose Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "30th Street & San Jose Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "30th Street & San Jose Avenue",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 30th Street & San Jose Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Anza Street & Stanyan Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Anza Street & Stanyan Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Anza Street & Stanyan Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Baker Street & Hayes Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Baker Street & Hayes Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Baker Street & Hayes Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Evans Avenue & Phelps Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Evans Avenue & Phelps Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Evans Avenue & Phelps Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Haight Street & Steiner Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Haight Street & Steiner Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Haight Street & Steiner Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Holloway Avenue & Junipero Serra Boulevard",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Holloway Avenue & Junipero Serra Boulevard",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Holloway Avenue & Junipero Serra Boulevard"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Portola Drive & Twin Peaks Boulevard",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Portola Drive & Twin Peaks Boulevard",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Portola Drive & Twin Peaks Boulevard"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "16th Street & Sanchez Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "16th Street & Sanchez Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at 16th Street & Sanchez Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Alemany Boulevard & Sickles Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Alemany Boulevard & Sickles Avenue",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Alemany Boulevard & Sickles Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "California Street & Larkin Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "California Street & Larkin Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at California Street & Larkin Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Larkin Street & Post Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Larkin Street & Post Street",
+     "treatment_says": "Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and updated or new curb ramps, plus new controllers, conduit and wiring where needed at Larkin Street & Post Street"
+    }
+   ],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.027,
+   "pages": [
+    "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0"
+   ]
+  },
+  {
+   "id": "control_unreadable",
+   "city": "nyc",
+   "program": null,
+   "url": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "control": "a page that refuses automated readers: reported unreadable, nothing invented",
+   "projects": [],
+   "refused": [],
+   "unreadable": [
+    "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml"
+   ],
+   "usd": 0.0,
+   "pages": []
+  },
+  {
+   "id": "control_offtopic",
+   "city": "chicago",
+   "program": null,
+   "url": "https://en.wikipedia.org/wiki/Wrigley_Field",
+   "control": "a page that names an intersection but lists no safety project",
+   "projects": [],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.1076,
+   "pages": [
+    "https://en.wikipedia.org/wiki/Wrigley_Field"
+   ]
+  }
+ ]
+}

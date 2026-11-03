@@ -161,6 +161,7 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
                                  min(remaining, 0.5), f"{tag} turn {turn}")
         except IncompleteResponse as e:
             run.turns = turn
+            run.usd += getattr(e, "usd", 0.0)  # T30b: a cut-off response was paid for but not counted
             run.stopped = f"incomplete: {e}"
             break
         run.usd += cost(resp)[0]

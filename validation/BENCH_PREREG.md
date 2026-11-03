@@ -983,6 +983,13 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Changes:** pages are read up to 150,000 characters; a project on a location list may rest on two passages, the list item (naming both streets) and the passage that says what will be done at the listed locations, both checked word for word on the page. The instructions ask for every project on long pages.
 - **Inputs and rule:** the same as T30 (`validation/experiments/T30b.json`). These inputs are not fresh: T30b measures the fixes on the pages that showed the problems.
 
+### T30b result (2026-11-04)
+- **Rule not met.** 8 of 16 (50%). **San Francisco: all 17 locations kept, all 8 hand-collected among them** (the list fix works). **Seattle: nothing kept**: with the whole page read, Muse Spark's answer passed the 8,000-token output cap and was cut off before it could submit. That cut-off answer cost $0.05 (in the ledger) but the run counted $0, a bug in the agent loop, fixed after. Controls held. The encyclopedia control, now read in full, cost $0.11.
+
+## T30c Program intake with room to answer (registered 2026-11-04, before any T30c run)
+- **Changes:** intake answers may use up to 32,000 output tokens; a cut-off answer's cost is counted (in every agent run).
+- **Inputs and rule:** the same as T30 and T30b (`validation/experiments/T30c.json`).
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).
