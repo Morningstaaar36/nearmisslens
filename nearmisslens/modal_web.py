@@ -30,7 +30,7 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
                "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "3.00", "NML_DAILY_REQUESTS": "300",
-               "NML_CHECK_BUDGET_USD": "0.50", "NML_ASOF": ASOF})
+               "NML_CHECK_BUDGET_USD": "0.50", "NML_ALLOWED_ORIGINS": "https://morningstaaar36.github.io", "NML_ASOF": ASOF})
          .add_local_dir(ROOT / "validation", "/app/validation")
          .add_local_dir(ROOT / "docs", "/app/docs", ignore=["video/**", "img/**", "*.md"])
          .add_local_dir(ROOT / "nearmisslens", "/app/nearmisslens", ignore=["**/__pycache__/**"]))

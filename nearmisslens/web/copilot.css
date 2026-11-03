@@ -109,3 +109,48 @@ button.planlink{margin-top:8px;font-size:14px;padding:6px 10px}
 
 .verdict{padding:.6em .8em;border-radius:6px;border-left:4px solid var(--muted, #888);background:rgba(127,127,127,.08)}
 .verdict.ok{border-left-color:#2e7d32}.verdict.warn{border-left-color:#b26a00}.verdict.bad{border-left-color:#c62828}
+
+/* task bar, start screen and views: one task per screen; the map only for looking up corners */
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--paper);padding:8px 12px;z-index:20}
+.skip:focus{left:12px}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px 24px;flex-wrap:wrap;
+  background:var(--sheet);border-bottom:1px solid var(--rule);
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.logo{font-weight:800;font-size:20px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+nav.tasks{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+nav.tasks a{white-space:nowrap;padding:8px 12px;border-radius:6px;color:var(--ink);text-decoration:none;font-weight:700;font-size:15px}
+nav.tasks a:hover{background:var(--paper)}
+nav.tasks a[aria-current="page"]{background:var(--ink);color:var(--paper)}
+body:not(.with-map) .app{grid-template-columns:minmax(0,1fr)}
+body:not(.with-map) .rail{display:none}
+body:not(.with-map) main{margin:0 auto;width:100%}
+.rail{height:calc(100vh - 60px);top:60px}
+.start h2{font-size:clamp(28px,3.6vw,40px);line-height:1.1;font-weight:800;margin:8px 0 12px;letter-spacing:-.015em;max-width:24ch;text-wrap:balance}
+.start .lede{margin-bottom:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin:0 0 30px;padding:0;list-style:none}
+.cards a{display:flex;flex-direction:column;gap:6px;height:100%;padding:18px;border:1.5px solid var(--rule);border-radius:8px;
+  background:var(--sheet);color:var(--ink);text-decoration:none}
+.cards a:hover{border-color:var(--ink)}
+.cards a.primary{border-color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
+.cards .t{font-weight:800;font-size:18px}
+.cards .d{color:var(--mut);font-size:14px;line-height:1.45;flex:1}
+.cards .k{font-size:13px;color:var(--mut)}
+.cards .go{font-weight:700;color:var(--guide)}
+ol.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;padding:0;margin:0 0 24px;list-style:none;counter-reset:s}
+ol.how li{counter-increment:s;padding-top:10px;border-top:2px solid var(--rule)}
+ol.how li::before{content:counter(s);font-weight:800;color:var(--warn);margin-right:8px}
+.examples{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.examples button{font-weight:600;font-size:13px;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);text-align:left}
+.examples button:hover{border-color:var(--ink)}
+.field{display:grid;gap:6px;margin:0 0 12px}
+.field label{font-weight:700;font-size:14px}
+.hint{color:var(--mut);font-size:13px;margin:0}
+.formrow{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.formrow .field{margin:0}
+@media (max-width:860px){.rail{height:auto;top:auto}}
+/* the task forms read top to bottom: examples, the text, then where and go */
+form.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:0;max-width:780px;margin:8px 0 18px}
+form.ask .examples,form.ask textarea{flex:1 1 100%}
+form.ask textarea{width:100%;min-height:96px;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);resize:vertical}
+form.ask select,form.ask input:not([type=checkbox]){font:inherit;font-size:15px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+form.ask button[type=submit],form.ask>button:last-child{margin-left:auto}

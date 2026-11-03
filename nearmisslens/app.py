@@ -40,6 +40,8 @@ ASK_RESERVE_USD = 0.05
 ENGINEER_WAIT_S = 20.0  # answer in the request when it is quick; otherwise the page polls (a proxy cuts long requests)
 ENGINEER_SLOTS = 3  # new corners investigated at once (no model; public map and data servers set the pace)
 CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one desk case's Meta cap, reserved first
+# the origins of the page's static copy (e.g. the GitHub Pages site), comma-separated, allowed to call the endpoints
+ALLOWED_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get("NML_ALLOWED_ORIGINS", "").split(",") if o.strip()}
 PROGRAM_ITEMS = int(os.environ.get("NML_PROGRAM_ITEMS", "4"))  # proposals in one program review on the server
 PROGRAM_REVIEW_USD = 0.20  # each proposal's Meta cap within a program (a review costs about $0.04); 4 reserve $1.00
 
@@ -170,13 +172,32 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                    busy="the server is investigating other new corners; try again in a minute", plain=(ValueError,))
 
     class H(BaseHTTPRequestHandler):
+        def _cors(self) -> bool:
+            """The static copy of the page (another origin, listed in NML_ALLOWED_ORIGINS) may call the endpoints."""
+            origin = self.headers.get("Origin")
+            if origin and origin in ALLOWED_ORIGINS:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Vary", "Origin")
+                return True
+            return False
+
         def _send(self, code: int, body: bytes, ctype: str):
             self.send_response(code)
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("X-Content-Type-Options", "nosniff")
+            self._cors()
             self.end_headers()
             self.wfile.write(body)
+
+        def do_OPTIONS(self):  # a browser's preflight before the static page posts JSON here
+            self.send_response(204 if self.headers.get("Origin") in ALLOWED_ORIGINS else 403)
+            if self._cors():
+                self.send_header("Access-Control-Allow-Methods", "GET, POST")
+                self.send_header("Access-Control-Allow-Headers", "Content-Type")
+                self.send_header("Access-Control-Max-Age", "600")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
 
         def _json(self, code: int, obj: dict):
             self._send(code, json.dumps(obj, default=str).encode(), "application/json")

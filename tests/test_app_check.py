@@ -217,3 +217,33 @@ def test_portfolio_endpoints_end_to_end(monkeypatch, tmp_path):
     res = rec["result"]
     assert rec["status"] == "done" and res["totals"]["build"] == 2 and len(res["budget_plan"]["chosen"]) == 1
     assert "Within a budget of $15,000" in res["markdown"]
+
+
+def test_the_static_copy_may_call_the_endpoints_and_no_one_else(monkeypatch, tmp_path):
+    """The GitHub Pages copy is another origin: its forms need CORS, and only listed origins get it."""
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    monkeypatch.setattr(app, "ALLOWED_ORIGINS", {"https://pages.example"})
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            _call(base + "/cities")
+            break
+        except OSError:
+            time.sleep(0.05)
+
+    def opts(origin):
+        req = urllib.request.Request(base + "/review", method="OPTIONS", headers={"Origin": origin})
+        try:
+            with urllib.request.urlopen(req) as r:
+                return r.status, dict(r.headers)
+        except urllib.error.HTTPError as e:
+            return e.code, dict(e.headers)
+    code, h = opts("https://pages.example")
+    assert code == 204 and h["Access-Control-Allow-Origin"] == "https://pages.example" and "POST" in h["Access-Control-Allow-Methods"]
+    code, h = opts("https://evil.example")
+    assert code == 403 and "Access-Control-Allow-Origin" not in h
+    req = urllib.request.Request(base + "/cities", headers={"Origin": "https://pages.example"})
+    with urllib.request.urlopen(req) as r:
+        assert r.headers["Access-Control-Allow-Origin"] == "https://pages.example"

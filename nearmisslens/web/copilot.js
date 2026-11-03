@@ -52,14 +52,8 @@ async function boot() {
     (s.plan_gap != null ? `<span class="gapdot"></span><b>${s.plan_gap}</b> had at least ${INDEX.gap_min_injury_crashes} injury crashes and no recorded safety work in ${INDEX.years} years. ` : "") +
     (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
     `Records as of ${date(INDEX.asof)}.` +
-    (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
-    ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>` +
-    ` <button class="quiet planlink" id="checklink">${LIVE !== null ? "Check a claim yourself" : "Checks of fresh inputs"}</button>` +
-    ` <button class="quiet planlink" id="reviewlink">Before you commit: review a proposed project</button>`;
-  if (INDEX.plan) $("planlink").onclick = () => showPlan();
-  $("desklink").onclick = () => showDesk();
-  $("checklink").onclick = () => showCheck();
-  $("reviewlink").onclick = () => showReview();
+    (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "");
+  if (INDEX.plan) $("planlink").onclick = () => { location.hash = `${CITY}/plan`; };
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -72,16 +66,87 @@ async function boot() {
       .on("click", () => openCorner(c)).addTo(layer);
   }
   listCorners(INDEX.corners);
+  dispatch(r);
+  window.addEventListener("hashchange", () => {
+    const n = route();
+    if (n.city && n.city !== CITY && ids.includes(n.city)) { location.reload(); return; }
+    dispatch(n);
+  });
+}
+
+const VIEWS = {review: () => showReview(), program: () => showProgram(), check: () => showCheck(), desk: () => showDesk(),
+  plan: () => showPlan(), corners: () => showCorners()};
+
+function dispatch(r) {
+  // one task per screen: the start screen, a task, or a corner's case
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
-  if (r.corner === "desk") { showDesk(); return; }
-  if (r.corner === "check") { showCheck(); return; }
-  if (r.corner === "review") { showReview(); return; }
-  if (hit) openCorner(hit);
-  else if (INDEX.plan) showPlan();  // a city opens on its action plan
+  if (VIEWS[r.corner]) VIEWS[r.corner]();
+  else if (hit) openCorner(hit);
+  else showStart();
+}
+
+function setView(name) {
+  // which task is open: the task bar marks it, and the map shows only for looking up corners
+  const withMap = name === "corners";
+  document.body.className = `view-${name}` + (withMap ? " with-map" : "");
+  for (const a of document.querySelectorAll("nav.tasks a")) {
+    if (a.dataset.view === name) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+  if (withMap && map) setTimeout(() => map.invalidateSize(), 60);
+  window.scrollTo({top: 0});
+}
+
+function showStart() {
+  setView("start");
+  const live = LIVE !== null;
+  const card = (href, t, d, k, primary) => `<li><a href="${href}"${primary ? ' class="primary"' : ""}><span class="t">${t}</span>` +
+    `<span class="d">${d}</span><span class="k">${k}</span><span class="go">Start →</span></a></li>`;
+  $("out").innerHTML = `<section class="start"><p class="where">For engineers and agencies in ${esc(INDEX.city_name)} and the other covered cities</p>` +
+    `<h2>Check a street-safety project against the city's own crash record before money is spent</h2>` +
+    `<p class="lede">Describe a proposed fix, paste a news story, or pick a corner. Meta's models do the research; code checks every ` +
+    `number against the public record and every quote against its page, and says so when the evidence does not cover a fix.</p>` +
+    `<ul class="cards">` +
+    card("#review", "Review a project", "One proposed fix at one intersection: is it supported here, what would it avoid, what does the record say against it?", live ? "About 1–2 minutes" : "Saved reviews", true) +
+    card("#program", "Review a list", "Two to four proposals, or a whole program: each reviewed, then ranked by what the evidence supports, within your budget.", live ? "A few minutes" : "Saved program reviews") +
+    card("#check", "Check a claim", "A news link or an official's statement about a corner, tested against the crash record.", live ? "About 2 minutes" : "Saved checks") +
+    card("#corners", "Look up a corner", `The worst corners in ${esc(INDEX.city_name)}: what their crashes have in common, what was tried, who must act.`, "Opens at once") +
+    `</ul><h3>How a review works</h3><ol class="how">` +
+    `<li>Muse Spark reads your proposal and investigates the corner with checked tools: crash records, past city programs, federal crash-reduction studies, road owners.</li>` +
+    `<li>Code, not the model, sets the verdict: proceed, check on site first, compare, not covered by the evidence, or reconsider.</li>` +
+    `<li>A second model argues against the verdict. Code keeps an objection only if its fact is in the record, and the memo answers each one.</li>` +
+    `</ol><p class="legend">Every registered test, passed or not, is in <a href="https://github.com/Morningstaaar36/nearmisslens#how-we-kept-ourselves-honest">the repository</a>. ` +
+    `${live ? "Live work runs under a daily budget; saved results always open." : ""}</p></section>`;
+}
+
+async function showCorners() {
+  // look up a corner: the map and the list beside the city's plan (or a prompt to pick one)
+  setView("corners");
+  if (INDEX.plan) { showPlan(); return; }
+  $("out").innerHTML = `<p class="where">${esc(INDEX.city_name)}</p><h2 class="corner">Pick a corner</h2>` +
+    `<p class="lede">Choose a corner on the map or in the list, or search one by its street names.</p>`;
+}
+
+async function showProgram() {
+  // a whole list: each proposal reviewed, then grouped and ranked by code
+  setView("program");
+  const head = `<p class="where">Review a list</p><h2 class="corner">Review a list of proposed projects</h2>` +
+    `<p class="lede">Paste two to four proposals, one per line, each with its intersection and, if you know it, its cost. ` +
+    `Each is reviewed like a single project; then code groups the list (build, check on site first, compare, study, ` +
+    `reconsider) and fits your budget.</p>`;
+  if (LIVE === null) {
+    $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` + (await savedPrograms());
+    return;
+  }
+  let cities = [];
+  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
+  $("out").innerHTML = head + programForm(cities) + (await savedPrograms());
+  wireProgram();
 }
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
 
+const VERDICT_LABEL = {proceed: "proceed", proceed_after_site_check: "proceed after a site check", compare_alternative: "compare first",
+  outside_evidence: "not covered by the evidence", mixed: "decide part by part", reconsider: "reconsider"};
 const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", mixed: "warn", reconsider: "bad"};
 
 function reviewResult(r) {
@@ -112,13 +177,35 @@ async function savedReviews() {
     `<p class="legend">Registered in ${esc(d.registered)}. ${s.published} of ${s.inputs} memos published; every verdict set by code; ` +
     `${s.objections_kept} red-team objections kept after their facts were checked. Rule ${s.rule_met ? "met" : "not met"}; ` +
     `mean $${Number(s.mean_usd).toFixed(3)} per review.</p>` +
-    d.cases.map(c => `<details><summary>${esc(c.city_name || c.city)} · ${esc((c.input || "").slice(0, 90))} · <b>${esc(c.verdict || c.status)}</b></summary>` +
+    d.cases.map(c => `<details><summary>${esc(c.city_name || c.city)} · ${esc((c.input || "").slice(0, 90))} · <b>${esc(VERDICT_LABEL[c.verdict] || c.verdict || c.status)}</b></summary>` +
       `<p class="legend">Proposal: ${esc(c.input)} (<a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>)</p>${reviewResult(c)}</details>`).join("") +
     (tryRows ? `<h4>Real proposals to try${LIVE !== null ? " here" : " with nml review"}</h4><ul>${tryRows}</ul>` : "") + `</section>`;
 }
 
+async function reviewExamples(cities) {
+  // real proposals nobody tuned the tool on (the test set's held-out and team rows): click one to fill the form
+  let d;
+  try { d = await getJSON("data/reviews.json"); } catch (e) { return; }
+  const rows = (d.try || []).slice(0, 4);
+  if (!rows.length || !$("reviewin")) return;
+  const box = document.createElement("div");
+  box.className = "examples";
+  box.innerHTML = `<span class="hint">Try a real proposal:</span>` + rows.map((t, i) =>
+    `<button type="button" data-i="${i}">${esc((cities.find(c => c.id === t.city) || {}).name || t.city)}: ${esc(t.proposal.slice(0, 70))}${t.proposal.length > 70 ? "…" : ""}</button>`).join("");
+  $("reviewin").before(box);
+  box.onclick = e => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    const t = rows[+b.dataset.i];
+    $("reviewin").value = t.proposal;
+    if ($("reviewcity")) $("reviewcity").value = t.city;
+    $("reviewin").focus();
+  };
+}
+
 async function showReview() {
   // Before you commit: a proposed project, reviewed against the city's record before anyone commits money to it
+  setView("review");
   const head = `<p class="where">Before you commit</p><h2 class="corner">Review a proposed project before funding it</h2>` +
     `<p class="lede">Describe the project as you would to a colleague: the fix, the intersection, the cost. Muse Spark registers it ` +
     `against the federal list of proven countermeasures and investigates the corner with the checked tools. Code tests it against ` +
@@ -127,7 +214,7 @@ async function showReview() {
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code>, ` +
       `or a whole list: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` +
-      (await savedPrograms()) + (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
+      (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
     return;
   }
   let cities = [];
@@ -136,8 +223,8 @@ async function showReview() {
     `placeholder="e.g. Leading pedestrian intervals at Street A &amp; Street B, about $15,000"></textarea>` +
     `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review</button></form>` +
-    `<div id="reviewout"></div>` + programForm(cities) + (await savedPrograms()) + await savedReviews();
-  wireProgram();
+    `<div id="reviewout"></div>` + await savedReviews();
+  await reviewExamples(cities);
   $("reviewform").onsubmit = async ev => {
     ev.preventDefault();
     $("reviewout").innerHTML = `<p class="busy">Starting…</p>`;
@@ -189,9 +276,8 @@ async function savedPrograms() {
 }
 
 function programForm(cities) {
-  return `<h3>Or a whole list: a program review</h3><p class="legend">Two to four proposals, one per line (the command line, ` +
-    `<code>nml portfolio list.txt --city CITY --budget-total 500000</code>, takes up to 25). Each is reviewed as above; code groups ` +
-    `and ranks them, and fits a budget if you give one.</p><form id="programform" class="search ask"><textarea id="programin" rows="4" ` +
+  return `<p class="hint">The command line (<code>nml portfolio list.txt --city CITY --budget-total 500000</code>) takes up to 25, or reads them from an agency's web page (<code>--from-url</code>).</p>` +
+    `<form id="programform" class="search ask"><textarea id="programin" rows="4" aria-label="Proposals, one per line" ` +
     `placeholder="Rapid flashing beacons at Street A &amp; Street B, $45,000&#10;A refuge island at Street C &amp; Street D"></textarea>` +
     `<label for="programcity">City</label> <select id="programcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
@@ -237,9 +323,10 @@ async function savedChecks() {
 }
 
 async function showCheck() {
+  setView("check");
   // the live desk on your own input: a link, a claim, a source's text or a resident's report, in a registry city
   if (LIVE === null) {
-    $("out").innerHTML = `<p class="where">Checks of fresh inputs · saved</p><h2 class="corner">The desk on inputs nobody chose for it</h2>` +
+    $("out").innerHTML = `<p class="where">Check a claim · saved results</p><h2 class="corner">Checks of inputs nobody chose for it</h2>` +
       `<p class="lede">Each input went to <code>nml check</code>, the same path as the live page's "Check a claim yourself". ` +
       `Run your own with a Meta key: <code>nml check "a news link or a claim" --city CITY</code> (see TESTING.md).</p>` +
       (await savedChecks() || `<p class="legend">No saved checks in this copy.</p>`);
@@ -247,7 +334,7 @@ async function showCheck() {
   }
   let cities = [];
   try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* listed below */ }
-  $("out").innerHTML = `<p class="where">Check a claim · live</p><h2 class="corner">Give the desk something real</h2>` +
+  $("out").innerHTML = `<p class="where">Check a claim</p><h2 class="corner">Check a news story or a claim about a corner</h2>` +
     `<p class="lede">A news link, an official's claim, or a resident's report. Muse Spark finds and reads the source, ` +
     `investigates the corner with the checked tools and tests each number against the city's own crash record; code ` +
     `refuses any quote not on its page and any number not in the record. A case takes a few minutes; one runs at a time, ` +
@@ -304,6 +391,7 @@ function checkResult(r) {
 }
 
 async function showDesk() {
+  setView("desk");
   // the desk: Muse Spark took a real-world input, searched the live web, worked the case with the checked tools and
   // published only what the gate accepted; refused attempts and every step are in the trace
   history.replaceState(null, "", `#${CITY}/desk`);
@@ -346,6 +434,7 @@ async function showDesk() {
 }
 
 async function showPlan() {
+  setView("corners");
   for (const b of $("corners").querySelectorAll("button")) b.setAttribute("aria-current", "false");
   history.replaceState(null, "", `#${CITY}/plan`);
   busy("Opening the city's action plan…");
@@ -478,6 +567,7 @@ function failed(err, q) {
 }
 
 async function openCorner(c) {
+  setView("corners");
   for (const b of $("corners").querySelectorAll("button")) b.setAttribute("aria-current", b.dataset.slug === c.slug);
   history.replaceState(null, "", `#${CITY}/${c.slug}`);
   busy(`Opening the case for ${esc(c.name)}…`);

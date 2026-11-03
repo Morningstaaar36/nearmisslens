@@ -11,11 +11,20 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="copilot.css">
-</head><body>
+</head><body class="view-start">
+<a class="skip" href="#out">Skip to content</a>
+<header class="topbar">
+  <a class="logo" href="#" aria-label="NearMissLens, start">NearMissLens</a>
+  <nav class="tasks" aria-label="What you can do">
+    <a href="#review" data-view="review">Review a project</a>
+    <a href="#program" data-view="program">Review a list</a>
+    <a href="#check" data-view="check">Check a claim</a>
+    <a href="#corners" data-view="corners">Look up a corner</a>
+    <a href="#desk" data-view="desk">Saved results</a>
+  </nav>
+</header>
 <div class="app">
-  <aside class="rail">
-    <div class="brand"><h1>NearMissLens</h1>
-      <p>A safety engineer for city streets. Pick a corner: you get what its crashes have in common, what the city already tried, the fix the record supports, who must act, and the request.</p></div>
+  <aside class="rail" aria-label="Corners in this city">
     <div class="cityswitch" id="cityswitch"></div>
     <form class="search" id="search"><label for="q" class="sr" hidden>Intersection</label>
       <input id="q" placeholder="Search a corner by its street names" autocomplete="off"><button>Find</button></form>
@@ -23,9 +32,8 @@
     <p class="citynote" id="citynote">Loading the city's priority corners…</p>
     <ol class="corners" id="corners" aria-label="Priority corners, most injury crashes first"></ol>
   </aside>
-  <main id="out">
-    <div class="empty"><h2>Which corner should the city fix first, and who has to do it?</h2>
-      <p>Pick a corner on the map or in the list. Each case is built by six tools over public records (police crash reports, the city's own past programs, federal crash-reduction studies, road ownership and council districts), and every sentence links to the receipt that shows where it came from.</p></div>
+  <main id="out" tabindex="-1">
+    <p class="busy">Loading…</p>
   </main>
 </div>
 <script src="copilot.js"></script>
