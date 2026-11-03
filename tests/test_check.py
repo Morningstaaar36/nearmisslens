@@ -9,8 +9,9 @@ from nearmisslens import check, opendata
 def fake_run(finished=True):
     seen = {}
 
-    def run(task, city, client, letter_client=None, model_check_client=None, budget_usd=0.5, max_turns=22, pages=None):
-        seen.update(task=task, city=city, pages=pages, letter=letter_client)
+    def run(task, city, client, letter_client=None, model_check_client=None, budget_usd=0.5, max_turns=22, pages=None,
+            max_reads=None):
+        seen.update(task=task, city=city, pages=pages, letter=letter_client, max_reads=max_reads)
         final = {"summary": "Two crashes; plate ABC1234 seen.", "findings": [{"receipt": "D1", "text": "A finding."}],
                  "sources": [{"url": "input:text", "quote": "a quote", "quote_check": "verified"}]} if finished else None
         return {"finished": finished, "final": final, "stopped": "finish_tool" if finished else "max_turns", "turns": 5,
@@ -70,6 +71,7 @@ def test_an_unfinished_case_is_abstained_with_the_gates_reason(fake_city, tmp_pa
     run, _ = fake_run(finished=False)
     r = check.check("https://example.org/story", "zz", runner=run, out_dir=tmp_path)
     assert r["status"] == "abstained" and "max_turns" in r["reason"] and "quote is not in the page" in r["reason"]
+    assert r["trace"] and "the last refusal" in r["reason"]
 
 
 def test_bad_inputs_are_refused_before_any_run(fake_city):
@@ -92,3 +94,20 @@ def test_a_failed_run_is_an_error_never_published(fake_city):
 def test_city_list_says_what_each_supports(fake_city):
     rows = {c["id"]: c for c in check.cities()}
     assert rows["zz"]["checkable"] and not rows["yy"]["checkable"] and "crash" in rows["yy"]["missing"]
+
+
+def test_reading_is_capped_so_a_case_reaches_its_findings():
+    from nearmisslens import orchestrator
+    desk = orchestrator.Desk("zz")
+    desk.pages = {f"input:{k}": "Some text about a corner." * 5 for k in range(3)}
+    read = next(t for t in orchestrator.core_tools(desk, max_reads=2) if t.name == "read_page")
+    assert "text" in read.fn("input:0", "corner") and "text" in read.fn("input:1", "corner")
+    assert "2 pages read already" in read.fn("input:2", "corner")["error"]
+    unlimited = next(t for t in orchestrator.core_tools(orchestrator.Desk("zz")) if t.name == "read_page")
+    assert all("error" not in unlimited.fn("input:9", "x") for _ in range(10))  # registered runs are unchanged
+
+
+def test_check_runs_cap_their_reading(fake_city, tmp_path):
+    run, seen = fake_run()
+    check.check("https://example.org/story", "zz", runner=run, out_dir=tmp_path)
+    assert seen["max_reads"] == check.MAX_READS

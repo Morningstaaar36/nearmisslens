@@ -474,6 +474,17 @@ def cmd_check(args) -> int:
     from . import check
     from .meta_client import MetaClient
     client = MetaClient(SETTINGS)
+    if args.example:
+        ex = check.example(args.example)
+        args.input, args.city, args.kind, args.photo, args.address = (ex["input"], ex["city"], ex.get("kind"),
+                                                                       ex.get("photo"), ex.get("address"))
+        args.budget = ex.get("budget", args.budget)
+        if ex.get("asof"):  # the records date the example ran at, so a replay asks the same questions
+            import os
+            os.environ["NML_ASOF"] = ex["asof"]
+    if not (args.input and args.city):
+        print("give an input and --city, or --example N")
+        return 2
     r = check.check(args.input, args.city, kind="source" if args.as_source else args.kind, photo=args.photo,
                     address=args.address, letter=not args.no_letter, budget_usd=args.budget, client=client,
                     letter_client=None if args.no_letter else _letter_client(), model_check_client=client)
@@ -600,8 +611,9 @@ def main(argv: list[str] | None = None) -> int:
     br.add_argument("--letter", action="store_true", help="also draft a checked letter to the council member and community board")
     ck = sub.add_parser("check", help="check a claim, a source or a resident's report against a registry city's record "
                         "(paid: Muse Spark); e.g. nml check https://example.org/story --city CITY_ID")
-    ck.add_argument("input", help="a URL, a claim in your own words, or (with --as-source) the source's own text")
-    ck.add_argument("--city", required=True, help="a registry city id (nml cities lists them)")
+    ck.add_argument("input", nargs="?", help="a URL, a claim in your own words, or (with --as-source) the source's own text")
+    ck.add_argument("--city", help="a registry city id (nml cities lists them)")
+    ck.add_argument("--example", type=int, help="run saved example N (validation/examples/check.json); with --replay, offline")
     ck.add_argument("--kind", choices=["url", "find", "source", "report"], help="default: url for a link, else find")
     ck.add_argument("--as-source", action="store_true", help="the input text is itself the source (cited as input:text)")
     ck.add_argument("--photo", help="report: a public photo URL")

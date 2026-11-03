@@ -1,0 +1,8 @@
+[
+ {"note": "a claim to find: the desk searches for a recent report and investigates the intersection it names",
+  "input": "A pedestrian or cyclist was hit by a driver at a named intersection in Washington DC in October 2026",
+  "city": "dc", "kind": "find", "budget": 0.40, "asof": "2026-11-03"},
+ {"note": "a resident's report without a photo, at an address",
+  "input": "Drivers don't stop for people in the crosswalk, it's scary to cross here every morning",
+  "city": "sf", "kind": "report", "address": "Market Street & 5th Street", "budget": 0.40, "asof": "2026-11-03"}
+]

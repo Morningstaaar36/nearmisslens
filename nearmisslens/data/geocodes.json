@@ -23,6 +23,12 @@
 "name": "Florida Avenue Northwest & 7th Street Northwest",
 "city": "dc"
 },
+"dc|8th street southeast & pennsylvania avenue southeast": {
+"lat": 38.8840802,
+"lon": -76.9949709,
+"name": "8th Street Southeast & Pennsylvania Avenue Southeast",
+"city": "dc"
+},
 "dc|arkansas avenue northwest & iowa avenue northwest": {
 "lat": 38.9473396,
 "lon": -77.0307693,
@@ -2025,6 +2031,12 @@
 "lat": 37.7832509,
 "lon": -122.4027076,
 "name": "Howard Street & 4th Street",
+"city": "sf"
+},
+"sf|5th street & market street": {
+"lat": 37.7840127,
+"lon": -122.4080709,
+"name": "Market Street & 5th Street",
 "city": "sf"
 },
 "sf|6th street & mission street": {

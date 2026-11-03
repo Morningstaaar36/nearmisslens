@@ -153,6 +153,7 @@ class Desk:
         self.places: set[str] = set()
         self.pages: dict[str, str] = {}  # records handed to the desk with the task (url -> text), e.g. a 311 report
         self.claim_checks = 0
+        self.reads = 0
 
     def receipt(self, tool: str, data, query: str | None = None) -> str:
         rid = f"D{len(self.receipts) + 1}"
@@ -196,7 +197,8 @@ def dataset_tools(city: str, desk: Desk) -> tuple[dict | None, list[Tool]]:
     return space, tools
 
 
-def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_client=None) -> list[Tool]:
+def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_client=None,
+               max_reads: int | None = None) -> list[Tool]:
     txt, num = {"type": "string"}, {"type": "number"}
 
     def investigate(address: str, draft_letter: bool):
@@ -251,7 +253,12 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 **({"letter": letter} if letter else {})}
 
     def read_page(url: str, find: str):
-        """The page's text exactly as the citation gate reads it: the sentences that mention `find`, else the start."""
+        """The page's text exactly as the citation gate reads it: the sentences that mention `find`, else the start.
+        With max_reads, the finding phase ends there: reading is capped so a case cannot spend its turns on sources."""
+        desk.reads += 1
+        if max_reads is not None and desk.reads > max_reads:
+            return {"error": f"{max_reads} pages read already: investigate the intersection the best source names, "
+                             "check its numbers and finish with what you have read"}
         text = text_of(url, desk.pages)
         if text is None:
             return {"readable": False, "note": "this page cannot be read here; cite another page that reports it"}
@@ -694,14 +701,14 @@ def _places(desk: Desk):
 
 
 def run_case(task: str, city: str, client, letter_client=None, model_check_client=None, budget_usd: float = 0.50,
-             max_turns: int = 22, pages: dict | None = None) -> dict:
+             max_turns: int = 22, pages: dict | None = None, max_reads: int | None = None) -> dict:
     desk = Desk(city)
     desk.pages.update(pages or {})
     desk.final = None
     space, ds_tools = dataset_tools(city, desk)
     server = [{"type": "web_search"}] + ([space, {"type": "tool_search"}] if space else [])
     t0 = time.time()
-    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client) + ds_tools,
+    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads) + ds_tools,
                     max_turns, budget_usd, effort="low", tag=f"desk {task[:40]}", escalate_after=3,
                     required=("investigate",), governor=True, server_tools=server,
                     include=("web_search_call.results",), on_response=desk.collect)

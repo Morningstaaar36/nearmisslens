@@ -127,3 +127,14 @@ def test_a_place_outside_every_city_is_refused_before_the_intersection_search(mo
     with pytest.raises(brief.OutsideCoverage, match="outside the cities this copy covers"):
         brief.geocode("Main St & 1st Ave, Portland, OR")
     assert len(calls) == 1  # one place search, no Overpass, no other spellings
+
+
+def test_an_unknown_category_is_never_a_pattern():
+    from nearmisslens import rootcause
+    a = {"crash_type_fields": ["type"], "factor_fields": ["f"], "labels": {"9": "Bicycle-Unknown/Not Stated"}}
+    tags, _ = rootcause.tags({"type": "Bicycle-Unknown/Not Stated", "f": "Speeding"}, a)
+    assert "crash type: bicycle-unknown/not stated" not in tags and "factor: speeding" in tags
+    tags, _ = rootcause.tags({"type": "9", "f": "Not Reported"}, a)
+    assert not any("unknown" in t or "not reported" in t for t in tags)
+    tags, _ = rootcause.tags({"type": "Broadside", "f": ""}, a)
+    assert "crash type: broadside" in tags

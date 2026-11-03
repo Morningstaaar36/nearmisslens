@@ -26,6 +26,13 @@ from .evaluate import RESULTS_DIR
 
 MIN_CRASHES = 10
 EMPTY = {"", "unspecified", "unknown", "does not apply", "n/a", "na", "none", "other", "not applicable", "nan"}
+UNKNOWN = re.compile(r"\b(unknown|not stated|unspecified|not reported|not recorded)\b", re.I)
+
+
+def _empty(v: str) -> bool:
+    """A value that records nothing: blank, 'unknown', or a category that is itself 'unknown / not stated' (a crash
+    type 'bicycle-unknown/not stated' says the type was not recorded; it is not something crashes have in common)."""
+    return v.lower() in EMPTY or bool(UNKNOWN.search(v))
 
 
 def _num(r: dict, fields: list[str]) -> float:
@@ -58,7 +65,8 @@ def tags(r: dict, a: dict) -> tuple[set[str], set[str]]:
         v = str(r.get(f) or "").strip()
         if v.lower() in ("y", "yes", "true", "1"):  # a flag field: its label (or name) is the factor
             out.add(f"factor: {labels.get(f, f.lower())}")
-        elif v.lower() not in EMPTY and v.lower() not in ("n", "no", "false", "0") and _meaningful(v, labels):
+        elif not _empty(v) and not _empty(str(labels.get(v, v))) and v.lower() not in ("n", "no", "false", "0") \
+                and _meaningful(v, labels):
             out.add(f"factor: {labels.get(v, v.lower())}")
     if not a.get("factor_fields"):
         missing.add("contributing factors")
@@ -85,7 +93,7 @@ def tags(r: dict, a: dict) -> tuple[set[str], set[str]]:
     for f in a.get("crash_type_fields", []):
         raw = str(r.get(f) or "").strip()
         v = raw.lower()
-        if v and v not in EMPTY and _meaningful(raw, labels):
+        if v and not _empty(raw) and not _empty(str(labels.get(raw, v))) and _meaningful(raw, labels):
             out.add(f"crash type: {labels.get(raw, v)}")
     if not a.get("crash_type_fields"):
         missing.add("crash types")

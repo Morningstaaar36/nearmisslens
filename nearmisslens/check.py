@@ -21,7 +21,17 @@ from . import opendata, orchestrator
 from .config import SETTINGS, portable
 
 KINDS = ("url", "find", "source", "report")
+EXAMPLES = Path(__file__).resolve().parent.parent / "validation" / "examples" / "check.json"
+
+
+def example(n: int) -> dict:
+    """A saved input (validation/examples/check.json), numbered from 1; with --replay its run comes from the cache."""
+    rows = json.loads(EXAMPLES.read_text()) if EXAMPLES.exists() else []
+    if not 1 <= n <= len(rows):
+        raise ValueError(f"there are {len(rows)} saved examples")
+    return rows[n - 1]
 MAX_INPUT = 2000
+MAX_READS = 6  # pages a case may read before it must investigate and write (a live case read 21 and never wrote)
 SOURCE_ID = "input:text"
 
 
@@ -98,23 +108,26 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
     run = runner or orchestrator.run_case
     try:
         r = run(task, c["id"], client, letter_client=letter_client if letter else None,
-                model_check_client=model_check_client, budget_usd=budget_usd, max_turns=max_turns, pages=pages)
+                model_check_client=model_check_client, budget_usd=budget_usd, max_turns=max_turns, pages=pages,
+                max_reads=MAX_READS)
     except Exception as e:  # a failed run is reported as an error, never as a published case
         return {"status": "error", "reason": f"{type(e).__name__}: {e}", "city": c["id"], "input": text, "kind": k,
                 "seconds": round(time.time() - t0, 1)}
     final = r.get("final") or {}
     claims = [{"id": rid, **v["data"]} for rid, v in (r.get("receipts") or {}).items()
               if v.get("tool") == "check_claim" and isinstance(v.get("data"), dict)]
-    last = (r.get("trace") or [{}])[-1]
+    said = [s for s in r.get("trace") or [] if s.get("errors") or s.get("error")]
+    why = "; ".join((said[-1].get("errors") or [said[-1].get("error")])[:3]) if said else "no step reported a problem"
     out = {"status": "published" if r.get("finished") else "abstained",
            "reason": None if r.get("finished") else
-           f"not published ({r.get('stopped')}): " + "; ".join(last.get("errors") or [last.get("error") or ""]).strip("; "),
+           f"not published ({r.get('stopped')}); the last refusal: {why}",
            "city": c["id"], "city_name": c["name"], "kind": k, "input": orchestrator.redact(text), "task": task,
            "corner": r.get("corner"), "summary": orchestrator.redact(final.get("summary") or ""),
            "findings": [{**f, "text": orchestrator.redact(f.get("text", ""))} for f in final.get("findings") or []],
            "sources": final.get("sources") or [], "claims": claims,
            "letter": orchestrator.redact(r.get("letter") or "") or None,
            "receipts": r.get("receipts"), "cost_usd": {"meta": r.get("usd")}, "turns": r.get("turns"),
+           "refusals": r.get("refusals"), "trace": r.get("trace"),
            "seconds": round(time.time() - t0, 1), "asof": r.get("asof"), "source": "live" if not SETTINGS.replay else "replay"}
     save(out, out_dir)
     return out
