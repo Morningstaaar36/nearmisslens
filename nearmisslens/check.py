@@ -127,7 +127,7 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
            "sources": final.get("sources") or [], "claims": claims,
            "letter": orchestrator.redact(r.get("letter") or "") or None,
            "receipts": r.get("receipts"), "cost_usd": {"meta": r.get("usd")}, "turns": r.get("turns"),
-           "refusals": r.get("refusals"), "trace": r.get("trace"),
+           "refusals": r.get("refusals"), "trace": r.get("trace"), "web": r.get("web"),  # search results, to trace a URL
            "seconds": round(time.time() - t0, 1), "asof": r.get("asof"), "source": "live" if not SETTINGS.replay else "replay"}
     save(out, out_dir)
     return out
