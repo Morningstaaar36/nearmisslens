@@ -140,6 +140,7 @@ class Review:
         self.objections: list[dict] | None = None
         self.final: dict | None = None
         self.red_team_usd = 0.0
+        self.off_corner: str | None = None
 
 
 def _receipt_of(desk, tool: str) -> tuple[str, dict] | None:
@@ -233,6 +234,30 @@ def red_team(rv: Review, open_client) -> dict:
     return {"kept": list(kept), "dropped": list(dropped), "usd": round(run.usd, 4), "stopped": run.stopped}
 
 
+def _street_words(name: str) -> list[set[str]]:
+    """Each street of an intersection's name as a set of words, abbreviations spelled out and direction words, street
+    types and punctuation set aside: "E 9th St & Rev Q. Zed Ave, Town" -> [{9th}, {reverend, q, zed}]."""
+    from .brief import ABBREV_FULL, QUADRANT
+    drop = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "street", "avenue",
+            "boulevard", "road", "place", "drive", "lane", "court", "parkway", "way", "terrace", "highway",
+            "expressway", "square", "the"}
+    head = name.split(",")[0]
+    out = []
+    for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
+        words = {ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower() for w in re.findall(r"[a-z0-9]+", part.lower())}
+        words = {w for w in words if w not in drop}
+        if words:
+            out.append(words)
+    return out
+
+
+def same_corner(proposed: str, corner: str) -> bool:
+    """Whether the investigated corner is the proposal's intersection: every street the proposal names is one of the
+    corner's streets (word for word, abbreviations and direction words aside)."""
+    want, have = _street_words(proposed), _street_words(corner)
+    return bool(want) and all(any(w <= h or h <= w for h in have) for w in want)
+
+
 def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
     desk = rv.desk
     core = {t.name: t for t in orchestrator.core_tools(desk, letter_client, None, client)}
@@ -252,6 +277,12 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
         got = _receipt_of(desk, "choose_fixes")
         if got is None:
             return {"error": "investigate the intersection first"}
+        corner = ((desk.report or {}).get("junction") or {}).get("name", "")
+        if not same_corner(rv.proposal["address"], corner):
+            rv.off_corner = corner
+            return {"error": f"the case is about {corner}, not the proposed intersection ({rv.proposal['address']}). "
+                             "A review is only of the intersection proposed: if it cannot be found, stop; never review "
+                             "another corner"}
         rv.appraisal = appraise(got[1], rv.proposal["countermeasure"], rv.proposal["cost_usd"])
         rid = desk.receipt("appraisal", rv.appraisal)
         return {"receipt": rid, **rv.appraisal,
@@ -365,7 +396,9 @@ def review(text: str, city: str, client=None, letter_client=None, open_client=No
                     required=("register_proposal", "investigate", "appraise", "red_team"), governor=True)
     rep = rv.desk.report or {}
     out = {"status": "published" if rv.final else "abstained",
-           "reason": None if rv.final else f"not published ({run.stopped})",
+           "reason": None if rv.final else (f"the proposed intersection could not be found; the agent reached "
+                                             f"{rv.off_corner}, which is not it" if rv.off_corner
+                                             else f"not published ({run.stopped})"),
            "city": c["id"], "city_name": c["name"], "input": orchestrator.redact(text),
            "proposal": rv.proposal, "corner": (rep.get("junction") or {}).get("name"),
            "verdict": (rv.appraisal or {}).get("verdict"), "verdict_text": (rv.appraisal or {}).get("verdict_text"),

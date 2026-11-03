@@ -97,7 +97,8 @@ def save_gazetteer(extra: list[dict] | None = None) -> int:
 
 ABBREV_FULL = {"st": "Street", "ave": "Avenue", "av": "Avenue", "blvd": "Boulevard", "rd": "Road", "pkwy": "Parkway",
                "dr": "Drive", "pl": "Place", "ln": "Lane", "ct": "Court", "hwy": "Highway", "expy": "Expressway",
-               "sq": "Square", "ter": "Terrace", "way": "Way", "n": "North", "s": "South", "e": "East", "w": "West"}
+               "sq": "Square", "ter": "Terrace", "way": "Way", "n": "North", "s": "South", "e": "East", "w": "West",
+               "rev": "Reverend"}
 QUADRANT = {"nw": "Northwest", "ne": "Northeast", "sw": "Southwest", "se": "Southeast"}
 
 
@@ -153,8 +154,10 @@ DIRECTIONS = "North|South|East|West|Northeast|Northwest|Southeast|Southwest|N|S|
 
 
 def _directional(street: str) -> str:
-    """A street name pattern that also matches it with a direction word before or after it."""
-    return f"(({DIRECTIONS}) )?{street}( ({DIRECTIONS}))?"
+    """A street name pattern that also matches it with a direction word before or after it, and with or without a
+    period after an initial ("Reverend James A Polite Avenue" is "Reverend James A. Polite Avenue" in OpenStreetMap)."""
+    words = [w.rstrip(".") + "[.]?" if len(w.rstrip(".")) == 1 else w for w in street.split()]
+    return f"(({DIRECTIONS}) )?{' '.join(words)}( ({DIRECTIONS}))?"
 
 
 def _crossing(a: str, b: str, area: str) -> list[tuple[float, float]]:

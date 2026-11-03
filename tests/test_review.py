@@ -170,3 +170,37 @@ def test_the_check_test_set_says_what_each_input_should_get():
     assert {i["split"] for i in d["inputs"]} == {"independent", "team", "held_out"}
     assert all(i["expect"] and i["kind"] in check.KINDS for i in d["inputs"])
     assert len({i["id"] for i in d["inputs"]}) == len(d["inputs"])
+
+
+@pytest.mark.parametrize("proposed,corner,same", [
+    ("East 169th Street & Rev James A Polite Avenue, Bronx", "East 169th Street & Prospect Avenue, Bronx", False),
+    ("East 169th Street & Rev James A Polite Avenue, Bronx", "East 169th Street & Reverend James A. Polite Avenue, Bronx", True),
+    ("22nd Street NW & L Street NW", "22nd Street Northwest & L Street Northwest, Washington DC", True),
+    ("15th Ave S & S Lander St", "15th Avenue South & South Lander Street, Seattle", True),
+    ("Ridge Avenue & Hollywood Avenue", "West Hollywood Avenue & North Ridge Avenue, Chicago", True),
+    ("Ridge Avenue & Hollywood Avenue", "North Ridge Avenue & West Thorndale Avenue, Chicago", False),
+])
+def test_a_review_is_only_of_the_intersection_proposed(proposed, corner, same):
+    """T26: a proposal's street was not found, and the agent reviewed a nearby corner instead. The appraisal now
+    refuses a case about any intersection but the one proposed."""
+    assert review.same_corner(proposed, corner) is same
+
+
+def test_the_appraisal_refuses_another_corner():
+    rv = review.Review("zz")
+    ts = {t.name: t for t in review.tools(rv, None, None, None)}
+    ts["register_proposal"].fn(address="East 169th Street & Rev James A Polite Avenue, Bronx",
+                               countermeasure="Lighting", cost_usd=0, goal="x")
+    rv.desk.receipt("choose_fixes", FX)
+    rv.desk.report = {"junction": {"name": "East 169th Street & Prospect Avenue, Bronx"}}
+    out = ts["appraise"].fn()
+    assert "not the proposed intersection" in out["error"] and rv.appraisal is None
+    assert rv.off_corner == "East 169th Street & Prospect Avenue, Bronx"
+
+
+def test_an_initial_matches_with_or_without_its_period():
+    import re
+    from nearmisslens import brief
+    pat = brief._directional("Reverend James A Polite Avenue")
+    assert re.fullmatch(pat, "Reverend James A. Polite Avenue", re.I) and re.fullmatch(pat, "Reverend James A Polite Avenue", re.I)
+    assert brief.address_variants("Rev James A Polite Ave & E 169th St, Bronx")[1].startswith("Reverend James A Polite Avenue")
