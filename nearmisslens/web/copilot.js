@@ -253,7 +253,20 @@ $("search").onsubmit = async e => {
     return;
   }
   busy(`Reading the public record for ${esc(q)}…`);
-  try { show(await getJSON(`${LIVE}engineer`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({address: q, city: CITY})}), null); }
+  try {
+    let r = await getJSON(`${LIVE}engineer`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({address: q, city: CITY})});
+    while (r.job) {  // a corner never fetched before: the server keeps working and the page asks again
+      const job = r.job;
+      await new Promise(ok => setTimeout(ok, 3000));
+      const rec = await getJSON(`${LIVE}engineer/${encodeURIComponent(job)}`);
+      if (rec.status === "failed") throw new Error(rec.error);
+      if (rec.status === "running") {
+        busy(`Reading the public record for ${esc(q)}… ${Math.round(rec.seconds)} s (a corner nobody asked about before can take a few minutes; public map servers set the pace)`);
+        r = {job};
+      } else r = rec.result;
+    }
+    show(r, null);
+  }
   catch (err) { failed(err, q); }
 };
 

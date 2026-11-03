@@ -92,3 +92,64 @@ def test_check_endpoints_end_to_end(monkeypatch, tmp_path):
         time.sleep(0.05)
     assert code == 200 and rec["status"] == "done" and rec["result"]["corner"] == "A & B"
     assert _call(base + "/check/ffffffffffffffff")[0] == 404
+
+
+def test_jobs_wait_returns_quick_results_and_none_while_running(tmp_path):
+    gate = threading.Event()
+    jobs = Jobs(lambda q: (gate.wait(5), {"ok": q["n"]})[1], None, 0.0, tmp_path / "j", slots=2, busy="busy now")
+    a, b = jobs.submit({"n": 1}), jobs.submit({"n": 2})  # two slots: both start
+    with pytest.raises(Busy, match="busy now"):
+        jobs.submit({"n": 3})
+    assert jobs.wait(a, 0.05) is None  # still running: the caller hands out the job id instead
+    gate.set()
+    assert jobs.wait(a, 5)["result"] == {"ok": 1} and jobs.wait(b, 5)["result"] == {"ok": 2}
+
+
+def test_a_plain_refusal_is_said_as_it_is_and_costs_nothing(tmp_path):
+    b = DailyBudget(usd=5, requests=10, path=tmp_path / "b.json")
+    jobs = Jobs(lambda q: (_ for _ in ()).throw(ValueError("no such intersection was found")), b, 0.5, tmp_path / "j",
+                plain=(ValueError,))
+    rec = jobs.wait(jobs.submit({}), 5)
+    assert rec["status"] == "failed" and rec["plain"] and rec["error"] == "no such intersection was found"
+    assert b.state()["usd"] == 0.0
+
+
+def test_a_job_left_running_by_a_restart_reads_as_stopped(tmp_path):
+    store = tmp_path / "j"
+    store.mkdir()
+    (store / "0123456789abcdef.json").write_text(json.dumps({"status": "running", "started": time.time() - 30}))
+    rec = Jobs(lambda q: {}, None, 0.0, store).status("0123456789abcdef")  # a new process: not running here
+    assert rec["status"] == "failed" and "restarted" in rec["error"]
+
+
+def test_engineer_answers_quick_corners_inline_and_slow_ones_as_a_job(monkeypatch, tmp_path):
+    from nearmisslens import brief, context, engineer
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    monkeypatch.setattr(app, "ENGINEER_WAIT_S", 0.5)
+    slow = threading.Event()
+    monkeypatch.setattr(brief, "geocode", lambda a: (_ for _ in ()).throw(ValueError("could not find that place"))
+                        if a.startswith("Nowhere") else (1.0, 2.0, a))
+    monkeypatch.setattr(context, "city_of", lambda lat, lon: "zz")
+    monkeypatch.setattr(engineer, "investigate", lambda desk, a, name, lat, lon:
+                        (slow.wait(5) if a.startswith("Slow") else None, {"junction": {"name": name}})[1])
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            _call(base + "/cities")
+            break
+        except OSError:
+            time.sleep(0.05)
+    assert _call(base + "/engineer", {"address": "Fast St & Quick Ave"}) == (200, {"junction": {"name": "Fast St & Quick Ave"}})
+    assert _call(base + "/engineer", {"address": "Nowhere Rd & Lost Ln"}) == (422, {"error": "could not find that place"})
+    code, body = _call(base + "/engineer", {"address": "Slow St & Long Ave"})
+    assert code == 202 and len(body["job"]) == 16
+    assert _call(f"{base}/engineer/{body['job']}")[1]["status"] == "running"
+    slow.set()
+    for _ in range(100):
+        rec = _call(f"{base}/engineer/{body['job']}")[1]
+        if rec["status"] != "running":
+            break
+        time.sleep(0.05)
+    assert rec["status"] == "done" and rec["result"]["junction"]["name"] == "Slow St & Long Ave"

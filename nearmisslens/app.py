@@ -3,7 +3,9 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
 
     GET  /                  the page (nearmisslens/web/copilot.html, mode "live")
     GET  /data/...          the static site's files (docs/data: index, evidence, one report per corner, photos)
-    POST /engineer          {"address": "..."} -> the deterministic engineer report (no model, a request-cap)
+    POST /engineer          {"address": "..."} -> the deterministic engineer report (no model, a request-cap), or,
+                            when it takes longer than ENGINEER_WAIT_S (a corner never fetched before), {"job": id}
+    GET  /engineer/<id>     {"status": "running" | "done" | "failed", "seconds", "result"?}
     POST /letter            {"name", "lat", "lon"} -> a drafted, number-checked request letter (Muse Spark Open)
     GET  /cities            the registry's cities and whether each can be checked
     POST /check             {"input", "city", "kind"?, "photo"?, "address"?} -> {"job": id}: the desk on one input
@@ -31,6 +33,8 @@ DOCS = ROOT / "docs"
 MAX_BODY = 4096
 LETTER_RESERVE_USD = 0.03
 ASK_RESERVE_USD = 0.05
+ENGINEER_WAIT_S = 20.0  # answer in the request when it is quick; otherwise the page polls (a proxy cuts long requests)
+ENGINEER_SLOTS = 3  # new corners investigated at once (no model; public map and data servers set the pace)
 CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one desk case's Meta cap, reserved first
 
 
@@ -131,6 +135,15 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                       letter_client=memo_client, model_check_client=desk_client),
                 budget if public else None, CHECK_BUDGET_USD)
 
+    def investigate(q: dict) -> dict:
+        lat, lon, name = brief.geocode(q["address"])
+        if context.city_of(lat, lon) is None:
+            raise BadRequest("that place is outside the cities this copy covers")
+        return engineer.investigate(engineer.Desk(), q["address"], name, lat, lon)
+
+    corners = Jobs(investigate, None, 0.0, SETTINGS.runs_dir / "engineer" / "jobs", slots=ENGINEER_SLOTS,
+                   busy="the server is investigating other new corners; try again in a minute", plain=(ValueError,))
+
     class H(BaseHTTPRequestHandler):
         def _send(self, code: int, body: bytes, ctype: str):
             self.send_response(code)
@@ -152,9 +165,9 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
             if u.path == "/cities":
                 return self._json(200, {"cities": check.cities()})
-            if u.path.startswith("/check/"):
-                rec = jobs.status(u.path.rsplit("/", 1)[1])
-                return self._json(200, rec) if rec else self._json(404, {"error": "no such check (kept 24 hours)"})
+            if u.path.startswith(("/check/", "/engineer/")):
+                rec = (jobs if u.path.startswith("/check/") else corners).status(u.path.rsplit("/", 1)[1])
+                return self._json(200, rec) if rec else self._json(404, {"error": "no such job (kept 24 hours)"})
             if u.path.startswith("/data/"):
                 p = static_file(u.path)
                 if p:
@@ -173,10 +186,16 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                     if public and not budget.request():
                         return self._json(429, {"error": "today's limit for new corners is reached; the city's "
                                                          "priority corners are still open from the list"})
-                    lat, lon, name = brief.geocode(a)
-                    if context.city_of(lat, lon) is None:
-                        raise BadRequest("that place is outside the cities this copy covers")
-                    return self._json(200, engineer.investigate(engineer.Desk(), a, name, lat, lon))
+                    try:
+                        job = corners.submit({"address": a})
+                    except Busy as e:
+                        return self._json(409, {"error": str(e)})
+                    rec = corners.wait(job, ENGINEER_WAIT_S)
+                    if rec is None:
+                        return self._json(202, {"job": job})
+                    if rec["status"] == "failed":
+                        return self._json(422 if rec.get("plain") else 502, {"error": rec["error"]})
+                    return self._json(200, rec["result"])
                 if path == "/letter":
                     name, lat, lon = point(q)
                     if public and not budget.reserve(LETTER_RESERVE_USD):

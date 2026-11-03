@@ -50,6 +50,22 @@ def _cache_dir() -> Path:
     return p
 
 
+def _get(url: str, params: dict | None, data: dict | None, timeout: float, total: float | None = None) -> tuple[int, bytes]:
+    """(status, body) of one GET (or form POST), within `total` seconds in all (default `timeout`): httpx's timeout
+    counts each read, so a server that trickles its answer could otherwise hold a request for many minutes. Overpass
+    gets its own timeout as the total (a mirror answers instead); a city's data download gets four times it."""
+    total = timeout if total is None else total
+    end = time.time() + total
+    with httpx.Client(headers=UA, timeout=timeout, follow_redirects=True) as c:
+        with c.stream("POST" if data is not None else "GET", url, data=data, params=params) as r:
+            body = bytearray()
+            for chunk in r.iter_bytes():
+                body += chunk
+                if time.time() > end:
+                    raise httpx.ReadTimeout(f"no complete answer in {total:.0f} s")
+            return r.status_code, bytes(body)
+
+
 def fetch(url: str, params: dict | None = None, data: dict | None = None, timeout: float = 90.0,
           attempts: int = 6) -> tuple[dict, float]:
     """GET (or POST form) JSON with a disk cache keyed by the request; returns (json, seconds, 0 when cached)."""
@@ -64,19 +80,18 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
     for attempt in range(attempts):
         target = servers[attempt % len(servers)]
         try:
-            with httpx.Client(headers=UA, timeout=timeout, follow_redirects=True) as c:
-                r = c.post(target, data=data) if data is not None else c.get(target, params=params)
-            if r.status_code == 200:
-                out = r.json()
+            status, body = _get(target, params, data, timeout, total=timeout if url == OVERPASS else 4 * timeout)
+            if status == 200:
+                out = json.loads(body)
                 atomic_write(path, json.dumps(out))
                 return out, round(time.time() - t, 2)
-            err = f"HTTP {r.status_code}"
-            if r.status_code < 500 and r.status_code != 429:  # a bad request will not get better by waiting
+            err = f"HTTP {status}"
+            if status < 500 and status != 429:  # a bad request will not get better by waiting
                 break
         except (httpx.TransportError, json.JSONDecodeError) as e:
             err = f"{type(e).__name__}"
-        if attempt + 1 < attempts:
-            time.sleep(min(60, 3 * 2 ** attempt))  # public servers shed load with 429/503: back off up to a minute
+        if attempt + 1 < attempts and attempt + 1 >= len(servers):  # back off only before asking a server again:
+            time.sleep(min(60, 3 * 2 ** attempt))  # public servers shed load with 429/503 (a mirror is tried at once)
     raise RuntimeError(f"{url}: {err}")
 
 
@@ -148,7 +163,7 @@ def osm(lat: float, lon: float) -> dict:
          f"node(around:400,{lat},{lon})[amenity~\"school|kindergarten\"];"
          f"node(around:200,{lat},{lon})[highway=bus_stop];);out tags center;")
     try:
-        js, secs = overpass(q, timeout=120)
+        js, secs = overpass(q, timeout=30)  # a small box: a healthy server answers in seconds
         el = js.get("elements", [])
         nodes = [e.get("tags", {}) for e in el if e["type"] == "node"]
         ways = [e.get("tags", {}) for e in el if e["type"] == "way"]
