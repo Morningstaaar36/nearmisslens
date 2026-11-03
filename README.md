@@ -10,7 +10,7 @@
 
 Nothing is published until code has checked every number against the record and every quote against its page.
 
-**On 36 fresh real cases in three runs registered before they ran (T21c to T21e), the desk published 33, and all 72 of their quotes were found on the page they cite. It cost $0.063 to $0.126 a case on the Meta API.** The first version published 4 of 12. A quote check shows the sentence is on the page, not that it supports the finding, and the hand audit of the published findings is pending.
+**On 36 fresh real cases in three runs registered before they ran (T21c to T21e), the desk published 33, and all 72 of their quotes were found on the page they cite. It cost $0.063 to $0.126 a case on the Meta API.** The first version published 4 of 12. A quote check shows the sentence is on the page, not that it supports the finding. An independent audit of 12 published cases found an error in 7. In 4 of them the error was in the drafted letter: the letter said no one was killed where people had died, a counting bug now fixed. The other 3 were errors that earlier runs' fixes had already corrected. See "How we kept ourselves honest".
 
 **Muse Spark alone, with the same web search on the same inputs (T24), shows what the checks add:**
 - 26 of the 73 quotes it cited from pages we could read are not on those pages.
@@ -333,6 +333,9 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
 ## How we kept ourselves honest
 
 - **Registration.** The rules of every test are in [`validation/BENCH_PREREG.md`](validation/BENCH_PREREG.md), and every result, including the failures, is in [`validation/BENCH.md`](validation/BENCH.md). Earlier registrations were often committed with their results, so git cannot confirm their order. T18 and T19 were committed and pushed before they ran (commits 89de45b and 28ba1b0), and changes after a run are listed there.
+- **Independent testing.** Agents that had not seen our reviews tested and audited the product; their reports are kept as written in [`validation/independent/`](validation/independent/), and BENCH_PREREG.md says what we changed after each one.
+  - **An independent test** (7 new inputs): 2 passed, 3 were partial and 2 failed. The failures were in Before you commit: parts of a proposal were dropped, a site's signal status was misread, and a package cost was charged to one device. Each was fixed; the failed cases now pass on rerun, and a second round runs on new inputs.
+  - **An independent audit** (12 published cases drawn with a fixed seed): 7 had an error. 4 were letters that said no one was killed where people had died (a counting bug, now fixed; the saved letters carry a correction). 3 had already been fixed by later runs' changes.
 - **Cases are rechecked.** Every saved case is rewritten by the current code and rechecked before the site is built. Agent cases are rechecked against today's receipts, and a claim that no longer passes is shown struck through with the reason.
 - **The scoreboard.** Every registered test of the current product, met or not:
 
@@ -359,7 +362,10 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
 
 ## Limits
 
-- **The desk's verdicts are only as good as its gates.** The gates check numbers, quotes and wording, not whether a finding is the right one to make; the review of T21c found two wrong claim verdicts that passed. Every published desk finding is listed for a hand audit, pending.
+- **The desk's verdicts are only as good as its gates.** The gates check numbers, quotes and wording, not whether a finding is the right one to make.
+  - The review of T21c found two wrong claim verdicts that passed.
+  - **An independent audit** (`validation/independent/`) of 12 published cases found errors in 7 (58%, 95% interval 32–81%). Counting only the findings and claims, not the letters: 4 of 12 (33%, 14–61%).
+  - The letter bug and the lighting estimate are fixed, and the saved letters affected carry a correction on the site. No person has audited the cases yet.
 - **The crash record lags the news.** Police data arrives days to weeks after a crash, so a crash in the news is often not in the record yet. The desk states the record's as-of date, but a letter can still say "no deaths were recorded" the week of a death.
 - **The desk is slow where OpenStreetMap is slow.** Most of a case's minutes are spent waiting for public map servers, not on the model.
 - **A screening aid, not a design.** Estimates use the Highway Safety Manual's simple method, one fix per corner, never stacked, and a qualified engineer must review each one.

@@ -900,3 +900,22 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - mean cost at most $0.15;
   - **new: every published memo is about the intersection proposed** (T26: 6 of 7).
 - **Also reported:** each memo's verdict against T26's, and the post-hoc review as for T26.
+
+## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
+- **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
+- **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).
+- **Result:** 7 of 12 had at least one error (58%, Wilson 95% interval 32% to 81%). Counting only summaries, findings, sources and claims, not the drafted letters: 4 of 12 (33%, 14% to 61%). 2 were clean and 3 had minor problems.
+- **What held up:**
+  - all 22 quotes are on their pages;
+  - every corner but one matches its source;
+  - every crash and death count in the findings is within 2 of the auditor's own count;
+  - no plate or unprinted name appears.
+- **The errors, and where each stands:**
+  - **Letters said no one was killed where the record has deaths** (4 of the 7). Letters counted deaths by mode only, and San Francisco, Seattle and Chicago record deaths without the mode. *Fixed:* every death count now comes from one function. The 6 saved letters affected on the site carry a visible correction; the registered results are kept as they ran.
+  - **A true sentence and a crash after the record's end called "contradicted"** (2, both T21c). *Already fixed* by the T21d and T21e changes: the current check gives "consistent" and "cannot be checked", and the site shows the current verdict next to each published one.
+  - **A 311 report investigated at a corner 337 m away** (1, T21c). *Already fixed* by the T21e change: a non-intersection address is matched to a screened corner only within 150 m, else refused.
+- **Other patterns, and what changed:**
+  - **Lighting was valued at corners where the record codes 80–94% of after-dark crashes as lit.** *Fixed:* lighting is no longer estimated where at least 80% of at least 5 after-dark crashes are coded lit.
+  - **The yearly harm figure sat next to death counts.** *Fixed:* it now says it values injury crashes only.
+  - **"Consistent" was published on a death count the model-read flags marked untested** (Kilbourn & Belmont). The code had tested that number and it matches the record, so the verdict stands. Since the T25 changes a check also cannot grade its own record sentence as a source claim.
+  - **Not changed:** 311 curb and sidewalk reports, which the feed routes to Public Works, still get letters to the transportation agency; quotes with a plate redacted count as verified.
