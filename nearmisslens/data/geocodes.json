@@ -1,4 +1,10 @@
 {
+"chicago|division street & milwaukee avenue": {
+"lat": 41.9033638,
+"lon": -87.6664876,
+"name": "Milwaukee Avenue & Division Street",
+"city": "chicago"
+},
 "dc|14th street northwest & u street northwest": {
 "lat": 38.917008,
 "lon": -77.031859,
@@ -1995,6 +2001,12 @@
 "lat": 47.6635729,
 "lon": -122.3411772,
 "name": "Stone Way North & North 48th Street",
+"city": "seattle"
+},
+"seattle|rainier avenue south & south genesee street": {
+"lat": 47.5640892,
+"lon": -122.2881792,
+"name": "Rainier Avenue South & South Genesee Street",
 "city": "seattle"
 },
 "seattle|rainier avenue south & south henderson street": {

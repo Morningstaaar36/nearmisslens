@@ -1,4 +1,7 @@
 """The offline geocode table answers only in the city the address names (verifier1 A2)."""
+import inspect
+import json
+
 import pytest
 
 from nearmisslens import brief
@@ -44,10 +47,13 @@ def test_the_city_named_first_wins():
 
 
 def test_a_lookup_found_in_another_city_is_refused(monkeypatch):
-    calls = iter([([{"lat": "40.7", "lon": "-74.0", "display_name": "x"}], None),
-                  ([{"lat": "40.7", "lon": "-74.0"}], None),
-                  ({"elements": [{"type": "node", "lat": 40.71, "lon": -74.0}]}, None)])
-    monkeypatch.setattr(brief.context, "fetch", lambda *a, **k: next(calls))
+    def fetch(url, params=None, data=None, **k):
+        if data:  # the intersection search
+            return {"elements": [{"type": "node", "lat": 40.71, "lon": -74.0}]}, None
+        if params.get("bounded"):  # the search within the named city (Seattle) finds nothing
+            return [], None
+        return [{"lat": "40.7", "lon": "-74.0", "display_name": "x"}], None
+    monkeypatch.setattr(brief.context, "fetch", fetch)
     monkeypatch.setattr(brief, "GEOCODES", None)  # nothing may be written
     with pytest.raises(ValueError, match="not in the city the address names"):
         brief._lookup("Pike St & 5th Ave, Seattle")
@@ -138,3 +144,39 @@ def test_an_unknown_category_is_never_a_pattern():
     assert not any("unknown" in t or "not reported" in t for t in tags)
     tags, _ = rootcause.tags({"type": "Broadside", "f": ""}, a)
     assert "crash type: broadside" in tags
+
+
+def test_a_long_street_is_found_inside_the_named_city_and_with_a_direction_word(monkeypatch, tmp_path):
+    """'Milwaukee Avenue, Chicago' first matched a suburb on the same road, and 'Division Street' a small street of
+    that name across town: the search is repeated inside the city's box, and the crossing found with OSM's names
+    ('North Milwaukee Avenue', 'West Division Street')."""
+    asked = []
+
+    def fetch(url, params=None, data=None, **k):
+        if data:
+            asked.append(data["data"])
+            hit = "North|South" in data["data"] and "41.64,-87.94,42.03,-87.52" in data["data"]
+            return {"elements": [{"type": "node", "lat": 41.9034, "lon": -87.6665}] if hit else []}, None
+        if params["q"].startswith("Milwaukee"):
+            return ([{"lat": "41.8926", "lon": "-87.6498", "display_name": "N Milwaukee Ave, Chicago"}]
+                    if params.get("bounded") else [{"lat": "42.10", "lon": "-87.88", "display_name": "Wheeling"}]), None
+        return [{"lat": "41.6735", "lon": "-87.67"}], None  # another Division Street, far south
+    monkeypatch.setattr(brief.context, "fetch", fetch)
+    monkeypatch.setattr(brief, "GEOCODES", tmp_path / "geocodes.json")
+    monkeypatch.setattr(brief, "gazetteer", lambda: {})
+    lat, lon, name = brief._lookup("Milwaukee Avenue & Division Street, Chicago")
+    assert (lat, lon) == (41.9034, -87.6665) and len(asked) == 2  # the exact names first (cached runs), then the city
+
+
+def test_no_city_comparison_is_said_plainly(monkeypatch):
+    """A city with no screened priority junctions (Chicago here) has nothing to compare against: the report says so,
+    instead of "no pattern stands out against the city's priority junctions"."""
+    from nearmisslens import engineer
+    monkeypatch.setattr(engineer.rootcause, "analyse", lambda lat, lon: {
+        "crashes": 66, "baseline": None, "enough_crashes": True, "over_represented": [], "source": "x"})
+    desk = engineer.Desk()
+    data, rid = engineer.root_cause(desk, 41.9, -87.66)
+    summary = next(r["summary"] for r in desk.receipts if r["id"] == rid)
+    assert "not compared" in summary and "stands out" not in summary
+    src = inspect.getsource(engineer.claims_for)
+    assert "is not compared with the rest of the city" in src  # the report's sentence for the same case

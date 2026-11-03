@@ -149,6 +149,45 @@ def geocode(address: str) -> tuple[float, float, str]:
     raise errors[0]
 
 
+DIRECTIONS = "North|South|East|West|Northeast|Northwest|Southeast|Southwest|N|S|E|W|NE|NW|SE|SW"
+
+
+def _directional(street: str) -> str:
+    """A street name pattern that also matches it with a direction word before or after it."""
+    return f"(({DIRECTIONS}) )?{street}( ({DIRECTIONS}))?"
+
+
+def _crossing(a: str, b: str, area: str) -> list[tuple[float, float]]:
+    """The nodes where streets named a and b (patterns, case-insensitive) meet in the area (an Overpass filter:
+    "around:R,LAT,LON" or a bounding box "S,W,N,E"). Each public Overpass server is asked once, within a time limit;
+    ValueError when none answers."""
+    q = (f'[out:json][timeout:90];way({area})[highway][name~"^{a}$",i]->.a;'
+         f'way({area})[highway][name~"^{b}$",i]->.b;node(w.a)(w.b);out;')
+    for server in OVERPASS_SERVERS:  # the public servers fail now and then; try the next one
+        try:
+            res, _ = context.fetch(server, data={"data": q}, timeout=75, attempts=1)
+        except RuntimeError:
+            continue
+        return [(e["lat"], e["lon"]) for e in res.get("elements", []) if e.get("type") == "node"]
+    raise ValueError("OpenStreetMap servers are unavailable; try again or give coordinates")
+
+
+def _nominatim(q: str, country: str, city: str | None) -> list:
+    """Nominatim's best match. A long street runs past the city line (its best match can be in a suburb on the same
+    road), so when the address names a registry city and the match is not in it, the search is repeated within that
+    city's bounding box. The first search's parameters are unchanged, so earlier lookups answer from the cache."""
+    from . import opendata
+    params = {"q": q, "format": "jsonv2", "limit": 1, "countrycodes": country}
+    js, _ = context.fetch("https://nominatim.openstreetmap.org/search", params)
+    c = opendata.city(city) if city else None
+    if c and (not js or context.city_of(float(js[0]["lat"]), float(js[0]["lon"])) != c["id"]):
+        s, w, n, e = c["bbox"]
+        inside, _ = context.fetch("https://nominatim.openstreetmap.org/search",
+                                  {**params, "viewbox": f"{w},{n},{e},{s}", "bounded": 1})
+        js = inside or js
+    return js
+
+
 class OutsideCoverage(ValueError):
     """The place is in no registry city: refused at once, before any slow intersection search."""
 
@@ -164,8 +203,8 @@ def _lookup(address: str) -> tuple[float, float, str]:
     streets = address.split(",")[0]
     rest = ",".join(address.split(",")[1:])
     first = streets.split("&")[0].strip() if "&" in streets else streets
-    js, _ = context.fetch("https://nominatim.openstreetmap.org/search",
-                          {"q": f"{first},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": country})
+    named = city_named(address)
+    js = _nominatim(f"{first},{rest}", country, named)
     if not js:
         raise ValueError(f"address not found: {address}")
     lat, lon, name = float(js[0]["lat"]), float(js[0]["lon"]), js[0].get("display_name", address)
@@ -175,22 +214,16 @@ def _lookup(address: str) -> tuple[float, float, str]:
     if "&" not in streets:
         return lat, lon, name
     a, b = (x.strip() for x in streets.split("&")[:2])
-    jb, _ = context.fetch("https://nominatim.openstreetmap.org/search",
-                          {"q": f"{b},{rest}", "format": "jsonv2", "limit": 1, "countrycodes": country})
+    jb = _nominatim(f"{b},{rest}", country, named)
     if jb:  # long streets: search around the midpoint of the two streets' anchors, wide enough to reach both
         lat, lon = (lat + float(jb[0]["lat"])) / 2, (lon + float(jb[0]["lon"])) / 2
-    q = (f'[out:json][timeout:90];way(around:12000,{lat},{lon})[highway][name~"^{a}$",i]->.a;'
-         f'way(around:12000,{lat},{lon})[highway][name~"^{b}$",i]->.b;node(w.a)(w.b);out;')
-    res = None
-    for server in OVERPASS_SERVERS:  # the public servers fail now and then; try the next one
-        try:
-            res, _ = context.fetch(server, data={"data": q}, timeout=150)
-            break
-        except RuntimeError:
-            continue
-    if res is None:
-        raise ValueError("OpenStreetMap servers are unavailable; try again or give coordinates")
-    nodes = [(e["lat"], e["lon"]) for e in res.get("elements", []) if e.get("type") == "node"]
+    nodes = _crossing(a, b, f"around:12000,{lat},{lon}")
+    c = opendata.city(named) if named else None
+    if not nodes and c:  # the whole named city, with a direction before or after each name ("North Milwaukee Avenue"):
+        s, w, n, e = c["bbox"]  # a common name's best match can be another street of that name across town
+        nodes = _crossing(_directional(a), _directional(b), f"{s},{w},{n},{e}")
+        if nodes:
+            lat, lon = float(js[0]["lat"]), float(js[0]["lon"])  # the crossing nearest the first street's match
     if not nodes:
         raise ValueError(f"no intersection of {a} and {b} found near {name}")
     lat2, lon2 = min(nodes, key=lambda n: (n[0] - lat) ** 2 + (n[1] - lon) ** 2)

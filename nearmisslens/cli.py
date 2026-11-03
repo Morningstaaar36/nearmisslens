@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import sys
 
@@ -700,6 +701,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.replay:
         SETTINGS.replay = True
+    from . import brief
     from .cache import ReplayMiss
     from .cost import BudgetExceeded
     try:
@@ -708,6 +710,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"not in the replay cache: {e}. Run without --replay to fetch it from the Meta Model API (paid).")
     except BudgetExceeded as e:
         print(f"stopped by the spending cap: {e}")
+    except brief.OutsideCoverage as e:  # a plain refusal, not a crash
+        print(f"refused: {e}")
+    except ValueError as e:  # a place not found and similar plain failures; NML_DEBUG=1 shows the traceback
+        if os.environ.get("NML_DEBUG"):
+            raise
+        print(f"could not finish: {e}")
     return 2
 
 

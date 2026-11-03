@@ -84,7 +84,8 @@ def root_cause(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
         checks.append("not in this dataset: " + ", ".join(data["not_recorded"]))
     rid = desk.record("root_cause", data, [data.get("source")], checks, t0,
                       ("over-represented: " + ", ".join(t["pattern"] for t in over)) if over
-                      else f"no pattern stands out against {peers}")
+                      else f"no pattern stands out against {peers}" if data.get("baseline")
+                      else "not compared: the city has no screened priority junctions to compare against")
     return data, rid
 
 
@@ -465,6 +466,9 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
         out += [{"text": f"{treatments.pct(100 * t['share'])}% of crashes here {t['phrase']}, against "
                          f"{treatments.pct(100 * t['city_share'])}% at {peers}.", "receipt": rr}
                 for t in over[:3]]
+    elif rc.get("crashes") is not None and not rc.get("baseline"):  # nothing to compare against: say so
+        out.append({"text": "What these crashes have in common is not compared with the rest of the city: it has no "
+                            "screened priority junctions to compare against.", "receipt": rr})
     elif rc.get("crashes") is not None:
         out.append({"text": f"No crash pattern here stands out against {peers}"
                             + ("" if rc.get("enough_crashes") else " (too few crashes to test)") + ".", "receipt": rr})
