@@ -105,7 +105,7 @@ async function savedReviews() {
   let d;
   try { d = await getJSON("data/reviews.json"); } catch (e) { return ""; }
   const s = d.summary;
-  const tryRows = (d.try || []).map(t => `<li>${esc(t.city)}: ${esc(t.proposal)} <span class="legend">(${esc(t.split === "held_out" ? "held out: never run by the project" : "tried by the team")}; <a href="${esc(t.source)}" target="_blank" rel="noopener">source</a>)</span></li>`).join("");
+  const tryRows = (d.try || []).map(t => `<li>${esc(t.city)}: ${esc(t.proposal)} <span class="legend">(${esc({held_out: "held out: never run by the project", independent: "run by an independent tester", team: "tried by the team"}[t.split] || t.split)}; <a href="${esc(t.source)}" target="_blank" rel="noopener">source</a>)</span></li>`).join("");
   return `<section class="step"><h3>Saved reviews: ${esc(d.run)}, real proposed projects</h3>` +
     `<p class="legend">Registered in ${esc(d.registered)}. ${s.published} of ${s.inputs} memos published; every verdict set by code; ` +
     `${s.objections_kept} red-team objections kept after their facts were checked. Rule ${s.rule_met ? "met" : "not met"}; ` +
