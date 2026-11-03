@@ -119,3 +119,25 @@ def intake(client: MetaClient, wav: Path, facts: dict, tag: str, audio_key: str 
     complaint = extract(client, t["transcript"], tag)
     return {"audio": Path(wav).name, "transcript": t["transcript"], "audio_s": t.get("audioDurationMs", 0) / 1000,
             "complaint": complaint, "match": match(complaint, facts)}
+
+
+def to_wav(audio: Path, out_dir: Path) -> Path:
+    """Any recording (a phone's m4a, an mp3, a wav) as the mono 16 kHz 16-bit WAV the transcriber takes."""
+    import subprocess
+    out_dir.mkdir(parents=True, exist_ok=True)
+    wav = out_dir / f"{file_sha256(audio)[:16]}.wav"
+    if not wav.exists():
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(audio), "-ac", "1", "-ar", "16000", "-sample_fmt", "s16",
+                        str(wav)], check=True)
+    return wav
+
+
+def spoken_proposal(client: MetaClient, audio: Path) -> str:
+    """The proposal an engineer spoke, as text for nml review (Muse Voice Transcribe). Refused when nothing was said."""
+    from .config import SETTINGS
+    wav = to_wav(Path(audio), SETTINGS.runs_dir / "audio")
+    text = (transcribe(client, wav, f"proposal {Path(audio).name}").get("transcript") or "").strip()
+    if len(text) < 10:
+        raise ValueError("the recording has no proposal in it that could be transcribed; speak the fix, the "
+                         "intersection and the cost")
+    return text

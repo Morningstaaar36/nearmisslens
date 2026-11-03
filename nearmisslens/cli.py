@@ -4,6 +4,7 @@ import argparse
 import os
 import json
 import sys
+from pathlib import Path
 
 from .config import ROOT, SETTINGS, portable, resolve
 from .cost import CostMeter
@@ -283,6 +284,10 @@ def cmd_review(args) -> int:
     from .meta_client import MetaClient
     from .openclient import OpenWeightsClient
     text, city = args.proposal, args.city
+    if args.audio:  # a proposal spoken in the field: Muse Voice Transcribe, then the same review
+        from .voice import spoken_proposal
+        text = spoken_proposal(MetaClient(SETTINGS), Path(args.audio))
+        print(f"transcript: {text}", file=sys.stderr)
     if args.example:
         ex = review.example(args.example)
         text, city = ex["proposal"], ex["city"]
@@ -771,6 +776,8 @@ def main(argv: list[str] | None = None) -> int:
     rv.add_argument("--city", help="a registry city id (nml cities)")
     rv.add_argument("--example", type=int, help="a saved real proposal from validation/examples/proposals.json")
     rv.add_argument("--letter", action="store_true", help="also draft the work order to the road owner")
+    rv.add_argument("--audio", help="a recording of the proposal, spoken (any format ffmpeg reads): transcribed by "
+                    "Muse Voice Transcribe, then reviewed")
     rv.add_argument("--budget", type=float, default=0.50, help="Meta API dollars for this review (default 0.50)")
     rv.add_argument("--json", action="store_true")
     po = sub.add_parser("portfolio", help="program review: a list of proposed projects, each reviewed, ranked by code "

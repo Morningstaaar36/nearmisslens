@@ -283,6 +283,8 @@ An engineer or directorate about to fund a fix describes it in plain words: "a p
 3. **Muse Spark Open on Baseten**, another model family, writes the pre-mortem. Each objection must point at a receipt field and its value, and code keeps only the objections whose fact is there.
 4. Muse Spark writes the memo. The gate holds it to the code's verdict and the receipts' numbers, and it must answer every kept objection. A work order to the road owner can be drafted.
 
+An engineer at the site can also speak the proposal: `nml review --audio memo.m4a --city CITY` transcribes it with **Muse Voice Transcribe** and reviews the transcript. In a development run, a spoken request for all-way stops at 31st Avenue & East Spruce Street in Seattle was transcribed with two words misheard ("always stop signs", "Leshi") and still reviewed at the right corner.
+
 ![A saved memo: a neighborhood commission's request for a leading pedestrian interval at 22nd St & L St NW in Washington. Code sets "reconsider" because DC's own records show one is already installed; the findings cite their receipts, and the red team's objections, each resting on a checked fact, are answered](docs/img/review_memo.png)
 
 ![The pre-mortem for a Chicago refuge island that code says to proceed with: Muse Spark Open argues against it (a cheaper beacon avoids more crashes, the cost is unstated, the owner is inferred), each objection pinned to a receipt field and value that code checked, each answered](docs/img/review_premortem.png)

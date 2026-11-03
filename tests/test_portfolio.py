@@ -101,3 +101,14 @@ def test_a_registered_program_run_is_scored_and_its_ranking_reproduced(tmp_path)
     assert s["met"] == {"reviewed": True, "on_proposed_corner": True, "ranking_reproduced": True, "cost": True}
     res["programs"][0]["program"]["totals"]["build"] = 5  # a hand-edited program is not reproduced
     assert not portfolio.run_summary(res, {"rule": {"min_reviewed_share": 0.8, "max_mean_usd": 0.15}})["ranking_reproduced"]
+
+
+def test_a_spoken_proposal_is_transcribed_then_reviewed_and_silence_is_refused(monkeypatch, tmp_path):
+    import pytest
+    from nearmisslens import voice
+    monkeypatch.setattr(voice, "to_wav", lambda audio, out: tmp_path / "x.wav")
+    monkeypatch.setattr(voice, "transcribe", lambda client, wav, tag: {"transcript": " Beacons at A St and B Ave, $45,000 "})
+    assert voice.spoken_proposal(None, tmp_path / "memo.m4a") == "Beacons at A St and B Ave, $45,000"
+    monkeypatch.setattr(voice, "transcribe", lambda client, wav, tag: {"transcript": ""})
+    with pytest.raises(ValueError):
+        voice.spoken_proposal(None, tmp_path / "memo.m4a")

@@ -78,6 +78,7 @@ For the engineer or directorate deciding whether to fund a project. Describe it 
 ```bash
 uv run nml review "Leading pedestrian intervals at Street A & Street B, about \$15,000" --city CITY_ID
 uv run nml review --example N          # a real proposal from validation/examples/proposals.json
+uv run nml review --audio memo.m4a --city CITY_ID   # a spoken proposal: Muse Voice Transcribe, then the same review
 ```
 
 What happens:
