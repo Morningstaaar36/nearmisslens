@@ -11,12 +11,17 @@ report and says the letter is paused for the day.
     modal secret create nearmisslens-keys MODEL_API_KEY=... BASETEN_API_KEY=...   # once; keys stay in Modal's store
     modal serve nearmisslens/modal_web.py                          # a temporary URL while it runs
     modal deploy nearmisslens/modal_web.py                         # the permanent URL (then: nml pages --live URL)"""
+import os
 from pathlib import Path
 
 import modal
 
 ROOT = Path(__file__).resolve().parent.parent
 PORT = 8000
+# the records' date: read from the repo when deploying; inside the container this file is not at ROOT, and the image
+# already carries the date in its environment
+_ASOF_FILE = ROOT / "validation" / "ASOF"
+ASOF = _ASOF_FILE.read_text().strip() if _ASOF_FILE.exists() else os.environ.get("NML_ASOF", "")
 app = modal.App("nearmisslens-copilot")
 state = modal.Volume.from_name("nearmisslens-state", create_if_missing=True)
 image = (modal.Image.debian_slim(python_version="3.12")
@@ -25,7 +30,7 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
                "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "3.00", "NML_DAILY_REQUESTS": "300",
-               "NML_CHECK_BUDGET_USD": "0.50", "NML_ASOF": (ROOT / "validation" / "ASOF").read_text().strip()})
+               "NML_CHECK_BUDGET_USD": "0.50", "NML_ASOF": ASOF})
          .add_local_dir(ROOT / "validation", "/app/validation")
          .add_local_dir(ROOT / "docs", "/app/docs", ignore=["video/**", "img/**", "*.md"])
          .add_local_dir(ROOT / "nearmisslens", "/app/nearmisslens", ignore=["**/__pycache__/**"]))
