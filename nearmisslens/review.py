@@ -474,6 +474,9 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
                 errors.append(f"the answer to {a.get('objection')} cites no receipt")
             errors += [f"answer to {a.get('objection')}: {e}" for e in engineer.wording(a.get("answer", ""))]
         errors += [f"summary: {e}" for e in engineer.wording(summary)]
+        texts = [summary] + [f.get("text", "") for f in findings] + [a.get("answer", "") for a in answers]
+        if any(re.search(r"\bjudg", t, re.I) for t in texts):  # the published memo's wording rule
+            errors.append("say 'assessed' or 'compared', not 'judged'")
         if any(orchestrator.has_plate(x) for x in [summary] + [f.get("text", "") for f in findings]):
             errors.append("a licence plate is written out")
         return errors

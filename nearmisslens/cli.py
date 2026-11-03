@@ -125,6 +125,10 @@ def cmd_demo(args) -> int:
         from .demo_copilot import render as render_copilot
         render_copilot()
         return 0
+    if args.desk:
+        from .demo_desk import render as render_desk
+        render_desk()
+        return 0
     from .demo import render
     render(args.audit)
     return 0
@@ -651,6 +655,8 @@ def main(argv: list[str] | None = None) -> int:
     de = sub.add_parser("demo", help="render the demo video from viewer recordings and run outputs")
     de.add_argument("--audit", help="viewer audit key, e.g. heldout_sam (default: the best available)")
     de.add_argument("--copilot", action="store_true", help="the safety-engineer demo: your voice-studio takes, Kokoro guide voice for lines not yet recorded")
+    de.add_argument("--desk", action="store_true", help="the Before you commit demo from the saved registered runs: "
+                    "your voice-studio takes, Kokoro guide voice for lines not yet recorded")
     bn = sub.add_parser("bench", help="NML-Bench (validation/BENCH_PREREG.md); without flags only rewrites BENCH.md")
     bn.add_argument("--free", action="store_true", help="T3 persistence and T7 fix test on all 14 flights ($0)")
     bn.add_argument("--kinematics", action="store_true", help="tune Kalman/RTS on dev, re-score test and held-out ($0)")
