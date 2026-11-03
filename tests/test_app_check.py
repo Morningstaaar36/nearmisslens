@@ -180,3 +180,40 @@ def test_review_endpoints_end_to_end(monkeypatch, tmp_path):
             break
         time.sleep(0.05)
     assert rec["status"] == "done" and rec["result"]["verdict"] == "proceed"
+
+
+def test_portfolio_endpoints_end_to_end(monkeypatch, tmp_path):
+    from nearmisslens import review
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    monkeypatch.setattr(check, "supported", lambda city: ({"id": city}, None) if city == "zz" else (None, "no crash data"))
+
+    def fake(text, city, *a, **k):
+        return {"status": "published", "verdict": "proceed", "corner": text[:20], "proposal": {"cost_usd": 10000},
+                "appraisal": {"verdict": "proceed", "parts": [{"countermeasure": "A", "verdict": "proceed",
+                                                               "proposed": {"injury_crashes_avoided_per_year": 0.2}}]},
+                "cost_usd": {"meta": 0.03, "open_weights_red_team": 0.01}}
+    monkeypatch.setattr(review, "review", fake)
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            _call(base + "/cities")
+            break
+        except OSError:
+            time.sleep(0.05)
+    two = "Beacons at A St & B Ave\nAn island at C St & D Ave"
+    assert _call(base + "/portfolio", {"proposals": "only one proposal here", "city": "zz"})[0] == 400
+    assert _call(base + "/portfolio", {"proposals": "\n".join(["Beacons at A St & B Ave"] * 9), "city": "zz"})[0] == 400
+    assert _call(base + "/portfolio", {"proposals": two, "city": "la"})[0] == 422
+    assert _call(base + "/portfolio", {"proposals": two, "city": "zz", "budget_total": "lots"})[0] == 400
+    code, body = _call(base + "/portfolio", {"proposals": two, "city": "zz", "budget_total": 15000})
+    assert code == 202
+    for _ in range(200):
+        code, rec = _call(f"{base}/portfolio/{body['job']}")
+        if rec["status"] != "running":
+            break
+        time.sleep(0.05)
+    res = rec["result"]
+    assert rec["status"] == "done" and res["totals"]["build"] == 2 and len(res["budget_plan"]["chosen"]) == 1
+    assert "Within a budget of $15,000" in res["markdown"]

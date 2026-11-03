@@ -293,6 +293,29 @@ def cmd_review(args) -> int:
     return 0 if r["status"] == "published" else 2
 
 
+def cmd_portfolio(args) -> int:
+    """Program review: a list of proposals reviewed one by one, then ranked by code (see nearmisslens/portfolio.py)."""
+    from . import portfolio
+    from .meta_client import MetaClient
+    from .openclient import OpenWeightsClient
+    if args.example:
+        prog = portfolio.example(args.example)
+        text, city, title = json.dumps(prog["projects"]), prog["city"], prog.get("title")
+        os.environ.setdefault("NML_ASOF", prog.get("asof") or "")
+    else:
+        if not args.list or not args.city:
+            print("give a list file (one proposal per line, a CSV with a 'text' column, or JSON) and --city, or --example ID")
+            return 2
+        text = sys.stdin.read() if args.list == "-" else Path(args.list).read_text()
+        city, title = args.city, args.title
+    p = portfolio.run(text, city, MetaClient(SETTINGS), _letter_client() if args.letter else None, OpenWeightsClient(),
+                      budget_usd=args.budget_total, per_review_usd=args.budget, title=title,
+                      out_dir=Path(args.out) if args.out else None, workers=args.workers)
+    print(json.dumps({"totals": p["totals"], "budget_plan": p["budget_plan"], "saved": p["out_dir"]}, indent=1)
+          if args.json else portfolio.portfolio_md(p, p["title"]) + f"\nsaved: {p['out_dir']}")
+    return 0
+
+
 def cmd_review_run(args) -> int:
     from . import review
     from .meta_client import MetaClient
@@ -684,6 +707,18 @@ def main(argv: list[str] | None = None) -> int:
     rv.add_argument("--letter", action="store_true", help="also draft the work order to the road owner")
     rv.add_argument("--budget", type=float, default=0.50, help="Meta API dollars for this review (default 0.50)")
     rv.add_argument("--json", action="store_true")
+    po = sub.add_parser("portfolio", help="program review: a list of proposed projects, each reviewed, ranked by code "
+                        "into one program memo (paid unless --replay)")
+    po.add_argument("list", nargs="?", help="a file: one proposal per line, a CSV with a 'text' column, or JSON; - for stdin")
+    po.add_argument("--city", help="a registry city id (nml cities)")
+    po.add_argument("--example", help="a saved real program list from validation/examples/programs.json, by id")
+    po.add_argument("--budget-total", type=float, help="the program's budget in dollars: which supported projects fit")
+    po.add_argument("--budget", type=float, default=0.50, help="Meta API dollars per review (default 0.50)")
+    po.add_argument("--workers", type=int, default=3, help="reviews at a time (default 3)")
+    po.add_argument("--title")
+    po.add_argument("--out", help="the folder to save into; an interrupted program resumes from it")
+    po.add_argument("--letter", action="store_true", help="also draft each work order")
+    po.add_argument("--json", action="store_true")
     rr = sub.add_parser("review-run", help="run nml review on a registered spec's proposals (T26) and score its rule; paid unless --replay")
     rr.add_argument("spec")
     cr = sub.add_parser("check-run", help="run nml check on a registered spec's inputs (T25) and score its rule; paid unless --replay")
@@ -777,7 +812,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

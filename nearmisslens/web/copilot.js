@@ -125,8 +125,9 @@ async function showReview() {
     `the crash record and sets the verdict. Muse Spark Open argues against it, and code keeps only objections whose facts are in ` +
     `the record. The memo must answer every one. A review takes a few minutes.</p>`;
   if (LIVE === null) {
-    $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code> (see TESTING.md).</p>` +
-      (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
+    $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code>, ` +
+      `or a whole list: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` +
+      (await savedPrograms()) + (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
     return;
   }
   let cities = [];
@@ -135,7 +136,8 @@ async function showReview() {
     `placeholder="e.g. Leading pedestrian intervals at Street A &amp; Street B, about $15,000"></textarea>` +
     `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review</button></form>` +
-    `<div id="reviewout"></div>` + await savedReviews();
+    `<div id="reviewout"></div>` + programForm(cities) + (await savedPrograms()) + await savedReviews();
+  wireProgram();
   $("reviewform").onsubmit = async ev => {
     ev.preventDefault();
     $("reviewout").innerHTML = `<p class="busy">Starting…</p>`;
@@ -152,6 +154,68 @@ async function showReview() {
       if (rec.status === "running") { $("reviewout").innerHTML = `<p class="busy">Reviewing… ${Math.round(rec.seconds)} s</p>`; continue; }
       if (rec.status === "failed") { $("reviewout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("reviewout").innerHTML = reviewResult(rec.result);
+      return;
+    }
+  };
+}
+
+const PROGRAM_GROUPS = [["build", "Build: the evidence supports these here"], ["site_check", "Build after a site check"],
+  ["compare", "Compare first: another proven fix avoids at least twice as many crashes"], ["parts", "Decide part by part"],
+  ["study", "Not covered by the evidence: a before-and-after study, not a promise"], ["reconsider", "Reconsider"]];
+
+function programResult(p) {
+  // a program review: every proposal reviewed against its own corner, then grouped and ranked by code
+  const t = p.totals || {}, money = v => v ? `$${Number(v).toLocaleString("en-US", {maximumFractionDigits: 0})}` : "not given";
+  const plan = p.budget_plan;
+  return `<p class="legend">${t.proposals} proposals, ${t.reviewed} reviewed. Code ranks them; no model compares one corner with another.` +
+    (t.avoided_per_year_if_supported_built ? ` If every supported project is built, the reviews expect about <b>${t.avoided_per_year_if_supported_built}</b> injury crashes avoided a year.` : "") +
+    (t.reconsider_cost_usd ? ` Projects to reconsider carry ${money(t.reconsider_cost_usd)} of stated cost.` : "") + `</p>` +
+    (plan ? `<p class="verdict ok"><b>Within ${money(plan.budget_usd)}:</b> ${plan.chosen.length} project(s), ${money(plan.spent_usd)}, ` +
+      `about ${plan.avoided_per_year} injury crashes avoided a year; ${money(plan.left_usd)} left.` +
+      (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project(s) have no cost to rank.` : "") + `</p>` : "") +
+    PROGRAM_GROUPS.filter(([g]) => (p.groups[g] || []).length).map(([g, label]) => `<h4>${esc(label)}</h4><table><tr><th>Proposal</th><th>Avoided a year</th><th>Cost</th><th>Why</th></tr>` +
+      p.groups[g].map(x => `<tr><td>${esc(x.input)}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
+        `<td>${esc((x.reasons || []).join("; "))}${x.alternative ? ` (alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year)` : ""}</td></tr>`).join("") + `</table>`).join("") +
+    ((p.not_reviewed || []).length ? `<h4>Not reviewed</h4><ul>${p.not_reviewed.map(x => `<li>${esc(x.input)}: ${esc(x.reason || x.status)}</li>`).join("")}</ul>` : "") +
+    `<p class="legend">Cost of the reviews: $${esc(t.review_cost_usd)}.</p>`;
+}
+
+async function savedPrograms() {
+  let d;
+  try { d = await getJSON("data/programs.json"); } catch (e) { return ""; }
+  return `<section class="step"><h3>Saved program reviews: ${esc(d.run)}, real program lists</h3><p class="legend">${esc(d.note || "")}</p>` +
+    d.programs.map(p => `<details><summary>${esc(p.city_name || p.city)} · ${esc(p.title)} · ${p.totals.proposals} proposals</summary>` +
+      `<p class="legend">Source: <a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.agency || "the agency")}</a></p>${programResult(p)}</details>`).join("") + `</section>`;
+}
+
+function programForm(cities) {
+  return `<h3>Or a whole list: a program review</h3><p class="legend">Two to four proposals, one per line (the command line, ` +
+    `<code>nml portfolio list.txt --city CITY --budget-total 500000</code>, takes up to 25). Each is reviewed as above; code groups ` +
+    `and ranks them, and fits a budget if you give one.</p><form id="programform" class="search ask"><textarea id="programin" rows="4" ` +
+    `placeholder="Rapid flashing beacons at Street A &amp; Street B, $45,000&#10;A refuge island at Street C &amp; Street D"></textarea>` +
+    `<label for="programcity">City</label> <select id="programcity">${cities.map(c =>
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
+    `<label for="programbudget">Budget $</label> <input id="programbudget" type="number" min="0" step="1000" style="width:8em"> <button>Review the list</button></form><div id="programout"></div>`;
+}
+
+function wireProgram() {
+  $("programform").onsubmit = async ev => {
+    ev.preventDefault();
+    $("programout").innerHTML = `<p class="busy">Starting…</p>`;
+    const budget = Number($("programbudget").value) || null;
+    let job;
+    try {
+      job = (await getJSON(`${LIVE}portfolio`, {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({proposals: $("programin").value, city: $("programcity").value, budget_total: budget})})).job;
+    } catch (e) { $("programout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+    for (;;) {
+      await new Promise(ok => setTimeout(ok, 5000));
+      let rec;
+      try { rec = await getJSON(`${LIVE}portfolio/${encodeURIComponent(job)}`); }
+      catch (e) { $("programout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+      if (rec.status === "running") { $("programout").innerHTML = `<p class="busy">Reviewing the list… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "failed") { $("programout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
+      $("programout").innerHTML = programResult(rec.result);
       return;
     }
   };

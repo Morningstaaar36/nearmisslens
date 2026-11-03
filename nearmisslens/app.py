@@ -12,6 +12,8 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
     GET  /check/<id>        {"status": "running" | "done" | "failed", "seconds", "result"?}
     POST /review            {"proposal", "city"} -> {"job": id}: Before you commit, a review of a proposed project
     GET  /review/<id>       {"status": "running" | "done" | "failed", "seconds", "result"?}
+    POST /portfolio         {"proposals": "one per line", "city", "budget_total"?} -> {"job": id}: a program review
+    GET  /portfolio/<id>    {"status": "running" | "done" | "failed", "seconds", "result"?}
 
 Public mode (NML_PUBLIC=1): global daily caps on requests and model dollars (budget.DailyBudget), no illustration,
 no caller identity kept, places outside the registered cities refused, errors in plain words."""
@@ -38,6 +40,8 @@ ASK_RESERVE_USD = 0.05
 ENGINEER_WAIT_S = 20.0  # answer in the request when it is quick; otherwise the page polls (a proxy cuts long requests)
 ENGINEER_SLOTS = 3  # new corners investigated at once (no model; public map and data servers set the pace)
 CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one desk case's Meta cap, reserved first
+PROGRAM_ITEMS = int(os.environ.get("NML_PROGRAM_ITEMS", "4"))  # proposals in one program review on the server
+PROGRAM_REVIEW_USD = 0.30  # each proposal's Meta cap within a program (a review costs about $0.04)
 
 
 class BadRequest(ValueError):
@@ -144,6 +148,18 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                      budget if public else None, CHECK_BUDGET_USD + reviews.RED_TEAM_BUDGET_USD,
                      SETTINGS.runs_dir / "reviews" / "jobs", busy="another review is running; try again in a few minutes")
 
+    from . import portfolio as programs
+
+    def program(q: dict) -> dict:
+        p = programs.run(q["proposals"], q["city"], desk_client, None, OpenWeightsClient(),
+                         budget_usd=q.get("budget_total"), per_review_usd=PROGRAM_REVIEW_USD,
+                         title=f"Program review: {len(programs.read_list(q['proposals']))} proposals")
+        return {**p, "markdown": programs.portfolio_md(p, p["title"]),
+                "cost_usd": {"reviews": p["totals"]["review_cost_usd"]}}
+    programming = Jobs(program, budget if public else None,
+                       PROGRAM_ITEMS * (PROGRAM_REVIEW_USD + reviews.RED_TEAM_BUDGET_USD),
+                       SETTINGS.runs_dir / "programs" / "jobs", busy="another program review is running; try again later")
+
     def investigate(q: dict) -> dict:
         lat, lon, name = brief.geocode(q["address"])
         if context.city_of(lat, lon) is None:
@@ -174,8 +190,9 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
             if u.path == "/cities":
                 return self._json(200, {"cities": check.cities()})
-            if u.path.startswith(("/check/", "/engineer/", "/review/")):
-                rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing}[u.path[:u.path.index("/", 1) + 1]] \
+            if u.path.startswith(("/check/", "/engineer/", "/review/", "/portfolio/")):
+                rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing,
+                       "/portfolio/": programming}[u.path[:u.path.index("/", 1) + 1]] \
                     .status(u.path.rsplit("/", 1)[1])
                 return self._json(200, rec) if rec else self._json(404, {"error": "no such job (kept 24 hours)"})
             if u.path.startswith("/data/"):
@@ -245,6 +262,28 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                         return self._json(422, {"error": check.supported(q["city"])[1]})
                     try:
                         return self._json(202, {"job": reviewing.submit(q)})
+                    except Busy as e:
+                        return self._json(409, {"error": str(e)})
+                    except Paused as e:
+                        return self._json(429, {"error": str(e)})
+                if path == "/portfolio":
+                    text, city = q.get("proposals"), q.get("city")
+                    if not isinstance(text, str) or not isinstance(city, str):
+                        raise BadRequest("give the proposals (one per line) and the city as text")
+                    if len(text) > PROGRAM_ITEMS * reviews.MAX_INPUT:
+                        raise BadRequest("the list is too long")
+                    items = programs.read_list(text)
+                    if not 2 <= len(items) <= PROGRAM_ITEMS or any(len(x["text"]) > reviews.MAX_INPUT for x in items):
+                        raise BadRequest(f"give 2 to {PROGRAM_ITEMS} proposals, one per line (the command line "
+                                         f"takes up to {programs.MAX_ITEMS})")
+                    total = q.get("budget_total")
+                    if total is not None and (not isinstance(total, (int, float)) or not 0 < total < 1e10):
+                        raise BadRequest("the budget is a number of dollars")
+                    if check.supported(city)[0] is None:
+                        return self._json(422, {"error": check.supported(city)[1]})
+                    try:
+                        return self._json(202, {"job": programming.submit({"proposals": text, "city": city,
+                                                                           "budget_total": total})})
                     except Busy as e:
                         return self._json(409, {"error": str(e)})
                     except Paused as e:
