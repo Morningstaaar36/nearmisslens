@@ -20,6 +20,8 @@ def test_the_crashes_coded_at_the_corner_are_counted_and_the_rest_named():
 
 def test_ordinals_match_a_dataset_that_writes_none():
     assert brief.same_corner("East 169 Street & Teller Avenue", "East 169th Street & Teller Ave")
+    assert brief.same_corner("04Th St & Channel St", "4th Street & Channel Street")  # San Francisco pads numbers
+    assert not brief.same_corner("14th St & Channel St", "4th Street & Channel Street")
 
 
 def test_a_review_cannot_proceed_on_other_corners_crashes():

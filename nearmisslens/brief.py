@@ -200,8 +200,8 @@ def _street_words(name: str) -> list[set[str]]:
     head = name.split(",")[0]
     out = []
     for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
-        words = {re.sub(r"^(\d+)(st|nd|rd|th)$", r"\1", ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower())
-                 for w in re.findall(r"[a-z0-9]+", part.lower())}  # "169th" and "169" are one street
+        words = {re.sub(r"^0*(\d+?)(st|nd|rd|th)?$", r"\1", ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower())
+                 for w in re.findall(r"[a-z0-9]+", part.lower())}  # "169th", "169" and "04th" are one street each
         words = {w for w in words if w not in drop}
         if words:
             out.append(words)
