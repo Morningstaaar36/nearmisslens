@@ -296,3 +296,18 @@ def test_a_kept_objection_submitted_again_is_not_counted_as_dropped(monkeypatch)
         return R()
     monkeypatch.setattr(review, "run_agent", fake_run_agent)
     assert review.red_team(rv, FakeOpen())["dropped"] == []
+
+
+def test_the_work_order_names_the_proposal_and_each_parts_verdict():
+    """Independent test round 2: a review's letter did not mention the proposal it was the work order for."""
+    r = {"corner": "A St & B Ave, Zedburg", "verdict_text": "decide part by part",
+         "proposal": {"cost_usd": 45000.0, "cost_covers": "this fix only",
+                      "parts": [{"countermeasure": "Rectangular Rapid Flashing Beacons", "what": "two beacons"},
+                                {"countermeasure": "other", "what": "curb ramps"}]},
+         "appraisal": {"parts": [{"countermeasure": "Rectangular Rapid Flashing Beacons", "verdict_text": "proceed"},
+                                 {"countermeasure": "other", "verdict_text": "not covered by the evidence"}]},
+         "letter": "Dear colleagues,"}
+    w = review.work_requested(r)
+    assert "A St & B Ave" in w and "$45,000" in w and "- two beacons: proceed" in w
+    assert "- curb ramps: not covered by the evidence" in w
+    assert w in review.memo_md({**r, "status": "published", "memo": {}})

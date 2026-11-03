@@ -578,6 +578,19 @@ def save(out: dict, out_dir: Path | None = None, receipts: dict | None = None) -
     return d
 
 
+def work_requested(r: dict) -> str:
+    """The proposal the work order is for, and each part's verdict, written by code above the corner's letter (the
+    letter is drafted for the corner before the proposal is appraised, so it may not name the proposal)."""
+    prop, ap = r.get("proposal") or {}, r.get("appraisal") or {}
+    verdict = {x.get("countermeasure"): x.get("verdict_text") for x in ap.get("parts") or []}
+    parts = [f"- {x.get('what') or x.get('countermeasure')}: {verdict.get(x.get('countermeasure')) or 'not appraised'}"
+             for x in prop.get("parts") or []]
+    cost = f"${prop['cost_usd']:,.0f} ({prop.get('cost_covers')})" if prop.get("cost_usd") else "not stated"
+    return "\n".join([f"**Work requested at {r.get('corner') or prop.get('address')}** (cost {cost}):", *parts,
+                      f"Overall: {r.get('verdict_text') or r.get('verdict')}. The letter below is the corner's request; "
+                      "attach this memo so the owner sees the proposal and its verdict."])
+
+
 def memo_md(r: dict) -> str:
     """The decision memo as a readable page."""
     p = r.get("proposal") or {}
@@ -612,7 +625,7 @@ def memo_md(r: dict) -> str:
         L += [f"*{len(r['objections_dropped'])} more objection(s) were dropped by code: "
               + "; ".join(sorted({x.get('why', '') for x in r['objections_dropped']}))[:400] + ".*", ""]
     if r.get("letter"):
-        L += ["## Draft work order (review it; nothing is sent)", "", r["letter"], ""]
+        L += ["## Draft work order (review it; nothing is sent)", "", work_requested(r), "", r["letter"], ""]
     return "\n".join(L)
 
 
