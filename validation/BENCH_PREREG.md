@@ -964,6 +964,16 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - mean cost at most $0.15 a proposal (Meta API and open weights).
 - **Also reported:** the groups per program, and a post-hoc read of each "build" and "reconsider" row against its memo.
 
+## T30 Program intake from the agency's own pages (registered 2026-11-04, before any T30 run)
+- **What:** `nml intake` (and `nml portfolio --from-url`). Muse Spark reads an agency's page and lists every project at one intersection, with its treatment, status (planned, completed, not stated), any stated cost and one passage copied from the page. Code keeps a project only when that passage is on the page word for word and names both streets, and keeps a cost only when the passage states it; refused projects are listed with why, and the model may correct them once. A page that refuses automated readers is reported unreadable and never fetched another way.
+- **Development run** (not part of this test): SFMTA's Contract 36 page; 18 projects found, all marked completed, which the page says ("Traffic signal work has been completed at all project locations"); $0.03.
+- **Inputs** (`validation/experiments/T30.json`): the two readable source pages of T29's program lists (Seattle Safe Routes to School; SFMTA Contract 35), scored against the 16 projects collected by hand from them, and two controls: NYC DOT's 2025 projects page (it refuses automated readers) and a stadium's encyclopedia page that names an intersection but lists no project.
+- **Rule:**
+  - at least 75% of the hand-collected projects found (same intersection);
+  - both controls give no project;
+  - at most $0.10 of Meta API a readable page.
+- **Also reported:** projects found beyond the hand lists (the hand lists kept only some items), their status, and the refusals.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

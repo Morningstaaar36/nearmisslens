@@ -1,0 +1,37 @@
+{
+ "id": "T30",
+ "registered": "validation/BENCH_PREREG.md, T30",
+ "what": "nml intake: Muse Spark reads an agency's own project page into a checked list of intersection projects; scored against the lists collected by hand (validation/examples/programs.json)",
+ "inputs": [
+  {
+   "id": "seattle_srts",
+   "city": "seattle",
+   "program": "sea_srts_2026",
+   "url": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school"
+  },
+  {
+   "id": "sf_contract35",
+   "city": "sf",
+   "program": "sf_contract35_signals",
+   "url": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0"
+  },
+  {
+   "id": "control_unreadable",
+   "city": "nyc",
+   "program": null,
+   "url": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "control": "a page that refuses automated readers: reported unreadable, nothing invented"
+  },
+  {
+   "id": "control_offtopic",
+   "city": "chicago",
+   "program": null,
+   "url": "https://en.wikipedia.org/wiki/Wrigley_Field",
+   "control": "a page that names an intersection but lists no safety project"
+  }
+ ],
+ "rule": {
+  "min_recall": 0.75,
+  "max_usd_per_page": 0.1
+ }
+}

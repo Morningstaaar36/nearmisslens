@@ -297,11 +297,52 @@ def cmd_review(args) -> int:
     return 0 if r["status"] == "published" else 2
 
 
+def cmd_intake(args) -> int:
+    """Program intake: an agency's pages read into a checked list of intersection projects (nearmisslens/intake.py)."""
+    from . import intake, opendata
+    from .meta_client import MetaClient
+    c = opendata.city(args.city)
+    if c is None:
+        print(f"no registry city {args.city!r} (nml cities)")
+        return 2
+    out = intake.extract(args.sources, c["name"], MetaClient(SETTINGS), include_completed=args.include_completed)
+    if args.json:
+        print(json.dumps(out, indent=1))
+    else:
+        for x in out["projects"]:
+            print(x["text"])
+        print(f"\n{len(out['projects'])} projects kept; {out.get('completed_left_out', 0)} completed left out; "
+              f"{len(out['refused'])} refused; unreadable: {', '.join(out['unreadable']) or 'none'}; "
+              f"${out['usd']} Meta API", file=sys.stderr)
+        for r in out["refused"]:
+            print(f"  refused: {r.get('intersection')}: {r['why']}", file=sys.stderr)
+    return 0 if out["projects"] else 2
+
+
 def cmd_portfolio(args) -> int:
     """Program review: a list of proposals reviewed one by one, then ranked by code (see nearmisslens/portfolio.py)."""
     from . import portfolio
     from .meta_client import MetaClient
     from .openclient import OpenWeightsClient
+    if args.from_url:
+        from . import intake, opendata
+        c = opendata.city(args.city or "")
+        if c is None:
+            print("give --city with --from-url (nml cities)")
+            return 2
+        got = intake.extract(args.from_url, c["name"], MetaClient(SETTINGS))
+        print(f"intake: {len(got['projects'])} projects kept, {len(got['refused'])} refused, unreadable: "
+              f"{', '.join(got['unreadable']) or 'none'} (${got['usd']})", file=sys.stderr)
+        if not got["projects"]:
+            return 2
+        args.list, args.example = None, None
+        text = json.dumps([{"text": x["text"]} for x in got["projects"]])
+        p = portfolio.run(text, c["id"], MetaClient(SETTINGS), _letter_client() if args.letter else None,
+                          OpenWeightsClient(), budget_usd=args.budget_total, per_review_usd=args.budget,
+                          title=args.title or f"Program review: {len(got['projects'])} projects read from the agency's pages",
+                          out_dir=Path(args.out) if args.out else None, workers=args.workers)
+        print(portfolio.portfolio_md(p, p["title"]) + f"\nsaved: {p['out_dir']}")
+        return 0
     if args.example:
         prog = portfolio.example(args.example)
         text, city, title = json.dumps(prog["projects"]), prog["city"], prog.get("title")
@@ -317,6 +358,15 @@ def cmd_portfolio(args) -> int:
                       out_dir=Path(args.out) if args.out else None, workers=args.workers)
     print(json.dumps({"totals": p["totals"], "budget_plan": p["budget_plan"], "saved": p["out_dir"]}, indent=1)
           if args.json else portfolio.portfolio_md(p, p["title"]) + f"\nsaved: {p['out_dir']}")
+    return 0
+
+
+def cmd_intake_run(args) -> int:
+    from . import intake
+    from .meta_client import MetaClient
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{args.spec}.json").read_text())
+    res = intake.run_registered(args.spec, MetaClient(SETTINGS))
+    print(json.dumps(intake.run_summary(res, sp), indent=1))
     return 0
 
 
@@ -735,6 +785,16 @@ def main(argv: list[str] | None = None) -> int:
     po.add_argument("--out", help="the folder to save into; an interrupted program resumes from it")
     po.add_argument("--letter", action="store_true", help="also draft each work order")
     po.add_argument("--json", action="store_true")
+    po.add_argument("--from-url", nargs="+", help="read the projects from the agency's own pages (Muse Spark, checked "
+                    "by code) instead of a list file")
+    it = sub.add_parser("intake", help="read an agency's pages into a checked list of intersection projects (paid; "
+                        "about $0.02 a page)")
+    it.add_argument("sources", nargs="+", help="URLs, or saved pages / text files")
+    it.add_argument("--city", required=True)
+    it.add_argument("--include-completed", action="store_true", help="also list projects the page says are completed")
+    it.add_argument("--json", action="store_true")
+    ir = sub.add_parser("intake-run", help="run nml intake on a registered spec's pages (T30) and score its rule; paid")
+    ir.add_argument("spec")
     pr = sub.add_parser("portfolio-run", help="run nml portfolio on a registered spec's program lists (T29) and score its rule; paid unless --replay")
     pr.add_argument("spec")
     rr = sub.add_parser("review-run", help="run nml review on a registered spec's proposals (T26) and score its rule; paid unless --replay")
@@ -831,7 +891,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "intake": cmd_intake, "intake-run": cmd_intake_run, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":
