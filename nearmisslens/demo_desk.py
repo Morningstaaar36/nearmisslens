@@ -126,7 +126,7 @@ def script(f: dict | None = None) -> list[Scene]:
                                        f"{t['reviewed']} of {t['proposals']} proposals were reviewed, each on its own "
                                        "corner. Most rest on fixes no federal study covers, and the memos say so "
                                        "instead of promising a number.",
-                            "page", target="program", q={"route": "review"},
+                            "page", target="program", q={"route": "program"},
                             caption="A whole program, reviewed and ranked by code"))
     scenes += [
         Scene("check", f"The same desk checks claims. On {t25['inputs']} inputs nobody chose for it, all "
