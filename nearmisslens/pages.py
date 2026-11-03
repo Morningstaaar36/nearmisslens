@@ -257,14 +257,14 @@ def programs_page(root: Path) -> None:
     from .evaluate import RESULTS_DIR
     from .orchestrator import redact
     from . import opendata, portfolio
-    path = RESULTS_DIR / "bench" / "experiment_T29.json"
-    if not path.exists():
+    run = next((r for r in ("T29b", "T29") if (RESULTS_DIR / "bench" / f"experiment_{r}.json").exists()), None)
+    if run is None:  # the latest registered program run
         return
-    res = json.loads(path.read_text())
-    sp = json.loads((ROOT / "validation" / "experiments" / "T29.json").read_text())
+    res = json.loads((RESULTS_DIR / "bench" / f"experiment_{run}.json").read_text())
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{run}.json").read_text())
     s = portfolio.run_summary(res, sp)
     names = {c["id"]: c["name"] for c in opendata.load_cities()}
-    blob = {"run": "T29", "registered": sp["registered"], "summary": s,
+    blob = {"run": run, "registered": sp["registered"], "summary": s,
             "note": f"Registered in {sp['registered']}. {s['reviewed']} of {s['proposals']} proposals reviewed, "
                     f"{s['on_proposed_corner']} on the corner proposed; code's program reproduced from the saved "
                     f"reviews: {'yes' if s['ranking_reproduced'] else 'no'}; mean ${s['mean_usd']:.3f} a proposal. "

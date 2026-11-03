@@ -726,6 +726,25 @@ Registered in BENCH_PREREG.md (T28). The 7 proposals of the `registered` split o
 | A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St | seattle | outside_evidence | Beacon Avenue South & South Webster Street, Seattle | 0.091 |
 | Replace the painted median island with a concrete median island at Turk Boulevard & Lyon S | sf | reconsider | Turk Boulevard & Lyon Street, San Francisco | 0.071 |
 
+## T29 Program review: `nml portfolio` on real program lists
+
+Registered in BENCH_PREREG.md (T29). 3 program lists from the agencies' own pages (`validation/examples/programs.json`, split `registered`); every proposal reviewed by Before you commit, then grouped and ranked by code.
+
+| Rule | Measured | |
+|---|---|---|
+| at least 80% of the 23 proposals reviewed | 20 | met |
+| every published memo about the intersection proposed | 20 of 20 | met |
+| code's program reproduced from the saved reviews | no | not met |
+| mean cost at most $0.15 a proposal | $0.078 | met |
+
+**Rule: not met.** $1.79 in all; 90 red-team objections kept after their facts were checked.
+
+| Program | Proposals | Build | Build after a site check | Compare first | Decide part by part | Not covered by the evidence | Reconsider | Not reviewed |
+|---|---|---|---|---|---|---|---|---|
+| Safe Routes to School - Current Projects (items expected in 2026) (seattle) | 8 | 0 | 0 | 0 | 2 | 3 | 0 | 3 |
+| Contract 35 Traffic Signal Modifications (17 intersections; 8 listed h (sf) | 8 | 0 | 0 | 0 | 1 | 7 | 0 | 0 |
+| NYC DOT 2025 Projects presented to community boards (single-intersecti (nyc) | 7 | 0 | 0 | 0 | 1 | 6 | 0 | 0 |
+
 ## T30 Program intake: `nml intake` on agencies' own pages
 
 Registered in BENCH_PREREG.md (T30, T30b, T30c: the same pages and rule, after fixes). Scored against the projects collected by hand from the same pages (`validation/examples/programs.json`).
@@ -735,6 +754,14 @@ Registered in BENCH_PREREG.md (T30, T30b, T30c: the same pages and rule, after f
 | T30 | 5 of 16 | yes | $0.035 | not met |
 | T30b | 8 of 16 | yes | $0.013 | not met |
 | T30c | 16 of 16 | yes | $0.063 | met |
+
+## T31 A corner's own crashes, against an independent count
+
+Registered in BENCH_PREREG.md (T31; T31b on fresh corners after T31's change). Injury crashes 2021-10-31 to 2026-10-31; the independent counts are by an agent that never saw the tool's method (`validation/independent/t31*`). Agreement: within 1, or 15% of the independent count.
+
+| Run | Corners agreeing (tool) | Corners agreeing (100 m circle) | Mean error, tool | Mean error, circle | Rule |
+|---|---|---|---|---|---|
+| T31 | 2 of 10 | 1 of 10 | 13.5 | 30.1 | not met |
 
 ## Data agent: adapters found and validated without hand-written code
 

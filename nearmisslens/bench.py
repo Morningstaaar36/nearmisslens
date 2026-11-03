@@ -703,7 +703,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27") + _t26_section("T28") + _t29_section() + _t30_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27") + _t26_section("T28") + _t29_section() + _t29_section("T29b") + _t30_section() + _t31_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1310,17 +1310,17 @@ def _t26_section(run: str = "T26") -> list[str]:
     return L + [""]
 
 
-def _t29_section() -> list[str]:
-    """T29: program review (nml portfolio) on real program lists."""
-    r = _load("experiment_T29.json")
+def _t29_section(run: str = "T29") -> list[str]:
+    """T29 and T29b: program review (nml portfolio) on real program lists."""
+    r = _load(f"experiment_{run}.json")
     if not r:
         return []
     from .portfolio import GROUPS, run_summary
-    sp = json.loads((ROOT / "validation" / "experiments" / "T29.json").read_text())
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{run}.json").read_text())
     s = run_summary(r, sp)
     yes = lambda b: "met" if b else "not met"
-    L = ["## T29 Program review: `nml portfolio` on real program lists", "",
-         f"Registered in BENCH_PREREG.md (T29). {s['programs']} program lists from the agencies' own pages "
+    L = [f"## {run} Program review: `nml portfolio` on real program lists" + (" (T29's reviews, ties fixed, 3 retried)" if run != "T29" else ""), "",
+         f"Registered in BENCH_PREREG.md ({run}). {s['programs']} program lists from the agencies' own pages "
          "(`validation/examples/programs.json`, split `registered`); every proposal reviewed by Before you commit, then "
          "grouped and ranked by code.", "",
          "| Rule | Measured | |", "|---|---|---|",
@@ -1356,6 +1356,26 @@ def _t30_section() -> list[str]:
                   "| Run | Hand-collected found | Controls give nothing | $ a readable page | Rule |", "|---|---|---|---|---|"]
         L.append(f"| {run} | {s['hand_found']} of {s['hand_projects']} | {'yes' if s['controls_empty'] else 'no'} | "
                  f"${s['mean_usd_per_readable_page']:.3f} | {'met' if s['rule_met'] else 'not met'} |")
+    return L + [""] if L else []
+
+
+def _t31_section() -> list[str]:
+    """T31 and T31b: a corner's own crash count against an independent count."""
+    L = []
+    for run in ("T31", "T31b"):
+        r = _load(f"experiment_{run}.json")
+        if not r or not r.get("summary"):
+            continue
+        s = r["summary"]
+        if not L:
+            L += ["## T31 A corner's own crashes, against an independent count", "",
+                  "Registered in BENCH_PREREG.md (T31; T31b on fresh corners after T31's change). Injury crashes "
+                  "2021-10-31 to 2026-10-31; the independent counts are by an agent that never saw the tool's method "
+                  "(`validation/independent/t31*`). Agreement: within 1, or 15% of the independent count.", "",
+                  "| Run | Corners agreeing (tool) | Corners agreeing (100 m circle) | Mean error, tool | Mean error, circle | Rule |",
+                  "|---|---|---|---|---|---|"]
+        L.append(f"| {run} | {s['tool_agree']} of {s['corners']} | {s['circle_agree']} of {s['corners']} | "
+                 f"{s['tool_mean_abs_error']} | {s['circle_mean_abs_error']} | {'met' if s['rule_met'] else 'not met'} |")
     return L + [""] if L else []
 
 
