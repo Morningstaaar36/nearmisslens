@@ -85,3 +85,19 @@ def test_a_failed_review_is_a_result_and_the_program_goes_on(tmp_path):
         return fake_review(text, *a, **k)
     p = portfolio.run(LIST, "zz", reviewer=flaky, out_dir=tmp_path)
     assert p["totals"]["not_reviewed"] == 2 and "geocoder down" in p["not_reviewed"][0]["reason"]
+
+
+def test_a_registered_program_run_is_scored_and_its_ranking_reproduced(tmp_path):
+    p = portfolio.run(LIST, "zz", reviewer=fake_review, out_dir=tmp_path)
+    reviews = [json.loads(x) for x in (tmp_path / "reviews.jsonl").read_text().splitlines()]
+    for r in reviews:
+        if r.get("status") == "published":
+            r["proposal"]["address"] = r["corner"]
+    p2 = portfolio.rank(reviews)
+    res = {"programs": [{"program": {k: p2[k] for k in ("totals", "groups", "not_reviewed", "budget_plan")},
+                         "reviews": reviews}]}
+    s = portfolio.run_summary(res, {"rule": {"min_reviewed_share": 0.8, "max_mean_usd": 0.15}})
+    assert s["ranking_reproduced"] and s["reviewed"] == 7 and s["on_proposed_corner"] == 7
+    assert s["met"] == {"reviewed": True, "on_proposed_corner": True, "ranking_reproduced": True, "cost": True}
+    res["programs"][0]["program"]["totals"]["build"] = 5  # a hand-edited program is not reproduced
+    assert not portfolio.run_summary(res, {"rule": {"min_reviewed_share": 0.8, "max_mean_usd": 0.15}})["ranking_reproduced"]

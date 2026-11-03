@@ -1,0 +1,16 @@
+{
+ "id": "T29",
+ "registered": "validation/BENCH_PREREG.md, T29",
+ "what": "nml portfolio on three real program lists the project had never run (validation/examples/programs.json, split 'registered'): every proposal reviewed by Before you commit, then grouped and ranked by code",
+ "programs": [
+  "sea_srts_2026",
+  "sf_contract35_signals",
+  "nyc_dot_2025_projects"
+ ],
+ "asof": "2026-10-31",
+ "budget_usd": 0.5,
+ "rule": {
+  "min_reviewed_share": 0.8,
+  "max_mean_usd": 0.15
+ }
+}

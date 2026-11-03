@@ -1,0 +1,240 @@
+{
+ "what": "Real program lists (2025-2026) of proposed intersection safety projects, for testing nml portfolio. Collected 2026-11-03 before any was run.",
+ "made": "2026-11-03",
+ "notes": "No source stated a per-project cost, so every cost_usd is null. DC items come from separate DDOT Notices of Intent; each has its own source_page and source_says joins the NOI title and a sentence from the NOI letter with ' | '. SF source_says joins the page's treatment sentences and the location line with ' | '. Seattle items marked expected in 2026 on a page updated September 2026; some may since be built.",
+ "programs": [
+  {
+   "id": "sea_srts_2026",
+   "city": "seattle",
+   "agency": "Seattle Department of Transportation (SDOT)",
+   "title": "Safe Routes to School - Current Projects (items expected in 2026)",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+   "published": "2026-09",
+   "projects": [
+    {
+     "text": "Install paint-and-post curb bulbs at NW 65th St & 3rd Ave NW (Safe Routes to School, West Woodland Elementary / Ballard High School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Paint and post curb bulbs at NW 65th St and 3rd Ave NW leading to West Woodland Elementary and Ballard High School (expected in 2026)"
+    },
+    {
+     "text": "Install a push-button crossing beacon and curb ramps at S Lucile St & 13th Ave S (Safe Routes to School, Cleveland High School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Push button crossing beacon and curb ramps at S Lucile St and 13th Ave S leading to Cleveland High School (expected in summer 2026)."
+    },
+    {
+     "text": "Convert 6th Ave W & W Smith St to an all-way stop (Safe Routes to School, Coe Elementary).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 6th Ave W/W Smith St at Coe Elementary (expected in 2026)"
+    },
+    {
+     "text": "Install a turn wedge on the southwest corner of Rainier Ave S & S Walden St to slow right turns from Walden onto Rainier (Safe Routes to School, John Muir Elementary).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install \"turn wedge\" on the southwest corner of Rainier Ave S/S Walden St to slow right turns from Walden onto Rainier leading to John Muir Elementary (expected in 2026)"
+    },
+    {
+     "text": "Convert SW Myrtle St & 34th Ave SW to an all-way stop (Safe Routes to School, Our Lady of Guadalupe School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stop at SW Myrtle St and 34th Ave SW at Our Lady of Guadalupe School (expected in 2026)"
+    },
+    {
+     "text": "Mark crosswalks at Seward Park Ave S & S Hamlet St (Safe Routes to School, Rainier Beach High School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks at Seward Park Ave S/S Hamlet St next to Rainier Beach High School (expected in 2026)"
+    },
+    {
+     "text": "Install push-button flashing beacons and painted curb bulbs at California Ave SW & SW Hinds St (Safe Routes to School, Madison Middle School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons and painted bulbs at California/Hinds & California/Spokane near Madison Middle School (expected in 2026)"
+    },
+    {
+     "text": "Install push-button flashing beacons and painted curb bulbs at California Ave SW & SW Spokane St (Safe Routes to School, Madison Middle School).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons and painted bulbs at California/Hinds & California/Spokane near Madison Middle School (expected in 2026)"
+    }
+   ],
+   "split": "registered"
+  },
+  {
+   "id": "sf_contract35_signals",
+   "city": "sf",
+   "agency": "San Francisco Municipal Transportation Agency (SFMTA)",
+   "title": "Contract 35 Traffic Signal Modifications (17 intersections; 8 listed here)",
+   "source": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+   "published": "2026-08",
+   "projects": [
+    {
+     "text": "Upgrade the traffic signal at 6th Ave & Irving St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: 6th Avenue & Irving Street"
+    },
+    {
+     "text": "Upgrade the traffic signal at 25th Ave & Clement St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: 25th Avenue & Clement Street"
+    },
+    {
+     "text": "Upgrade the traffic signal at Haight St & Steiner St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: Haight Street & Steiner Street"
+    },
+    {
+     "text": "Upgrade the traffic signal at Portola Dr & Twin Peaks Blvd with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: Portola Drive & Twin Peaks Boulevard"
+    },
+    {
+     "text": "Upgrade the traffic signal at 16th St & Sanchez St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: 16th Street & Sanchez Street"
+    },
+    {
+     "text": "Upgrade the traffic signal at Evans Ave & Phelps St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: Evans Avenue & Phelps Street"
+    },
+    {
+     "text": "Upgrade the traffic signal at Holloway Ave & Junipero Serra Blvd with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: Holloway Avenue & Junipero Serra Boulevard"
+    },
+    {
+     "text": "Upgrade the traffic signal at California St & Larkin St with new poles and larger signal heads, pedestrian countdown signals, accessible pedestrian signals and new or updated curb ramps.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections. Signal visibility improvements includes new poles with larger signal heads. Related pedestrian safety improvements include pedestrian countdown signals (PCS), accessible pedestrian signals (APS), and updated or new curb ramps. | Project Locations: California Street & Larkin Street"
+    }
+   ],
+   "split": "registered"
+  },
+  {
+   "id": "nyc_dot_2025_projects",
+   "city": "nyc",
+   "agency": "NYC Department of Transportation",
+   "title": "NYC DOT 2025 Projects presented to community boards (single-intersection items)",
+   "source": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "published": "2025",
+   "projects": [
+    {
+     "text": "Install a new traffic signal with pedestrian-priority phasing and concrete curb extensions at E 170th St & Teller Ave (Bronx).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed pedestrian safety improvements at the intersection of East 170th Street and Teller Avenue in the Bronx. The proposal included a new traffic signal with signal phasing that prioritizes pedestrians, updated markings, improved traffic control signage and concrete curb extensions to slow turning vehicle speeds and install new safer, shorter pedestrian crossings."
+    },
+    {
+     "text": "Install concrete pedestrian refuge islands and new markings at Broadway & Gates Ave (Brooklyn).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed Vision Zero safety improvements on Broadway in Brooklyn at the intersections of Gates Avenue and Park Avenue. The proposed improvements included installing concrete pedestrian refuge islands, new markings, and improved roadway organization."
+    },
+    {
+     "text": "Install painted curb extensions at 3rd Ave & 65th St (Brooklyn, school safety).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed safety upgrades at the intersection of 3rd Avenue and 65th Street and on 65th Street between 2nd and 3rd Avenues in Brooklyn, in the direct vicinity of MS 936, PS 503, PS 506, PS 971, Tom Joyce Soccer Field, John Allen Payne Playground, and Leif Ericson Park. Planned safety improvements included painted curb extensions, reconfigured travel lanes on southbound 3rd Avenue between 63th and 65th Streets to reduce speeding and organize traffic, and a stop-controlled crosswalk to provide safe pedestrian access to Tom Joyce Soccer Field."
+    },
+    {
+     "text": "Install concrete pedestrian islands, clarified lane markings and new ADA ramps at Lenox Ave & W 145th St (Manhattan).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed intersection safety improvements at Lenox Avenue and West 145th Street in Manhattan. The proposed improvements consisted of concrete pedestrian islands, clarified lane markings, and construction of new ADA pedestrian ramps."
+    },
+    {
+     "text": "Install a concrete pedestrian island on the west leg of 31st Rd & Union St (Flushing, Queens).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed intersection safety improvements at the intersection of 31st Road and Union Street in Flushing. The proposed improvements included a concrete pedestrian island on the west leg of the intersection and clarified lane markings on 31st Road."
+    },
+    {
+     "text": "Install two bus boarding islands and painted pedestrian space at 31st St & 37th Ave (Queens).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "NYC DOT proposed bus and pedestrian safety improvements at the intersection of 31st Street and 37th Avenue in Queens. The proposed improvements included two new bus boarding islands and painted pedestrian space under the elevated subway tracks on 31st Street."
+    },
+    {
+     "text": "Install painted and concrete curb extensions at Farragut Ave & Regis Dr (Staten Island, school safety).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "The project added painted and concrete curb extensions at Farragut Avenue at Regis Drive, Farragut Avenue at Goethals Road North, and Jules Drive at Goethals Road North to improve visibility, shorten pedestrian crossings, and slow vehicular turns."
+    }
+   ],
+   "split": "registered"
+  },
+  {
+   "id": "dc_ddot_noi_2025",
+   "city": "dc",
+   "agency": "District Department of Transportation (DDOT)",
+   "title": "DDOT Notices of Intent, Planning & Sustainability Division, Apr-Jul 2025 (intersection items)",
+   "source": "https://ddotwiki.atlassian.net/wiki/spaces/NI/overview",
+   "published": "2025-04 to 2025-07",
+   "projects": [
+    {
+     "text": "Install a new crosswalk and daylighting (25 ft parking restriction) at 8th St NW & Highland Ave NW.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "New Crosswalk and “Daylighting” at the intersection of 8th Street NW and Highland Avenue NW. | In addition to the sidewalk, DDOT plans to install a new crosswalk and “daylighting” improvements at the intersection of Highland Avenue, NW and 8th Street NW.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3197992964/NOI-25-104-PSD"
+    },
+    {
+     "text": "Install new crosswalks and daylighting at 16th St SE & Frankford St SE (access to Moten Elementary).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "New Crosswalk and “Daylighting” at the intersection of 16th Street SE and Frankford St SE | In addition to the sidewalk, DDOT plans to install new crosswalks at the intersection, on the south side of 16th St SE and on the east side of Frankford St SE, to provide pedestrian access from the new sidewalks to Moten Elementary School.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3320610835/NOI-25-161-PSD"
+    },
+    {
+     "text": "Install a curb extension with sidewalk at 32nd Pl NW & Tennyson St NW.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Installation of Curb Extension and Sidewalk at the intersection of 32nd Place NW and Tennyson Street, NW | DDOT’s Sidewalk Gap Program is proposing to install a new curb extension with sidewalk on the west side of 32nd Place, NW at the intersection of Tennyson Street, NW.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3302490122/NOI-25-148-PSD"
+    },
+    {
+     "text": "Replace the quick-build curb extension with a permanent concrete curb extension and sidewalk at North Capitol St NE & Rock Creek Church Rd NE.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Installation of Curb Extension and Sidewalk at the intersection of North Capitol Street NE and Rock Creek Church Rd NE | DDOT proposes installation of a new concrete curb extension that will permanently reconfigure the intersection.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3335749644/NOI-25-170-PSD"
+    },
+    {
+     "text": "Install a new marked crosswalk and daylighting at Portal Dr NW & Roxanna Rd NW.",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Installation of New Crosswalk and “Daylighting” at the intersection of Portal Drive NW and Roxanna Road NW | As part of constructing a new sidewalk along the south side of Portal Drive NW, between Roxanna Road NW and 16th Street NW, DDOT’s Sidewalk Gap Program is planning to install a new marked crosswalk and “daylighting” improvements at the intersection of Portal Drive NW and Roxanna Road NW.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3353935906/NOI-25-178-PSD"
+    },
+    {
+     "text": "Convert Chesapeake St SE & 6th St SE to an all-way stop (Safe Routes to School, Hendley Elementary).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Lastly, an all-way stop will be set up at the intersection of Chesapeake Street SE and 6th Street SE.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3222339601/NOI-25-119-PSD"
+    },
+    {
+     "text": "Install a new crosswalk with ADA ramps at the T-intersection of 4th St SE & Chesapeake St SE (Safe Routes to School, Hendley Elementary).",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "A new crosswalk with ADA-compliant ramps will be installed at the T-intersection of 4th St. SE and Chesapeake St. SE.",
+     "source_page": "https://ddotwiki.atlassian.net/wiki/spaces/NI/pages/3222339601/NOI-25-119-PSD"
+    }
+   ],
+   "split": "held_out"
+  }
+ ],
+ "asof": "2026-10-31",
+ "splits": "registered: run by the project as T29; held_out: never run by the project before review (for the team and reviewers)"
+}

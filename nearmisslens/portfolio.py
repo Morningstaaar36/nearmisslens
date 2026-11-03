@@ -265,3 +265,61 @@ def run(text: str, city: str, client=None, letter_client=None, open_client=None,
     (out_dir / "program.md").write_text(portable(portfolio_md(p, p["title"])))
     p["out_dir"] = str(out_dir)
     return p
+
+
+def run_registered(spec_id: str, client, open_client, reviewer=None) -> dict:
+    """A registered program run (validation/experiments/T29*.json): every program list it names, reviewed and
+    ranked, resumed from the saved reviews of an interrupted run."""
+    import os
+    from .evaluate import RESULTS_DIR
+    from .orchestrator import redact
+    sp = json.loads((Path(__file__).resolve().parent.parent / "validation" / "experiments" / f"{spec_id}.json").read_text())
+    os.environ["NML_ASOF"] = sp["asof"]
+    data = json.loads(EXAMPLES.read_text())
+    progs = [p for p in data["programs"] if p["id"] in sp["programs"]]
+    out = []
+    for prog in progs:
+        p = run(json.dumps(prog["projects"]), prog["city"], client, None, open_client,
+                budget_usd=prog.get("budget_total_usd"), per_review_usd=sp["budget_usd"], title=prog["title"],
+                out_dir=Path(SETTINGS.runs_dir) / "programs" / f"{spec_id}_{prog['id']}", reviewer=reviewer)
+        reviews = [json.loads(x) for x in (Path(p["out_dir"]) / "reviews.jsonl").read_text().splitlines()]
+        latest = {}
+        for r in reviews:  # an interrupted program's retried review replaces its failed one
+            latest[r["program_text"]] = r
+        out.append({"id": prog["id"], "city": prog["city"], "agency": prog.get("agency"), "title": prog["title"],
+                    "source": prog["source"], "program": {k: p[k] for k in ("totals", "groups", "not_reviewed",
+                                                                            "budget_plan", "seconds")},
+                    "reviews": list(latest.values())})
+        print(prog["id"], json.dumps(p["totals"]), flush=True)
+    res = {"id": spec_id, "programs": out}
+    path = RESULTS_DIR / "bench" / f"experiment_{spec_id}.json"
+    path.write_text(redact(portable(json.dumps(res, indent=1, default=str))))
+    return res
+
+
+def run_summary(res: dict, spec: dict) -> dict:
+    """The registered rule, measured: how many proposals were reviewed, on their own corner, at what cost, and
+    whether code's ranking is reproduced exactly from the saved reviews."""
+    reviews = [r for p in res["programs"] for r in p["reviews"]]
+    pub = [r for r in reviews if r.get("status") == "published"]
+    on_corner = [r for r in pub if rv_mod.same_corner((r.get("proposal") or {}).get("address") or r.get("input", ""),
+                                                      r.get("corner") or "")]
+    usd = [sum(float(v or 0) for v in (r.get("cost_usd") or {}).values()) for r in reviews]
+    again = [rank(p["reviews"], (p["program"].get("budget_plan") or {}).get("budget_usd")) for p in res["programs"]]
+    same = all(json.dumps(a["totals"], sort_keys=True) == json.dumps(p["program"]["totals"], sort_keys=True)
+               and json.dumps(a["groups"], sort_keys=True, default=str) == json.dumps(p["program"]["groups"], sort_keys=True, default=str)
+               for a, p in zip(again, res["programs"]))
+    rule = spec["rule"]
+    out = {"programs": len(res["programs"]), "proposals": len(reviews), "reviewed": len(pub),
+           "on_proposed_corner": len(on_corner),
+           "groups": {g: sum(p["program"]["totals"][g] for p in res["programs"]) for g, _, _ in GROUPS},
+           "abstained_or_failed": len(reviews) - len(pub),
+           "ranking_reproduced": same,
+           "objections_kept": sum(len(r.get("objections") or []) for r in pub),
+           "mean_usd": round(sum(usd) / len(usd), 4) if usd else None, "total_usd": round(sum(usd), 4)}
+    met = {"reviewed": len(pub) >= rule["min_reviewed_share"] * len(reviews),
+           "on_proposed_corner": len(on_corner) == len(pub),
+           "ranking_reproduced": same,
+           "cost": out["mean_usd"] is not None and out["mean_usd"] <= rule["max_mean_usd"]}
+    out["met"], out["rule_met"] = met, all(met.values())
+    return out

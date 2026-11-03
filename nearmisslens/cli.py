@@ -316,6 +316,16 @@ def cmd_portfolio(args) -> int:
     return 0
 
 
+def cmd_portfolio_run(args) -> int:
+    from . import portfolio
+    from .meta_client import MetaClient
+    from .openclient import OpenWeightsClient
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{args.spec}.json").read_text())
+    res = portfolio.run_registered(args.spec, MetaClient(SETTINGS), OpenWeightsClient())
+    print(json.dumps(portfolio.run_summary(res, sp), indent=1))
+    return 0
+
+
 def cmd_review_run(args) -> int:
     from . import review
     from .meta_client import MetaClient
@@ -719,6 +729,8 @@ def main(argv: list[str] | None = None) -> int:
     po.add_argument("--out", help="the folder to save into; an interrupted program resumes from it")
     po.add_argument("--letter", action="store_true", help="also draft each work order")
     po.add_argument("--json", action="store_true")
+    pr = sub.add_parser("portfolio-run", help="run nml portfolio on a registered spec's program lists (T29) and score its rule; paid unless --replay")
+    pr.add_argument("spec")
     rr = sub.add_parser("review-run", help="run nml review on a registered spec's proposals (T26) and score its rule; paid unless --replay")
     rr.add_argument("spec")
     cr = sub.add_parser("check-run", help="run nml check on a registered spec's inputs (T25) and score its rule; paid unless --replay")
@@ -812,7 +824,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

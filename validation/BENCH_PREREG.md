@@ -921,6 +921,21 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **new: at least 3 kept objections on at least 6 of the published memos, and no kept objection resting on the verdict itself.**
 - **Also reported:** verdicts against T27 (the appraisal code did not change, so a different verdict means the agent registered the proposal differently).
 
+## T29 Program review on real program lists (registered 2026-11-03 evening, before any T29 review)
+- **What:** `nml portfolio`. An agency's list of proposed intersection projects goes in; each proposal is reviewed by Before you commit (Muse Spark investigates, code sets the verdict, Muse Spark Open argues against it); code groups the list (build, build after a site check, compare first, decide part by part, not covered by the evidence, reconsider, not reviewed) and ranks each group by injury crashes avoided per dollar, then per year. No model sees the whole list.
+- **Inputs:** `validation/examples/programs.json`, collected tonight from the agencies' own pages before any was run (each project with the source's sentence):
+  - Seattle: SDOT Safe Routes to School items listed for 2026 (8);
+  - San Francisco: SFMTA Contract 35 traffic signal modifications (8 of its 17 locations);
+  - New York: NYC DOT 2025 projects presented to community boards, single-intersection items (7).
+  - **Held out:** DDOT notices of intent, Apr–Jul 2025 (7), for the team and reviewers; never run by the project before review.
+  - No source gives a cost per project, so no budget plan is tested here (the budget plan is tested in `tests/test_portfolio.py`).
+- **Rule** (`validation/experiments/T29.json`):
+  - at least 80% of the 23 proposals reviewed (a published memo);
+  - every published memo about the intersection proposed;
+  - code's program reproduced exactly from the saved reviews (`rank` run again on them gives the same groups and totals);
+  - mean cost at most $0.15 a proposal (Meta API and open weights).
+- **Also reported:** the groups per program, and a post-hoc read of each "build" and "reconsider" row against its memo.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).
