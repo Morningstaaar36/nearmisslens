@@ -53,10 +53,11 @@ def facts() -> dict:
     if _load("experiment_T30c.json"):
         from .intake import run_summary as intake_summary
         out["t30"] = intake_summary(_load("experiment_T30c.json"), _spec("T30c"))
-    prog = _load("experiment_T29.json")
-    if prog:
+    run = next((r for r in ("T29b", "T29") if _load(f"experiment_{r}.json")), None)
+    if run:  # the latest registered program run
         from .portfolio import run_summary as program_summary
-        out["t29"] = program_summary(prog, _spec("T29"))
+        prog = _load(f"experiment_{run}.json")
+        out["t29"] = program_summary(prog, _spec(run))
         out["program"] = prog["programs"][0]
     return out
 
@@ -101,7 +102,7 @@ def script(f: dict | None = None) -> list[Scene]:
         Scene("results", f"We registered every test before running it. {_words(rv['inputs']).capitalize()} real proposals "
                          f"from {_words(f['cities'])} cities' plans: {_words(rv['published'])} memos, every one on the corner proposed, "
                          f"{rv['objections_kept']} checked objections, about {_cents(rv['mean_usd'])} a review. "
-                         "Two independent testers broke earlier versions; what they found is fixed, and their reports "
+                         "Independent testers broke earlier versions; what they found is fixed, and their reports "
                          "are kept as written.",
               "card", f"{rv['published']} of {rv['inputs']} memos, {rv['objections_kept']} checked objections",
               caption=f"Registered run {f['reviews_run']}: rule met; ${rv['mean_usd']:.3f} a review"),
@@ -119,10 +120,12 @@ def script(f: dict | None = None) -> list[Scene]:
                             caption=f"nml intake, registered run T30c (after two runs that did not meet the rule)"))
     if f.get("t29"):
         t = f["t29"]
-        scenes.append(Scene("program", f"Program review takes the whole "
-                                       f"list, reviews each proposal, and code ranks them: build, check on site first, "
-                                       f"compare, study, or reconsider. On {_words(t['programs'])} real lists from the "
-                                       f"agencies' own pages, {t['reviewed']} of {t['proposals']} proposals reviewed.",
+        scenes.append(Scene("program", f"Program review takes the whole list, reviews each proposal, and code ranks "
+                                       f"them: build, check on site first, compare, study, or reconsider. On "
+                                       f"{_words(t['programs'])} real lists from the agencies' own pages, "
+                                       f"{t['reviewed']} of {t['proposals']} proposals were reviewed, each on its own "
+                                       "corner. Most rest on fixes no federal study covers, and the memos say so "
+                                       "instead of promising a number.",
                             "page", target="program", q={"route": "review"},
                             caption="A whole program, reviewed and ranked by code"))
     scenes += [
