@@ -327,6 +327,7 @@ def populations(cr: dict) -> dict:
 # studies": the median of eligible records. "needs a site check": the estimate holds only if something the public data
 # cannot show is true (the record's study sites, or the fix's own precondition). "contradicted here": the city's own
 # record rules out the national effect.
+LIT_ALREADY = 0.8  # lighting is not estimated where the record codes this share of after-dark crashes as lit
 EVIDENCE = ("measured here", "FHWA-cited", "national studies", "needs a site check", "contradicted here")
 SUPPORTED = EVIDENCE[:3]  # the tiers a plan may total without a site visit
 
@@ -361,6 +362,12 @@ def fix_options(d: dict, cmf, control: str | None = None) -> dict:
         if item.get("site_fix") is False or name in have:
             continue
         sel = countermeasures.select(item, control, pops, cmf, frozenset(d.get("site_kinds") or ()))
+        lit = cr.get("dark_lit_share")
+        if name == "Lighting" and sel.get("quantified") and lit is not None and lit >= LIT_ALREADY \
+                and (cr.get("dark_crashes") or 0) >= 5:  # its estimate is for an unlit corner; the record says lit
+            sel = {"quantified": False, "reason": f"the record codes {round(100 * lit)}% of the crashes after dark "
+                                                  "here as with street lights on, and the lighting estimate is for a "
+                                                  "corner without street lighting"}
         checks = [c for c in (item.get("condition") if item.get("condition") not in conds else None,
                               item.get("site_check"), sel.get("site_condition")) if c]
         if not sel["quantified"]:

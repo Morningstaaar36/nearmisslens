@@ -456,8 +456,10 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
     if cr and "error" not in cr:
         out.append({"text": crash_sentence(name, cr), "receipt": rf})
         if fx.get("harm"):
+            dead = fx["harm"].get("deaths_in_record") or 0
             out.append({"text": f"At the U.S. DOT's values that harm costs about {_usd(fx['harm']['usd_per_year'])} "
-                                "a year.", "receipt": rf})
+                                "a year" + (" (injury crashes only: deaths are not valued in this figure)" if dead else "")
+                                + ".", "receipt": rf})
     rc, rr = rec["root_cause"]
     over = rc.get("over_represented") or []
     peers = (rc.get("baseline") or {}).get("junctions") or "the city's priority junctions"

@@ -285,7 +285,7 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
     inj, kil = a.get("injured", {}), a.get("killed", {})
     sums = Counter()
     injury_crashes, groups, factors, years_c = 0, Counter(), Counter(), Counter()
-    dark = wet = 0
+    dark = wet = dark_lit = 0
     for r in rows:
         d = _date(r.get(a.get("date_field")))
         years_c[str(d.year) if d else "unknown"] += 1
@@ -312,6 +312,7 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
         light = _text(r, a.get("light_fields", []))
         surface = _text(r, a.get("surface_fields", []))
         dark += "dark" in light
+        dark_lit += "dark" in light and ("lights on" in light or "lighted" in light) and "not" not in light
         wet += any(w in surface for w in ("wet", "ice", "snow", "slush"))
         for f in a.get("factor_fields", []):
             v = str(r.get(f) or "").strip()
@@ -331,6 +332,9 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             **{k: int(v) for k, v in sums.items() if v}, "crash_groups": dict(groups),
             "crash_type_recorded": bool(a.get("crash_type_fields")),
             "dark_share": round(dark / n, 3) if n and a.get("light_fields") else None,
+            # of the crashes after dark, the share the record codes as with street lights on
+            "dark_lit_share": round(dark_lit / dark, 3) if dark and a.get("light_fields") else None,
+            "dark_crashes": dark if a.get("light_fields") else None,
             "wet_share": round(wet / n, 3) if n and a.get("surface_fields") else None,
             "top_factors": [{"factor": f, "crashes": c} for f, c in factors.most_common(3)],
             "factor_counts": dict(factors.most_common(15))}

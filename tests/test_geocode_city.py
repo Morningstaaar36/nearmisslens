@@ -244,3 +244,17 @@ def test_a_letter_counts_the_deaths_a_city_records_without_their_mode():
     brief = {"junction": "A St & B Ave", "dossier": {"lat": 0, "lon": 0, "crashes": cr, "plans": {}, "city": "seattle",
                                                      "years": 5}, "fixes": {}}
     assert letter.facts(brief, offices_=[])["people_killed"] == 4
+
+
+def test_lighting_is_not_estimated_where_the_record_says_the_lights_were_on():
+    """Independent audit: lighting was valued at corners where the record codes 80-94% of after-dark crashes as with
+    street lights on; its estimate is for an unlit corner."""
+    from nearmisslens import brief, countermeasures
+    base = {"crashes": {"injury_crashes": 60, "crashes": 120, "dark_share": 0.4, "dark_crashes": 48, "since": "2021-10-31",
+                        "crash_groups": {}, "recorded": {"injured_by_mode": [], "killed": False}},
+            "street": {"signals": 2, "roads": [{"name": "A"}]}, "plans": {"projects": []}, "city": "zz", "years": 5}
+    lit = brief.fix_options({**base, "crashes": {**base["crashes"], "dark_lit_share": 0.9}}, countermeasures.load_cmf())
+    unlit = brief.fix_options({**base, "crashes": {**base["crashes"], "dark_lit_share": 0.2}}, countermeasures.load_cmf())
+    names = lambda fx: {o["countermeasure"] for o in fx["options"]}
+    assert "Lighting" in names(unlit) and "Lighting" not in names(lit)
+    assert any("street lights on" in (o.get("reason") or "") for o in lit["not_estimated"] if o["countermeasure"] == "Lighting")
