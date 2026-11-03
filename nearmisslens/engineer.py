@@ -438,7 +438,7 @@ def crash_sentence(name: str, cr: dict) -> str:
     """The record's headline, stating only the counts the city's dataset records; a summary that does not say which
     it records gets the injury-crash total alone."""
     rec = cr.get("recorded") or {"injured_by_mode": [], "killed": False}
-    killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed")) or cr.get("any_killed", 0)
+    killed = context.deaths(cr)
     parts = [f"{n} {m}{'' if n == 1 else 's'} injured" for m in ("pedestrian", "cyclist") if m in rec["injured_by_mode"]
              for n in [cr.get(f'{m}_injured', 0)]]
     if rec.get("killed"):

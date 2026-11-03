@@ -28,7 +28,8 @@ def junction(cr: dict, years: int) -> dict | None:
     if not cr or "error" in cr or not cr.get("injury_crashes"):
         return None
     per_year = cr["injury_crashes"] / years
-    killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed", "any_killed"))
+    from .context import deaths
+    killed = deaths(cr)
     return {"injury_crashes_per_year": round(per_year, 1), "usd_per_year": round(per_year * INJURY_CRASH_USD, -3),
             "deaths_in_record": int(killed), "value_per_injury_crash_usd": INJURY_CRASH_USD,
             "dollar_year": BCA["dollar_year"], "source": BCA["source"]}

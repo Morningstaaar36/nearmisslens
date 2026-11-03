@@ -37,6 +37,13 @@ YEARS = 5
 GAP_MIN_INJURY_CRASHES = 10
 
 
+def deaths(cr: dict) -> int:
+    """People killed in a crash summary: the deaths by mode where the city records the mode, else the dataset's total
+    (some cities record deaths without the mode; leaving that total out once made letters say no one was killed)."""
+    by_mode = sum(int(cr.get(k) or 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
+    return by_mode or int(cr.get("any_killed") or 0)
+
+
 def city_of(lat: float, lon: float) -> str | None:
     """The registry city whose bounding box holds the point (registry.json "cities")."""
     from . import opendata

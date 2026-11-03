@@ -232,3 +232,15 @@ def test_one_addressee_per_agency():
     brief = {"junction": "A St & B Ave", "dossier": {"lat": 0, "lon": 0, "crashes": {}, "plans": {}, "city": "dc", "years": 5}, "fixes": {}}
     f = letter.facts(brief, offices_=[], who=who, audience="agency")
     assert f["to"] == "the District Department of Transportation (DDOT)" and f["road_owners"][0]["roads"] == ["A St", "B Ave"]
+
+
+def test_a_letter_counts_the_deaths_a_city_records_without_their_mode():
+    """Independent audit: letters said 'no one was killed' at corners where the record has deaths, because a city
+    that records deaths without the mode (any_killed) was summed by mode only."""
+    from nearmisslens import context, harm, letter
+    cr = {"injury_crashes": 30, "crashes": 60, "any_killed": 4, "since": "2021-10-31"}
+    assert context.deaths(cr) == 4 and context.deaths({"pedestrian_killed": 1, "cyclist_killed": 1}) == 2
+    assert harm.junction(cr, 5)["deaths_in_record"] == 4
+    brief = {"junction": "A St & B Ave", "dossier": {"lat": 0, "lon": 0, "crashes": cr, "plans": {}, "city": "seattle",
+                                                     "years": 5}, "fixes": {}}
+    assert letter.facts(brief, offices_=[])["people_killed"] == 4

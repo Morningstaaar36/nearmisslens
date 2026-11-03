@@ -76,7 +76,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
         audience = "resident"  # no recorded owner: the offices that can request the work are the addressees
     d, fx = brief["dossier"], brief.get("fixes") or {}
     cr, pl = d.get("crashes") or {}, d.get("plans") or {}
-    killed = sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
+    killed = context.deaths(cr)
     # the two leading estimated low-cost fixes (reconstructions need a design study first), with their site checks
     supported = [o for o in fx.get("options", []) if o.get("scale", "low-cost") == "low-cost"][:2]
     measured = next((o for o in fx.get("options", []) if o.get("local_evidence")), None)
