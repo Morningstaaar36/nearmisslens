@@ -141,3 +141,14 @@ def test_red_team_drops_and_hardened_refusals():
     r = _load("experiment_T20b.json")
     _has(f"{r['dropped_unverified']} whose spec did not check out against the receipt were dropped")
     _has(f"refuses {round(100 * r['scores_hardened_posthoc']['model']['false_refusal'])}% of true ones")
+
+
+def test_t25_numbers():
+    from nearmisslens.check_runs import summary
+    s = summary(_load("experiment_T25.json"), "T25")
+    assert s["rule_met"]
+    _has(f"all {s['published_real']} real inputs published")
+    _has(f"all {s['quotes_verified']} of their quotes")
+    _has(f"{s['published_real']} of {s['real']} real inputs")
+    _has(f"{s['quotes_verified']} of {s['quotes_published']} quotes verified")
+    _has(f"${s['mean_usd']:.3f} an input")

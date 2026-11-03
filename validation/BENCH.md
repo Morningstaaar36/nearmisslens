@@ -624,6 +624,36 @@ Registered in BENCH_PREREG.md (T24). The 12 inputs of T21c, Muse Spark 1.3 with 
 
 Hypothesis (at least 20% of quotes absent from their readable page, or at least 20% of number findings differing from the record): supported. 'Consistent' needs a number the record tests: a different value in its place would be refused. 'Differs' means not the record's number within 100 m over five years for what the sentence names; a source counting another area or period is not therefore wrong. Scored by `baseline_desk.score` with the corner's record rebuilt in the window its desk run read (the scoring was corrected after the run and before this was written up; see BENCH_PREREG.md).
 
+## T25 `nml check` on inputs nobody chose for it
+
+Registered in BENCH_PREREG.md (T25). 12 inputs fixed in `validation/experiments/T25.json` before the run: news links, claims to find, and two controls. Records as of 2026-10-31; $0.50 Meta budget per input; the settings the deployed app uses.
+
+| Rule | Measured | |
+|---|---|---|
+| at least 8 of 10 real inputs published | 10 | met |
+| mean Meta cost at most $0.25 | $0.056 | met |
+| at least 80% of published quotes verified | 26 of 26 | met |
+| no licence plate published | 0 | met |
+| the off-topic page is not published | not published | met |
+| the false zero-crash statement is not called consistent | published: differs from the record | met |
+
+**Rule: met.** Mean 458 s per input; $0.67 in all. The post-hoc review is under "T25 result" in BENCH_PREREG.md: it found the false-statement control was published about another corner, from another page, after the desk misread its input's id, so its rule was met without testing the statement; a check must now cite its own input.
+
+| Input | Kind | City | Outcome | Corner | Named in the input | Meta $ |
+|---|---|---|---|---|---|---|
+| url_nyc | url | nyc | published | Broadway & West 262nd Street, Bronx, NY | West 262nd Street & Broadway | 0.035 |
+| url_dc | url | dc | published | 23rd Street Northwest & L Street Northwest, Washington, DC | 23rd Street & L Street NW | 0.046 |
+| url_chicago_1 | url | chicago | published | Foster Avenue & Pulaski Road, Chicago | Foster Avenue & Pulaski Road | 0.040 |
+| url_chicago_2 | url | chicago | published | Kilbourn Avenue & Belmont Avenue, Chicago | Belmont Avenue & Kilbourn Avenue | 0.046 |
+| url_seattle | url | seattle | published | Bellevue Avenue & East Pine Street, Seattle | Bellevue Avenue East & East Pine Street | 0.054 |
+| url_sf | url | sf | published | Beckett Street & Jackson Street, San Francisco | Jackson Street & Beckett Street | 0.042 |
+| find_nyc | find | nyc | published | East 57th Street & 2nd Avenue, Manhattan, New York City |  | 0.046 |
+| find_dc | find | dc | published | 23rd Street Northwest & L Street Northwest, Washington DC |  | 0.109 |
+| find_seattle | find | seattle | published | Broadway & East Pine Street, Seattle |  | 0.065 |
+| find_sf | find | sf | published | 4th Street & Channel Street, San Francisco |  | 0.070 |
+| control_offtopic | url | seattle | abstained | Broad Street & 5th Avenue North, Seattle |  | 0.061 |
+| control_false_claim | source | sf | published | Market Street & Gough Street, San Francisco |  | 0.054 |
+
 ## Data agent: adapters found and validated without hand-written code
 
 | place | dataset | validator attempts | records near the test point | latest record |

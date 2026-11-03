@@ -1300,7 +1300,9 @@ def _t25_section() -> list[str]:
          f"| the false zero-crash statement is not called consistent | {s['false_claim_status']}: "
          f"{'; '.join(s['false_claim_verdicts']) or 'no verdict'} | {yes(met['control_false_claim'])} |", "",
          f"**Rule: {'met' if s['rule_met'] else 'not met'}.** Mean {s['mean_seconds']:.0f} s per input; "
-         f"${s['total_usd']:.2f} in all.", "",
+         f"${s['total_usd']:.2f} in all. The post-hoc review is under \"T25 result\" in BENCH_PREREG.md: it found the "
+         "false-statement control was published about another corner, from another page, after the desk misread its "
+         "input's id, so its rule was met without testing the statement; a check must now cite its own input.", "",
          "| Input | Kind | City | Outcome | Corner | Named in the input | Meta $ |", "|---|---|---|---|---|---|---|"]
     for c in r["cases"]:
         L.append(f"| {c['id']} | {c.get('kind')} | {c.get('city')} | {c['status']} | {c.get('corner') or ''} | "

@@ -16,6 +16,8 @@ Nothing is published until code has checked every number against the record and 
 - 26 of the 73 quotes it cited from pages we could read are not on those pages.
 - Of the 60 sentences it wrote with numbers about the case, 1 states a count the city's crash record can test, and it differs from the record; the other 59 cannot be checked.
 
+**On 12 inputs nobody chose for it (T25), through `nml check`, the path a reviewer uses, all 10 real inputs published, and all 26 of their quotes were found on their page.** The inputs were news links and claims from a date window no earlier run used, including the first two Chicago cases. Both controls were caught: an off-topic page was not published, and a false "zero injury crashes" statement was not called consistent. It cost $0.056 an input. Our review found that the false-statement control drifted to another corner after misreading its input. A check must now cite its own input, and the rerun calls the statement "differs from the record" (the record has 67).
+
 What we changed between runs, and what reviews of the published cases still found wrong, is below.
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs (a static replay, not a live endpoint), with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
@@ -261,6 +263,8 @@ uv run nml check "The council says this corner had 40 crashes" --city CITY_ID   
 uv run nml app                                                        # the same, in the browser: "Check a claim yourself"
 ```
 
+In T25, registered before it ran, `nml check` published 10 of 10 real inputs at their named corners, with 26 of 26 quotes verified and both controls caught (see "The desk, run after run" and BENCH_PREREG.md).
+
 Two saved examples replay offline with no key: `uv run nml --replay check --example 1` (a claim to find in Washington DC) and `--example 2` (a resident's report in San Francisco). In those first live development runs, not a registered test, the report published; the DC claim was refused, because the pages about that crash could not be read here and the gate no longer lets a quote from a page about another crash stand behind a corner's case.
 
 [`TESTING.md`](TESTING.md) is for an independent tester: what each field means, what counts as a failure, and how to keep a test fair. A test builds a forbidden list from every corner, street and source in the saved results and fails if any of them appears in the generic code or the desk's prompts (`tests/test_no_hardcoding.py`).
@@ -304,6 +308,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T21d | Honest verdicts on fresh cases | registered, results in BENCH.md |
   | T23 | Do a city's own cameras give usable counts, and does counting people change which corners rank worst? | packed counts: met; ranking: not reported (rule), too few people seen |
   | T23b | The same at midday | packed counts: met (all disagreements undercount); ranking: not reported (rule), 15 of 20 cameras |
+  | T25 | Does `nml check` publish at least 8 of 10 real inputs nobody chose, and catch an off-topic page and a false statement? | met (10 of 10; both controls caught; the false-statement control drifted to another corner, fixed after) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.
