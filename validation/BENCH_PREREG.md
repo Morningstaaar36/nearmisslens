@@ -769,7 +769,7 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **"Unknown / not stated" is never a pattern.** The SF case listed "4% recorded as bicycle-unknown/not stated crashes" as something crashes there have in common. A category that says it was not recorded is now treated as missing.
 - **Registered desk runs are unchanged:** the cap and the corner rule are on for `nml check` only, so T21–T24 replay as before.
 
-## T25 `nml check` on inputs nobody chose for it (registered 2026-11-03, about 18:00 Dhaka, before any T25 input is run)
+## T25 `nml check` on inputs nobody chose for it (registered 2026-11-03, 17:18 Dhaka (commit a9efba3), before any T25 input is run)
 - **What is tested:** `nml check`, the path a reviewer uses (the same entry as the web's `POST /check`), with the deployed settings: records as of 2026-10-31, $0.50 Meta budget per input, the 6-page reading cap, sources must name the corner, letters by Muse Spark Open. Earlier registered runs tested the desk on tasks it searched for itself; here half the inputs are links a person pastes.
 - **Inputs (12, fixed in `validation/experiments/T25.json`):**
   - **6 news links**, one per checkable city and two for Chicago, which no registered run has tested. For each city, the first result of a web search that is a report or statement published January 1 to June 30, 2026 (a window no earlier run used), about a pedestrian hit by a driver at a named intersection, at a corner no earlier run investigated. Queries: "{city} pedestrian hit by driver at intersection 2026 {police department}", then, where that found nothing in the window, "Seattle pedestrian killed OR struck 2026 ..." and "DC pedestrian struck killed 2026 intersection ...". Each page was opened once to confirm its date and intersection; nothing else from it was used.
@@ -786,7 +786,7 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Also reported:** time per input; Chicago's two outcomes; whether each published case is at the intersection its input names; a post-hoc review of every published claim verdict (hypothesis: at most 1 in 10 wrong, the same as T21e's, which was not met there). The review is done within the project and is not the hand audit.
 - **Spend:** at most $6.00 (12 × $0.50); expected about $1.50. The local guard is set so the run stops before $80 on the Meta ledger.
 
-## T26 Before you commit: `nml review` on real proposed projects (registered 2026-11-03, about 19:45 Dhaka, before any T26 proposal is reviewed)
+## T26 Before you commit: `nml review` on real proposed projects (registered 2026-11-03, 18:48 Dhaka (commit 0bd0650), before any T26 proposal is reviewed)
 - **What is new:** a pre-commitment review for the engineer or directorate that must decide whether to fund a project (`nearmisslens/review.py`).
   - Muse Spark registers the proposal against the closed list of federal Proven Safety Countermeasures and investigates the corner with the desk's checked tools.
   - Code appraises the proposal and **sets the verdict**: proceed, proceed only after a site check, compare against an alternative, or reconsider. It weighs:
