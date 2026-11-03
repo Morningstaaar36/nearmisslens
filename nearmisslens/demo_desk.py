@@ -50,6 +50,9 @@ def facts() -> dict:
            "cities": len({c.get("city_id") or c.get("city") for c in cases}),
            "in_place": next((c for c in cases if (c.get("appraisal") or {}).get("in_place")), None),
            "argued": max(cases, key=lambda c: len(c.get("objections") or [])) if cases else None}
+    if _load("experiment_T30c.json"):
+        from .intake import run_summary as intake_summary
+        out["t30"] = intake_summary(_load("experiment_T30c.json"), _spec("T30c"))
     prog = _load("experiment_T29.json")
     if prog:
         from .portfolio import run_summary as program_summary
@@ -103,9 +106,20 @@ def script(f: dict | None = None) -> list[Scene]:
               "card", f"{rv['published']} of {rv['inputs']} memos, {rv['objections_kept']} checked objections",
               caption=f"Registered run {f['reviews_run']}: rule met; ${rv['mean_usd']:.3f} a review"),
     ]
+    if f.get("t30"):
+        t = f["t30"]
+        kept = sum(r["kept"] for r in t["rows"])
+        scenes.append(Scene("intake", "An agency rarely has one proposal; it has a list on a web page. Give the page, and "
+                                      "Muse Spark reads every project at an intersection, with the page's own status. Code "
+                                      "keeps one only if its sentence is on the page and names both streets. On two "
+                                      f"agencies' pages it found all {t['hand_found']} projects we had listed by hand, "
+                                      f"{kept} in all, at about {_cents(t['mean_usd_per_readable_page'])} a page. Then "
+                                      "every project is reviewed, and code ranks the list.",
+                            "card", f"From the agency's page: {t['hand_found']} of {t['hand_projects']} projects found",
+                            caption=f"nml intake, registered run T30c (after two runs that did not meet the rule)"))
     if f.get("t29"):
         t = f["t29"]
-        scenes.append(Scene("program", f"An agency rarely has one proposal; it has a list. Program review takes the whole "
+        scenes.append(Scene("program", f"Program review takes the whole "
                                        f"list, reviews each proposal, and code ranks them: build, check on site first, "
                                        f"compare, study, or reconsider. On {_words(t['programs'])} real lists from the "
                                        f"agencies' own pages, {t['reviewed']} of {t['proposals']} proposals reviewed.",
@@ -123,8 +137,9 @@ def script(f: dict | None = None) -> list[Scene]:
                        "With the gates, nothing is published until code has checked it.",
               "card", f"Alone: {t24['quotes_absent']} of {t24['quotes_verified'] + t24['quotes_absent']} quotes not on "
                       "their page", caption="Muse Spark alone (T24) against the desk with its gates"),
-        Scene("close", "Every test is in the repository, met or not. Proposals and a program list are held out for you: "
-                       "try one, or bring your own.",
+        Scene("close", "An engineer at the site can even speak the proposal: Muse Voice Transcribe takes it down, and "
+                       "the same review runs. Every test is in the repository, met or not. Proposals and a program list "
+                       "are held out for you: try one, or bring your own.",
               "card", "Try it on your city's proposal", caption="nml review · nml portfolio · held-out sets in TESTING.md"),
     ]
     return scenes
