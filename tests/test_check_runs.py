@@ -60,3 +60,12 @@ def test_the_site_gets_the_saved_checks_with_their_record_notes(monkeypatch, tmp
     blob = json.loads((out / "checks.json").read_text())
     assert blob["summary"]["by_input"] == {"url_nyc": "published"} and "2026-10-31" in blob["cases"][0]["record_notes"][0]
     assert "ABC1234" not in (out / "checks.json").read_text()  # plates are redacted from what the site publishes
+
+
+def test_a_saved_letter_that_misses_recorded_deaths_gets_a_correction():
+    from nearmisslens import pages
+    case = {"letter": "The record shows 14 injury crashes and 0 people killed.",
+            "findings": [{"text": "Kilbourn had 14 injury crashes in police records since 2021-10-31: 1 person killed.", "receipt": "D3"}]}
+    assert "record holds 1 death" in pages.letter_correction(case)
+    assert pages.letter_correction({**case, "letter": "The record shows 1 person killed."}) is None
+    assert pages.letter_correction({**case, "findings": [{"text": "14 injury crashes: 0 people killed."}]}) is None

@@ -176,7 +176,7 @@ def desk_page(root: Path) -> None:
     keep = ("kind", "city", "task", "finished", "stopped", "final", "corner", "letter", "usd", "seconds", "turns", "web",
             "trace", "receipts")
     from .orchestrator import redact
-    cases = [{k: c.get(k) for k in keep} for c in res.get("cases", [])]
+    cases = [{**{k: c.get(k) for k in keep}, "letter_correction": letter_correction(c)} for c in res.get("cases", [])]
     review = {"checked": 0, "changed": 0}
     for c in cases:
         c["rechecks"] = rechecks(c)
@@ -191,6 +191,24 @@ def desk_page(root: Path) -> None:
     (root / "desk.json").write_text(blob)  # no licence plate is published, even one a 311 report printed
 
 
+NO_DEATHS = re.compile(r"\b(no one was killed|no people were killed|nobody was killed|0 people (?:were )?killed|no deaths|"
+                       r"no one died)\b", re.I)
+
+
+def letter_correction(case: dict) -> str | None:
+    """A saved letter that says no one was killed where its own findings state deaths: the letter counted deaths by
+    mode only, and some cities record them without the mode (fixed 2026-11-03, found by the independent audit). The
+    saved letter is kept as it ran; the page shows this correction next to it."""
+    letter = case.get("letter") or ""
+    found = json.dumps((case.get("final") or {}).get("findings") or case.get("findings") or [])
+    m = re.search(r"(\d+) (?:people|person) (?:were |was )?killed", found)
+    if letter and NO_DEATHS.search(letter) and m and int(m.group(1)) > 0:
+        return (f"Correction: this letter says no one was killed, but the record holds {m.group(1)} "
+                f"{'death' if m.group(1) == '1' else 'deaths'} here (its findings say so). The letter counted deaths by "
+                "mode only and missed deaths recorded without the mode; fixed on 2026-11-03 after an independent audit.")
+    return None
+
+
 def checks_page(root: Path) -> None:
     """The saved `nml check` results of the latest registered check run (T25), for the site: each input with its
     outcome, as the live page would show it, and the run's rule as measured."""
@@ -203,8 +221,8 @@ def checks_page(root: Path) -> None:
     res = json.loads(path.read_text())
     keep = ("id", "control", "status", "reason", "city", "city_name", "kind", "input", "corner", "summary", "findings",
             "sources", "claims", "letter", "cost_usd", "turns", "seconds", "asof")
-    cases = [{**{k: c.get(k) for k in keep}, "record_notes": c.get("record_notes") or record_lag(c)}
-             for c in res["cases"]]
+    cases = [{**{k: c.get(k) for k in keep}, "record_notes": c.get("record_notes") or record_lag(c),
+              "letter_correction": letter_correction(c)} for c in res["cases"]]
     blob = {"run": "T25", "registered": spec("T25")["registered"], "summary": summary(res), "cases": cases}
     (root / "checks.json").write_text(redact(json.dumps(blob, default=str)))
 

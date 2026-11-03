@@ -232,7 +232,8 @@ function checkResult(r) {
     `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("") + `</ul>` : "";
   const srcs = (r.sources || []).length ? `<h4>Sources</h4><ul>` + r.sources.map(s =>
     `<li><a href="${safeUrl(s.url)}" rel="noopener">${esc(s.url)}</a> (${esc(s.quote_check || "unchecked")}): “${esc(s.quote)}”</li>`).join("") + `</ul>` : "";
-  const letter = r.letter ? `<h4>Draft letter (review it; nothing is sent)</h4><pre class="letter">${esc(r.letter)}</pre>` : "";
+  const fix = r.letter_correction ? `<p class="verdict bad">${esc(r.letter_correction)}</p>` : "";
+  const letter = r.letter ? `<h4>Draft letter (review it; nothing is sent)</h4>${fix}<pre class="letter">${esc(r.letter)}</pre>` : "";
   const notes = (r.record_notes || []).map(n => `<p class="legend">${esc(n)}</p>`).join("");
   return head + claims + finds + srcs + notes + letter +
     `<p class="legend">Records as of ${esc(r.asof || "")}; $${esc((r.cost_usd || {}).meta)} of Meta API, ${esc(r.turns)} turns, ${Math.round(r.seconds || 0)} s.</p>`;
@@ -261,7 +262,8 @@ async function showDesk() {
         /^https?:/.test(x.receipt || "") ? "from the source page" : esc(x.receipt) + (((c.receipts || {})[x.receipt] || {}).tool ? " · " + esc(c.receipts[x.receipt].tool) : "")
       }</span>${recheck((c.rechecks || {})[x.receipt])}</li>`).join("")}</ul>` : "") +
       ((f.sources || []).length ? `<ul class="claims">${f.sources.map(s => `<li>“${esc(s.quote)}” <a href="${safeUrl(s.url)}" rel="noopener" target="_blank">source</a> ${badge(s.quote_check)}</li>`).join("")}</ul>` : "") +
-      (c.letter ? `<details><summary>The drafted letter (Muse Spark Open, number-checked)</summary><p class="letter">${esc(c.letter)}</p></details>` : "") +
+      (c.letter ? `<details${c.letter_correction ? " open" : ""}><summary>The drafted letter (Muse Spark Open, number-checked)</summary>` +
+        (c.letter_correction ? `<p class="verdict bad">${esc(c.letter_correction)}</p>` : "") + `<p class="letter">${esc(c.letter)}</p></details>` : "") +
       `<details><summary>What the agent did, step by step</summary><ol class="legend">` +
       (c.web || []).map(w => `<li>web: ${esc((w.action || {}).type)} ${esc((w.action || {}).query || (w.action || {}).url || "")}</li>`).join("") +
       (c.trace || []).map(t => `<li>${esc(t.tool)}${t.error ? ` — <s>${esc(t.error)}</s> ${esc((t.errors || []).slice(0, 3).join("; "))}` : ""}</li>`).join("") +
