@@ -141,8 +141,8 @@ def script(f: dict | None = None) -> list[Scene]:
               "card", f"Alone: {t24['quotes_absent']} of {t24['quotes_verified'] + t24['quotes_absent']} quotes not on "
                       "their page", caption="Muse Spark alone (T24) against the desk with its gates"),
         Scene("close", "An engineer at the site can even speak the proposal: Muse Voice Transcribe takes it down, and "
-                       "the same review runs. Every test is in the repository, met or not. Proposals and a program list "
-                       "are held out for you: try one, or bring your own.",
+                       "the same review runs. Every test is in the repository, met or not. It is live now: try a "
+                       "proposal we held out, or bring your own.",
               "card", "Try it on your city's proposal", caption="nml review · nml portfolio · held-out sets in TESTING.md"),
     ]
     return scenes
