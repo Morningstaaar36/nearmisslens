@@ -86,7 +86,11 @@ What happens:
    - **proceed**;
    - **proceed only after a site check** (the estimate assumes something the public data cannot show);
    - **compare before committing** (another supported fix is expected to avoid at least twice as many injury crashes);
-   - **reconsider** (the record shows none of the crashes it targets, the fix is already installed, the city's own record contradicts it, no evidence fits the site, or the stated cost is above the lifetime value of the harm it avoids).
+   - **not covered by the evidence** (no crash-modification study fits this fix at this site: the decision rests on a site study and an engineer's assessment);
+   - **reconsider** (the record shows none of the crashes it targets, the fix is already installed, the city's own record contradicts it, or the stated cost is above the lifetime value of the harm it avoids);
+   - **decide part by part** (a proposal with several parts, such as an interval and a turn phase, whose parts get different verdicts; each part's verdict is listed).
+
+   A device built for another control than the map shows (a beacon where a signal is mapped within 80 m) is estimated as the proposal describes the site, with the control to be confirmed on site. A stated cost is compared with a fix's benefit only when it pays for that fix alone.
 3. Muse Spark Open (Baseten) red-teams the decision. Code keeps an objection only if the fact it cites is in a receipt.
 4. Muse Spark writes the memo, and the gate holds it to the code's verdict, the receipts' numbers and an answer to every kept objection.
 
@@ -99,4 +103,6 @@ The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`. A review 
 
 `nml review --example N` runs row N; each row keeps its source link.
 
-**What counts as a failure here:** the memo is about a different corner than proposed; a number is not in the receipt it cites; an answer does not address its objection; or the verdict's reason is wrong given the receipts (for example "reconsider: no target crashes" where the record shows them).
+Each check also saves `receipts.json`: the data behind every receipt id a finding cites, so a number can be checked without rerunning.
+
+**What counts as a failure here:** the memo is about a different corner than proposed; a part of the proposal is dropped; a number is not in the receipt it cites; an answer does not address its objection; or the verdict's reason is wrong given the receipts (for example "reconsider: no target crashes" where the record shows them). A town inside a city's bounding box (a suburb) must be refused, not reviewed against the city's records.
