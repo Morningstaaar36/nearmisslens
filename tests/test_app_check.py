@@ -153,3 +153,30 @@ def test_engineer_answers_quick_corners_inline_and_slow_ones_as_a_job(monkeypatc
             break
         time.sleep(0.05)
     assert rec["status"] == "done" and rec["result"]["junction"]["name"] == "Slow St & Long Ave"
+
+
+def test_review_endpoints_end_to_end(monkeypatch, tmp_path):
+    from nearmisslens import review
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    monkeypatch.setattr(check, "supported", lambda city: ({"id": city}, None) if city == "zz" else (None, "no crash data"))
+    monkeypatch.setattr(review, "review", lambda text, city, *a, **k: {"status": "published", "verdict": "proceed",
+                                                                       "cost_usd": {"meta": 0.03, "open_weights_red_team": 0.01}})
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            _call(base + "/cities")
+            break
+        except OSError:
+            time.sleep(0.05)
+    assert _call(base + "/review", {"proposal": "LPI at A St & B Ave, $10,000", "city": "la"})[0] == 422
+    assert _call(base + "/review", {"proposal": "short", "city": "zz"})[0] == 400
+    code, body = _call(base + "/review", {"proposal": "LPI at A St & B Ave, $10,000", "city": "zz"})
+    assert code == 202
+    for _ in range(100):
+        code, rec = _call(f"{base}/review/{body['job']}")
+        if rec["status"] != "running":
+            break
+        time.sleep(0.05)
+    assert rec["status"] == "done" and rec["result"]["verdict"] == "proceed"

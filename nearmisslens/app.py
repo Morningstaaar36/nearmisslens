@@ -10,6 +10,8 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
     GET  /cities            the registry's cities and whether each can be checked
     POST /check             {"input", "city", "kind"?, "photo"?, "address"?} -> {"job": id}: the desk on one input
     GET  /check/<id>        {"status": "running" | "done" | "failed", "seconds", "result"?}
+    POST /review            {"proposal", "city"} -> {"job": id}: Before you commit, a review of a proposed project
+    GET  /review/<id>       {"status": "running" | "done" | "failed", "seconds", "result"?}
 
 Public mode (NML_PUBLIC=1): global daily caps on requests and model dollars (budget.DailyBudget), no illustration,
 no caller identity kept, places outside the registered cities refused, errors in plain words."""
@@ -135,6 +137,13 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                       letter_client=memo_client, model_check_client=desk_client),
                 budget if public else None, CHECK_BUDGET_USD)
 
+    from . import review as reviews
+    from .openclient import OpenWeightsClient
+    reviewing = Jobs(lambda q: reviews.review(q["proposal"], q["city"], desk_client, memo_client, OpenWeightsClient(),
+                                              budget_usd=CHECK_BUDGET_USD),
+                     budget if public else None, CHECK_BUDGET_USD + reviews.RED_TEAM_BUDGET_USD,
+                     SETTINGS.runs_dir / "reviews" / "jobs", busy="another review is running; try again in a few minutes")
+
     def investigate(q: dict) -> dict:
         lat, lon, name = brief.geocode(q["address"])
         if context.city_of(lat, lon) is None:
@@ -165,8 +174,9 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
             if u.path == "/cities":
                 return self._json(200, {"cities": check.cities()})
-            if u.path.startswith(("/check/", "/engineer/")):
-                rec = (jobs if u.path.startswith("/check/") else corners).status(u.path.rsplit("/", 1)[1])
+            if u.path.startswith(("/check/", "/engineer/", "/review/")):
+                rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing}[u.path[:u.path.index("/", 1) + 1]] \
+                    .status(u.path.rsplit("/", 1)[1])
                 return self._json(200, rec) if rec else self._json(404, {"error": "no such job (kept 24 hours)"})
             if u.path.startswith("/data/"):
                 p = static_file(u.path)
@@ -221,6 +231,20 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                         return self._json(422, {"error": str(e)})
                     try:
                         return self._json(202, {"job": jobs.submit(q)})
+                    except Busy as e:
+                        return self._json(409, {"error": str(e)})
+                    except Paused as e:
+                        return self._json(429, {"error": str(e)})
+                if path == "/review":
+                    q = {k: (q.get(k) or None) for k in ("proposal", "city")}
+                    if not all(isinstance(v, str) for v in q.values()):
+                        raise BadRequest("give the proposal and the city as text")
+                    if len(q["proposal"]) > reviews.MAX_INPUT or len(q["proposal"].strip()) < 10:
+                        raise BadRequest(f"describe the project in 10 to {reviews.MAX_INPUT} characters")
+                    if check.supported(q["city"])[0] is None:
+                        return self._json(422, {"error": check.supported(q["city"])[1]})
+                    try:
+                        return self._json(202, {"job": reviewing.submit(q)})
                     except Busy as e:
                         return self._json(409, {"error": str(e)})
                     except Paused as e:

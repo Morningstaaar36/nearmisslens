@@ -148,6 +148,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     (root / "evidence.json").write_text(json.dumps(evidence(), indent=0, default=str))
     desk_page(root)
     checks_page(root)
+    reviews_page(root)
     (docs / "index.html").write_text(page("static", live))
     for name in ("copilot.js", "copilot.css"):
         shutil.copyfile(WEB / name, docs / name)
@@ -206,6 +207,26 @@ def checks_page(root: Path) -> None:
              for c in res["cases"]]
     blob = {"run": "T25", "registered": spec("T25")["registered"], "summary": summary(res), "cases": cases}
     (root / "checks.json").write_text(redact(json.dumps(blob, default=str)))
+
+
+def reviews_page(root: Path) -> None:
+    """The registered review run's memos (T26) for the site, with the rule as measured and the test set's other
+    proposals (the team's and the held-out ones), so a reader can try one."""
+    from .evaluate import RESULTS_DIR
+    from .orchestrator import redact
+    from . import review
+    path = RESULTS_DIR / "bench" / "experiment_T26.json"
+    if not path.exists():
+        return
+    res = json.loads(path.read_text())
+    sp = json.loads((ROOT / "validation" / "experiments" / "T26.json").read_text())
+    keep = ("id", "status", "reason", "city", "city_name", "input", "source", "proposal", "corner", "verdict",
+            "verdict_text", "appraisal", "objections", "memo", "letter", "cost_usd", "seconds", "asof")
+    rows = json.loads(review.EXAMPLES.read_text())["proposals"]
+    blob = {"run": "T26", "registered": sp["registered"], "summary": review.run_summary(res, sp),
+            "cases": [{k: c.get(k) for k in keep} for c in res["cases"]],
+            "try": [{k: r[k] for k in ("id", "city", "proposal", "source", "split")} for r in rows if r["split"] != "registered"]}
+    (root / "reviews.json").write_text(redact(json.dumps(blob, default=str)))
 
 
 def published_verdict(text: str) -> str | None:

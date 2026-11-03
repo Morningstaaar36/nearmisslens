@@ -69,7 +69,7 @@ class Jobs:
         started, spent = time.time(), 0.0
         try:
             result = self.runner(q)
-            spent = float((result.get("cost_usd") or {}).get("meta") or 0.0)
+            spent = sum(float(v or 0.0) for v in (result.get("cost_usd") or {}).values())  # every model's dollars
             rec = {"status": "done", "started": started, "result": result}
         except self.plain as e:  # a plain refusal (a place not found, outside the cities): said as it is, nothing spent
             rec = {"status": "failed", "started": started, "error": str(e), "plain": True}

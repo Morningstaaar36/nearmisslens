@@ -54,10 +54,12 @@ async function boot() {
     `Records as of ${date(INDEX.asof)}.` +
     (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
     ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>` +
-    ` <button class="quiet planlink" id="checklink">${LIVE !== null ? "Check a claim yourself" : "Checks of fresh inputs"}</button>`;
+    ` <button class="quiet planlink" id="checklink">${LIVE !== null ? "Check a claim yourself" : "Checks of fresh inputs"}</button>` +
+    ` <button class="quiet planlink" id="reviewlink">Before you commit: review a proposed project</button>`;
   if (INDEX.plan) $("planlink").onclick = () => showPlan();
   $("desklink").onclick = () => showDesk();
   $("checklink").onclick = () => showCheck();
+  $("reviewlink").onclick = () => showReview();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -73,11 +75,85 @@ async function boot() {
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
   if (r.corner === "desk") { showDesk(); return; }
   if (r.corner === "check") { showCheck(); return; }
+  if (r.corner === "review") { showReview(); return; }
   if (hit) openCorner(hit);
   else if (INDEX.plan) showPlan();  // a city opens on its action plan
 }
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
+
+const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", reconsider: "bad"};
+
+function reviewResult(r) {
+  // a decision memo: the verdict code set, why, the findings with receipts, the red team's checked objections and the answers
+  if (r.status !== "published") return `<p class="legend"><b>${esc(r.status)}</b>: ${esc(r.reason || "")}</p>`;
+  const a = r.appraisal || {}, m = r.memo || {}, ans = {};
+  for (const x of m.answers || []) ans[x.objection] = x;
+  const cost = r.cost_usd || {};
+  return `<p class="verdict ${VERDICT_CLASS[r.verdict] || ""}"><b>${esc(r.verdict_text)}</b> <span class="legend">(set by code from the receipts)</span></p>` +
+    `<ul>${(a.reasons || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
+    `<p>${esc(m.summary || "")}</p>` +
+    `<h4>Findings</h4><ul>${(m.findings || []).map(f => `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("")}</ul>` +
+    ((r.objections || []).length ? `<h4>Pre-mortem: the red team (Muse Spark Open), facts checked by code</h4><ul>` +
+      r.objections.map(o => `<li><b>${esc(o.id)}</b> ${esc(o.objection)} <span class="legend">[${esc(o.receipt)}: ${esc(o.field)} = ${esc(String(o.value))}]</span>` +
+        (ans[o.id] ? `<br><i>Answer:</i> ${esc(ans[o.id].answer)} <span class="legend">[${esc(ans[o.id].receipt)}]</span>` : "") + `</li>`).join("") + `</ul>` : "") +
+    (r.letter ? `<details><summary>Draft work order (Muse Spark Open, number-checked; nothing is sent)</summary><pre class="letter">${esc(r.letter)}</pre></details>` : "") +
+    `<p class="legend">Records as of ${esc(r.asof || "")}; $${esc(cost.meta)} Meta API + $${esc(cost.open_weights_red_team)} Muse Spark Open; ${Math.round(r.seconds || 0)} s.</p>`;
+}
+
+async function savedReviews() {
+  let d;
+  try { d = await getJSON("data/reviews.json"); } catch (e) { return ""; }
+  const s = d.summary;
+  const tryRows = (d.try || []).map(t => `<li>${esc(t.city)}: ${esc(t.proposal)} <span class="legend">(${esc(t.split === "held_out" ? "held out: never run by the project" : "tried by the team")}; <a href="${esc(t.source)}" target="_blank" rel="noopener">source</a>)</span></li>`).join("");
+  return `<section class="step"><h3>Saved reviews: ${esc(d.run)}, real proposed projects</h3>` +
+    `<p class="legend">Registered in ${esc(d.registered)}. ${s.published} of ${s.inputs} memos published; every verdict set by code; ` +
+    `${s.objections_kept} red-team objections kept after their facts were checked. Rule ${s.rule_met ? "met" : "not met"}; ` +
+    `mean $${Number(s.mean_usd).toFixed(3)} per review.</p>` +
+    d.cases.map(c => `<details><summary>${esc(c.city_name || c.city)} · ${esc((c.input || "").slice(0, 90))} · <b>${esc(c.verdict || c.status)}</b></summary>` +
+      `<p class="legend">Proposal: ${esc(c.input)} (<a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>)</p>${reviewResult(c)}</details>`).join("") +
+    (tryRows ? `<h4>Real proposals to try${LIVE !== null ? " here" : " with nml review"}</h4><ul>${tryRows}</ul>` : "") + `</section>`;
+}
+
+async function showReview() {
+  // Before you commit: a proposed project, reviewed against the city's record before anyone commits money to it
+  const head = `<p class="where">Before you commit</p><h2 class="corner">Review a proposed project before funding it</h2>` +
+    `<p class="lede">Describe the project as you would to a colleague: the fix, the intersection, the cost. Muse Spark registers it ` +
+    `against the federal list of proven countermeasures and investigates the corner with the checked tools. Code tests it against ` +
+    `the crash record and sets the verdict. Muse Spark Open argues against it, and code keeps only objections whose facts are in ` +
+    `the record. The memo must answer every one. A review takes a few minutes.</p>`;
+  if (LIVE === null) {
+    $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code> (see TESTING.md).</p>` +
+      (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
+    return;
+  }
+  let cities = [];
+  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
+  $("out").innerHTML = head + `<form id="reviewform" class="search ask"><textarea id="reviewin" maxlength="1500" rows="3" ` +
+    `placeholder="e.g. Leading pedestrian intervals at Street A &amp; Street B, about $15,000"></textarea>` +
+    `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review</button></form>` +
+    `<div id="reviewout"></div>` + await savedReviews();
+  $("reviewform").onsubmit = async ev => {
+    ev.preventDefault();
+    $("reviewout").innerHTML = `<p class="busy">Starting…</p>`;
+    let job;
+    try {
+      job = (await getJSON(`${LIVE}review`, {method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({proposal: $("reviewin").value, city: $("reviewcity").value})})).job;
+    } catch (e) { $("reviewout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+    for (;;) {
+      await new Promise(ok => setTimeout(ok, 4000));
+      let rec;
+      try { rec = await getJSON(`${LIVE}review/${encodeURIComponent(job)}`); }
+      catch (e) { $("reviewout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+      if (rec.status === "running") { $("reviewout").innerHTML = `<p class="busy">Reviewing… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "failed") { $("reviewout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
+      $("reviewout").innerHTML = reviewResult(rec.result);
+      return;
+    }
+  };
+}
 
 async function savedChecks() {
   // the registered run of nml check (T25): inputs fixed before the run, each outcome as the live page shows it

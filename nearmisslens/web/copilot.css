@@ -106,3 +106,6 @@ button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:under
 button.linkish:focus-visible{outline:3px solid var(--warn)}
 button.planlink{margin-top:8px;font-size:14px;padding:6px 10px}
 .status.recheck { white-space: normal; display: inline; }
+
+.verdict{padding:.6em .8em;border-radius:6px;border-left:4px solid var(--muted, #888);background:rgba(127,127,127,.08)}
+.verdict.ok{border-left-color:#2e7d32}.verdict.warn{border-left-color:#b26a00}.verdict.bad{border-left-color:#c62828}
