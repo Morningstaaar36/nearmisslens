@@ -745,6 +745,25 @@ Registered in BENCH_PREREG.md (T29). 3 program lists from the agencies' own page
 | Contract 35 Traffic Signal Modifications (17 intersections; 8 listed h (sf) | 8 | 0 | 0 | 0 | 1 | 7 | 0 | 0 |
 | NYC DOT 2025 Projects presented to community boards (single-intersecti (nyc) | 7 | 0 | 0 | 0 | 1 | 6 | 0 | 0 |
 
+## T29b Program review: `nml portfolio` on real program lists (T29's reviews, ties fixed, 3 retried)
+
+Registered in BENCH_PREREG.md (T29b). 3 program lists from the agencies' own pages (`validation/examples/programs.json`, split `registered`); every proposal reviewed by Before you commit, then grouped and ranked by code.
+
+| Rule | Measured | |
+|---|---|---|
+| at least 80% of the 23 proposals reviewed | 21 | met |
+| every published memo about the intersection proposed | 21 of 21 | met |
+| code's program reproduced from the saved reviews | yes | met |
+| mean cost at most $0.15 a proposal | $0.079 | met |
+
+**Rule: met.** $1.81 in all; 94 red-team objections kept after their facts were checked.
+
+| Program | Proposals | Build | Build after a site check | Compare first | Decide part by part | Not covered by the evidence | Reconsider | Not reviewed |
+|---|---|---|---|---|---|---|---|---|
+| Safe Routes to School - Current Projects (items expected in 2026) (seattle) | 8 | 0 | 0 | 0 | 2 | 4 | 0 | 2 |
+| Contract 35 Traffic Signal Modifications (17 intersections; 8 listed h (sf) | 8 | 0 | 0 | 0 | 1 | 7 | 0 | 0 |
+| NYC DOT 2025 Projects presented to community boards (single-intersecti (nyc) | 7 | 0 | 0 | 0 | 1 | 6 | 0 | 0 |
+
 ## T30 Program intake: `nml intake` on agencies' own pages
 
 Registered in BENCH_PREREG.md (T30, T30b, T30c: the same pages and rule, after fixes). Scored against the projects collected by hand from the same pages (`validation/examples/programs.json`).

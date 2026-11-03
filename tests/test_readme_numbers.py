@@ -203,3 +203,13 @@ def test_t31_numbers():
          f"{b['circle_mean_abs_error']})")
     _has(f"within {b['tool_mean_abs_error']} injury crashes on average where the 100 m circle was off by "
          f"{b['circle_mean_abs_error']}, but it agreed within 15% at only {b['tool_agree']} of 10")
+
+
+def test_t29b_numbers():
+    from nearmisslens.portfolio import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T29b.json").read_text())
+    s = run_summary(_load("experiment_T29b.json"), sp)
+    assert s["rule_met"] and s["ranking_reproduced"] and s["on_proposed_corner"] == s["reviewed"]
+    _has(f"{s['reviewed']} of the {s['proposals']} proposals were reviewed, every one on its own corner, at "
+         f"${s['mean_usd']:.3f} a proposal")
+    _has(f"met ({s['reviewed']} of {s['proposals']} reviewed, all on their corner, ranking rebuilt exactly)")

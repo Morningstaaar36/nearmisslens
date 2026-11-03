@@ -1033,6 +1033,11 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Changes:** ties broken by the proposal's text; a town refusal remembered only when the input names the town; street names matched however written.
 - **Inputs:** T29's three lists. The 20 published reviews are reused as saved (`runs/programs/T29_*`); the 3 not reviewed are run again. The rule is T29's (`validation/experiments/T29b.json`).
 
+### T29b result (2026-11-04)
+- **Rule met.** 21 of the 23 proposals reviewed (91%), all 21 on the intersection proposed; **code's program rebuilt exactly from the saved reviews**; $0.079 a proposal (94 checked objections kept).
+- **The three retried:** California Ave SW & SW Hinds St is now reviewed (the street-name fix found the crossing); SW Myrtle St & 34th Ave SW and Seward Park Ave S & S Hamlet St were again not reviewed, now for the right reason: the agent reached a different corner (35th Ave SW; S Henderson St) and the review refused to review it instead.
+- **Groups:** 17 not covered by the evidence, 4 decide part by part. None of these three lists holds a project the federal evidence supports here as proposed: signal upgrades, all-way stops, curb bulbs and marked crosswalks are not on the list of proven countermeasures, or no record on it fits the site; the reviews say so instead of estimating.
+
 ### T31 result (2026-11-04)
 - **Rule not met.** The tool's count agreed with the independent count at **2 of the 10 corners** (the rule asked 8). The independent counts are kept as written: `validation/independent/t31_independent_counts_2026-11-04.md`.
 - **Still, much closer than the circle:** mean absolute error 13.5 injury crashes against the 100 m circle's 30.1; closer at 7 corners, equal at 2, further at 1 (the circle agreed at 1 of 10).
