@@ -5,7 +5,7 @@ import os
 import json
 import sys
 
-from .config import SETTINGS, portable, resolve
+from .config import ROOT, SETTINGS, portable, resolve
 from .cost import CostMeter
 from .runlog import metrics_markdown, read_metrics
 from .config import MODELS
@@ -270,6 +270,36 @@ def cmd_desk(args) -> int:
         return 0
     res = desk_runs.run_desk(args.spec, MetaClient(SETTINGS), OpenWeightsClient(), fresh=args.fresh)
     print(f"{sum(bool(c.get('finished')) for c in res['cases'])} of {len(res['cases'])} published")
+    return 0
+
+
+def cmd_review(args) -> int:
+    """Before you commit: a pre-commitment review of a proposed project (see nearmisslens/review.py)."""
+    from . import review
+    from .meta_client import MetaClient
+    from .openclient import OpenWeightsClient
+    text, city = args.proposal, args.city
+    if args.example:
+        ex = review.example(args.example)
+        text, city = ex["proposal"], ex["city"]
+        os.environ.setdefault("NML_ASOF", ex.get("asof") or "")
+    if not text or not city:
+        print("give a proposal and --city, or --example N (nml review --list shows them)")
+        return 2
+    r = review.review(text, city, MetaClient(SETTINGS), _letter_client() if args.letter else None, OpenWeightsClient(),
+                      budget_usd=args.budget)
+    print(json.dumps({k: r.get(k) for k in ("status", "reason", "corner", "verdict_text", "cost_usd", "seconds", "saved")},
+                     indent=1) if args.json else review.memo_md(r))
+    return 0 if r["status"] == "published" else 2
+
+
+def cmd_review_run(args) -> int:
+    from . import review
+    from .meta_client import MetaClient
+    from .openclient import OpenWeightsClient
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{args.spec}.json").read_text())
+    res = review.run_registered(args.spec, MetaClient(SETTINGS), _letter_client(), OpenWeightsClient())
+    print(json.dumps(review.run_summary(res, sp), indent=1))
     return 0
 
 
@@ -647,6 +677,15 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
+    rv = sub.add_parser("review", help="Before you commit: review a proposed street-safety project against the city's record (paid unless --replay)")
+    rv.add_argument("proposal", nargs="?", help='e.g. "Leading pedestrian intervals at Street A & Street B, about $15,000"')
+    rv.add_argument("--city", help="a registry city id (nml cities)")
+    rv.add_argument("--example", type=int, help="a saved real proposal from validation/examples/proposals.json")
+    rv.add_argument("--letter", action="store_true", help="also draft the work order to the road owner")
+    rv.add_argument("--budget", type=float, default=0.50, help="Meta API dollars for this review (default 0.50)")
+    rv.add_argument("--json", action="store_true")
+    rr = sub.add_parser("review-run", help="run nml review on a registered spec's proposals (T26) and score its rule; paid unless --replay")
+    rr.add_argument("spec")
     cr = sub.add_parser("check-run", help="run nml check on a registered spec's inputs (T25) and score its rule; paid unless --replay")
     cr.add_argument("spec")
     dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b, T21c) or the governed agent (T22); paid unless --replay")
@@ -738,7 +777,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

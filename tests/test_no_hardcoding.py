@@ -16,11 +16,11 @@ import tokenize
 from urllib.parse import urlparse
 
 import nearmisslens
-from nearmisslens import check, jobs, opendata, orchestrator
+from nearmisslens import check, jobs, opendata, orchestrator, review
 from nearmisslens.config import ROOT
 
 BENCH = ROOT / "validation" / "results" / "bench"
-GENERIC = [check, jobs]  # the modules that must know no city; add new generic modules here
+GENERIC = [check, jobs, review]  # the modules that must know no city; add new generic modules here
 # words that are common English or street vocabulary, not a place (each needed because a corner name contains it)
 COMMON = set("""street avenue boulevard road place drive lane court parkway highway expressway square terrace way
 north south east west northeast northwest southeast southwest the and of at near center park bridge hill market

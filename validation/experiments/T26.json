@@ -1,0 +1,9 @@
+{
+ "id": "T26",
+ "registered": "validation/BENCH_PREREG.md, T26",
+ "what": "nml review (Before you commit) on real proposed projects: the 'registered' split of validation/examples/proposals.json",
+ "split": "registered",
+ "asof": "2026-10-31",
+ "budget_usd": 0.50,
+ "rule": {"min_published": 6, "max_mean_usd": 0.15}
+}

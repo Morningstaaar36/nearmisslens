@@ -785,3 +785,35 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - the false zero-crash statement is not called "consistent with the record".
 - **Also reported:** time per input; Chicago's two outcomes; whether each published case is at the intersection its input names; a post-hoc review of every published claim verdict (hypothesis: at most 1 in 10 wrong, the same as T21e's, which was not met there). The review is done within the project and is not the hand audit.
 - **Spend:** at most $6.00 (12 × $0.50); expected about $1.50. The local guard is set so the run stops before $80 on the Meta ledger.
+
+## T26 Before you commit: `nml review` on real proposed projects (registered 2026-11-03, about 19:45 Dhaka, before any T26 proposal is reviewed)
+- **What is new:** a pre-commitment review for the engineer or directorate that must decide whether to fund a project (`nearmisslens/review.py`).
+  - Muse Spark registers the proposal against the closed list of federal Proven Safety Countermeasures and investigates the corner with the desk's checked tools.
+  - Code appraises the proposal and **sets the verdict**: proceed, proceed only after a site check, compare against an alternative, or reconsider. It weighs:
+    - whether the record shows the crashes the fix targets;
+    - the expected effect and how strong its evidence is;
+    - stated cost against the lifetime value of the harm avoided;
+    - whether the fix is already installed;
+    - whether the city's own record contradicts it;
+    - whether another supported fix is expected to avoid at least twice as many injury crashes.
+  - Muse Spark Open on Baseten, another model family, red-teams the decision. Each objection must name a receipt field and its value, and code keeps only objections whose fact is in the receipt.
+  - Muse Spark writes the memo. The gate refuses it unless the verdict is the code's, every number is in the receipt cited, and every kept objection is answered.
+- **Development before this registration:** unit tests (no model), and one live review of a proposal outside the test set (leading pedestrian intervals at Milwaukee Avenue & Division Street, Chicago, $10,000: published, proceed, $0.026 Meta + $0.018 Muse Spark Open, 108 s). Nothing was changed after it.
+- **The test set (`validation/examples/proposals.json`, built before any review ran):**
+  - 17 real proposed projects in the five checkable cities, each written as an engineer would type it, from its public source: SDOT's Highway Safety Improvement Program list, SFCTA's Turk Boulevard project, a Chicago news report of an agency project and a residents' petition, an ANC 2A resolution and an ANC 6A committee item, a Manhattan community board letter and an NYC DOT plan.
+  - **Split by a fixed hash within each city:**
+    - `registered`: 7, run here as T26;
+    - `team`: 7, tried by the team;
+    - `held_out`: 3, never run by the project before review, so reviewers can try proposals nobody tuned for.
+- **Settings:** records as of 2026-10-31; $0.50 Meta budget per review; work orders drafted by Muse Spark Open.
+- **Rule:**
+  - at least 6 of 7 memos published;
+  - every published verdict is the code's;
+  - the red team ran on every published memo;
+  - mean cost at most $0.15 per review (Meta plus Muse Spark Open).
+- **Also reported:**
+  - the verdicts;
+  - objections kept and dropped;
+  - time per review;
+  - a post-hoc review of each memo, done within the project and not the hand audit: is the corner the one proposed, does the verdict follow from the receipts, and does each answer address its objection.
+- **Spend:** at most $3.50 Meta; expected about $0.25 Meta and $0.15 Baseten.

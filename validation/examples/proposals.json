@@ -1,0 +1,176 @@
+{
+ "what": "Real proposed street-safety projects, each as an engineer would type it, from the public source named. Split by a fixed hash within each city: 'registered' (T26), 'team' (tried by the team before submission), 'held_out' (not run by the project before review; for reviewers to try).",
+ "made": "validation/examples/proposals.json, built 2026-11-03 before any review was run",
+ "proposals": [
+  {
+   "id": "chicago_0948ca",
+   "city": "chicago",
+   "proposal": "A raised pedestrian refuge island at Ashland Avenue & Cullerton Street",
+   "source": "https://www.change.org/p/fix-ashland-cullerton-now-justice-for-marcela",
+   "source_kind": "residents' petition",
+   "source_date": "2026-07",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "dc_4427fc",
+   "city": "dc",
+   "proposal": "A leading pedestrian interval at 22nd Street NW & L Street NW",
+   "source": "https://anc2a.org/wp-content/uploads/2026/05/23L-Draft-Resolution.pdf",
+   "source_kind": "neighborhood commission resolution",
+   "source_date": "2026-05-20",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "nyc_15a89c",
+   "city": "nyc",
+   "proposal": "A new concrete pedestrian island and left-turn restrictions at East 169th Street & Rev James A Polite Avenue, Bronx",
+   "source": "https://www.nyc.gov/html/dot/downloads/pdf/e169-st-rev-james-a-polite-ave-lyman-pl-whh.pdf",
+   "source_kind": "agency plan",
+   "source_date": "2024",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_1673ea",
+   "city": "seattle",
+   "proposal": "Flashing beacons on all four corners, two new crosswalks and four curb ramps at 33rd Ave S & S Myrtle Pl",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_8e2eca",
+   "city": "seattle",
+   "proposal": "Pedestrian flashing beacons on all four corners at 15th Ave S & S Lander St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_b40acc",
+   "city": "seattle",
+   "proposal": "A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "sf_20ab73",
+   "city": "sf",
+   "proposal": "Replace the painted median island with a concrete median island at Turk Boulevard & Lyon Street",
+   "source": "https://www.sfcta.org/projects/district-2-turk-boulevard-pedestrian-safety",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "registered",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "chicago_1e736f",
+   "city": "chicago",
+   "proposal": "Chicago's first pedestrian hybrid beacon, with accessible signals, at Ridge Avenue & Hollywood Avenue (the five-way intersection with Wayne Avenue), about $1.3 million",
+   "source": "https://chicago.suntimes.com/transportation/2026/09/28/chicagos-first-pedestrian-hybrid-beacon-accessible-signals-edgewater-intersection-2021-crash",
+   "source_kind": "news of an agency project",
+   "source_date": "2026-09-28",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "dc_aa16ac",
+   "city": "dc",
+   "proposal": "A leading pedestrian interval and a protected left-turn phase at 23rd Street NW & L Street NW, where residents report drivers turning left into people crossing",
+   "source": "https://anc2a.org/wp-content/uploads/2026/05/23L-Draft-Resolution.pdf",
+   "source_kind": "neighborhood commission resolution",
+   "source_date": "2026-05-20",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "nyc_22c137",
+   "city": "nyc",
+   "proposal": "Concrete pedestrian islands at West 21st Street & 10th Avenue, Manhattan, in place of the painted ones",
+   "source": "https://cbmanhattan.cityofnewyork.us/cb4/wp-content/uploads/sites/10/2025/12/25-TPC-Letter-to-DOT-re-W.-21st-Street-and-10th-Avenue-Intersection.pdf",
+   "source_kind": "community board letter",
+   "source_date": "2025-12",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_46ca81",
+   "city": "seattle",
+   "proposal": "A pedestrian island on the north side of the intersection at Rainier Ave S & S Mead St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_ab1187",
+   "city": "seattle",
+   "proposal": "A pedestrian island across Rainier Ave S at Rainier Ave S & S Findlay St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_f6a349",
+   "city": "seattle",
+   "proposal": "Two flashing pedestrian beacons at 55th Ave S & Renton Ave S",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "sf_515e80",
+   "city": "sf",
+   "proposal": "Replace the painted median island with a concrete median island at Turk Boulevard & Nido Avenue",
+   "source": "https://www.sfcta.org/projects/district-2-turk-boulevard-pedestrian-safety",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "team",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "dc_b7c4bc",
+   "city": "dc",
+   "proposal": "Convert the intersection of 12th Street NE, K Street NE and Florida Avenue NE into a traffic circle",
+   "source": "https://anc6a.org/wp-content/uploads/TSPA0124.pdf",
+   "source_kind": "neighborhood commission committee",
+   "source_date": "2024-01",
+   "split": "held_out",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_5933d5",
+   "city": "seattle",
+   "proposal": "A crosswalk across Renton Ave S, two flashing beacons and a curb extension at Renton Ave S & S Holden St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "held_out",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "seattle_ae0b81",
+   "city": "seattle",
+   "proposal": "A crosswalk and pedestrian island across Rainier Ave S at Rainier Ave S & S Byron St",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "held_out",
+   "asof": "2026-10-31"
+  }
+ ]
+}
