@@ -499,6 +499,11 @@ OUTCOME_WORDS = {"pedestrian": "pedestrian injury crashes", "injury": "injury cr
 # what the city's own record says about a program it ran; never "failed" or "doesn't work": an effect not shown in
 # the record is not shown to be absent
 NOT_SUPPORTED = ("earlier trend", "not shown", "worse")
+# what each status says about doing it again: an interval that includes zero is inconclusive, not evidence against
+REPEAT_WORDS = {"earlier trend": "Repeating it here is not supported by the city's own record.",
+                "worse": "Repeating it here is not supported by the city's own record.",
+                "not shown": "The city's own record neither shows it worked nor rules it out, so repeating it here "
+                             "rests on other evidence."}
 
 
 def pct(x: float) -> int:
@@ -593,8 +598,7 @@ def repeat_risk(city: str | None, projects: list[dict]) -> list[dict]:
                           "study": st["study"], "source": st["source"], "theta": st.get("theta"),
                           "ci95": st.get("ci95"), "sites": st.get("sites"),
                           "text": f"This corner got {st['label']}{' in ' + str(pr['year']) if pr.get('year') else ''}. "
-                                  f"Across the city: {st['text']}. Repeating it here is not supported by the city's "
-                                  "own record."}
+                                  f"Across the city: {st['text']}. " + REPEAT_WORDS[st["status"]]}
     return list(flags.values())
 
 

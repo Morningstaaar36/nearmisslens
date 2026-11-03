@@ -190,3 +190,11 @@ def test_rerunning_a_study_keeps_its_fake_program_rank_only_if_the_result_is_unc
              "runs": {"p_cg": {"pedestrian": {"theta": 0.9, "ci95": [0.8, 1.0]}}}}
     keep_fake_rank(moved, old)
     assert "fake_rank" not in moved["gates"]["lpi"]
+
+
+def test_an_inconclusive_program_is_not_called_evidence_against():
+    """Independent test: a citywide result of -19% (95% interval -35% to +1%) was read as 'repeating it here is not
+    supported'. An interval that includes zero neither shows nor rules out an effect."""
+    from nearmisslens import treatments
+    assert "neither shows it worked nor rules it out" in treatments.REPEAT_WORDS["not shown"]
+    assert "not supported" in treatments.REPEAT_WORDS["earlier trend"] and set(treatments.REPEAT_WORDS) == set(treatments.NOT_SUPPORTED)
