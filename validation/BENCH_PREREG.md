@@ -919,3 +919,24 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **The yearly harm figure sat next to death counts.** *Fixed:* it now says it values injury crashes only.
   - **"Consistent" was published on a death count the model-read flags marked untested** (Kilbourn & Belmont). The code had tested that number and it matches the record, so the verdict stands. Since the T25 changes a check also cannot grade its own record sentence as a source claim.
   - **Not changed:** 311 curb and sidewalk reports, which the feed routes to Public Works, still get letters to the transportation agency; quotes with a plate redacted count as verified.
+
+### T27 result (2026-11-03)
+- **Rule met.**
+  - 7 of 7 memos published and **7 of 7 about the intersection proposed** (T26: 6 of 7; the Bronx street is now found as "Reverend James A Polite Avenue").
+  - Every verdict was the code's, and the red team ran on all 7.
+  - Mean $0.068 per review ($0.48 in all); mean 181 s.
+- **Verdicts against T26** (same proposals):
+
+| Proposal | T26 | T27 |
+|---|---|---|
+| Ashland & Cullerton, refuge island | proceed | proceed |
+| 22nd & L NW, leading pedestrian interval | reconsider | reconsider (already installed) |
+| E 169th St & Rev James A Polite Ave, island + left-turn restrictions | reconsider (wrong corner) | right corner; both parts not covered by the evidence |
+| 33rd Ave S & S Myrtle Pl, beacons + crosswalks + curb ramps | proceed (beacons only) | decide part by part: beacons proceed; crosswalks and curb ramps not covered by the evidence |
+| 15th Ave S & S Lander St, beacons | reconsider ("signalized") | proceed after a site check: confirm the control (the map shows a signal within 80 m); estimated as an uncontrolled crossing |
+| Beacon Ave S & S Webster St, crosswalk | reconsider | not covered by the evidence |
+| Turk Blvd & Lyon St, concrete median island | reconsider | reconsider (no pedestrian injury crashes in the record) |
+
+- **Post-hoc review:**
+  - **Every memo is on its corner and keeps every part.** The two changed verdicts that rest on the mapped control (Lander) and on the absence of a fitting study (Webster, the crosswalks and curb ramps) now say so, instead of "reconsider".
+  - **The red team improved but is uneven.** In Ashland and Lander it argued against the verdict, citing alternatives, cost and the crash mix, and the answers address it. In 3 memos no objection's fact checked out, so none was kept. In the Bronx memo two of the three kept objections restate the verdict despite the instruction to argue against it.

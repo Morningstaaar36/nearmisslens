@@ -665,7 +665,7 @@ Registered in BENCH_PREREG.md (T26). The 7 proposals of the `registered` split o
 | the red team ran on every published memo | 7 of 7 | met |
 | mean cost at most $0.15 (Meta + Muse Spark Open) | $0.057 | met |
 
-**Rule: met.** 14 objections kept after their facts were checked; mean 304 s per review. The post-hoc review (BENCH_PREREG.md, "T26 result") found one memo about a neighbouring corner and one verdict resting on a doubtful signal mapping, and split "not covered by the evidence" from "reconsider".
+**Rule: met.** 14 objections kept after their facts were checked; mean 304 s per review; 6 of 7 memos about the intersection proposed. The post-hoc review is under "T26 result" in BENCH_PREREG.md.
 
 | Proposal | City | Verdict (as run) | Corner reviewed | $ |
 |---|---|---|---|---|
@@ -676,6 +676,29 @@ Registered in BENCH_PREREG.md (T26). The 7 proposals of the `registered` split o
 | Pedestrian flashing beacons on all four corners at 15th Ave S & S Lander St | seattle | reconsider | 15th Avenue South & South Lander Street, Seattle | 0.057 |
 | A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St | seattle | reconsider | Beacon Avenue South & South Webster Street, Seattle | 0.051 |
 | Replace the painted median island with a concrete median island at Turk Boulevard & Lyon S | sf | reconsider | Turk Boulevard & Lyon Street, San Francisco | 0.049 |
+
+## T27 Before you commit: `nml review` on real proposed projects (after the fixes)
+
+Registered in BENCH_PREREG.md (T27). The 7 proposals of the `registered` split of `validation/examples/proposals.json`, each from an agency plan, a neighborhood commission, a community board or a petition. Code sets each verdict; Muse Spark Open red-teams it; the memo must answer every objection whose fact checked out.
+
+| Rule | Measured | |
+|---|---|---|
+| at least 6 of 7 memos published | 7 | met |
+| every published verdict is the code's | yes | met |
+| the red team ran on every published memo | 7 of 7 | met |
+| mean cost at most $0.15 (Meta + Muse Spark Open) | $0.068 | met |
+
+**Rule: met.** 13 objections kept after their facts were checked; mean 180 s per review; 7 of 7 memos about the intersection proposed. The post-hoc review is under "T27 result" in BENCH_PREREG.md.
+
+| Proposal | City | Verdict (as run) | Corner reviewed | $ |
+|---|---|---|---|---|
+| A raised pedestrian refuge island at Ashland Avenue & Cullerton Street | chicago | proceed | Ashland Avenue & Cullerton Street, Chicago | 0.119 |
+| A leading pedestrian interval at 22nd Street NW & L Street NW | dc | reconsider | 22nd Street Northwest & L Street Northwest, Washington DC | 0.057 |
+| A new concrete pedestrian island and left-turn restrictions at East 169th Street & Rev Jam | nyc | outside_evidence | Reverend James A Polite Avenue & East 169th Street, New York City | 0.072 |
+| Flashing beacons on all four corners, two new crosswalks and four curb ramps at 33rd Ave S | seattle | mixed | 33rd Avenue South & South Myrtle Place, Seattle | 0.065 |
+| Pedestrian flashing beacons on all four corners at 15th Ave S & S Lander St | seattle | proceed_after_site_check | 15th Avenue South & South Lander Street, Seattle | 0.060 |
+| A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St | seattle | outside_evidence | Beacon Avenue South & South Webster Street, Seattle | 0.050 |
+| Replace the painted median island with a concrete median island at Turk Boulevard & Lyon S | sf | reconsider | Turk Boulevard & Lyon Street, San Francisco | 0.056 |
 
 ## Data agent: adapters found and validated without hand-written code
 

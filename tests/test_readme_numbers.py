@@ -162,3 +162,11 @@ def test_t26_numbers():
     _has(f"{s['published']} of {s['inputs']} memos published")
     _has(f"${s['mean_usd']:.3f} a review")
     _has(f"{s['inputs']} real proposed projects")
+
+
+def test_t27_numbers():
+    from nearmisslens.review import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T27.json").read_text())
+    s = run_summary(_load("experiment_T27.json"), sp)
+    assert s["rule_met"] and s["on_proposed_corner"] == s["published"]
+    _has(f"{s['published']} of {s['inputs']} memos, all on the proposed corner, at ${s['mean_usd']:.3f} a review")
