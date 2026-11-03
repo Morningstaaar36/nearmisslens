@@ -143,3 +143,21 @@ def test_a_registered_run_is_scored_by_its_rule():
     s = review.run_summary({"cases": [c("published", "proceed", [{}]), c("published", "reconsider", []),
                                       c("abstained", None, None)]}, spec)
     assert s["rule_met"] and s["published"] == 2 and s["verdicts"]["reconsider"] == 1 and s["mean_usd"] == 0.04
+
+
+def test_the_site_gets_the_saved_reviews_and_the_proposals_to_try(monkeypatch, tmp_path):
+    import json
+    from nearmisslens import evaluate, pages
+    bench = tmp_path / "bench"
+    bench.mkdir()
+    (bench / "experiment_T26.json").write_text(json.dumps({"id": "T26", "cases": [
+        {"id": "x", "status": "published", "verdict": "proceed", "memo": {"verdict": "proceed", "summary": "Plate ABC1234."},
+         "objections": [], "cost_usd": {"meta": 0.03, "open_weights_red_team": 0.01}, "seconds": 90}]}))
+    monkeypatch.setattr(evaluate, "RESULTS_DIR", tmp_path)
+    out = tmp_path / "site"
+    out.mkdir()
+    pages.reviews_page(out)
+    blob = json.loads((out / "reviews.json").read_text())
+    assert blob["summary"]["published"] == 1 and blob["cases"][0]["verdict"] == "proceed"
+    assert blob["try"] and all(t["split"] in ("team", "held_out") for t in blob["try"])
+    assert "ABC1234" not in (out / "reviews.json").read_text()
