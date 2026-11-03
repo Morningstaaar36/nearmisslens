@@ -24,7 +24,7 @@ image = (modal.Image.debian_slim(python_version="3.12")
                       "opencv-python-headless==4.10.0.84", "meta-sam-parser==0.1.0", "modal")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
-               "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "1.00", "NML_DAILY_REQUESTS": "300",
+               "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "3.00", "NML_DAILY_REQUESTS": "300",
                "NML_CHECK_BUDGET_USD": "0.50", "NML_ASOF": (ROOT / "validation" / "ASOF").read_text().strip()})
          .add_local_dir(ROOT / "validation", "/app/validation")
          .add_local_dir(ROOT / "docs", "/app/docs", ignore=["video/**", "img/**", "*.md"])
