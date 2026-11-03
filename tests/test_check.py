@@ -10,8 +10,9 @@ def fake_run(finished=True):
     seen = {}
 
     def run(task, city, client, letter_client=None, model_check_client=None, budget_usd=0.5, max_turns=22, pages=None,
-            max_reads=None):
-        seen.update(task=task, city=city, pages=pages, letter=letter_client, max_reads=max_reads)
+            max_reads=None, sources_name_corner=False):
+        seen.update(task=task, city=city, pages=pages, letter=letter_client, max_reads=max_reads,
+                    corner_rule=sources_name_corner)
         final = {"summary": "Two crashes; plate ABC1234 seen.", "findings": [{"receipt": "D1", "text": "A finding."}],
                  "sources": [{"url": "input:text", "quote": "a quote", "quote_check": "verified"}]} if finished else None
         return {"finished": finished, "final": final, "stopped": "finish_tool" if finished else "max_turns", "turns": 5,
@@ -110,4 +111,13 @@ def test_reading_is_capped_so_a_case_reaches_its_findings():
 def test_check_runs_cap_their_reading(fake_city, tmp_path):
     run, seen = fake_run()
     check.check("https://example.org/story", "zz", runner=run, out_dir=tmp_path)
-    assert seen["max_reads"] == check.MAX_READS
+    assert seen["max_reads"] == check.MAX_READS and seen["corner_rule"]
+
+
+def test_a_source_must_name_the_corners_street():
+    from nearmisslens.orchestrator import names_corner
+    corner = "8th Street Southeast & Pennsylvania Avenue Southeast, Zedburg"
+    assert names_corner("A crash at Pennsylvania Ave SE and 8th St left one dead.", corner)
+    assert names_corner("Police closed 8th Street after the crash.", corner)
+    assert not names_corner("A cyclist was hit near Rhode Island Ave NW in Logan Circle.", corner)
+    assert not names_corner("A crash on 18th Street.", corner)  # '8th' must be a word of its own

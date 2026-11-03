@@ -198,7 +198,7 @@ def dataset_tools(city: str, desk: Desk) -> tuple[dict | None, list[Tool]]:
 
 
 def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_client=None,
-               max_reads: int | None = None) -> list[Tool]:
+               max_reads: int | None = None, sources_name_corner: bool = False) -> list[Tool]:
     txt, num = {"type": "string"}, {"type": "number"}
 
     def investigate(address: str, draft_letter: bool):
@@ -332,6 +332,10 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
             state = quote_check(s.get("quote", ""), s.get("url", ""), desk.pages)
             if state == "absent":
                 errors.append(f"source {k}: the quote is not in the page at {s.get('url')} (copy it exactly)")
+            elif sources_name_corner and state == "verified" and desk.report and \
+                    not names_corner(text_of(s.get("url", ""), desk.pages) or "", desk.report["junction"]["name"]):
+                errors.append(f"source {k}: the page at {s.get('url')} does not name {desk.report['junction']['name']}; "
+                              "a quote on its page is not about this corner: cite a page that names it, or leave it out")
             checked.append({**s, "quote_check": state})
         errors += [f"summary: {e}" for e in engineer.wording(summary)]
         texts = [summary] + [f.get("text", "") for f in findings] + [s.get("quote", "") for s in sources]
@@ -439,6 +443,23 @@ PLATE = re.compile(r"\b(?:plate|licen[cs]e(?:\s+plate)?|tag)\b(?:\s+(?:number|no
 def has_plate(text: str) -> bool:
     """A licence plate written out ("CA plate 7ABC123"): never published, even when the source printed it."""
     return any(re.search(r"\d", m.group(1)) for m in PLATE.finditer(text or ""))
+
+
+STREET_WORDS = {"street", "st", "avenue", "ave", "av", "boulevard", "blvd", "road", "rd", "place", "pl", "drive", "dr",
+                "lane", "ln", "court", "ct", "way", "parkway", "pkwy", "highway", "hwy", "terrace", "square", "north",
+                "south", "east", "west", "n", "s", "e", "w", "nw", "ne", "sw", "se", "northwest", "northeast", "southwest",
+                "southeast", "the", "of"}
+
+
+def names_corner(text: str, corner: str) -> bool:
+    """Whether a page names at least one of the corner's streets by its own words ('Pennsylvania', '8th'), so a
+    source about another crash cannot stand behind this corner's case."""
+    page = " " + _norm(text) + " "
+    for street in re.split(r"\s*&\s*", corner.split(",")[0]):
+        core = [w for w in _norm(street).split() if w not in STREET_WORDS]
+        if core and all(f" {w} " in page for w in core):
+            return True
+    return False
 
 
 def redact(text: str) -> str:
@@ -701,14 +722,15 @@ def _places(desk: Desk):
 
 
 def run_case(task: str, city: str, client, letter_client=None, model_check_client=None, budget_usd: float = 0.50,
-             max_turns: int = 22, pages: dict | None = None, max_reads: int | None = None) -> dict:
+             max_turns: int = 22, pages: dict | None = None, max_reads: int | None = None,
+             sources_name_corner: bool = False) -> dict:
     desk = Desk(city)
     desk.pages.update(pages or {})
     desk.final = None
     space, ds_tools = dataset_tools(city, desk)
     server = [{"type": "web_search"}] + ([space, {"type": "tool_search"}] if space else [])
     t0 = time.time()
-    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads) + ds_tools,
+    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads, sources_name_corner) + ds_tools,
                     max_turns, budget_usd, effort="low", tag=f"desk {task[:40]}", escalate_after=3,
                     required=("investigate",), governor=True, server_tools=server,
                     include=("web_search_call.results",), on_response=desk.collect)

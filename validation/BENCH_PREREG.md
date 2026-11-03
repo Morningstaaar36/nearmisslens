@@ -759,3 +759,12 @@ The checker's sentence splitter no longer breaks a sentence at a decimal point (
   - "Absent" should need the crossing in view; otherwise it is "not in view".
   - Packed counts need a correction from the image-mode sample, or image mode, where a corner is busy.
 - **Not covered, still pending:** the hand count. Frames are not published.
+
+## Changes after the first live `nml check` runs (2026-11-03, post hoc, before any registered run of `nml check`)
+
+Three live checks were run to test the new product path (Meta API $0.63 in all): a claim to find in Washington DC (twice) and a resident's report in San Francisco. They are development runs, not a registered test.
+- **Reading is capped for checks.** The first DC run spent 21 of its 22 turns reading pages and never wrote a case. A check may now read 6 pages, and then must investigate and write. With the cap, the same input published in 14 turns ($0.24).
+- **A source must name the corner (checks only).** That published DC case cited one source, a page about a different crash (a cyclist near Rhode Island Ave NW), whose quote was on its page. The gate now refuses a verified source whose page names none of the corner's streets.
+  - Applied after the fact to the 33 published cases of T21c–T21e, it would have refused 1 of 72 verified sources: Seattle's 4th Avenue & Pike Street case cited a citywide Vision Zero plan page that does not name the corner. That case had no other verified source.
+- **"Unknown / not stated" is never a pattern.** The SF case listed "4% recorded as bicycle-unknown/not stated crashes" as something crashes there have in common. A category that says it was not recorded is now treated as missing.
+- **Registered desk runs are unchanged:** the cap and the corner rule are on for `nml check` only, so T21–T24 replay as before.
