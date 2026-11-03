@@ -10,7 +10,8 @@ def fake_run(finished=True):
     seen = {}
 
     def run(task, city, client, letter_client=None, model_check_client=None, budget_usd=0.5, max_turns=22, pages=None,
-            max_reads=None, sources_name_corner=False, required_source=None):
+            max_reads=None, sources_name_corner=False, required_source=None, claims_from_sources=False,
+            keep_receipt_data=False):
         seen.update(task=task, city=city, pages=pages, letter=letter_client, max_reads=max_reads,
                     corner_rule=sources_name_corner, required=required_source)
         final = {"summary": "Two crashes; plate ABC1234 seen.", "findings": [{"receipt": "D1", "text": "A finding."}],
@@ -158,3 +159,40 @@ def test_a_mistyped_input_id_reads_the_one_text_handed_in_and_the_gate_wants_it_
         {"url": "input:text", "quote": "First Street and Main Street had zero injury crashes"}])
     assert not any("must cite the input" in e for e in own["problems"])
     assert orchestrator._same_url("https://www.example.org/a/", "http://example.org/a")
+
+
+def test_a_claim_must_be_the_sources_not_the_desks_own_record_sentence():
+    """Independent test: a check graded its own count ('48 injury crashes', in no source) as a source claim,
+    'consistent'. With claims_from_sources every number in a claim must be on a page the desk read."""
+    from nearmisslens import orchestrator
+    desk = orchestrator.Desk("zz")
+    desk.pages = {"input:text": "A pedestrian was killed at First Street and Main Street on Tuesday; 3 others were hurt."}
+    desk.receipts["D1"] = {"tool": "choose_fixes", "data": {"crashes": {"injury_crashes": 48}}}
+    ts = {t.name: t for t in orchestrator.core_tools(desk, claims_from_sources=True)}
+    own = ts["check_claim"].fn(text="First Street and Main Street had 48 injury crashes.", receipt="D1")
+    assert "48 is not on any page you read" in own["error"]
+    assert "error" not in ts["check_claim"].fn(text="3 others were hurt.", receipt="D1")
+    plain = {t.name: t for t in orchestrator.core_tools(orchestrator.Desk("zz"))}  # registered runs: unchanged
+    assert "not on any page" not in str(plain["check_claim"].fn(text="48 injury crashes.", receipt="D9"))
+
+
+def test_a_case_cannot_say_a_letter_was_drafted_when_none_was():
+    from nearmisslens import orchestrator
+    desk = orchestrator.Desk("zz")
+    desk.report = {"junction": {"name": "A & B"}, "findings": {"draft_request": {"letter": None}}}
+    ts = {t.name: t for t in orchestrator.core_tools(desk, claims_from_sources=True)}
+    out = ts["check_findings"].fn(summary="A request letter to the city is drafted and checked.", findings=[], sources=[])
+    assert any("no letter was drafted" in e for e in out["problems"])
+    assert orchestrator.LETTER_SAID.search("The letter was drafted.") and not orchestrator.LETTER_SAID.search("A letter is ready to draft from these facts.")
+
+
+def test_every_receipt_is_saved_for_audit(fake_city, tmp_path):
+    def run(task, city, client, **k):
+        assert k["keep_receipt_data"] and k["claims_from_sources"]
+        return {"finished": True, "final": {"summary": "s", "findings": [], "sources": []}, "stopped": "finish_tool",
+                "turns": 3, "usd": 0.01, "trace": [], "receipts": {"D1": {"tool": "choose_fixes"}},
+                "receipts_data": {"D1": {"tool": "choose_fixes", "data": {"crashes": {"injury_crashes": 48}}}}}
+    out = check.check("https://example.org/story", "zz", runner=run, out_dir=tmp_path / "r")
+    import json as _j
+    assert _j.loads((tmp_path / "r" / "receipts.json").read_text())["D1"]["data"]["crashes"]["injury_crashes"] == 48
+    assert out["receipts_file"].endswith("receipts.json")

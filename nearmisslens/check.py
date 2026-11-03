@@ -110,7 +110,8 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
         r = run(task, c["id"], client, letter_client=letter_client if letter else None,
                 model_check_client=model_check_client, budget_usd=budget_usd, max_turns=max_turns, pages=pages,
                 max_reads=MAX_READS, sources_name_corner=True,
-                required_source=SOURCE_ID if k == "source" else text.strip() if k == "url" else None)
+                required_source=SOURCE_ID if k == "source" else text.strip() if k == "url" else None,
+                claims_from_sources=True, keep_receipt_data=True)
     except Exception as e:  # a failed run is reported as an error, never as a published case
         return {"status": "error", "reason": f"{type(e).__name__}: {e}", "city": c["id"], "input": text, "kind": k,
                 "seconds": round(time.time() - t0, 1)}
@@ -131,7 +132,7 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
            "refusals": r.get("refusals"), "trace": r.get("trace"), "web": r.get("web"),  # search results, to trace a URL
            "seconds": round(time.time() - t0, 1), "asof": r.get("asof"), "source": "live" if not SETTINGS.replay else "replay"}
     out["record_notes"] = record_lag(out)
-    save(out, out_dir)
+    save(out, out_dir, receipts=r.get("receipts_data"))
     return out
 
 
@@ -153,10 +154,15 @@ def record_lag(out: dict) -> list[str]:
     return notes
 
 
-def save(out: dict, out_dir: Path | None = None) -> Path:
+def save(out: dict, out_dir: Path | None = None, receipts: dict | None = None) -> Path:
+    """result.json and report.md, and receipts.json with every receipt's data, so each published number can be
+    checked against the receipt it cites without running the case again."""
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d-%H%M%S")
     d = out_dir or SETTINGS.runs_dir / "checks" / f"{stamp}_{_slug(out.get('corner') or out.get('input') or '')}"
     d.mkdir(parents=True, exist_ok=True)
+    if receipts:
+        (d / "receipts.json").write_text(orchestrator.redact(portable(json.dumps(receipts, indent=1, default=str))))
+        out["receipts_file"] = portable(str(d / "receipts.json"))
     (d / "result.json").write_text(portable(json.dumps(out, indent=1, default=str)))
     (d / "report.md").write_text(report_md(out))
     out["saved"] = portable(str(d))

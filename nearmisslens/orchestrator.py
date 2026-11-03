@@ -154,6 +154,7 @@ class Desk:
         self.pages: dict[str, str] = {}  # records handed to the desk with the task (url -> text), e.g. a 311 report
         self.claim_checks = 0
         self.reads = 0
+        self.read_texts: list[str] = []  # every page read this case, as the gate reads it
 
     def receipt(self, tool: str, data, query: str | None = None) -> str:
         rid = f"D{len(self.receipts) + 1}"
@@ -197,6 +198,10 @@ def dataset_tools(city: str, desk: Desk) -> tuple[dict | None, list[Tool]]:
     return space, tools
 
 
+LETTER_SAID = re.compile(r"\bletter\b[^.]{0,80}\b(is |was |has been )?(drafted|written|checked and ready)\b|"
+                         r"\bdrafted\b[^.]{0,40}\bletter\b", re.I)
+
+
 def _same_url(a: str, b: str) -> bool:
     """Two spellings of one address: scheme, "www." and a trailing slash aside."""
     n = lambda u: re.sub(r"^https?://(www\.)?", "", (u or "").strip()).rstrip("/").lower()
@@ -205,7 +210,9 @@ def _same_url(a: str, b: str) -> bool:
 
 def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_client=None,
                max_reads: int | None = None, sources_name_corner: bool = False,
-               required_source: str | None = None) -> list[Tool]:
+               required_source: str | None = None, claims_from_sources: bool = False) -> list[Tool]:
+    """claims_from_sources (nml check): a claim checked against the record must be the source's, so every number in
+    it must be on a page the desk read; the desk's own sentences about the record are findings, not claims."""
     txt, num = {"type": "string"}, {"type": "number"}
 
     def investigate(address: str, draft_letter: bool):
@@ -271,6 +278,7 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         text = text_of(url, desk.pages)
         if text is None:
             return {"readable": False, "note": "this page cannot be read here; cite another page that reports it"}
+        desk.read_texts.append(text)
         words = [w for w in _norm(find).split() if len(w) > 2]
         sents = re.split(r"(?<=[.!?])\s+", text)
         hits = [x for x in sents if words and any(w in _norm(x).split() for w in words)]
@@ -281,6 +289,14 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         d = desk.receipts.get(receipt)
         if not d:
             return {"error": f"no receipt {receipt}"}
+        if claims_from_sources:
+            read = set().union(*(numbers_in(t) for t in desk.read_texts + list(desk.pages.values()))) if \
+                (desk.read_texts or desk.pages) else set()
+            missing = sorted(numbers_in(text) - read)
+            if missing:
+                return {"error": f"{', '.join(missing)} is not on any page you read: a claim is a sentence from the "
+                                 "source, checked against the record; what the record itself says is a finding, cited "
+                                 "to its D receipt"}
         desk.claim_checks += 1
         if desk.claim_checks > MAX_CLAIM_CHECKS:
             return {"error": f"{MAX_CLAIM_CHECKS} claims checked already: write the findings and run check_findings"}
@@ -346,6 +362,11 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 errors.append(f"source {k}: the page at {s.get('url')} does not name {desk.report['junction']['name']}; "
                               "a quote on its page is not about this corner: cite a page that names it, or leave it out")
             checked.append({**s, "quote_check": state})
+        letter_made = bool(((desk.report or {}).get("findings") or {}).get("draft_request", {}).get("letter")) \
+            if desk.report else False
+        if claims_from_sources and not letter_made and any(LETTER_SAID.search(t) for t in
+                                                           [summary] + [f.get("text", "") for f in findings]):
+            errors.append("no letter was drafted in this case: do not say one was (say the facts are ready for one)")
         if required_source and not any(_same_url(c.get("url", ""), required_source) and c["quote_check"] != "absent"
                                        for c in checked):
             errors.append(f"the case must cite the input it was given ({required_source}) with an exact quote from it: "
@@ -736,14 +757,16 @@ def _places(desk: Desk):
 
 def run_case(task: str, city: str, client, letter_client=None, model_check_client=None, budget_usd: float = 0.50,
              max_turns: int = 22, pages: dict | None = None, max_reads: int | None = None,
-             sources_name_corner: bool = False, required_source: str | None = None) -> dict:
+             sources_name_corner: bool = False, required_source: str | None = None,
+             claims_from_sources: bool = False, keep_receipt_data: bool = False) -> dict:
     desk = Desk(city)
     desk.pages.update(pages or {})
     desk.final = None
     space, ds_tools = dataset_tools(city, desk)
     server = [{"type": "web_search"}] + ([space, {"type": "tool_search"}] if space else [])
     t0 = time.time()
-    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads, sources_name_corner, required_source) + ds_tools,
+    run = run_agent(client, MODEL, INSTRUCTIONS, task, core_tools(desk, letter_client, model_check_client, client, max_reads, sources_name_corner, required_source,
+                                                     claims_from_sources) + ds_tools,
                     max_turns, budget_usd, effort="low", tag=f"desk {task[:40]}", escalate_after=3,
                     required=("investigate",), governor=True, server_tools=server,
                     include=("web_search_call.results",), on_response=desk.collect)
@@ -756,5 +779,6 @@ def run_case(task: str, city: str, client, letter_client=None, model_check_clien
                        "errors": (s.result or {}).get("errors") if isinstance(s.result, dict) else None} for s in run.steps],
             "receipts": {k: (v if v["tool"] in SMALL_RECEIPTS else {kk: vv for kk, vv in v.items() if kk != "data"})
                          for k, v in desk.receipts.items()},
+            **({"receipts_data": desk.receipts} if keep_receipt_data else {}),
             "corner": (rep.get("junction") or {}).get("name"), "asof": config_asof().isoformat(),
             "letter": ((rep.get("findings") or {}).get("draft_request") or {}).get("letter")}

@@ -87,7 +87,8 @@ def osm_designations(street: dict | None, city: dict | None) -> list[dict]:
     for r in (street or {}).get("roads", []):
         ref = " ".join(r.get("ref", []) or [])
         if re.search(r"\b(I|US|[A-Z]{2}|SR)\s?-?\d+", ref):  # any state's two-letter prefix
-            out.append({"party": "the state transportation department (route designation only; confirm ownership)",
+            state = (city or {}).get("state_agency") or "the state transportation department"
+            out.append({"party": f"{state} (route designation only; confirm ownership)",
                         "role": "possible owner", "road": r["name"], "route": ref,
                         "basis": {"dataset": "OpenStreetMap", "field": "ref", "value": ref},
                         "confidence": "designation only"})

@@ -180,3 +180,19 @@ def test_no_city_comparison_is_said_plainly(monkeypatch):
     assert "not compared" in summary and "stands out" not in summary
     src = inspect.getsource(engineer.claims_for)
     assert "is not compared with the rest of the city" in src  # the report's sentence for the same case
+
+
+def test_letters_say_only_what_is_checked():
+    """Independent test: 'Dear colleagues at route designation only; confirm ownership', a 'state DOT' in a district
+    that has none, a project dated 2032 described as done, and a site condition stated as a fact."""
+    from nearmisslens import jurisdiction, letter, opendata
+    assert letter._salutation([{"party": "the District Department of Transportation (DDOT) (route designation only; "
+                                         "confirm ownership)"}]) == "Dear colleagues at DDOT,"
+    dc = opendata.city("dc")
+    rows = jurisdiction.osm_designations({"roads": [{"name": "Rhode Island Avenue NE", "ref": ["US 1"]}]}, dc)
+    assert rows and "state transportation department" not in rows[0]["party"] and "DDOT" in rows[0]["party"]
+    facts = {"fixes": [{"needs_site_check_for": "an entry on yellow or red; the current yellow plus all-red is shorter "
+                                                "than ITE practice"}]}
+    bad = "The current yellow plus all-red here is shorter than ITE practice."
+    good = "Please check on site whether the current yellow plus all-red is shorter than ITE practice."
+    assert letter.condition_errors(bad, facts) and not letter.condition_errors(good, facts)

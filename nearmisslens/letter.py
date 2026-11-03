@@ -39,7 +39,9 @@ def short_agency(party: str) -> str:
 def _salutation(parties: list[dict]) -> str:
     """'Dear A and B,' from each addressee's registry salutation; agencies are greeted as colleagues at their short name."""
     if parties and all(p.get("party") and not p.get("salutation") for p in parties):
-        names = [short_agency(p["party"]) for p in parties]
+        # a party's own note ("(route designation only; confirm ownership)") is not part of its name
+        names = list(dict.fromkeys(short_agency(re.sub(r"\s*\((?:route|designation|confirm)[^)]*\)", "", p["party"]))
+                                   for p in parties))
         return "Dear colleagues at " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]) + ","
     if not parties:
         return "To the road owner (not identified in the city's open records),"
@@ -70,7 +72,10 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
     supported = [o for o in fx.get("options", []) if o.get("scale", "low-cost") == "low-cost"][:2]
     measured = next((o for o in fx.get("options", []) if o.get("local_evidence")), None)
     h = fx.get("harm") or {}
-    projects = sorted((p for p in pl.get("projects", []) if isinstance(p.get("year"), int)), key=lambda p: p["year"])
+    done_by = asof().year  # a project dated after the record's date is planned, not done
+    dated = sorted((p for p in pl.get("projects", []) if isinstance(p.get("year"), int)), key=lambda p: p["year"])
+    projects = [p for p in dated if p["year"] <= done_by]
+    planned = [p for p in dated if p["year"] > done_by]
     addressed = owners if audience == "agency" else offices_
     salutation = _salutation(addressed)
     since = dt.date.fromisoformat(cr["since"]) if cr.get("since") else None
@@ -91,6 +96,7 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
         "people_killed": killed,
         "city_priority_location": bool(pl.get("designated")),
         "latest_recorded_safety_project": {k: projects[-1][k] for k in ("name", "year")} if projects else None,
+        "planned_safety_project": {k: planned[0][k] for k in ("name", "year")} if planned else None,
         "no_recorded_treatment_in_period": bool(d.get("plan_gap")),
         "harm_million_usd_per_year": round(h["usd_per_year"] / 1e6, 1) if h else None,
         "fixes": [{"name": _plain(o["countermeasure"]), "federal_name": o["countermeasure"],
@@ -112,6 +118,25 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
         "tried_here_before": [x["text"] for x in fx.get("repeat_risk") or []],
         "dollar_values": f"the U.S. DOT's official values for the cost of crashes ({harm.BCA['dollar_year']} dollars)",
     }
+
+
+HEDGE = re.compile(r"\b(check|checked|confirm|confirmed|verify|verified|if|whether|survey|study|assess)\b", re.I)
+
+
+def condition_errors(text: str, facts: dict) -> list[str]:
+    """A fix's site condition ("the current yellow plus all-red is shorter than practice") is something to check on
+    site, never a fact about the junction: a sentence that states one must say it is to be checked."""
+    conds = [c.strip() for fx in (facts.get("fixes") or []) + [facts.get("measured_in_this_city") or {}]
+             for c in (fx.get("needs_site_check_for") or "").split(";") if c.strip()]
+    errors = []
+    for sent in re.split(r"(?<=[.!?])\s+", text):
+        low = sent.lower()
+        for c in conds:
+            words = [w for w in re.findall(r"[a-z]{4,}", c.lower())]
+            if words and sum(w in low for w in words) / len(words) >= 0.6 and not HEDGE.search(sent):
+                errors.append(f"'{sent.strip()[:90]}' states a site condition as a fact: say it must be checked on site")
+                break
+    return errors
 
 
 AGENCY_INSTRUCTIONS = (
@@ -160,7 +185,7 @@ def draft(client, brief: dict, offices_: list[dict] | None = None, model: str = 
     attempts = []
 
     def finish(subject: str, body: str) -> dict:
-        errors = check.text(subject) + check.text(body)
+        errors = check.text(subject) + check.text(body) + condition_errors(subject + " " + body, f)
         attempts.append({"subject": subject, "body": body, "errors": errors})
         return {"error": "rejected by the fact checker", "errors": errors} if errors else {"ok": True}
 
