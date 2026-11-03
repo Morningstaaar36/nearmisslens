@@ -152,3 +152,13 @@ def test_t25_numbers():
     _has(f"{s['published_real']} of {s['real']} real inputs")
     _has(f"{s['quotes_verified']} of {s['quotes_published']} quotes verified")
     _has(f"${s['mean_usd']:.3f} an input")
+
+
+def test_t26_numbers():
+    from nearmisslens.review import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T26.json").read_text())
+    s = run_summary(_load("experiment_T26.json"), sp)
+    assert s["rule_met"]
+    _has(f"{s['published']} of {s['inputs']} memos published")
+    _has(f"${s['mean_usd']:.3f} a review")
+    _has(f"{s['inputs']} real proposed projects")

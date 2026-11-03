@@ -864,7 +864,7 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Changes after T26** (post hoc, tested):
   - **A review is only of the intersection proposed.** The appraisal refuses a case about any other corner, and the review abstains.
   - **Intersection names match with or without a period after an initial, and "Rev" is "Reverend"** (the Bronx case's street).
-  - **A new verdict, "not covered by the evidence".** It is for a fix that no crash-modification study fits at this site; the decision then rests on a site study and judgement. "Reconsider" is kept for evidence against:
+  - **A new verdict, "not covered by the evidence".** It is for a fix that no crash-modification study fits at this site; the decision then rests on a site study and an engineer's assessment. "Reconsider" is kept for evidence against:
     - the record shows none of the targeted crashes;
     - the fix is already installed;
     - the city's own record contradicts it;

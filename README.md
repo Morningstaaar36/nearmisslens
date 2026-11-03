@@ -260,6 +260,34 @@ Of the attacker's false claims, 114 whose spec did not check out against the rec
 
 The model-read check beats the regex on both counts here (registered rule met). This style pushed the regex into refusing half the true claims; on the T18 held-out set, after the bug fixes, the model-read check let through 2.6% of false claims against the regex's 20.5%, but refused slightly more true ones (17.9% against 15.8%). Labels check only the numbers, so some "true" claims it refuses carry rhetoric a gate should refuse anyway. After a later review we hardened the code side (every number in a claim must be covered by an assertion; no complement shares; counts exact to rounding). On the same readings that lets through 1 of 157 false claims but refuses 58% of true ones, because the model does not always quote every number (post hoc, in BENCH.md). The site uses it as a second check on agent-written claims; it is not yet strict enough on both counts to be the only gate.
 
+## Before you commit: review a proposed project
+
+An engineer or directorate about to fund a fix describes it in plain words: "a pedestrian island at Street A & Street B, about $60,000". `nml review` does the due diligence before money is committed:
+1. **Muse Spark** registers the proposal against the closed list of federal Proven Safety Countermeasures, so a fix is never invented. It then investigates the corner with the desk's checked tools.
+2. **Code appraises it and sets the verdict.** It checks:
+   - whether the record shows the crashes the fix targets;
+   - what the fix is expected to avoid, and how strong that evidence is;
+   - the stated cost against the lifetime value of the harm avoided;
+   - whether the fix is already installed;
+   - whether the city's own record contradicts it;
+   - whether another supported fix would avoid at least twice as much.
+
+   The verdicts are proceed, proceed only after a site check, compare first, not covered by the evidence, or reconsider.
+3. **Muse Spark Open on Baseten**, another model family, writes the pre-mortem. Each objection must point at a receipt field and its value, and code keeps only the objections whose fact is there.
+4. Muse Spark writes the memo. The gate holds it to the code's verdict and the receipts' numbers, and it must answer every kept objection. A work order to the road owner can be drafted.
+
+**T26, registered before it ran:**
+- **Results:** 7 real proposed projects from SDOT's safety program, SFCTA, a DC neighborhood commission, a Chicago petition and NYC DOT. 7 of 7 memos published, at $0.057 a review.
+- **The finding the tool is for:** a DC neighborhood commission asked for a leading pedestrian interval at 22nd & L NW, and DC's own signal records show one is already there.
+- **What our review found wrong:**
+  - one memo was about a neighbouring corner after the proposed street was not found;
+  - one verdict rested on a signal mapping that may be wrong;
+  - "reconsider" was used where no study fits the site.
+
+  All three are fixed (see BENCH_PREREG.md).
+
+A real-proposal test set (`validation/examples/proposals.json`) keeps three proposals held out, never run by us, for reviewers: `uv run nml review --example 15` (to 17).
+
 ## Check a claim yourself
 
 Give the desk your own input in any city `nml cities` lists as checkable: a news link, an official's claim, a source's text, or a resident's report. It runs the same desk and gates as the registered runs and saves a JSON result and a readable report under `runs/checks/`. It needs a Meta Model API key (`MODEL_API_KEY`); a Baseten key is optional.
@@ -317,6 +345,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T23 | Do a city's own cameras give usable counts, and does counting people change which corners rank worst? | packed counts: met; ranking: not reported (rule), too few people seen |
   | T23b | The same at midday | packed counts: met (all disagreements undercount); ranking: not reported (rule), 15 of 20 cameras |
   | T25 | Does `nml check` publish at least 8 of 10 real inputs nobody chose, and catch an off-topic page and a false statement? | met (10 of 10; both controls caught; the false-statement control drifted to another corner, fixed after) |
+  | T26 | Does Before you commit publish a code-set verdict, red-teamed, for at least 6 of 7 real proposed projects at no more than $0.15 each? | met (7 of 7; one memo was about a neighbouring corner, fixed after) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.

@@ -51,7 +51,7 @@ VERDICTS = {
     "proceed_after_site_check": "proceed only after a site check confirms what the estimate assumes",
     "compare_alternative": "compare before committing: another supported fix is expected to avoid much more",
     "outside_evidence": "not covered by the evidence: no crash-modification study fits this fix at this site, so the "
-                        "decision rests on a site study and engineering judgement, not on this record",
+                        "decision rests on a site study and an engineer's assessment, not on this record",
     "reconsider": "reconsider: the record or the evidence does not support this fix here as proposed",
 }
 

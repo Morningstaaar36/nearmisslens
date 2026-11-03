@@ -2,6 +2,8 @@
 validation/BENCH_PREREG.md: T3 hotspot persistence and T7 fix test with a random control."""
 from __future__ import annotations
 
+from .config import ROOT
+
 import itertools
 import re
 from collections import Counter
@@ -701,7 +703,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1272,6 +1274,36 @@ def _or_rule(v, reported: bool = True, n: int | None = None) -> str:
     if v is None:
         return "not reported (rule)"
     return str(v) if reported else f"{v} (on {n} corners; not a finding: the rule needs 20)"
+
+
+def _t26_section() -> list[str]:
+    """T26: Before you commit (nml review) on real proposed projects."""
+    r = _load("experiment_T26.json")
+    if not r:
+        return []
+    from .review import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T26.json").read_text())
+    s = run_summary(r, sp)
+    yes = lambda b: "met" if b else "not met"
+    L = ["## T26 Before you commit: `nml review` on real proposed projects", "",
+         f"Registered in BENCH_PREREG.md (T26). The {s['inputs']} proposals of the `registered` split of "
+         "`validation/examples/proposals.json`, each from an agency plan, a neighborhood commission, a community board "
+         "or a petition. Code sets each verdict; Muse Spark Open red-teams it; the memo must answer every objection whose "
+         "fact checked out.", "",
+         "| Rule | Measured | |", "|---|---|---|",
+         f"| at least {sp['rule']['min_published']} of {s['inputs']} memos published | {s['published']} | {yes(s['met']['published'])} |",
+         f"| every published verdict is the code's | {'yes' if s['verdict_is_codes'] else 'no'} | {yes(s['met']['verdict_is_codes'])} |",
+         f"| the red team ran on every published memo | {s['red_team_ran']} of {s['published']} | {yes(s['met']['red_team_on_every_memo'])} |",
+         f"| mean cost at most ${sp['rule']['max_mean_usd']:.2f} (Meta + Muse Spark Open) | ${s['mean_usd']:.3f} | {yes(s['met']['cost'])} |", "",
+         f"**Rule: {'met' if s['rule_met'] else 'not met'}.** {s['objections_kept']} objections kept after their facts "
+         f"were checked; mean {s['mean_seconds']:.0f} s per review. The post-hoc review (BENCH_PREREG.md, \"T26 result\") "
+         "found one memo about a neighbouring corner and one verdict resting on a doubtful signal mapping, and split "
+         "\"not covered by the evidence\" from \"reconsider\".", "",
+         "| Proposal | City | Verdict (as run) | Corner reviewed | $ |", "|---|---|---|---|---|"]
+    for c in r["cases"]:
+        usd = sum(float(v or 0) for v in (c.get("cost_usd") or {}).values())
+        L.append(f"| {(c.get('input') or '')[:90]} | {c.get('city')} | {c.get('verdict')} | {c.get('corner') or ''} | {usd:.3f} |")
+    return L + [""]
 
 
 def _t25_section() -> list[str]:
