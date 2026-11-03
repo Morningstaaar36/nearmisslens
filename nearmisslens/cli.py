@@ -461,10 +461,11 @@ def cmd_add_city(args) -> int:
 
 
 def _letter_client():
-    """Muse Spark Open on Baseten when its key is set, else hosted Muse Spark: a letter never needs a second key."""
+    """Muse Spark Open on Baseten when its key is set (and always in replay, where the saved runs used it and no key
+    is needed), else hosted Muse Spark: a letter never needs a second key."""
     import os
     from .meta_client import MetaClient
-    if os.environ.get("BASETEN_API_KEY"):
+    if os.environ.get("BASETEN_API_KEY") or SETTINGS.replay:
         from .openclient import OpenWeightsClient
         return OpenWeightsClient()
     return MetaClient(SETTINGS)

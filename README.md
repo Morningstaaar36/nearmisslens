@@ -261,6 +261,8 @@ uv run nml check "The council says this corner had 40 crashes" --city CITY_ID   
 uv run nml app                                                        # the same, in the browser: "Check a claim yourself"
 ```
 
+Two saved examples replay offline with no key: `uv run nml --replay check --example 1` (a claim to find in Washington DC) and `--example 2` (a resident's report in San Francisco). In those first live development runs, not a registered test, the report published; the DC claim was refused, because the pages about that crash could not be read here and the gate no longer lets a quote from a page about another crash stand behind a corner's case.
+
 [`TESTING.md`](TESTING.md) is for an independent tester: what each field means, what counts as a failure, and how to keep a test fair. A test builds a forbidden list from every corner, street and source in the saved results and fails if any of them appears in the generic code or the desk's prompts (`tests/test_no_hardcoding.py`).
 
 ## Try it
