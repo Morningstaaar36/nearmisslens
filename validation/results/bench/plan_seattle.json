@@ -45,7 +45,7 @@
   "crashes_avoided_per_year_counted_once_after_rtm": 5.7,
   "harm_avoided_usd_per_year_total": 2600000.0,
   "harm_avoided_usd_per_year_after_rtm": 2600000.0,
-  "textbook_crashes_avoided_per_year": 108.6,
+  "textbook_crashes_avoided_per_year": 108.5,
   "corners_where_textbook_fix_is_not_supported": 48,
   "corners_with_another_road_owner": 0,
   "corners_with_presumed_owner": 48,
@@ -2543,13 +2543,13 @@
     "verify_on_site": null
    },
    "textbook": {
-    "countermeasure": "Lighting",
-    "cmf_id": "7774",
+    "countermeasure": "Pavement Friction Management",
+    "cmf_id": "195",
     "evidence": "needs a site check",
-    "crashes_avoided_per_year": 0.7,
-    "harm_avoided_usd_per_year": 226000.0,
-    "pays_for_itself_under_usd": 1584000.0,
-    "verify_on_site": "the corner has no street lighting now"
+    "crashes_avoided_per_year": 0.6,
+    "harm_avoided_usd_per_year": 211000.0,
+    "pays_for_itself_under_usd": 1480000.0,
+    "verify_on_site": "the pavement's friction is low now (wet-road crashes alone do not show it)"
    },
    "owners": [
     {

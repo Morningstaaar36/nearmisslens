@@ -120,7 +120,7 @@ From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 Oc
 |---|---|---|---|---|
 | Corners | 303 distinct points among the 304 priority intersections | 50 worst | 50 worst | 50 worst |
 | Harm a year, each crash counted once (U.S. DOT injury-crash value; deaths not valued separately, so this is low) | $786 million | $183 million | $192 million | $129 million |
-| Largest low-cost estimate at each corner, added up | 338 crashes a year | 109 | 76 | 58 |
+| Largest low-cost estimate at each corner, added up | 338 crashes a year | 108 | 76 | 58 |
 | Supported without a site visit | **86** at 129 corners; **83** with each crash counted once, **79** after regression to the mean | **8** at 8 corners (6 counted once) | **2** at 5 corners | **0** |
 
 The gap between the last two rows is the point. In New York the largest estimate at 270 of the corners is signal backplates, which hold only where the record shows red-light entries; elsewhere they need a check nobody has made. Yellow timing needs a timing check, and the only crosswalk study in the set was done at school crossings.
