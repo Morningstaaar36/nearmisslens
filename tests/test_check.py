@@ -196,3 +196,17 @@ def test_every_receipt_is_saved_for_audit(fake_city, tmp_path):
     import json as _j
     assert _j.loads((tmp_path / "r" / "receipts.json").read_text())["D1"]["data"]["crashes"]["injury_crashes"] == 48
     assert out["receipts_file"].endswith("receipts.json")
+
+
+def test_a_published_check_quotes_the_sentence_that_names_its_corner(monkeypatch):
+    """Independent test: four verified quotes, none naming the intersection. One must."""
+    from nearmisslens import orchestrator
+    desk = orchestrator.Desk("zz")
+    desk.pages = {"https://example.org/a": "A woman was struck by a car. Police were called to First Street and Main Street."}
+    desk.report = {"junction": {"name": "First Street & Main Street, Zedburg"}, "findings": {}}
+    ts = {t.name: t for t in orchestrator.core_tools(desk, sources_name_corner=True)}
+    bad = ts["check_findings"].fn(summary="s", findings=[], sources=[{"url": "https://example.org/a", "quote": "A woman was struck by a car."}])
+    assert any("no quote names" in e for e in bad["problems"])
+    good = ts["check_findings"].fn(summary="s", findings=[], sources=[
+        {"url": "https://example.org/a", "quote": "Police were called to First Street and Main Street."}])
+    assert not any("no quote names" in e for e in good["problems"])

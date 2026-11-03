@@ -367,6 +367,11 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
         if claims_from_sources and not letter_made and any(LETTER_SAID.search(t) for t in
                                                            [summary] + [f.get("text", "") for f in findings]):
             errors.append("no letter was drafted in this case: do not say one was (say the facts are ready for one)")
+        if sources_name_corner and desk.report and checked and not any(
+                c["quote_check"] == "verified" and names_corner(c.get("quote", ""), desk.report["junction"]["name"])
+                for c in checked):
+            errors.append(f"no quote names {desk.report['junction']['name']}: quote the source's sentence that names "
+                          "the intersection, so a reader sees the source is about this corner")
         if required_source and not any(_same_url(c.get("url", ""), required_source) and c["quote_check"] != "absent"
                                        for c in checked):
             errors.append(f"the case must cite the input it was given ({required_source}) with an exact quote from it: "

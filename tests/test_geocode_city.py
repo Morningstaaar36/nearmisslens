@@ -222,3 +222,13 @@ def test_a_town_inside_a_citys_box_is_not_the_city(monkeypatch):
     with pytest.raises(ValueError) as e:  # a city street whose first match is in a suburb goes on to the crossing search
         brief._lookup("Ashland Avenue & Cullerton Street, Chicago")
     assert not isinstance(e.value, brief.OutsideCoverage)
+
+
+def test_one_addressee_per_agency():
+    from nearmisslens import letter
+    who = {"owners": [{"party": "the District Department of Transportation (DDOT)", "roads": ["A St"], "confidence": "inferred"},
+                      {"party": "the District Department of Transportation (DDOT) (route designation only; confirm ownership)",
+                       "roads": ["B Ave"], "confidence": "designation only"}], "requesters": []}
+    brief = {"junction": "A St & B Ave", "dossier": {"lat": 0, "lon": 0, "crashes": {}, "plans": {}, "city": "dc", "years": 5}, "fixes": {}}
+    f = letter.facts(brief, offices_=[], who=who, audience="agency")
+    assert f["to"] == "the District Department of Transportation (DDOT)" and f["road_owners"][0]["roads"] == ["A St", "B Ave"]

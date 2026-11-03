@@ -62,7 +62,16 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
                      **({"contact": r["contact"]} if r.get("contact") else {}),
                      **({"salutation": r["salutation"]} if r.get("salutation") else {})}
                     for r in (who or {}).get("requesters", [])] or offices(brief["dossier"]["lat"], brief["dossier"]["lon"])
-    owners = [{"party": r["party"], "roads": r["roads"], "confidence": r["confidence"]} for r in (who or {}).get("owners", [])]
+    owners = []
+    for r in (who or {}).get("owners", []):  # one addressee per agency: a route note on the same agency is merged in
+        base = re.sub(r"\s*\((?:route|designation|confirm)[^)]*\)", "", r["party"]).strip()
+        same = next((o for o in owners if re.sub(r"\s*\((?:route|designation|confirm)[^)]*\)", "", o["party"]).strip() == base), None)
+        if same:
+            same["roads"] = sorted(set(same["roads"]) | set(r["roads"]))
+            if "(" in same["party"] and "(" not in r["party"].replace(base, ""):
+                same.update(party=r["party"], confidence=r["confidence"])
+        else:
+            owners.append({"party": r["party"], "roads": list(r["roads"]), "confidence": r["confidence"]})
     if audience == "agency" and not owners:
         audience = "resident"  # no recorded owner: the offices that can request the work are the addressees
     d, fx = brief["dossier"], brief.get("fixes") or {}
