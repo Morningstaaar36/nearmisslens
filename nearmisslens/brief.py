@@ -14,6 +14,7 @@ from __future__ import annotations
 import io
 import json
 import math
+import os
 import re
 from pathlib import Path
 
@@ -393,8 +394,8 @@ def _lookup(address: str) -> tuple[float, float, str]:
         raise OutsideCoverage(f"{address!r} is in {js[0]['display_name'].split(',')[1].strip() if ',' in js[0].get('display_name', '') else 'another place'}"
                               f", outside {here['name']}'s own limits: its crash records do not cover it")
     if context.city_of(lat, lon) is None:
-        raise OutsideCoverage(f"{address!r} is outside the cities this copy covers ({_covered()}); add a city with "
-                              "nml add-city")
+        raise OutsideCoverage(f"{address!r} is outside the cities this copy covers ({_covered()})"
+                              + ("" if os.environ.get("NML_PUBLIC") == "1" else "; add a city with nml add-city"))
     if "&" not in streets:
         return lat, lon, name
     a, b = (x.strip() for x in streets.split("&")[:2])

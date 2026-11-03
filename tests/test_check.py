@@ -66,7 +66,7 @@ def test_unsupported_cities_get_a_plain_answer_and_no_run(fake_city):
     run, seen = fake_run()
     r = check.check("https://example.org/story", "yy", runner=run)
     assert r["status"] == "unsupported_city" and "no crash data" in r["reason"] and not seen
-    assert "not a city in the registry" in check.check("x", "nowhere", runner=run)["reason"]
+    assert "not a city this copy covers" in check.check("x", "nowhere", runner=run)["reason"]
 
 
 def test_an_unfinished_case_is_abstained_with_the_gates_reason(fake_city, tmp_path):

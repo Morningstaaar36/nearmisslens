@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import os
 import re
 import time
 from pathlib import Path
@@ -40,7 +41,8 @@ def supported(city: str | None) -> tuple[dict | None, str | None]:
     c = opendata.city(city)
     if c is None:
         known = ", ".join(x["id"] for x in opendata.load_cities())
-        return None, f"{city!r} is not a city in the registry ({known}); add it with nml add-city, then nml discover"
+        return None, (f"{city!r} is not a city this copy covers ({known})" + ("" if os.environ.get("NML_PUBLIC") == "1"
+                      else "; add it with nml add-city, then nml discover"))
     if "crash" not in opendata.coverage(c["id"])["kinds"]:
         return None, (f"{c['name']} has no crash data registered, so nothing can be checked against its record; "
                       "run nml discover LAT LON for a point in the city")
