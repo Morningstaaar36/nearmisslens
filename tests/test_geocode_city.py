@@ -172,7 +172,7 @@ def test_no_city_comparison_is_said_plainly(monkeypatch):
     """A city with no screened priority junctions (Chicago here) has nothing to compare against: the report says so,
     instead of "no pattern stands out against the city's priority junctions"."""
     from nearmisslens import engineer
-    monkeypatch.setattr(engineer.rootcause, "analyse", lambda lat, lon: {
+    monkeypatch.setattr(engineer.rootcause, "analyse", lambda lat, lon, **k: {
         "crashes": 66, "baseline": None, "enough_crashes": True, "over_represented": [], "source": "x"})
     desk = engineer.Desk()
     data, rid = engineer.root_cause(desk, 41.9, -87.66)

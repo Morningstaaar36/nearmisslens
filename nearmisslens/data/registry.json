@@ -71,6 +71,7 @@
   },
   {
    "id": "dc-crashes",
+   "location": {"address_field": "ADDRESS", "_note": "NEARESTINTSTREETNAME is not the cross street (L St rows give M St, which never meets L): street only"},
    "kind": "crash",
    "place": "Washington DC",
    "bbox": [
@@ -133,6 +134,7 @@
   },
   {
    "id": "chicago-crashes",
+   "location": {"street_field": "street_name"},
    "kind": "crash",
    "place": "Chicago",
    "bbox": [
@@ -464,6 +466,7 @@
   },
   {
    "id": "auto-seattle-5b98ff2b96b34af5b1e774cd9ec1f202",
+   "location": {"text_field": "LOCATION", "between": " BETWEEN ", "and": " AND "},
    "kind": "crash",
    "place": "Seattle, Washington",
    "bbox": [

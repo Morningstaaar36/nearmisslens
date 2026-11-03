@@ -226,11 +226,12 @@ def _since(years: int = YEARS) -> dt.date:
     return since(years)
 
 
-def registry_crashes(lat: float, lon: float) -> dict | None:
-    """The crash profile from the first registry adapter covering the point (seeded or found by the data agent)."""
+def registry_crashes(lat: float, lon: float, corner: str | None = None) -> dict | None:
+    """The crash profile from the first registry adapter covering the point (seeded or found by the data agent); with
+    the corner's name, only the crashes the dataset does not place at another intersection or street."""
     from . import opendata
     found = opendata.adapters_for(lat, lon, "crash")
-    return opendata.crash_summary(found[0], lat, lon, CRASH_RADIUS_M, YEARS) if found else None
+    return opendata.crash_summary(found[0], lat, lon, CRASH_RADIUS_M, YEARS, corner=corner) if found else None
 
 
 def registry_plans(lat: float, lon: float) -> dict | None:
@@ -250,14 +251,14 @@ def registry_plans(lat: float, lon: float) -> dict | None:
             "designated": bool(designated), "projects": projects}
 
 
-def dossier(lat: float, lon: float, street: bool = True) -> dict:
+def dossier(lat: float, lon: float, street: bool = True, corner: str | None = None) -> dict:
     """Everything the open record says about the junction, as counts with their sources. street=False skips
     OpenStreetMap (slow), for citywide screens. Crash and plan data come from the open-data registry, so any city
     with an adapter works; without one the dossier says so."""
     city = city_of(lat, lon)
     out = {"lat": round(lat, 6), "lon": round(lon, 6), "city": city, "years": YEARS}
     sources = (("street", lambda: osm(lat, lon)),) if street else ()
-    for name, fn in sources + (("crashes", lambda: registry_crashes(lat, lon)), ("plans", lambda: registry_plans(lat, lon))):
+    for name, fn in sources + (("crashes", lambda: registry_crashes(lat, lon, corner)), ("plans", lambda: registry_plans(lat, lon))):
         try:
             out[name] = fn()
         except Exception as e:  # an unavailable source is reported, not fatal

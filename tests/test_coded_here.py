@@ -33,3 +33,41 @@ def test_a_review_cannot_proceed_on_other_corners_crashes():
     if plain["verdict"] in ("proceed", "compare_alternative"):
         assert flagged["verdict"] == "proceed_after_site_check"
     assert "codes 3 of the 23" in flagged["parts"][0]["reasons"][0] and flagged["coded_at_corner"] == ch
+
+
+def test_every_location_coding_places_a_crash():
+    from nearmisslens import opendata as O
+    pair = {"street_fields": ["on", "cross"]}
+    assert O.crash_place({"on": "MISSION ST", "cross": "16TH ST"}, pair) == ("pair", "Mission St", "16Th St")
+    assert O.crash_place({"on": "BROADWAY", "cross": ""}, pair) == ("street", "Broadway")
+    text = {"location": {"text_field": "LOC", "between": " BETWEEN ", "and": " AND "}}
+    assert O.crash_place({"LOC": "RAINIER AVE S AND S GENESEE ST"}, text) == ("pair", "Rainier Ave S", "S Genesee St")
+    assert O.crash_place({"LOC": "RAINIER AVE S BETWEEN S OREGON ST AND S ALASKA ST"}, text) == ("street", "Rainier Ave S")
+    addr = {"location": {"address_field": "ADDRESS", "cross_field": "NEAR"}}
+    assert O.crash_place({"ADDRESS": "1120 22ND STREET NW", "NEAR": "M ST NW"}, addr) == ("pair", "22Nd Street Nw", "M St Nw")
+    assert O.crash_place({"street_name": "ASHLAND AVE"}, {"location": {"street_field": "street_name"}}) == ("street", "Ashland Ave")
+    assert O.crash_place({}, {}) is None
+
+
+def test_a_crash_is_the_corners_unless_placed_elsewhere():
+    from nearmisslens import opendata as O
+    corner = "22nd Street Northwest & L Street Northwest"
+    assert O.at_corner(("pair", "22Nd Street Nw", "L St Nw"), corner) is True
+    assert O.at_corner(("pair", "22Nd Street Nw", "M St Nw"), corner) is False  # the next corner up
+    assert O.at_corner(("street", "22Nd Street Nw"), corner) is True  # on one of its streets, not placed elsewhere
+    assert O.at_corner(("street", "K St Nw"), corner) is False
+    assert O.at_corner(None, corner) is None  # the dataset does not say: kept
+
+
+def test_the_summary_keeps_the_corners_own_crashes_and_says_what_it_left_out(monkeypatch):
+    from nearmisslens import opendata as O
+    a = {"id": "zz-crashes", "source": "zz", "date_field": "d", "injured": {"any": ["n"]}, "killed": {"any": ["k"]},
+         "street_fields": ["on", "cross"]}
+    rows = [{"d": "2026-01-01", "n": "1", "k": "0", "on": x, "cross": y} for x, y in
+            [("CESAR CHAVEZ ST", "FLORIDA ST")] * 3 + [("CESAR CHAVEZ ST", "ALABAMA ST")] * 14 + [("", "")] * 2]
+    monkeypatch.setattr(O, "rows_near", lambda *a, **k: rows)
+    s = O.crash_summary(a, 0, 0, corner="Florida Street & Cesar Chavez Street")
+    assert s["injury_crashes"] == 5 and s["attribution"] == {"by": "where the dataset places each crash",
+                                                             "within_radius": 19, "kept": 5, "left_out_elsewhere": 14,
+                                                             "not_placed": 2}
+    assert O.crash_summary(a, 0, 0)["injury_crashes"] == 19  # without a corner name: the circle, as before

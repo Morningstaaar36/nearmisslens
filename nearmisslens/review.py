@@ -429,7 +429,8 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
         from .brief import coded_here
         rv.appraisal = appraise_proposal(got[1], rv.proposal["parts"], rv.proposal["cost_usd"],
                                          rv.proposal["cost_covers"], fx_for_control if j.get("lat") is not None else None,
-                                         coded=coded_here(got[1].get("crashes") or {}, corner))
+                                         coded=None if (got[1].get("crashes") or {}).get("attribution")
+                                         else coded_here(got[1].get("crashes") or {}, corner))
         rid = desk.receipt("appraisal", rv.appraisal)
         return {"receipt": rid, **rv.appraisal,
                 "note": f"the verdict is set: {rv.appraisal['verdict_text']}. Cite {rid} for these numbers."}

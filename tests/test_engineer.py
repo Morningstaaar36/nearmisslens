@@ -16,8 +16,8 @@ def _fake(monkeypatch):
     d = {"lat": 1.0, "lon": 2.0, "city": "t", "crashes": CR, "plans": {"projects": []}, "street": {}}
     monkeypatch.setattr(E.brief, "geocode", lambda q: (1.0, 2.0, "Main St & Oak Ave, Testville"))
     monkeypatch.setattr(E.citywide, "cities", lambda: ["t"])
-    monkeypatch.setattr(E.context, "dossier", lambda lat, lon: d)
-    monkeypatch.setattr(E.rootcause, "analyse", lambda lat, lon: {
+    monkeypatch.setattr(E.context, "dossier", lambda lat, lon, **k: d)
+    monkeypatch.setattr(E.rootcause, "analyse", lambda lat, lon, **k: {
         "source": "Test crashes", "crashes": 40, "enough_crashes": True, "not_recorded": [],
         "over_represented": [{"pattern": "vehicle: truck", "phrase": "involved a truck", "share": 0.3, "city_share": 0.1}]})
     monkeypatch.setattr(E.treatments, "programs", lambda city: [

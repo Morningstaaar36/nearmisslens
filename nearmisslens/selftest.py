@@ -256,8 +256,16 @@ def check_verifier(client: MetaClient) -> Check:
     return ch
 
 
-def check_engineer(address: str = "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY") -> Check:
-    ch = Check("engineer", criterion="the safety engineer on the README corner, from records as of validation/ASOF: all five corner "
+def check_engineer(address: str | None = None) -> Check:
+    """The engineer on the first screened city's worst corner (from the results, not written here)."""
+    if address is None:
+        from .demo_copilot import hero
+        try:
+            h = hero()
+            address = f"{h['name']}, {h['city_name']}"
+        except Exception:  # no screened city saved in this copy
+            address = ""
+    ch = Check("engineer", criterion="the safety engineer on the first screened city's worst corner, from records as of validation/ASOF: all five corner "
                                      "tools give receipts, every claim cites one and passes the checker, and the case names "
                                      "at least one road owner and one priced fix")
     from . import engineer

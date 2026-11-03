@@ -35,6 +35,7 @@ class Desk:
     data: dict[str, dict] = field(default_factory=dict)
     dossiers: dict[tuple, dict] = field(default_factory=dict)
     places: set[str] = field(default_factory=set)  # corner names: "East 138 Street" holds no count to check
+    corners: dict[tuple, str] = field(default_factory=dict)  # the corner's name at a point: its own crashes only
 
     def record(self, tool: str, data: dict, sources: list[str], checks: list[str], t0: float, summary: str) -> str:
         rid = f"R{len(self.receipts) + 1}"
@@ -47,7 +48,7 @@ class Desk:
     def dossier(self, lat: float, lon: float) -> dict:
         key = (round(lat, 6), round(lon, 6))
         if key not in self.dossiers:
-            self.dossiers[key] = context.dossier(lat, lon)
+            self.dossiers[key] = context.dossier(lat, lon, corner=self.corners.get(key))
         return self.dossiers[key]
 
 
@@ -75,7 +76,7 @@ def screen_city(desk: Desk, city: str, top: int = 10) -> tuple[dict, str]:
 def root_cause(desk: Desk, lat: float, lon: float) -> tuple[dict, str]:
     """What the crashes at the corner have in common, against the city's priority junctions."""
     t0 = time.perf_counter()
-    data = rootcause.analyse(lat, lon)
+    data = rootcause.analyse(lat, lon, corner=desk.corners.get((round(lat, 6), round(lon, 6))))
     over = data.get("over_represented") or []
     peers = (data.get("baseline") or {}).get("junctions") or "the city's priority junctions"
     checks = [f"one-sided binomial test against the pooled crashes of {peers}, Holm-corrected",
@@ -456,9 +457,15 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
     if cr and "error" not in cr:
         out.append({"text": crash_sentence(name, cr), "receipt": rf})
         from .brief import coded_here, coded_sentence
-        ch = coded_here(cr, name)
-        if ch and ch["mostly_elsewhere"]:  # say so whenever the circle mostly holds other corners' crashes
-            out.append({"text": coded_sentence(name, ch), "receipt": rf})
+        at = cr.get("attribution")
+        if at and at["left_out_elsewhere"]:  # the corner's own crashes: say what the circle held and what was left out
+            out.append({"text": f"These counts are {name}'s own: the city's record places {at['left_out_elsewhere']} "
+                                f"of the {at['within_radius']} records within {cr.get('radius_m', 100):g} m at another "
+                                "intersection or street, and they are left out.", "receipt": rf})
+        else:
+            ch = coded_here(cr, name)
+            if ch and ch["mostly_elsewhere"]:  # say so whenever the circle mostly holds other corners' crashes
+                out.append({"text": coded_sentence(name, ch), "receipt": rf})
         if fx.get("harm"):
             dead = fx["harm"].get("deaths_in_record") or 0
             out.append({"text": f"At the U.S. DOT's values that harm costs about {_usd(fx['harm']['usd_per_year'])} "
@@ -496,6 +503,9 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
                                 + (f", so {', '.join(moved)} is not proposed again." if moved else "."), "receipt": rs})
     pg, rp = rec["test_programs"]
     out += [{"text": f["text"], "receipt": rp} for f in pg["repeat_risk"]]
+    if not pg.get("programs") and not pg.get("repeat_risk"):  # a city with no program tested against its record yet
+        out.append({"text": "None of the city's safety programs has been tested against its own crash record yet, so "
+                            "the fixes below rest on national evidence.", "receipt": rp})
     seen = set()
     for p in pg["programs"]:
         if p["label"] in seen:
@@ -574,6 +584,7 @@ def investigate(desk: Desk, query: str, name: str, lat: float, lon: float, t0: f
     """The five corner tools in order on a known point, and the claims written by code."""
     t0 = t0 if t0 is not None else time.perf_counter()
     desk.places.add(name.split(",")[0])
+    desk.corners[(round(lat, 6), round(lon, 6))] = name.split(",")[0]
     rec = {"root_cause": root_cause(desk, lat, lon), "test_programs": test_programs(desk, lat, lon),
            "choose_fixes": choose_fixes(desk, lat, lon)}
     mk = mechanisms(desk, slug(name), context.city_of(lat, lon))

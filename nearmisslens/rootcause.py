@@ -157,13 +157,15 @@ def baseline(city: str, a: dict, years: int = 5, radius_m: float = 100) -> dict 
     return out
 
 
-def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100) -> dict:
+def analyse(lat: float, lon: float, years: int = 5, radius_m: float = 100, corner: str | None = None) -> dict:
     """The junction's crash patterns, each with its share, the city baseline and whether it is over-represented."""
     found = opendata.adapters_for(lat, lon, "crash")
     if not found:
         return {"error": "no crash dataset is registered for this place"}
     a = found[0]
     rows = opendata.rows_near(a, lat, lon, radius_m, since(years))
+    if corner:  # the corner's own crashes, as in its crash summary (opendata.crash_summary)
+        rows = [r for r in rows if opendata.at_corner(opendata.crash_place(r, a), corner) is not False]
     n = len(rows)
     counts, missing, unspecified = profile(rows, a)
     base = baseline(a.get("city") or "", a, years, radius_m)

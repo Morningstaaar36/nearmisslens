@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 import math
 from collections import Counter
 from pathlib import Path
@@ -277,21 +278,82 @@ def _text(r: dict, fields: list[str]) -> str:
     return " ".join(str(r.get(f) or "") for f in fields or []).lower()
 
 
-def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years: int = 5) -> dict:
+def crash_place(r: dict, a: dict) -> tuple[str, ...] | None:
+    """Where the dataset says one crash happened, from its adapter's coding: ("pair", A, B) at an intersection,
+    ("street", A) on a street away from its intersections, or None when the row does not say. Codings (registry.json):
+    "street_fields" [on, cross]; "location" {"text_field", "and", "between"} ("A AND B", "A BETWEEN B AND C");
+    {"address_field", "cross_field"} (a street address and its nearest cross street); {"street_field"} (a street)."""
+    tidy = lambda v: " ".join(str(v or "").split()).title()
+    loc = a.get("location") or {}
+    if a.get("street_fields"):
+        names = [tidy(r.get(f)) for f in a["street_fields"][:2]]
+        if all(names):
+            return ("pair", *names)
+        return ("street", names[0]) if names[0] else None
+    if loc.get("text_field"):
+        t = tidy(r.get(loc["text_field"]))
+        if not t:
+            return None
+        if loc.get("between") and loc["between"].strip().lower() in t.lower().split():
+            return ("street", re.split(loc["between"].strip(), t, flags=re.I)[0].strip())
+        if loc.get("and") and re.search(rf"\s{loc['and'].strip()}\s", t, re.I):
+            x, y = re.split(rf"\s{loc['and'].strip()}\s", t, maxsplit=1, flags=re.I)
+            return ("pair", x.strip(), y.strip())
+        return ("street", t)
+    if loc.get("address_field"):
+        street = re.sub(r"^\d[\d-]*[A-Za-z]?\s+(?=\S)", "", tidy(r.get(loc["address_field"])))  # the house number only
+        cross = tidy(r.get(loc.get("cross_field")))
+        if street and cross:
+            return ("pair", street, cross)
+        return ("street", street) if street else None
+    if loc.get("street_field"):
+        return ("street", tidy(r.get(loc["street_field"]))) if r.get(loc["street_field"]) else None
+    return None
+
+
+def at_corner(place: tuple[str, ...] | None, corner: str) -> bool | None:
+    """Whether a crash the dataset places is this corner's: an intersection that is the corner, or a street that is
+    one of its streets. None when the dataset does not say (such a crash is kept)."""
+    from .brief import same_corner
+    if place is None:
+        return None
+    if place[0] == "pair":
+        pair = f"{place[1]} & {place[2]}"
+        return same_corner(pair, corner) and same_corner(corner, pair)
+    return any(same_corner(place[1], street) for street in re.split(r"\s*&\s*", corner.split(",")[0]))
+
+
+def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years: int = 5,
+                  corner: str | None = None) -> dict:
     """The common crash profile from any crash adapter: counts, injuries and deaths by mode, crash groups, and the
     share of crashes in darkness and on wet or icy surfaces."""
     since = _since(years)
     rows = rows_near(a, lat, lon, radius_m, since)
+    attribution = None
+    if corner and (a.get("street_fields") or a.get("location")):
+        # the corner's own crashes: those the dataset places at another intersection or on another street are left
+        # out (a 100 m circle takes in neighbouring corners where they are close; independent test round 3)
+        places = [(r, crash_place(r, a)) for r in rows]
+        mine = [r for r, pl in places if at_corner(pl, corner) is not False]
+        attribution = {"by": "where the dataset places each crash", "within_radius": len(rows), "kept": len(mine),
+                       "left_out_elsewhere": len(rows) - len(mine),
+                       "not_placed": sum(pl is None for _, pl in places)}
+        all_rows, rows = rows, mine
+    else:
+        all_rows = rows
     inj, kil = a.get("injured", {}), a.get("killed", {})
     sums = Counter()
     injury_crashes, groups, factors, years_c = 0, Counter(), Counter(), Counter()
     dark = wet = dark_lit = 0
     pairs, pair_injury = Counter(), Counter()  # the intersection the city codes each crash at, where it records one
-    for r in rows:
-        names = [" ".join(str(r.get(f) or "").split()).title() for f in a.get("street_fields", [])]
-        if len(names) >= 2 and all(names[:2]):
-            key = " & ".join(sorted(names[:2]))
+    for r in all_rows:
+        pl = crash_place(r, a)
+        if pl and pl[0] == "pair":
+            key = " & ".join(sorted(pl[1:]))
             pairs[key] += 1
+            if any(_sum(r, v) > 0 for v in list(a.get("injured", {}).values()) + list(a.get("killed", {}).values())):
+                pair_injury[key] += 1
+    for r in rows:
         d = _date(r.get(a.get("date_field")))
         years_c[str(d.year) if d else "unknown"] += 1
         per = {}
@@ -302,8 +364,6 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             sums[k] += v
         if any(v > 0 for v in per.values()) or _sum(r, a.get("serious_injured", [])) > 0:
             injury_crashes += 1
-            if len(names) >= 2 and all(names[:2]):
-                pair_injury[" & ".join(sorted(names[:2]))] += 1
         kind = _text(r, a.get("crash_type_fields", []))
         fac = _text(r, a.get("factor_fields", []))
         if per["pedestrian_injured"] + per["pedestrian_killed"] > 0 or _sum(r, a.get("pedestrian_involved", [])) > 0 \
@@ -348,7 +408,8 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             # the independent test: a 100 m circle can hold more of the neighbouring corners' crashes than this one's)
             **({"street_pairs": [{"pair": k, "crashes": v, "injury_crashes": pair_injury[k]}
                                  for k, v in pairs.most_common(8)],
-                "street_coded": sum(pairs.values())} if a.get("street_fields") else {}),
+                "street_coded": sum(pairs.values())} if a.get("street_fields") or a.get("location") else {}),
+            **({"attribution": attribution} if attribution else {}),
             "top_factors": [{"factor": f, "crashes": c} for f, c in factors.most_common(3)],
             "factor_counts": dict(factors.most_common(15))}
 
