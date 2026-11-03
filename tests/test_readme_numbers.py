@@ -170,3 +170,14 @@ def test_t27_numbers():
     s = run_summary(_load("experiment_T27.json"), sp)
     assert s["rule_met"] and s["on_proposed_corner"] == s["published"]
     _has(f"{s['published']} of {s['inputs']} memos, all on the proposed corner, at ${s['mean_usd']:.3f} a review")
+
+
+def test_t28_numbers():
+    from nearmisslens.review import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T28.json").read_text())
+    s = run_summary(_load("experiment_T28.json"), sp)
+    t27 = run_summary(_load("experiment_T27.json"), json.loads((ROOT / "validation" / "experiments" / "T27.json").read_text()))
+    assert s["rule_met"] and s["objections_on_the_verdict"] == 0
+    _has(f"{s['objections_kept']} in all, against {t27['objections_kept']}")
+    _has(f"${s['mean_usd']:.3f} a review")
+    _has(f"{s['memos_with_3_objections']} of {s['published']} memos, {s['objections_kept']} objections")

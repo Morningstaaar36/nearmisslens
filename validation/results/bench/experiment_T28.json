@@ -1,0 +1,2043 @@
+{
+ "id": "T28",
+ "cases": [
+  {
+   "id": "chicago_0948ca",
+   "city_id": "chicago",
+   "source": "https://www.change.org/p/fix-ashland-cullerton-now-justice-for-marcela",
+   "status": "published",
+   "reason": null,
+   "city": "chicago",
+   "city_name": "Chicago",
+   "input": "A raised pedestrian refuge island at Ashland Avenue & Cullerton Street",
+   "proposal": {
+    "address": "Ashland Avenue & Cullerton Street, Chicago",
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "what": "raised pedestrian refuge island at Ashland Avenue & Cullerton Street"
+     }
+    ],
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "Provide a raised pedestrian refuge island at the intersection"
+   },
+   "corner": "Ashland Avenue & Cullerton Street, Chicago",
+   "verdict": "proceed",
+   "verdict_text": "proceed: the evidence supports this fix here",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "cost_usd": null,
+      "proposed": {
+       "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+       "scale": "reconstruction",
+       "evidence": "national studies",
+       "cmf": 0.685,
+       "crf_pct": 31.5,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.6,
+       "expected_crashes_avoided_per_year": 0.2,
+       "injury_crashes_avoided_per_year": 0.19,
+       "harm_avoided_usd_per_year": 65000.0,
+       "break_even_cost_usd": 455000.0
+      },
+      "best_alternative": {
+       "countermeasure": "Rectangular Rapid Flashing Beacons",
+       "scale": "low-cost",
+       "evidence": "FHWA-cited",
+       "cmf": 0.526,
+       "crf_pct": 47.4,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.6,
+       "expected_crashes_avoided_per_year": 0.3,
+       "injury_crashes_avoided_per_year": 0.28,
+       "harm_avoided_usd_per_year": 97000.0,
+       "break_even_cost_usd": 684000.0
+      },
+      "in_place": null,
+      "not_estimated_reason": null,
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "the record shows the crashes it targets and the evidence is national studies"
+      ],
+      "verdict": "proceed",
+      "verdict_text": "proceed: the evidence supports this fix here",
+      "what": "raised pedestrian refuge island at Ashland Avenue & Cullerton Street"
+     }
+    ],
+    "verdict": "proceed",
+    "verdict_text": "proceed: the evidence supports this fix here",
+    "site_control": "Uncontrolled",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "the record shows the crashes it targets and the evidence is national studies"
+    ],
+    "proposed": {
+     "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+     "scale": "reconstruction",
+     "evidence": "national studies",
+     "cmf": 0.685,
+     "crf_pct": 31.5,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 0.6,
+     "expected_crashes_avoided_per_year": 0.2,
+     "injury_crashes_avoided_per_year": 0.19,
+     "harm_avoided_usd_per_year": 65000.0,
+     "break_even_cost_usd": 455000.0
+    },
+    "best_alternative": {
+     "countermeasure": "Rectangular Rapid Flashing Beacons",
+     "scale": "low-cost",
+     "evidence": "FHWA-cited",
+     "cmf": 0.526,
+     "crf_pct": 47.4,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 0.6,
+     "expected_crashes_avoided_per_year": 0.3,
+     "injury_crashes_avoided_per_year": 0.28,
+     "harm_avoided_usd_per_year": 97000.0,
+     "break_even_cost_usd": 684000.0
+    },
+    "in_place": null,
+    "not_estimated_reason": null,
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "Most crashes at the site are not the type the island targets, limiting relevance: only 0.6 pedestrian injury crashes per year vs 114 total crashes in the radius.",
+     "receipt": "D4",
+     "field": "crashes.crashes",
+     "value": 114
+    },
+    {
+     "id": "O2",
+     "objection": "A better alternative exists that targets the same harm more effectively and is low-cost vs reconstruction: RRFBs avoid 0.28 injury crashes/year vs 0.19 for the island.",
+     "receipt": "D7",
+     "field": "best_alternative.injury_crashes_avoided_per_year",
+     "value": 0.28
+    },
+    {
+     "id": "O3",
+     "objection": "Cost justification for this reconstruction is weak because cost covers is not stated and break-even is relatively low ($455k), so unknown actual cost may exceed benefit.",
+     "receipt": "D7",
+     "field": "cost_covers",
+     "value": "not stated"
+    },
+    {
+     "id": "O4",
+     "objection": "The site also has wet-road injury crashes (0.7 per year) that the island does not address; pavement friction alternative targets this separate pattern.",
+     "receipt": "D4",
+     "field": "options.1.targets",
+     "value": "injury crashes on wet roads"
+    },
+    {
+     "id": "O5",
+     "objection": "The claimed ownership and ability to act is only inferred from OpenStreetMap, not a definitive owner commitment.",
+     "receipt": "D5",
+     "field": "owners.0.confidence",
+     "value": "inferred"
+    }
+   ],
+   "objections_dropped": [],
+   "memo": {
+    "summary": "Verdict is proceed. The Medians and Pedestrian Refuge Islands in Urban and Suburban Areas part (raised pedestrian refuge island) is proceed: the evidence supports this fix here. The estimate is modest and cost is unstated, with a higher-value beacon alternative noted and ownership to confirm via the draft request.",
+    "verdict": "proceed",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "Ashland Avenue & Cullerton Street had 18 injury crashes in police records since 2021-10-31: 1 person killed."
+     },
+     {
+      "receipt": "D4",
+      "text": "At the U.S. DOT's values that harm costs about $1.2 million a year (injury crashes only)."
+     },
+     {
+      "receipt": "D2",
+      "text": "What these crashes have in common is not compared with the rest of the city: it has no screened priority junctions to compare against."
+     },
+     {
+      "receipt": "D7",
+      "text": "The raised island targets pedestrian injury crashes with CMF 0.685 (31.5% reduction) from national studies, expected to avoid about 0.2 crashes a year, including 0.19 injury crashes avoided per year, worth $65,000 per year in harm avoided."
+     },
+     {
+      "receipt": "D7",
+      "text": "Cost covers is not stated with break-even cost $455,000 against $65,000 per year in harm avoided."
+     },
+     {
+      "receipt": "D4",
+      "text": "Rectangular Rapid Flashing Beacons would avoid about 0.3 crashes a year, worth $97,000 a year."
+     },
+     {
+      "receipt": "D7",
+      "text": "Best alternative is Rectangular Rapid Flashing Beacons at low-cost scale with FHWA-cited evidence and CMF 0.526, expected to avoid 0.28 injury crashes avoided per year worth $97,000 per year with break-even $684,000."
+     },
+     {
+      "receipt": "D5",
+      "text": "The Chicago Department of Transportation (CDOT) is responsible for South Ashland Avenue and West Cullerton Street."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "receipt": "D7",
+      "answer": "The appraised target is 0.6 pedestrian injury crashes per year, and the island is estimated to avoid 0.19 injury crashes avoided per year; relevance is limited to that subset, which is why the verdict remains proceed rather than a broader claim."
+     },
+     {
+      "objection": "O2",
+      "receipt": "D7",
+      "answer": "Rectangular Rapid Flashing Beacons as best alternative would avoid 0.28 injury crashes avoided per year versus 0.19 injury crashes avoided per year for the island, but the island still shows positive expected harm avoided and the appraisal retains proceed."
+     },
+     {
+      "objection": "O3",
+      "receipt": "D7",
+      "answer": "Cost covers is not stated and break-even cost is $455,000, so proceeding assumes final cost will be weighed against $65,000 per year in harm avoided before funds commit."
+     },
+     {
+      "objection": "O4",
+      "receipt": "D4",
+      "answer": "Pavement Friction Management would avoid about 0.4 crashes a year worth $129,000 a year for wet-road patterns, a separate pattern the island does not target."
+     },
+     {
+      "objection": "O5",
+      "receipt": "D5",
+      "answer": "Responsibility is attributed to the Chicago Department of Transportation (CDOT) for South Ashland Avenue and West Cullerton Street, and the ready draft request letter provides the path to confirm commitment."
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "verdict": "proceed"
+     }
+    ]
+   },
+   "letter": null,
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0481,
+    "open_weights_red_team": 0.0308
+   },
+   "turns": 8,
+   "seconds": 50.8,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 8,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-164826_ashland_avenue_cullerton_street_chicago"
+  },
+  {
+   "id": "dc_4427fc",
+   "city_id": "dc",
+   "source": "https://anc2a.org/wp-content/uploads/2026/05/23L-Draft-Resolution.pdf",
+   "status": "published",
+   "reason": null,
+   "city": "dc",
+   "city_name": "Washington DC",
+   "input": "A leading pedestrian interval at 22nd Street NW & L Street NW",
+   "proposal": {
+    "address": "22nd Street NW & L Street NW, Washington DC",
+    "parts": [
+     {
+      "countermeasure": "Leading Pedestrian Interval",
+      "what": "leading pedestrian interval at 22nd Street NW & L Street NW"
+     }
+    ],
+    "countermeasure": "Leading Pedestrian Interval",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "Provide a leading pedestrian interval at 22nd Street NW & L Street NW"
+   },
+   "corner": "22nd Street Northwest & L Street Northwest, Washington DC",
+   "verdict": "reconsider",
+   "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Leading Pedestrian Interval",
+      "cost_usd": null,
+      "proposed": null,
+      "best_alternative": null,
+      "in_place": {
+       "countermeasure": "Leading Pedestrian Interval",
+       "year": null,
+       "dataset": "dc-lpi"
+      },
+      "not_estimated_reason": null,
+      "site_control": "Signalized",
+      "reasons": [
+       "the city's records show Leading Pedestrian Interval already installed here"
+      ],
+      "verdict": "reconsider",
+      "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+      "what": "leading pedestrian interval at 22nd Street NW & L Street NW"
+     }
+    ],
+    "verdict": "reconsider",
+    "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+    "site_control": "Signalized",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "the city's records show Leading Pedestrian Interval already installed here"
+    ],
+    "proposed": null,
+    "best_alternative": null,
+    "in_place": {
+     "countermeasure": "Leading Pedestrian Interval",
+     "year": null,
+     "dataset": "dc-lpi"
+    },
+    "not_estimated_reason": null,
+    "countermeasure": "Leading Pedestrian Interval"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "Despite LPI record, harm remains high: reconsider should not imply no action is warranted given documented burden.",
+     "receipt": "D4",
+     "field": "crashes.injury_crashes",
+     "value": 13
+    },
+    {
+     "id": "O2",
+     "objection": "LPI narrowly targets pedestrians, yet most injury burden is motorists, undermining premise to duplicate LPI.",
+     "receipt": "D4",
+     "field": "crashes.motorist_injured",
+     "value": 11
+    },
+    {
+     "id": "O3",
+     "objection": "Pedestrian harm still present (2 injured) suggests residual risk even if LPI installed; agency could still justify pedestrian investment.",
+     "receipt": "D4",
+     "field": "crashes.pedestrian_injured",
+     "value": 2
+    },
+    {
+     "id": "O4",
+     "objection": "Statistical non-significance in DC program does not prove ineffectiveness at this site; evidence uncertainty argued for reconsider but does not rule out benefit.",
+     "receipt": "D8",
+     "field": "text",
+     "value": "at 267 sites the change in pedestrian injury crashes (-19%, 95% interval -35% to +1%) could be zero"
+    }
+   ],
+   "objections_dropped": [
+    {
+     "objection": "Despite LPI record, harm remains high: reconsider should not imply no action is warranted given documented burden.",
+     "receipt": "D4",
+     "field": "crashes.injury_crashes",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "LPI narrowly targets pedestrians, yet most injury burden is motorists, undermining premise to duplicate LPI.",
+     "receipt": "D4",
+     "field": "crashes.motorist_injured",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Pedestrian harm still present (2 injured) suggests residual risk even if LPI installed; agency could still justify pedestrian investment.",
+     "receipt": "D4",
+     "field": "crashes.pedestrian_injured",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Statistical non-significance in DC program does not prove ineffectiveness at this site; evidence uncertainty argued for reconsider but does not rule out benefit.",
+     "receipt": "D8",
+     "field": "text",
+     "why": "another objection already rests on this fact"
+    }
+   ],
+   "memo": {
+    "summary": "Verdict is reconsider: the Leading Pedestrian Interval part is reconsider because the city's records show it is already installed here and the city program does not show it worked. Harm remains high, so DDOT should pursue site-checked signal-visibility alternatives instead of duplicating LPI.",
+    "verdict": "reconsider",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "22nd Street Northwest & L Street Northwest had 13 injury crashes since 2021-10-31: 2 pedestrians injured, 3 cyclists injured and 0 people killed."
+     },
+     {
+      "receipt": "D2",
+      "text": "No crash pattern here stands out against the city's worst crash locations."
+     },
+     {
+      "receipt": "D7",
+      "text": "The city's records show Leading Pedestrian Interval already installed here, so the proposal would duplicate existing equipment."
+     },
+     {
+      "receipt": "D3",
+      "text": "Across the city at 267 sites the change in pedestrian injury crashes (-19%, 95% interval -35% to +1%) could be zero, neither showing LPI worked nor ruling it out."
+     },
+     {
+      "receipt": "D4",
+      "text": "That harm costs about $890,000 a year at U.S. DOT values, while the proposal states no cost to compare."
+     },
+     {
+      "receipt": "D4",
+      "text": "Best alternatives with quantified expected effect: Backplates with Retroreflective Borders would avoid about 0.4 crashes a year worth $134,000 a year, and Yellow Change Intervals would avoid about 0.2 crashes a year worth $69,000 a year, each only if a site check confirms an entry on yellow or red."
+     },
+     {
+      "receipt": "D5",
+      "text": "The District Department of Transportation (DDOT) is responsible for 22nd Street Northwest, L Street Northwest, and New Hampshire Avenue Northwest."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "answer": "Reconsider does not mean no action is needed: harm remains and the memo recommends site-checked alternatives rather than no action.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O2",
+      "answer": "Duplicating LPI is not supported because most injured are motorists and LPI narrowly targets pedestrians, so signal-visibility alternatives fit better.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O3",
+      "answer": "2 pedestrians injured shows residual pedestrian risk remains, but the record shows LPI is already installed here so a repeat installation is not the remedy.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O4",
+      "answer": "The city program at 267 sites with change -19% (95% interval -35% to +1%) could be zero neither shows LPI worked nor rules it out, so repeating it here rests on other evidence.",
+      "receipt": "D8"
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Leading Pedestrian Interval",
+      "verdict": "reconsider"
+     }
+    ]
+   },
+   "letter": "To: the District Department of Transportation (DDOT)\nSubject: Request for safety study and signal improvements at 22nd Street NW & L Street NW\n\nDear colleagues at DDOT,\n\nWe are writing about the junction of 22nd Street Northwest & L Street Northwest.\n\nThe city's open record for the 5 years from 31 October 2021 shows 38 crashes including 13 injury crashes. The record of who was hurt includes 2 pedestrians injured, 3 cyclists injured, and motorists, with 0 people killed listed. In the U.S. DOT's official values for the cost of crashes (2024 dollars), the yearly cost of the harm is $0.9 million. The records do not show recent safety work in this period, but list NHS - Federal Aid Pavement Restoration - NHPP Streets in 2026 as the latest recorded safety project and NHS - Federal Aid Pavement Restoration - NHPP Streets in 2027 as planned.\n\nThe site is listed as a city priority location. We respectfully ask you to carry out a safety study at this junction and, on the roads you are responsible for, to include the fixes noted below where the study shows they fit, using the plain names the city uses.\n\nLonger yellow signal times, which would need a check that there is an entry on yellow or red and that the current yellow plus all-red time is below the ITE recommended practice, is expected to prevent injury crashes.\n\nReflective backplates on the traffic signals, which would need a check for an entry on yellow or red, is expected to prevent injury crashes.\n\nThe city record shows Leading Pedestrian Interval signals are already in place. The earlier program's effect was not shown and we ask for a different approach based on the independent checks above.\n\nThank you for your work and consideration.\n\nYours sincerely,\n\n[Your name]\n[Your organisation or address]\n\nSources:\n- Open Data DC, Crashes in DC (DCGIS Public_Safety MapServer/24)\n- DDOT ProTrack projects (lines); DDOT ProTrack projects (points); DDOT Traffic Signals LPI (TrafficSafety MapServer/1); DDOT moveDC High Injury Network\n- FHWA CMF Clearinghouse, CMF 1410 (reflective backplates on the traffic signals)\n- FHWA CMF Clearinghouse, CMF 4219 (longer yellow signal times)\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)",
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0436,
+    "open_weights_red_team": 0.0341
+   },
+   "turns": 7,
+   "seconds": 28.1,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-164854_22nd_street_northwest_l_street_northwest"
+  },
+  {
+   "id": "nyc_15a89c",
+   "city_id": "nyc",
+   "source": "https://www.nyc.gov/html/dot/downloads/pdf/e169-st-rev-james-a-polite-ave-lyman-pl-whh.pdf",
+   "status": "published",
+   "reason": null,
+   "city": "nyc",
+   "city_name": "New York City",
+   "input": "A new concrete pedestrian island and left-turn restrictions at East 169th Street & Rev James A Polite Avenue, Bronx",
+   "proposal": {
+    "address": "East 169th Street & Rev James A Polite Avenue, New York City",
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "what": "new concrete pedestrian island"
+     },
+     {
+      "countermeasure": "other",
+      "what": "left-turn restrictions"
+     }
+    ],
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "improve safety with a new concrete pedestrian island and left-turn restrictions"
+   },
+   "corner": "Reverend James A Polite Avenue & East 169th Street, New York City",
+   "verdict": "outside_evidence",
+   "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "cost_usd": null,
+      "proposed": null,
+      "best_alternative": null,
+      "in_place": null,
+      "not_estimated_reason": "its CMF Clearinghouse records are for uncontrolled sites, and this site's control is stop-controlled",
+      "site_control": "Stop-controlled",
+      "reasons": [
+       "no crash-modification evidence for Medians and Pedestrian Refuge Islands in Urban and Suburban Areas applies to this site as the record shows it: its CMF Clearinghouse records are for uncontrolled sites, and this site's control is stop-controlled"
+      ],
+      "verdict": "outside_evidence",
+      "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+      "what": "new concrete pedestrian island"
+     },
+     {
+      "countermeasure": "other",
+      "what": "left-turn restrictions",
+      "verdict": "outside_evidence",
+      "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+      "reasons": [
+       "left-turn restrictions is not one of the federal Proven Safety Countermeasures, so no crash-modification evidence is applied to it here; it needs its own study"
+      ]
+     }
+    ],
+    "verdict": "outside_evidence",
+    "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+    "site_control": "Stop-controlled",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas: not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record (no crash-modification evidence for Medians and Pedestrian Refuge Islands in Urban and Suburban Areas applies to this site as the record shows it: its CMF Clearinghouse records are for uncontrolled sites, and this site's control is stop-controlled)",
+     "left-turn restrictions: not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record (left-turn restrictions is not one of the federal Proven Safety Countermeasures, so no crash-modification evidence is applied to it here; it needs its own study)"
+    ],
+    "proposed": null,
+    "best_alternative": null,
+    "in_place": null,
+    "not_estimated_reason": "its CMF Clearinghouse records are for uncontrolled sites, and this site's control is stop-controlled",
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "Agency may still fund despite outside_evidence label because record shows serious ongoing harm warranting engineer assessment: 8 injury crashes in 5 years.",
+     "receipt": "D4",
+     "field": "crashes.injury_crashes",
+     "value": 8
+    },
+    {
+     "id": "O2",
+     "objection": "Harms include vulnerable road users the island targets: 1 pedestrian injured and 2 cyclists injured, supporting site-study path.",
+     "receipt": "D4",
+     "field": "crashes.pedestrian_injured",
+     "value": 1
+    },
+    {
+     "id": "O3",
+     "objection": "Absence of over-represented factor patterns does not rule out benefit; the 40% unspecified factor share shows limits of crash factor data, which site study can supplement.",
+     "receipt": "D2",
+     "field": "factor_unspecified_share",
+     "value": 0.4
+    },
+    {
+     "id": "O4",
+     "objection": "Evidence gap is about transferability, not harm severity: enough crashes threshold met, indicating site warrants detailed review.",
+     "receipt": "D2",
+     "field": "enough_crashes",
+     "value": true
+    },
+    {
+     "id": "O5",
+     "objection": "Outside-evidence does not mean low harm: 20 crashes in 100m since 2021-10-31 provides prima facie case for engineer-led safety study.",
+     "receipt": "D4",
+     "field": "crashes.crashes",
+     "value": 20
+    }
+   ],
+   "objections_dropped": [],
+   "memo": {
+    "summary": "Verdict is outside_evidence: both the new concrete pedestrian island and the left-turn restrictions are outside_evidence, so no crash-modification evidence fits this stop-controlled site. The corner shows 8 injury crashes with pedestrian and cyclist injuries, no standout pattern, and no stated cost, leaving the decision to a NYC DOT site study and engineer assessment.",
+    "verdict": "outside_evidence",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "Reverend James A Polite Avenue & East 169th Street had 8 injury crashes in police records since 2021-10-31: 1 pedestrian injured, 2 cyclists injured and 0 people killed."
+     },
+     {
+      "receipt": "D2",
+      "text": "No crash pattern here stands out against the city's priority junctions."
+     },
+     {
+      "receipt": "D7",
+      "text": "No crash-modification evidence for Medians and Pedestrian Refuge Islands applies to this stop-controlled site because its CMF Clearinghouse records are for uncontrolled sites, and left-turn restrictions have no federal countermeasure evidence applied here, so expected effect is not estimated."
+     },
+     {
+      "receipt": "D4",
+      "text": "At the U.S. DOT's values that harm costs about $548,000 a year."
+     },
+     {
+      "receipt": "D3",
+      "text": "The city's Leading Pedestrian Interval signals passed the causal gate with pedestrian injury crashes changed -17% at 1,651 sites."
+     },
+     {
+      "receipt": "D5",
+      "text": "The NYC Department of Transportation (NYC DOT) is responsible for Reverend James A Polite Avenue, East 169th Street, a city street."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "answer": "Agreed that outside_evidence means decision rests on a site study and engineer assessment, not denial of harm; the 8 injury crashes support referral to NYC DOT for study.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O2",
+      "answer": "Noted; the record shows 1 pedestrian injured and 2 cyclists injured, which the engineer study can consider when assessing the island.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O3",
+      "answer": "Accepted; no standout pattern does not rule out benefit, and on-site review can supplement factor data.",
+      "receipt": "D2"
+     },
+     {
+      "objection": "O4",
+      "answer": "Agreed; the gap is transferability of crash-modification evidence, and the site warrants detailed review by the road owner.",
+      "receipt": "D2"
+     },
+     {
+      "objection": "O5",
+      "answer": "Agreed; outside_evidence is not a finding of low harm, and the crash record supports an engineer-led safety study request.",
+      "receipt": "D4"
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "verdict": "outside_evidence"
+     },
+     {
+      "countermeasure": "other",
+      "verdict": "outside_evidence"
+     }
+    ]
+   },
+   "letter": "To: the NYC Department of Transportation (NYC DOT)\nCc: Council Member, District 17, New York City Council; Bronx Community Board 3\nSubject: Request for safety review at Reverend James A Polite Avenue & East 169th Street \u2013 20 crashes in 5 years\n\nDear colleagues at NYC DOT,\n\nAs the owners of Reverend James A Polite Avenue and East 169th Street, I am writing to ask you to carry out a safety study at Reverend James A Polite Avenue & East 169th Street.\n\nThe official record for the 5 years from 31 October 2021 shows 20 crashes, including 8 crashes where people were injured. 2 cyclists and 1 pedestrian were injured. No one was killed. By the U.S. DOT's official values for the cost of crashes (2024 dollars) this harm is valued at $0.50 million per year.\n\nA safety project was recorded in this period: E 169th St and Rev James A Polite/Lyman Pl in 2024.\n\nPlease consider what further measures on the roads you are responsible for could reduce these casualties, check on site what is feasible, and advise what action will be taken.\n\nThank you for your help.\n\n[Your name]\n[Your organisation or address]\n\nSources:\n- NYC Open Data, Motor Vehicle Collisions - Crashes (h9gi-nx95)\n- NYC DOT Street Improvement Projects (corridors); NYC DOT Street Improvement Projects (intersections); NYC Vision Zero View, Enhanced Crossings (6ax4-q5k4); NYC Vision Zero View, Leading Pedestrian Interval Signals; NYC Vision Zero View, Signal Timing/25 MPH Retiming; NYC Vision Zero View, Speed Humps (jknp-skuy); NYC Vision Zero View, Turn Traffic Calming; NYC Vision Zero priority corridors; NYC Vision Zero priority intersections\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)",
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0651,
+    "open_weights_red_team": 0.0298
+   },
+   "turns": 9,
+   "seconds": 186.5,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 8,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 9,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-165200_reverend_james_a_polite_avenue_east_169t"
+  },
+  {
+   "id": "seattle_1673ea",
+   "city_id": "seattle",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "status": "published",
+   "reason": null,
+   "city": "seattle",
+   "city_name": "Seattle",
+   "input": "Flashing beacons on all four corners, two new crosswalks and four curb ramps at 33rd Ave S & S Myrtle Pl",
+   "proposal": {
+    "address": "33rd Ave S & S Myrtle Pl, Seattle",
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "what": "Flashing beacons on all four corners"
+     },
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "what": "two new crosswalks"
+     },
+     {
+      "countermeasure": "other",
+      "what": "four curb ramps - ADA curb ramps at new crosswalks"
+     }
+    ],
+    "countermeasure": "Rectangular Rapid Flashing Beacons",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "Flashing beacons on all four corners, two new crosswalks and four curb ramps at 33rd Ave S & S Myrtle Pl"
+   },
+   "corner": "33rd Avenue South & South Myrtle Place, Seattle",
+   "verdict": "mixed",
+   "verdict_text": "decide part by part: the parts of this proposal get different verdicts",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "cost_usd": null,
+      "proposed": {
+       "countermeasure": "Rectangular Rapid Flashing Beacons",
+       "scale": "low-cost",
+       "evidence": "FHWA-cited",
+       "cmf": 0.526,
+       "crf_pct": 47.4,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.2,
+       "expected_crashes_avoided_per_year": 0.1,
+       "injury_crashes_avoided_per_year": 0.09,
+       "harm_avoided_usd_per_year": 32000.0,
+       "break_even_cost_usd": 228000.0
+      },
+      "best_alternative": {
+       "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+       "scale": "reconstruction",
+       "evidence": "national studies",
+       "cmf": 0.685,
+       "crf_pct": 31.5,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.2,
+       "expected_crashes_avoided_per_year": 0.1,
+       "injury_crashes_avoided_per_year": 0.06,
+       "harm_avoided_usd_per_year": 22000.0,
+       "break_even_cost_usd": 152000.0
+      },
+      "in_place": null,
+      "not_estimated_reason": null,
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "the record shows the crashes it targets and the evidence is FHWA-cited"
+      ],
+      "verdict": "proceed",
+      "verdict_text": "proceed: the evidence supports this fix here",
+      "what": "Flashing beacons on all four corners"
+     },
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "cost_usd": null,
+      "proposed": null,
+      "best_alternative": {
+       "countermeasure": "Rectangular Rapid Flashing Beacons",
+       "scale": "low-cost",
+       "evidence": "FHWA-cited",
+       "cmf": 0.526,
+       "crf_pct": 47.4,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.2,
+       "expected_crashes_avoided_per_year": 0.1,
+       "injury_crashes_avoided_per_year": 0.09,
+       "harm_avoided_usd_per_year": 32000.0,
+       "break_even_cost_usd": 228000.0
+      },
+      "in_place": null,
+      "not_estimated_reason": "CMF 2697 was measured only at school crossings, and this site is not known to be one",
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "no crash-modification evidence for Crosswalk Visibility Enhancements applies to this site as the record shows it: CMF 2697 was measured only at school crossings, and this site is not known to be one"
+      ],
+      "verdict": "outside_evidence",
+      "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+      "what": "two new crosswalks"
+     },
+     {
+      "countermeasure": "other",
+      "what": "four curb ramps - ADA curb ramps at new crosswalks",
+      "verdict": "outside_evidence",
+      "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+      "reasons": [
+       "four curb ramps - ADA curb ramps at new crosswalks is not one of the federal Proven Safety Countermeasures, so no crash-modification evidence is applied to it here; it needs its own study"
+      ]
+     }
+    ],
+    "verdict": "mixed",
+    "verdict_text": "decide part by part: the parts of this proposal get different verdicts",
+    "site_control": "Uncontrolled",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "Rectangular Rapid Flashing Beacons: proceed: the evidence supports this fix here (the record shows the crashes it targets and the evidence is FHWA-cited)",
+     "Crosswalk Visibility Enhancements: not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record (no crash-modification evidence for Crosswalk Visibility Enhancements applies to this site as the record shows it: CMF 2697 was measured only at school crossings, and this site is not known to be one)",
+     "four curb ramps - ADA curb ramps at new crosswalks: not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record (four curb ramps - ADA curb ramps at new crosswalks is not one of the federal Proven Safety Countermeasures, so no crash-modification evidence is applied to it here; it needs its own study)"
+    ],
+    "proposed": {
+     "countermeasure": "Rectangular Rapid Flashing Beacons",
+     "scale": "low-cost",
+     "evidence": "FHWA-cited",
+     "cmf": 0.526,
+     "crf_pct": 47.4,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 0.2,
+     "expected_crashes_avoided_per_year": 0.1,
+     "injury_crashes_avoided_per_year": 0.09,
+     "harm_avoided_usd_per_year": 32000.0,
+     "break_even_cost_usd": 228000.0
+    },
+    "best_alternative": {
+     "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+     "scale": "reconstruction",
+     "evidence": "national studies",
+     "cmf": 0.685,
+     "crf_pct": 31.5,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 0.2,
+     "expected_crashes_avoided_per_year": 0.1,
+     "injury_crashes_avoided_per_year": 0.06,
+     "harm_avoided_usd_per_year": 22000.0,
+     "break_even_cost_usd": 152000.0
+    },
+    "in_place": null,
+    "not_estimated_reason": null,
+    "countermeasure": "Rectangular Rapid Flashing Beacons"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "RRFBs target only a tiny slice of harm here; the dominant pattern is fixed-object/object-struck crashes that beacons do not address, leaving most of the 43 crashes untouched.",
+     "receipt": "D2",
+     "field": "over_represented.0.pattern",
+     "value": "crash type: fixed object"
+    },
+    {
+     "id": "O2",
+     "objection": "Expected benefit is negligible (0.09 injury crashes avoided per year, $32k harm avoided) \u2013 break-even is $228k yet proposal cost is not stated, so cost vs benefit cannot be validated.",
+     "receipt": "D4",
+     "field": "options.0.injury_crashes_avoided_per_year",
+     "value": 0.09
+    },
+    {
+     "id": "O3",
+     "objection": "A higher-impact alternative exists for wet-road injury crashes (0.5 target/year, 0.3 injury crashes avoided/year) but requires on-site verification that friction is low now \u2013 undermining proceeding without that precondition check.",
+     "receipt": "D4",
+     "field": "options.1.targets",
+     "value": "injury crashes on wet roads"
+    },
+    {
+     "id": "O4",
+     "objection": "Road ownership is only inferred from OpenStreetMap, not confirmed; proceeding assumes SDOT authority without a confirmed owner to implement/maintain the beacons.",
+     "receipt": "D5",
+     "field": "owners.0.confidence",
+     "value": "inferred"
+    }
+   ],
+   "objections_dropped": [
+    {
+     "objection": "RRFBs target just 0.2 pedestrian-injury crashes/year while the bulk of injuries arise from other patterns; most loss remains even if effective, weakening the case to proceed.",
+     "receipt": "D2",
+     "field": "over_represented.0.pattern",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Benefit is negligible (0.09 injury crashes avoided per year) and break-even $228k hinges on an unknown cost, since coverage is not stated, so value cannot be verified.",
+     "receipt": "D4",
+     "field": "options.0.injury_crashes_avoided_per_year",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "There is a higher-yield target at this site \u2014 injury crashes on wet roads at 0.5/year \u2014 but it needs a site check that friction is low now, a precondition not met in the record.",
+     "receipt": "D4",
+     "field": "options.1.targets",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Ownership is only inferred from OpenStreetMap, so the actor who must approve and maintain the fix is not confirmed.",
+     "receipt": "D5",
+     "field": "owners.0.confidence",
+     "why": "another objection already rests on this fact"
+    }
+   ],
+   "memo": {
+    "summary": "Overall verdict is mixed: Rectangular Rapid Flashing Beacons proceed, Crosswalk Visibility Enhancements outside_evidence, curb ramps (other) outside_evidence. The beacons are supported by FHWA-cited evidence for the pedestrian crashes in the record, while the two new crosswalks and four curb ramps have no fitting crash-modification evidence at this site and rest on site study and engineering assessment.",
+    "verdict": "mixed",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "33rd Avenue South & South Myrtle Place had 10 injury crashes in police records since 2021-10-31: 0 people killed, costing about $685,000 a year."
+     },
+     {
+      "receipt": "D2",
+      "text": "21% of crashes here were fixed object against 6% at the city's worst locations, and 16% were motor vehicle struck object in road against 2% there."
+     },
+     {
+      "receipt": "D4",
+      "text": "Rectangular Rapid Flashing Beacons would avoid about 0.1 crashes a year (CMF 9024, the record FHWA's fact sheet cites; evidence: the record FHWA cites), worth $32,000 a year."
+     },
+     {
+      "receipt": "D7",
+      "text": "Break-even cost is $228,000 against $32,000 harm avoided per year, while proposal cost was not stated."
+     },
+     {
+      "receipt": "D7",
+      "text": "Best alternative is Medians and Pedestrian Refuge Islands in Urban and Suburban Areas with harm avoided $22,000 a year with break-even $152,000."
+     },
+     {
+      "receipt": "D5",
+      "text": "The Seattle Department of Transportation (SDOT) is responsible for 33rd Avenue South, South Myrtle Place."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "answer": "RRFBs target pedestrian injury crashes shown in the record, but fixed-object patterns remain unaddressed and need separate treatment per site study.",
+      "receipt": "D2"
+     },
+     {
+      "objection": "O2",
+      "answer": "Expected effect is about 0.1 crashes avoided per year worth $32,000 a year with break-even $228,000, and proposal cost was not stated so cost validation requires a stated cost.",
+      "receipt": "D7"
+     },
+     {
+      "objection": "O3",
+      "answer": "Pavement Friction Management would avoid about 0.3 crashes a year worth $101,000 a year only if a site check confirms friction is low now.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O4",
+      "answer": "SDOT is responsible for 33rd Avenue South, South Myrtle Place, so the work order should go to SDOT with ownership confirmed on site.",
+      "receipt": "D5"
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "verdict": "proceed"
+     },
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "verdict": "outside_evidence"
+     },
+     {
+      "countermeasure": "other",
+      "verdict": "outside_evidence"
+     }
+    ]
+   },
+   "letter": null,
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0468,
+    "open_weights_red_team": 0.0418
+   },
+   "turns": 8,
+   "seconds": 114.2,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 8,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-165354_33rd_avenue_south_south_myrtle_place_sea"
+  },
+  {
+   "id": "seattle_8e2eca",
+   "city_id": "seattle",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "status": "published",
+   "reason": null,
+   "city": "seattle",
+   "city_name": "Seattle",
+   "input": "Pedestrian flashing beacons on all four corners at 15th Ave S & S Lander St",
+   "proposal": {
+    "address": "15th Ave S & S Lander St, Seattle",
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "what": "Pedestrian flashing beacons on all four corners"
+     }
+    ],
+    "countermeasure": "Rectangular Rapid Flashing Beacons",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "Pedestrian flashing beacons on all four corners at 15th Ave S & S Lander St"
+   },
+   "corner": "15th Avenue South & South Lander Street, Seattle",
+   "verdict": "proceed_after_site_check",
+   "verdict_text": "proceed only after a site check confirms what the estimate assumes",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "cost_usd": null,
+      "proposed": {
+       "countermeasure": "Rectangular Rapid Flashing Beacons",
+       "scale": "low-cost",
+       "evidence": "FHWA-cited",
+       "cmf": 0.526,
+       "crf_pct": 47.4,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 1.4,
+       "expected_crashes_avoided_per_year": 0.7,
+       "injury_crashes_avoided_per_year": 0.66,
+       "harm_avoided_usd_per_year": 227000.0,
+       "break_even_cost_usd": 1596000.0
+      },
+      "best_alternative": {
+       "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+       "scale": "reconstruction",
+       "evidence": "national studies",
+       "cmf": 0.685,
+       "crf_pct": 31.5,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 1.4,
+       "expected_crashes_avoided_per_year": 0.4,
+       "injury_crashes_avoided_per_year": 0.44,
+       "harm_avoided_usd_per_year": 151000.0,
+       "break_even_cost_usd": 1061000.0
+      },
+      "in_place": null,
+      "not_estimated_reason": null,
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "Rectangular Rapid Flashing Beacons is built for uncontrolled crossings, and the map shows the corner as signalized (a signal or stop within 80 m may belong to a nearby crossing): confirm the control on site; the estimate here is for a uncontrolled site",
+       "the record shows the crashes it targets and the evidence is FHWA-cited"
+      ],
+      "verdict": "proceed_after_site_check",
+      "verdict_text": "proceed only after a site check confirms what the estimate assumes",
+      "what": "Pedestrian flashing beacons on all four corners",
+      "control_check": {
+       "proposal_implies": "Uncontrolled",
+       "mapped": "Signalized",
+       "basis": "OpenStreetMap: traffic signals and stop signs mapped within 80 m"
+      }
+     }
+    ],
+    "verdict": "proceed_after_site_check",
+    "verdict_text": "proceed only after a site check confirms what the estimate assumes",
+    "site_control": "Signalized",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "Rectangular Rapid Flashing Beacons is built for uncontrolled crossings, and the map shows the corner as signalized (a signal or stop within 80 m may belong to a nearby crossing): confirm the control on site; the estimate here is for a uncontrolled site",
+     "the record shows the crashes it targets and the evidence is FHWA-cited"
+    ],
+    "proposed": {
+     "countermeasure": "Rectangular Rapid Flashing Beacons",
+     "scale": "low-cost",
+     "evidence": "FHWA-cited",
+     "cmf": 0.526,
+     "crf_pct": 47.4,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 1.4,
+     "expected_crashes_avoided_per_year": 0.7,
+     "injury_crashes_avoided_per_year": 0.66,
+     "harm_avoided_usd_per_year": 227000.0,
+     "break_even_cost_usd": 1596000.0
+    },
+    "best_alternative": {
+     "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+     "scale": "reconstruction",
+     "evidence": "national studies",
+     "cmf": 0.685,
+     "crf_pct": 31.5,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 1.4,
+     "expected_crashes_avoided_per_year": 0.4,
+     "injury_crashes_avoided_per_year": 0.44,
+     "harm_avoided_usd_per_year": 151000.0,
+     "break_even_cost_usd": 1061000.0
+    },
+    "in_place": null,
+    "not_estimated_reason": null,
+    "countermeasure": "Rectangular Rapid Flashing Beacons"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "The crash pattern is parked-car related, not pedestrian - RRFBs target pedestrian crashes while bulk of record is parked-car/moving collisions.",
+     "receipt": "D2",
+     "field": "over_represented.0.pattern",
+     "value": "crash type: parked car"
+    },
+    {
+     "id": "O2",
+     "objection": "Site is signalized per mapping, so RRFB (designed for uncontrolled crossings) lacks applicable precondition.",
+     "receipt": "D4",
+     "field": "control",
+     "value": "Signalized"
+    },
+    {
+     "id": "O3",
+     "objection": "With cost covers not stated, break-even analysis cannot establish cost against benefit and agency may overpay.",
+     "receipt": "D1",
+     "field": "cost_covers",
+     "value": "not stated"
+    },
+    {
+     "id": "O4",
+     "objection": "Even accepting some pedestrian crashes, the dominant harm is parked-car collisions which RRFBs do not address, limiting overall benefit.",
+     "receipt": "D2",
+     "field": "over_represented.0.crashes",
+     "value": 35
+    },
+    {
+     "id": "O5",
+     "objection": "Signalized control means flashing beacons are redundant or non-compliant; need alternative like backplates or signal timing.",
+     "receipt": "D7",
+     "field": "site_control",
+     "value": "Signalized"
+    }
+   ],
+   "objections_dropped": [],
+   "memo": {
+    "summary": "Verdict is proceed_after_site_check. The Rectangular Rapid Flashing Beacons part is proceed_after_site_check: proceed only after a site check confirms what the estimate assumes about uncontrolled control. The estimate is conditional on that check.",
+    "verdict": "proceed_after_site_check",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "15th Avenue South & South Lander Street had 33 injury crashes in police records since 2021-10-31: 0 people killed, with harm costing about $2.3 million a year."
+     },
+     {
+      "receipt": "D2",
+      "text": "27% of crashes here were recorded as parked car crashes, against 10% at the city's worst crash locations, with 25% hit a parked car contribution and 24% one parked--one moving."
+     },
+     {
+      "receipt": "D7",
+      "text": "Rectangular Rapid Flashing Beacons with FHWA-cited evidence and CMF 0.526 and CRF of 47.4 percent targets pedestrian injury crashes with target 1.4 per year and expected 0.7 avoided per year including 0.66 injury crashes avoided worth 227000 per year."
+     },
+     {
+      "receipt": "D7",
+      "text": "Proposal cost is not stated with cost_covers not stated, so cost against benefit is judged by break-even cost 1596000; proceed only after site check and if price is within that."
+     },
+     {
+      "receipt": "D7",
+      "text": "Best alternative in appraisal is Medians and Pedestrian Refuge Islands with CMF 0.685 and CRF of 31.5 percent targeting 1.4 per year with 0.4 expected avoided and 0.44 injury avoided worth 151000 per year and break-even 1061000."
+     },
+     {
+      "receipt": "D5",
+      "text": "The Seattle Department of Transportation (SDOT) is responsible for 15th Avenue South, Beacon Avenue South, South Lander Street, and a request letter is drafted."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "receipt": "D7",
+      "response": "Answer to O1: pattern concern is noted, but the appraisal records pedestrian injury crashes of 1.4 per year targeted by Rectangular Rapid Flashing Beacons with FHWA-cited evidence, so a pedestrian benefit is estimated pending site check."
+     },
+     {
+      "objection": "O2",
+      "receipt": "D7",
+      "response": "Answer to O2: the appraisal flags mapped control as Signalized while the proposal implies Uncontrolled and requires confirmation of control on site; the estimate is for an uncontrolled site."
+     },
+     {
+      "objection": "O3",
+      "receipt": "D7",
+      "response": "Answer to O3: cost is not stated in the proposal, so the decision uses break-even cost of 1596000 from the appraisal; proceed only if price is below that and site check passes."
+     },
+     {
+      "objection": "O4",
+      "receipt": "D2",
+      "response": "Answer to O4: the parked-car over-representation is acknowledged as 27% parked car crashes against 10% at the city's worst locations, which limits overall harm addressed and is why verdict is conditional."
+     },
+     {
+      "objection": "O5",
+      "receipt": "D4",
+      "response": "Answer to O5: if the site check shows signalized control, consider the investigated signal alternatives that would avoid about 1.0 crashes a year worth $339,000 a year for backplates and about 0.5 crashes a year worth $176,000 a year for yellow intervals."
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Rectangular Rapid Flashing Beacons",
+      "verdict": "proceed_after_site_check"
+     }
+    ]
+   },
+   "letter": "To: the Seattle Department of Transportation (SDOT)\nSubject: Request for safety review at 15th Avenue South & South Lander Street\n\nDear colleagues at SDOT,\n\nWe are writing to ask you to carry out a safety study at 15th Avenue South & South Lander Street and to consider fixes on the roads you are responsible for (15th Avenue South, Beacon Avenue South and South Lander Street).\n\nThe official record for the 5 years from 31 October 2021 shows 131 crashes. Of those, 33 were injury crashes and none were fatal. Using the U.S. DOT's official values for the cost of crashes (2024 dollars), the harm is valued at $2.3 million per year. The only recent safety work recorded in this period is leading pedestrian intervals in 2023.\n\nWe ask you to assess two low-cost fixes:\n\n* Reflective backplates on the traffic signals. This is expected to prevent about 1.0 injury crashes per year, avoiding about $339,000 in harm per year. It would pay for itself if it costs under $2.4 million. On site, please check whether there is an entry on yellow or red.\n\n* Longer yellow signal times. This is expected to prevent about 0.50 injury crashes per year, avoiding about $176,000 in harm per year. It would pay for itself if it costs under $1.2 million. On site, please check whether there is an entry on yellow or red and whether the current yellow plus all-red time is below the ITE recommended practice.\n\nPlease let us know the outcome of your review and next steps.\n\nYours sincerely,\n\n[Your name]\n[Your organisation or address]\n\nSources:\n- SDOT Collisions All Years (arcgis 5b98ff2b96b34af5b1e774cd9ec1f202)\n- Leading Pedestrian Intervals (ACTIVE) / Signals with LPI and NTOR (arcgis a6e028e2f8c4455d953b138b65bd22de); SDOT Vision Zero Leading Pedestrian Intervals (layer 8)\n- FHWA CMF Clearinghouse, CMF 1410 (reflective backplates on the traffic signals)\n- FHWA CMF Clearinghouse, CMF 4219 (longer yellow signal times)\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)",
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0418,
+    "open_weights_red_team": 0.0419
+   },
+   "turns": 7,
+   "seconds": 47.8,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-165442_15th_avenue_south_south_lander_street_se"
+  },
+  {
+   "id": "seattle_b40acc",
+   "city_id": "seattle",
+   "source": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/vision-zero/highway-safety-improvement-program",
+   "status": "published",
+   "reason": null,
+   "city": "seattle",
+   "city_name": "Seattle",
+   "input": "A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St",
+   "proposal": {
+    "address": "Beacon Ave S & S Webster St, Seattle",
+    "parts": [
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "what": "A crosswalk on the south side of the intersection"
+     }
+    ],
+    "countermeasure": "Crosswalk Visibility Enhancements",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St"
+   },
+   "corner": "Beacon Avenue South & South Webster Street, Seattle",
+   "verdict": "outside_evidence",
+   "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "cost_usd": null,
+      "proposed": null,
+      "best_alternative": {
+       "countermeasure": "Rectangular Rapid Flashing Beacons",
+       "scale": "low-cost",
+       "evidence": "FHWA-cited",
+       "cmf": 0.526,
+       "crf_pct": 47.4,
+       "targets": "pedestrian injury crashes",
+       "target_crashes_per_year": 0.4,
+       "expected_crashes_avoided_per_year": 0.2,
+       "injury_crashes_avoided_per_year": 0.19,
+       "harm_avoided_usd_per_year": 65000.0,
+       "break_even_cost_usd": 456000.0
+      },
+      "in_place": null,
+      "not_estimated_reason": "CMF 2697 was measured only at school crossings, and this site is not known to be one",
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "no crash-modification evidence for Crosswalk Visibility Enhancements applies to this site as the record shows it: CMF 2697 was measured only at school crossings, and this site is not known to be one"
+      ],
+      "verdict": "outside_evidence",
+      "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+      "what": "A crosswalk on the south side of the intersection"
+     }
+    ],
+    "verdict": "outside_evidence",
+    "verdict_text": "not covered by the evidence: no crash-modification study fits this fix at this site, so the decision rests on a site study and an engineer's assessment, not on this record",
+    "site_control": "Uncontrolled",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "no crash-modification evidence for Crosswalk Visibility Enhancements applies to this site as the record shows it: CMF 2697 was measured only at school crossings, and this site is not known to be one"
+    ],
+    "proposed": null,
+    "best_alternative": {
+     "countermeasure": "Rectangular Rapid Flashing Beacons",
+     "scale": "low-cost",
+     "evidence": "FHWA-cited",
+     "cmf": 0.526,
+     "crf_pct": 47.4,
+     "targets": "pedestrian injury crashes",
+     "target_crashes_per_year": 0.4,
+     "expected_crashes_avoided_per_year": 0.2,
+     "injury_crashes_avoided_per_year": 0.19,
+     "harm_avoided_usd_per_year": 65000.0,
+     "break_even_cost_usd": 456000.0
+    },
+    "in_place": null,
+    "not_estimated_reason": "CMF 2697 was measured only at school crossings, and this site is not known to be one",
+    "countermeasure": "Crosswalk Visibility Enhancements"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "Site shows severe harm that Crosswalk Visibility Enhancements aims at, with fatality and many injuries, so dismissing on CMF school-crossing scope overlooks documented pedestrian risk.",
+     "receipt": "D4",
+     "field": "crashes.any_killed",
+     "value": 1
+    },
+    {
+     "id": "O2",
+     "objection": "Darkness pattern suggests visibility is central harm; crosswalk visibility work directly addresses this, so outside-evidence label ignores a plausible mechanism shown in data.",
+     "receipt": "D4",
+     "field": "crashes.dark_crashes",
+     "value": 9
+    },
+    {
+     "id": "O3",
+     "objection": "Lighting alternative targets darkness and is only viable if confirmed absent on site; without that verification the record cannot reject visibility-based countermeasures as not covered.",
+     "receipt": "D4",
+     "field": "options.1.verify_on_site",
+     "value": "the corner has no street lighting now"
+    },
+    {
+     "id": "O4",
+     "objection": "Cost coverage is unstated, so no cost-benefit failure can be asserted for Crosswalk Visibility Enhancements; an objection on economic grounds lacks foundation.",
+     "receipt": "D1",
+     "field": "cost_covers",
+     "value": "not stated"
+    }
+   ],
+   "objections_dropped": [
+    {
+     "objection": "Record shows fatal crash at site indicating ongoing pedestrian exposure despite lack of school-crossing CMF, supporting consideration of visibility enhancements.",
+     "receipt": "D4",
+     "field": "crashes.any_killed",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Nine crashes in darkness document visibility-related harm consistent with crosswalk conspicuity despite non-standard categorization.",
+     "receipt": "D4",
+     "field": "crashes.dark_crashes",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Alternative lighting requires site verification that street lighting is absent; absence not established so cannot assume crosswalk enhancements redundant.",
+     "receipt": "D4",
+     "field": "options.1.verify_on_site",
+     "why": "another objection already rests on this fact"
+    },
+    {
+     "objection": "Cost for proposal not stated, so economic rejection would be premature and engineering assessment still warranted.",
+     "receipt": "D1",
+     "field": "cost_covers",
+     "why": "another objection already rests on this fact"
+    }
+   ],
+   "memo": {
+    "summary": "Overall verdict is outside_evidence. The Crosswalk Visibility Enhancements part proposing a crosswalk on the south side is outside_evidence because no fitting crash-modification evidence applies to this site. The decision therefore rests on a site study and engineer assessment, with a drafted request to SDOT.",
+    "verdict": "outside_evidence",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "Beacon Avenue South & South Webster Street had 10 injury crashes in police records since 2021-10-31: 1 person killed."
+     },
+     {
+      "receipt": "D2",
+      "text": "No crash pattern here stands out against the city's worst crash locations."
+     },
+     {
+      "receipt": "D7",
+      "text": "No crash-modification evidence for Crosswalk Visibility Enhancements applies to this site as the record shows it: CMF 2697 was measured only at school crossings, and this site is not known to be one."
+     },
+     {
+      "receipt": "D4",
+      "text": "At the U.S. DOT's values that harm costs about $685,000 a year (injury crashes only: deaths are not valued in this figure)."
+     },
+     {
+      "receipt": "D4",
+      "text": "Rectangular Rapid Flashing Beacons would avoid about 0.2 crashes a year (CMF 9024, the record FHWA's fact sheet cites; evidence: the record FHWA cites), worth $65,000 a year."
+     },
+     {
+      "receipt": "D5",
+      "text": "The Seattle Department of Transportation (SDOT) is responsible for 32nd Avenue South, 33rd Avenue South, Beacon Avenue South, South Webster Street (no route reference, so presumed a city street)."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "answer": "The record documents 1 person killed in the injury crashes, but the crosswalk still has no applicable crash-modification evidence at this site, so the outside-evidence assessment stands pending a site study.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O2",
+      "answer": "No crash pattern here stands out against the city's worst crash locations, so a plausible visibility mechanism alone does not bring the crosswalk within the evidence.",
+      "receipt": "D2"
+     },
+     {
+      "objection": "O3",
+      "answer": "Lighting as an alternative is only eligible if a site check confirms it, and the record notes the check that the corner has no street lighting now.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O4",
+      "answer": "No cost-benefit comparison is shown for the crosswalk because the proposal states no cost and the cost coverage is not stated.",
+      "receipt": "D1"
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Crosswalk Visibility Enhancements",
+      "verdict": "outside_evidence"
+     }
+    ]
+   },
+   "letter": "To: the Seattle Department of Transportation (SDOT)\nSubject: Request for safety study at Beacon Avenue South & South Webster Street\n\nDear colleagues at SDOT,\n\nWe are writing to ask each road owner to carry out a safety study at the junction of Beacon Avenue South & South Webster Street and to consider fixes on the roads it is responsible for.\n\nThe official record for the 5 years from 31 October 2021 shows 24 crashes, of which 10 were injury crashes. One person was killed. No breakdown by pedestrians or cyclists injured was recorded. Valued in the U.S. DOT's official values for the cost of crashes (2024 dollars), the harm averages $0.7 million per year. No recent safety work is recorded for this junction in the period.\n\nOn the roads it controls - 32nd Avenue South, 33rd Avenue South, Beacon Avenue South, and South Webster Street - we ask SDOT to assess:\n\n- flashing beacons at the crosswalk, which is FHWA-cited evidence and is expected to prevent 0.2 pedestrian injury crashes per year, avoiding about $65,000 in harm per year, and would pay for itself under $0.5 million;\n\n- better street lighting, which would need a site check to confirm the corner has no street lighting now, and is expected to prevent 0.3 injury crashes in darkness per year, avoiding about $96,000 in harm per year, and would pay for itself under $0.7 million.\n\nPlease let us know the outcome of the study and next steps.\n\nYours sincerely,\n[Your name]\n[Your organisation or address]\n\nSources:\n- SDOT Collisions All Years (arcgis 5b98ff2b96b34af5b1e774cd9ec1f202)\n- Leading Pedestrian Intervals (ACTIVE) / Signals with LPI and NTOR (arcgis a6e028e2f8c4455d953b138b65bd22de); SDOT Vision Zero Leading Pedestrian Intervals (layer 8)\n- FHWA CMF Clearinghouse, CMF 9024 (flashing beacons at the crosswalk)\n- FHWA CMF Clearinghouse, CMF 7774 (better street lighting)\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)",
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.0572,
+    "open_weights_red_team": 0.0339
+   },
+   "turns": 9,
+   "seconds": 79.5,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "finish",
+     "error": "refused by the memo gate",
+     "errors": [
+      "answer to O4: 'failure' overstates the record: say 'have in common' for patterns and 'not shown' for programs"
+     ]
+    },
+    {
+     "turn": 8,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 9,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-165602_beacon_avenue_south_south_webster_street"
+  },
+  {
+   "id": "sf_20ab73",
+   "city_id": "sf",
+   "source": "https://www.sfcta.org/projects/district-2-turk-boulevard-pedestrian-safety",
+   "status": "published",
+   "reason": null,
+   "city": "sf",
+   "city_name": "San Francisco",
+   "input": "Replace the painted median island with a concrete median island at Turk Boulevard & Lyon Street",
+   "proposal": {
+    "address": "Turk Boulevard & Lyon Street, San Francisco",
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "what": "Replace the painted median island with a concrete median island"
+     }
+    ],
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "goal": "Replace the painted median island with a concrete median island at Turk Boulevard & Lyon Street"
+   },
+   "corner": "Turk Boulevard & Lyon Street, San Francisco",
+   "verdict": "reconsider",
+   "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+   "appraisal": {
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "cost_usd": null,
+      "proposed": null,
+      "best_alternative": null,
+      "in_place": null,
+      "not_estimated_reason": "the record has no pedestrian injury crashes",
+      "site_control": "Uncontrolled",
+      "reasons": [
+       "the record shows none of the crashes Medians and Pedestrian Refuge Islands in Urban and Suburban Areas targets: the record has no pedestrian injury crashes"
+      ],
+      "verdict": "reconsider",
+      "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+      "what": "Replace the painted median island with a concrete median island"
+     }
+    ],
+    "verdict": "reconsider",
+    "verdict_text": "reconsider: the record or the evidence does not support this fix here as proposed",
+    "site_control": "Uncontrolled",
+    "cost_usd": null,
+    "cost_covers": "not stated",
+    "reasons": [
+     "the record shows none of the crashes Medians and Pedestrian Refuge Islands in Urban and Suburban Areas targets: the record has no pedestrian injury crashes"
+    ],
+    "proposed": null,
+    "best_alternative": null,
+    "in_place": null,
+    "not_estimated_reason": "the record has no pedestrian injury crashes",
+    "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas"
+   },
+   "objections": [
+    {
+     "id": "O1",
+     "objection": "Evidence gap cuts both ways: with only 1 injury crash in 5 years, absence of pedestrian crashes may reflect low sample, not low risk; median islands provide proactive protection for pedestrians crossing uncontrolled approaches that injury data cannot rule out as needed.",
+     "receipt": "D4",
+     "field": "crashes.injury_crashes",
+     "value": 1
+    },
+    {
+     "id": "O2",
+     "objection": "Underreporting bias: police injury-only dataset misses near-misses and non-injury pedestrian conflicts that medians address; a concrete refuge could prevent future severe harm not yet reflected in the thin record.",
+     "receipt": "D4",
+     "field": "crashes.source",
+     "value": "DataSF, Traffic Crashes Resulting in Injury (ubvf-ztfx)"
+    },
+    {
+     "id": "O3",
+     "objection": "Site is uncontrolled, where crossing without refuge is riskier; a concrete median would shorten exposure and give pedestrians a safe waiting space even if past crashes were not coded as pedestrian injuries.",
+     "receipt": "D4",
+     "field": "control",
+     "value": "Uncontrolled"
+    },
+    {
+     "id": "O4",
+     "objection": "Low recorded harm ($0.1M/year) means even one prevented severe pedestrian injury would outweigh cost, especially if concrete median cost is modest; reconsider based on zero pedestrian crashes ignores severity reduction potential.",
+     "receipt": "D2",
+     "field": "enough_crashes",
+     "value": false
+    },
+    {
+     "id": "O5",
+     "objection": "Low count leaves uncertainty: only one injury crash in five years at Turk & Lyon means the absence of pedestrian-coded crashes does not prove absence of pedestrian risk; a concrete refuge can still reduce severity if a pedestrian crash occurs.",
+     "receipt": "D2",
+     "field": "crashes",
+     "value": 1
+    }
+   ],
+   "objections_dropped": [],
+   "memo": {
+    "summary": "Verdict is reconsider: the proposed concrete median island part is appraised as reconsider. The record shows 1 injury crash with no pedestrian injury crashes to target, so no effect was estimated for the uncontrolled site.",
+    "verdict": "reconsider",
+    "findings": [
+     {
+      "receipt": "D4",
+      "text": "Turk Boulevard & Lyon Street had 1 injury crashes in police records since 2021-10-31: 0 people killed."
+     },
+     {
+      "receipt": "D2",
+      "text": "No crash pattern here stands out against the city's worst crash locations (too few crashes to test)."
+     },
+     {
+      "receipt": "D7",
+      "text": "The record has no pedestrian injury crashes, so no expected effect was estimated for Medians and Pedestrian Refuge Islands, and the site is uncontrolled."
+     },
+     {
+      "receipt": "D4",
+      "text": "At the U.S. DOT's values that harm costs about $68,000 a year."
+     },
+     {
+      "receipt": "D3",
+      "text": "This corner got continental crosswalks. Across the city: at 780 sites the change in pedestrian injury crashes (+4%, 95% interval -25% to +33%) could be zero."
+     },
+     {
+      "receipt": "D7",
+      "text": "No best alternative with an estimated effect was identified for this site."
+     },
+     {
+      "receipt": "D5",
+      "text": "The San Francisco Municipal Transportation Agency (SFMTA) is responsible for Anzavista Avenue, Encanto Avenue, Lyon Street, Turk Boulevard."
+     }
+    ],
+    "answers": [
+     {
+      "objection": "O1",
+      "answer": "With 1 injury crash in the record, there are still no pedestrian injury crashes for medians to target, so the reconsider verdict stands on the available evidence.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O2",
+      "answer": "The record is police-reported injury crashes from DataSF, Traffic Crashes Resulting in Injury, so possible unrecorded conflicts cannot support an effect estimate here.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O3",
+      "answer": "The site is uncontrolled, but with no pedestrian injury crashes in the record the appraisal did not estimate an effect for a concrete median refuge.",
+      "receipt": "D7"
+     },
+     {
+      "objection": "O4",
+      "answer": "Recorded harm costs about $68,000 a year, and with no pedestrian injury crashes no crash reduction was estimated to weigh against any cost.",
+      "receipt": "D4"
+     },
+     {
+      "objection": "O5",
+      "answer": "Only one injury crash in five years leaves too few crashes to test a pattern, and the absence of pedestrian-coded crashes means no effect was estimated.",
+      "receipt": "D2"
+     }
+    ],
+    "parts": [
+     {
+      "countermeasure": "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas",
+      "verdict": "reconsider"
+     }
+    ]
+   },
+   "letter": "To: the San Francisco Municipal Transportation Agency (SFMTA)\nSubject: Request for safety study and fixes at Turk Boulevard & Lyon Street\n\nDear colleagues at SFMTA,\n\nI am writing to ask you to carry out a safety study at Turk Boulevard & Lyon Street on the roads you are responsible for: Anzavista Avenue, Encanto Avenue, Lyon Street and Turk Boulevard.\n\nThe official record for the 5 years from 31 October 2021 shows 1 crash, including 1 injury crash. No one was killed in that period.\n\nIn the U.S. DOT's official values (2024 dollars), the yearly cost of the harm recorded here is $0.1 million.\n\nThe city record does not show a recent safety project at this junction that would clearly address this harm.\n\nEarlier at this corner there were continental crosswalks. The city's own record neither shows it worked nor rules it out, so repeating it here rests on other evidence. Please consider a different approach and test what would work best here.\n\nPlease let us know what the study finds and what action you plan on the roads under your control.\n\nThank you for your attention to safety at this location.\n\n[Your name]\n[Your organisation or address]\n\nSources:\n- DataSF, Traffic Crashes Resulting in Injury (ubvf-ztfx)\n- DataSF, Continental Crosswalks (g9zy-srvv); DataSF, Painted Safety Zones (vtn2-q8ky)\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)",
+   "receipts": {
+    "D1": {
+     "tool": "proposal"
+    },
+    "D2": {
+     "tool": "root_cause"
+    },
+    "D3": {
+     "tool": "test_programs"
+    },
+    "D4": {
+     "tool": "choose_fixes"
+    },
+    "D5": {
+     "tool": "who_must_act"
+    },
+    "D6": {
+     "tool": "draft_request"
+    },
+    "D7": {
+     "tool": "appraisal"
+    },
+    "D8": {
+     "tool": "program_record"
+    },
+    "D9": {
+     "tool": "red_team"
+    }
+   },
+   "cost_usd": {
+    "meta": 0.046,
+    "open_weights_red_team": 0.0249
+   },
+   "turns": 8,
+   "seconds": 39.0,
+   "asof": "2026-10-31",
+   "trace": [
+    {
+     "turn": 1,
+     "tool": "register_proposal",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 2,
+     "tool": "investigate",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 3,
+     "tool": "appraise",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 4,
+     "tool": "program_record",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 5,
+     "tool": "red_team",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 6,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 7,
+     "tool": "check_memo",
+     "error": null,
+     "errors": null
+    },
+    {
+     "turn": 8,
+     "tool": "finish",
+     "error": null,
+     "errors": null
+    }
+   ],
+   "saved": "$RUNS/reviews/20261103-165641_turk_boulevard_lyon_street_san_francisco"
+  }
+ ]
+}

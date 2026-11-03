@@ -921,6 +921,16 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **new: at least 3 kept objections on at least 6 of the published memos, and no kept objection resting on the verdict itself.**
 - **Also reported:** verdicts against T27 (the appraisal code did not change, so a different verdict means the agent registered the proposal differently).
 
+### T28 result (2026-11-03)
+- **Rule met.**
+  - 7 of 7 memos published, 7 of 7 about the intersection proposed, every verdict the code's, the red team on all 7.
+  - **Every memo has at least 3 kept objections** (7 of 7; T27: 4 of 7 memos had any). 32 objections kept in all (T27: 13), none resting on the verdict itself; 12 more were dropped by code, all as a second objection on a fact already used.
+  - Mean $0.084 a review (T27: $0.068; the red team's second round costs about $0.01), $0.59 in all; mean 78 s.
+- **Verdicts:** the same as T27 on all 7 proposals (the appraisal code did not change).
+- **Post-hoc review** (ours, after the run):
+  - Most objections now argue against the verdict with a fact the memo must face: the Chicago island's "proceed" is challenged by the cheaper beacon that avoids more (0.28 against 0.19 a year) and by the inferred road owner; the Seattle beacons' "proceed after a site check" by the mapped signal and the parked-car crash pattern; the San Francisco "reconsider" by the small sample (1 injury crash in five years).
+  - Some are weak: "the cost is not stated" is offered as an objection three times, and two "reconsider" objections only say that harm remains. The fact check keeps them because their facts are right; it cannot tell a strong objection from a weak one.
+
 ## T29 Program review on real program lists (registered 2026-11-03 evening, before any T29 review)
 - **What:** `nml portfolio`. An agency's list of proposed intersection projects goes in; each proposal is reviewed by Before you commit (Muse Spark investigates, code sets the verdict, Muse Spark Open argues against it); code groups the list (build, build after a site check, compare first, decide part by part, not covered by the evidence, reconsider, not reviewed) and ranks each group by injury crashes avoided per dollar, then per year. No model sees the whole list.
 - **Inputs:** `validation/examples/programs.json`, collected tonight from the agencies' own pages before any was run (each project with the source's sentence):

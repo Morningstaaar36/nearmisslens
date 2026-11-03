@@ -293,6 +293,7 @@ An engineer or directorate about to fund a fix describes it in plain words: "a p
 
   All three are fixed (see BENCH_PREREG.md).
 - **T27 reran the same 7 proposals after the fixes:** 7 of 7 memos, all on the proposed corner, at $0.068 a review. A three-part proposal is decided part by part, and a corner the map shows as signalized is reviewed for beacons with the control to be confirmed on site.
+- **T28 reworked the red team** (it was uneven in T27: 3 of 7 memos had no objection that survived the fact check). Muse Spark Open now sees every fact in the receipts as receipt, field and value, an objection resting on the verdict itself is dropped, and it may replace dropped ones once. On the same 7 proposals, **every memo has at least 3 kept objections** (32 in all, against 13), with the same verdicts, at $0.084 a review.
 
 A real-proposal test set (`validation/examples/proposals.json`) keeps three proposals held out, never run by us, for reviewers: `uv run nml review --example 15` (to 17).
 
@@ -358,6 +359,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T25 | Does `nml check` publish at least 8 of 10 real inputs nobody chose, and catch an off-topic page and a false statement? | met (10 of 10; both controls caught; the false-statement control drifted to another corner, fixed after) |
   | T26 | Does Before you commit publish a code-set verdict, red-teamed, for at least 6 of 7 real proposed projects at no more than $0.15 each? | met (7 of 7; one memo was about a neighbouring corner, fixed after) |
   | T27 | The same after the fixes, with every memo about the intersection proposed? | met (7 of 7, all on the proposed corner) |
+  | T28 | The same with the reworked red team: at least 3 kept objections on 6 of 7 memos, none on the verdict itself? | met (7 of 7 memos, 32 objections) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.

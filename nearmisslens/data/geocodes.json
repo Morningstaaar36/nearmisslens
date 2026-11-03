@@ -2027,6 +2027,12 @@
 "name": "White Plains Road & Westchester Avenue",
 "city": "nyc"
 },
+"seattle|13th avenue south & south lucile street": {
+"lat": 47.5534501,
+"lon": -122.316143,
+"name": "13th Avenue South & South Lucile Street",
+"city": "seattle"
+},
 "seattle|15th avenue south & south lander street": {
 "lat": 47.5794787,
 "lon": -122.3134285,
@@ -2087,6 +2093,12 @@
 "name": "Broad Street & 5th Avenue North",
 "city": "seattle"
 },
+"seattle|6th avenue west & west smith street": {
+"lat": 47.641418,
+"lon": -122.3649364,
+"name": "6th Avenue West & West Smith Street",
+"city": "seattle"
+},
 "seattle|aurora avenue north & north 97th street": {
 "lat": 47.6996254,
 "lon": -122.3446406,
@@ -2133,6 +2145,12 @@
 "lat": 47.5233212,
 "lon": -122.2699864,
 "name": "Rainier Avenue South & South Henderson Street",
+"city": "seattle"
+},
+"seattle|rainier avenue south & south walden street": {
+"lat": 47.5729299,
+"lon": -122.2939985,
+"name": "Rainier Avenue South & South Walden Street",
 "city": "seattle"
 },
 "sf|16th street & julian avenue": {
@@ -2205,6 +2223,12 @@
 "lat": 37.7774549,
 "lon": -122.4131749,
 "name": "8th Street & Mission Street",
+"city": "sf"
+},
+"sf|acadia street & monterey boulevard": {
+"lat": 37.7316378,
+"lon": -122.4374725,
+"name": "Monterey Boulevard & Acadia Street",
 "city": "sf"
 },
 "sf|anza street & arguello boulevard": {
