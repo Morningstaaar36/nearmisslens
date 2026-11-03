@@ -945,6 +945,7 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **Letters:** each clause after a semicolon needs its own hedge for a site condition.
   - **San Francisco's crash data:** the lighting, primary collision factor, time, road surface and street fields are mapped in the registry, and a dataset's own word for "dark, street lights on" (`lit_values`) counts as lit. At Mission & 16th: 13 crashes after dark, all coded with street lights on, so lighting is not proposed there.
   - **Red team:** a kept objection submitted again is not counted as dropped. Reviews save `receipts.json`.
+- **Reruns after the fixes** (development runs, $0.11): both failed checks published at the right corner again. The city-wide and borough claims are now "cannot be checked" ("the sentence counts another period (through June)", "the sentence counts Queens, a wider area than the record's 100 m"), and both letters now ask *whether* the yellow plus all-red time is below practice.
 - **Not fixed:** the red team can still agree with the verdict (Fulton & 40th); letters for a review do not name the proposal they are the work order for.
 
 ## T29 Program review on real program lists (registered 2026-11-03 evening, before any T29 review)
