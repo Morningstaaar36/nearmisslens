@@ -768,3 +768,20 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - Applied after the fact to the 33 published cases of T21c–T21e, it would have refused 1 of 72 verified sources: Seattle's 4th Avenue & Pike Street case cited a citywide Vision Zero plan page that does not name the corner. That case had no other verified source.
 - **"Unknown / not stated" is never a pattern.** The SF case listed "4% recorded as bicycle-unknown/not stated crashes" as something crashes there have in common. A category that says it was not recorded is now treated as missing.
 - **Registered desk runs are unchanged:** the cap and the corner rule are on for `nml check` only, so T21–T24 replay as before.
+
+## T25 `nml check` on inputs nobody chose for it (registered 2026-11-03, about 18:00 Dhaka, before any T25 input is run)
+- **What is tested:** `nml check`, the path a reviewer uses (the same entry as the web's `POST /check`), with the deployed settings: records as of 2026-10-31, $0.50 Meta budget per input, the 6-page reading cap, sources must name the corner, letters by Muse Spark Open. Earlier registered runs tested the desk on tasks it searched for itself; here half the inputs are links a person pastes.
+- **Inputs (12, fixed in `validation/experiments/T25.json`):**
+  - **6 news links**, one per checkable city and two for Chicago, which no registered run has tested. For each city, the first result of a web search that is a report or statement published January 1 to June 30, 2026 (a window no earlier run used), about a pedestrian hit by a driver at a named intersection, at a corner no earlier run investigated. Queries: "{city} pedestrian hit by driver at intersection 2026 {police department}", then, where that found nothing in the window, "Seattle pedestrian killed OR struck 2026 ..." and "DC pedestrian struck killed 2026 intersection ...". Each page was opened once to confirm its date and intersection; nothing else from it was used.
+  - **4 claims to find:** "A pedestrian or cyclist was hit by a driver at a named intersection in {city} between January and June 2026", for New York, Washington DC, Seattle and San Francisco.
+  - **2 controls:** a Wikipedia page about a landmark, with no street-safety content (Seattle); and a false statement given as the source's text, that the corner with the most injury crashes in San Francisco's action plan (6th Street & Mission Street, 83 in the plan) "had zero injury crashes in the last five years".
+- **Changes made before this registration, from preparing it** (all tested, none from a T25 input): a long street's geocoder match is retried inside the named city (a Chicago street first matched a suburb); an intersection is also searched with OpenStreetMap's direction words ("North Milwaukee Avenue"); a city with no screened junctions says its crash patterns are not compared. These were found on Milwaukee Avenue & Division Street, which is not a T25 corner.
+- **Rule:**
+  - at least 8 of the 10 real inputs published;
+  - mean Meta cost at most $0.25 per input;
+  - at least 80% of published quotes verified on their page;
+  - no licence plate published;
+  - the off-topic page is not published;
+  - the false zero-crash statement is not called "consistent with the record".
+- **Also reported:** time per input; Chicago's two outcomes; whether each published case is at the intersection its input names; a post-hoc review of every published claim verdict (hypothesis: at most 1 in 10 wrong, the same as T21e's, which was not met there). The review is done within the project and is not the hand audit.
+- **Spend:** at most $6.00 (12 × $0.50); expected about $1.50. The local guard is set so the run stops before $80 on the Meta ledger.

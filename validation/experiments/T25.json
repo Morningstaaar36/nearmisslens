@@ -1,0 +1,24 @@
+{
+ "id": "T25",
+ "registered": "validation/BENCH_PREREG.md, T25",
+ "what": "nml check, the path reviewers use (the same entry as POST /check), on inputs chosen before any run",
+ "asof": "2026-10-31",
+ "budget_usd": 0.50,
+ "rule": {"min_published_real": 8, "real_inputs": 10, "max_mean_usd": 0.25, "min_verified_quote_share": 0.8,
+          "no_plates": true, "control_offtopic_not_published": true, "control_false_claim_not_consistent": true},
+ "selection": "News: for each checkable city, the first result found by a web search (queries in BENCH_PREREG T25) that is a report or statement published January 1 to June 30, 2026 (a window no earlier run used) about a pedestrian hit by a driver at a named intersection, at a corner no earlier run investigated; Chicago, never in a registered run, gets two. Claims: the same sentence for four cities. Controls: a page about a landmark with no street-safety content, and a false zero-crash statement about the corner with the most injury crashes in San Francisco's action plan.",
+ "inputs": [
+  {"id": "url_nyc", "kind": "url", "city": "nyc", "input": "https://westchester.news12.com/2026/01/30/man-dragged-for-minutes-in-north-riverdale-after-being-struck-by-suv/3PDmHdu6cqzCAVpEPsB7Ur", "corner_named": "West 262nd Street & Broadway"},
+  {"id": "url_dc", "kind": "url", "city": "dc", "input": "https://www.nbcwashington.com/news/local/woman-crosswalk-dc-hit-and-run/4092985/", "corner_named": "23rd Street & L Street NW"},
+  {"id": "url_chicago_1", "kind": "url", "city": "chicago", "input": "https://chi.streetsblog.org/2026/03/04/suv-driver-fatally-struck-a-female-pedestrian-tuesday-evening-near-gompers-park", "corner_named": "Foster Avenue & Pulaski Road"},
+  {"id": "url_chicago_2", "kind": "url", "city": "chicago", "input": "https://chi.streetsblog.org/2026/05/26/driver-who-fatally-struck-woman-62-near-belmont-kilbourn-cited-for-failure-to-yield", "corner_named": "Belmont Avenue & Kilbourn Avenue"},
+  {"id": "url_seattle", "kind": "url", "city": "seattle", "input": "https://spdblotter.seattle.gov/2026/02/16/detectives-investigating-fatal-collision-in-capitol-hill-2/", "corner_named": "Bellevue Avenue East & East Pine Street"},
+  {"id": "url_sf", "kind": "url", "city": "sf", "input": "https://walksf.org/news/for-reporters/press-releases/pedestrian-fatality-jackson-and-beckett-2026/", "corner_named": "Jackson Street & Beckett Street"},
+  {"id": "find_nyc", "kind": "find", "city": "nyc", "input": "A pedestrian or cyclist was hit by a driver at a named intersection in New York City between January and June 2026"},
+  {"id": "find_dc", "kind": "find", "city": "dc", "input": "A pedestrian or cyclist was hit by a driver at a named intersection in Washington DC between January and June 2026"},
+  {"id": "find_seattle", "kind": "find", "city": "seattle", "input": "A pedestrian or cyclist was hit by a driver at a named intersection in Seattle between January and June 2026"},
+  {"id": "find_sf", "kind": "find", "city": "sf", "input": "A pedestrian or cyclist was hit by a driver at a named intersection in San Francisco between January and June 2026"},
+  {"id": "control_offtopic", "kind": "url", "city": "seattle", "control": "offtopic", "input": "https://en.wikipedia.org/wiki/Space_Needle"},
+  {"id": "control_false_claim", "kind": "source", "city": "sf", "control": "false_claim", "input": "The city's transportation agency said that 6th Street & Mission Street had zero injury crashes in the last five years.", "record_note": "San Francisco's action plan lists 83 injury crashes there (validation/results/bench/plan_sf.json)"}
+ ]
+}

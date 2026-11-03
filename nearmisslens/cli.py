@@ -273,6 +273,14 @@ def cmd_desk(args) -> int:
     return 0
 
 
+def cmd_check_run(args) -> int:
+    from . import check_runs
+    from .meta_client import MetaClient
+    res = check_runs.run(args.spec, MetaClient(SETTINGS), _letter_client())
+    print(json.dumps(check_runs.summary(res), indent=1))
+    return 0
+
+
 def cmd_alone(args) -> int:
     from . import baseline_desk
     from .meta_client import MetaClient
@@ -639,6 +647,8 @@ def main(argv: list[str] | None = None) -> int:
     dsc.add_argument("lon", type=float)
     dsc.add_argument("--dry-run", action="store_true")
     dsc.add_argument("--meta", action="store_true")
+    cr = sub.add_parser("check-run", help="run nml check on a registered spec's inputs (T25) and score its rule; paid unless --replay")
+    cr.add_argument("spec")
     dk = sub.add_parser("desk", help="run the desk on a registered spec (T21, T21b, T21c) or the governed agent (T22); paid unless --replay")
     dk.add_argument("spec")
     dk.add_argument("--fresh", action="store_true", help="run every case again instead of resuming from saved results")
@@ -728,7 +738,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":
