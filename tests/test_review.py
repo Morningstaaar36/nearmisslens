@@ -311,3 +311,16 @@ def test_the_work_order_names_the_proposal_and_each_parts_verdict():
     assert "A St & B Ave" in w and "$45,000" in w and "- two beacons: proceed" in w
     assert "- curb ramps: not covered by the evidence" in w
     assert w in review.memo_md({**r, "status": "published", "memo": {}})
+
+
+def test_the_kind_of_site_comes_from_what_the_proposal_says():
+    """End-to-end test: "crosswalks leading to Whitman Middle School" was appraised as "not known to be a school
+    crossing" because nothing ever set the site's kind."""
+    assert review.site_kinds("Mark crosswalks at A St & B Ave leading to Whitman Middle School") == {"school crossings"}
+    assert review.site_kinds("A mid-block crossing on A St") == {"mid-block crossings"}
+    assert review.site_kinds("Curb bulbs at A St & B Ave") == set()
+
+
+def test_a_budget_with_nothing_to_fund_says_zero_dollars():
+    from nearmisslens import portfolio
+    assert portfolio._money(0) == "$0" and portfolio._money(None) == "not given"

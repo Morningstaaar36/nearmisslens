@@ -184,7 +184,7 @@ def rank(results: list[dict], budget_usd: float | None = None) -> dict:
 
 
 def _money(v) -> str:
-    return f"${v:,.0f}" if v else "not given"
+    return "not given" if v is None else f"${v:,.0f}"
 
 
 def portfolio_md(p: dict, title: str = "Program review") -> str:

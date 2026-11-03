@@ -46,9 +46,11 @@ def test_extract_keeps_checked_projects_drops_completed_and_unstated_costs(monke
     bad = _x(intersection="Main St & 1st Ave", treatment="repaving", source_says="Corridor repaving on Main St.")
     monkeypatch.setattr(intake, "run_agent", _fake([[wrong_cost, done, costed, bad], [good]]))
     out = intake.extract([], "Zedburg", None, pages=PAGES)
-    texts = [x["text"] for x in out["projects"]]
+    texts = [x["text"].split(". The agency's page says")[0] for x in out["projects"]]
     assert texts == ["Crossing beacon and curb ramps at S Elm St & 13th Ave S",
                      "A curb bulb at Oak St & 3rd Ave, $45,000 (this fix only)"]
+    # the agency's own sentence travels with the proposal, so its context (a school) reaches the review
+    assert out["projects"][1]["text"].endswith('The agency\'s page says: "A $45,000 curb bulb at Oak St & 3rd Ave (expected 2026)"')
     assert out["projects"][0].get("cost_dropped")  # 99,000 is not in its passage: dropped, not guessed
     assert out["completed_left_out"] == 1
     assert [r["intersection"] for r in out["refused"]] == ["Main St & 1st Ave"] and out["usd"] == 0.012

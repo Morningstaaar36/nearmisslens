@@ -98,6 +98,8 @@ def proposal_text(x: dict) -> str:
     t = f"{x['treatment'][:1].upper()}{x['treatment'][1:]} at {x['intersection']}"
     if x.get("cost_usd"):
         t += f", ${float(x['cost_usd']):,.0f} ({x.get('cost_covers') or 'not stated'})"
+    if x.get("source_says"):  # the agency's own sentence: its context (a school it leads to) reaches the review
+        t += f". The agency's page says: \"{x['source_says'][:300]}\""
     return t
 
 

@@ -229,6 +229,16 @@ class Review:
         self.lat_lon: tuple[float, float] | None = None
 
 
+SITE_KINDS = {"school crossings": r"\bschools?\b|\belementary\b|\bmiddle school\b|\bhigh school\b|safe routes to school",
+              "mid-block crossings": r"\bmid-?block\b"}
+
+
+def site_kinds(text: str) -> set[str]:
+    """The kinds of site the proposal itself says it is ("crosswalks leading to the middle school"), by the names
+    the evidence uses (fhwa_psc.json "only_for"): a crash-modification factor measured only at such sites applies."""
+    return {k for k, pat in SITE_KINDS.items() if re.search(pat, text or "", re.I)}
+
+
 def _last_refusal(run) -> str | None:
     """The last tool refusal of a run that did not publish, so an abstention says why."""
     for s in reversed(run.steps):
@@ -421,14 +431,23 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             return {"error": outside[0] + " Stop: this desk cannot review it."}
         j = (desk.report or {}).get("junction") or {}
 
-        def fx_for_control(control):
+        kinds = site_kinds(desk.task)
+
+        def fixes_here(control=None):
+            """The corner's fix options as investigate found them (its own crashes), re-estimated for another control
+            or for the kind of site the proposal says it is."""
             from . import brief
             from .countermeasures import load_cmf
-            d = engineer.Desk().dossier(j["lat"], j["lon"])
+            dd = engineer.Desk()
+            dd.corners[(round(j["lat"], 6), round(j["lon"], 6))] = corner.split(",")[0]
+            d = {**dd.dossier(j["lat"], j["lon"]), "site_kinds": sorted(kinds)}
             return brief.fix_options(d, load_cmf(), control=control)
+        fx = got[1]
+        if kinds and j.get("lat") is not None:  # "leading to the middle school": evidence measured at such sites applies
+            fx = {**fixes_here(), "site_kinds_from_proposal": sorted(kinds)}
         from .brief import coded_here
-        rv.appraisal = appraise_proposal(got[1], rv.proposal["parts"], rv.proposal["cost_usd"],
-                                         rv.proposal["cost_covers"], fx_for_control if j.get("lat") is not None else None,
+        rv.appraisal = appraise_proposal(fx, rv.proposal["parts"], rv.proposal["cost_usd"],
+                                         rv.proposal["cost_covers"], fixes_here if j.get("lat") is not None else None,
                                          coded=None if (got[1].get("crashes") or {}).get("attribution")
                                          else coded_here(got[1].get("crashes") or {}, corner))
         rid = desk.receipt("appraisal", rv.appraisal)
