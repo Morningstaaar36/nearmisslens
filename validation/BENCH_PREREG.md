@@ -1012,6 +1012,16 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - Datasets that do not code streets (Chicago, DC, Seattle) cannot be checked this way.
   - A school named only in a notice's attachment is not read.
 
+## T31 A corner's own crashes, against an independent count (registered 2026-11-04, before any T31 count)
+- **Why:** the third independent test found that a 100 m circle credits neighbouring corners' crashes to the corner named (Cesar Chavez & Florida: 23 in the circle, 3 coded at the corner).
+- **Change being tested:** where the city's crash data places each crash (San Francisco and New York: two street fields; Seattle: "A AND B" or "A BETWEEN B AND C"; DC and Chicago: the street only), a crash placed at another intersection or on another street is left out of the corner's counts, patterns and estimates, and the report says how many were left out. A crash the data does not place is kept.
+- **Inputs** (`validation/experiments/T31.json`): 10 corners, drawn with seed 20261104: 2 from each screened city's priority list (DC, New York, Seattle, San Francisco) and 2 of Chicago's corners in the test sets.
+- **Method:**
+  - The tool's injury-crash count per corner comes from the deterministic engineer (no model), records 2021-10-31 to 2026-10-31.
+  - The independent count comes from an agent that has not seen the tool's method or its counts. It queries each city's open crash data itself and counts the injury crashes the record places at that intersection, over the same window, deciding from the dataset's own fields and saying how.
+- **Rule:** the tool's count agrees with the independent count (within 1, or within 15% of the independent count if that is larger) at **at least 8 of the 10 corners**.
+- **Also reported:** the 100 m circle's count at each corner, against the same independent count.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

@@ -1,0 +1,53 @@
+{
+ "id": "T31",
+ "registered": "validation/BENCH_PREREG.md, T31",
+ "what": "A corner's own crashes: the tool's injury-crash count with the city's location coding, against an independent count from the city's open data by an agent that has not seen the tool's method",
+ "asof": "2026-10-31",
+ "window": "2021-10-31 to 2026-10-31",
+ "corners": [
+  {
+   "city": "dc",
+   "corner": "Stanton Road Southeast & Sheridan Road Southeast"
+  },
+  {
+   "city": "dc",
+   "corner": "Pennsylvania Avenue Southeast & L'Enfant Square Southeast"
+  },
+  {
+   "city": "nyc",
+   "corner": "Cross Bay Boulevard & Woodhaven Boulevard"
+  },
+  {
+   "city": "nyc",
+   "corner": "Glenwood Road & Ralph Avenue"
+  },
+  {
+   "city": "seattle",
+   "corner": "Elliott Avenue West & West Harrison Street"
+  },
+  {
+   "city": "seattle",
+   "corner": "Rainier Avenue South & 25th Avenue South"
+  },
+  {
+   "city": "sf",
+   "corner": "Mission Street & 14th Street"
+  },
+  {
+   "city": "sf",
+   "corner": "16th Street & Julian Avenue"
+  },
+  {
+   "city": "chicago",
+   "corner": "Foster Avenue & Pulaski Road"
+  },
+  {
+   "city": "chicago",
+   "corner": "Milwaukee Avenue & Division Street"
+  }
+ ],
+ "rule": {
+  "agree_within": "max(1, 15% of the independent count)",
+  "min_agree": 8
+ }
+}
