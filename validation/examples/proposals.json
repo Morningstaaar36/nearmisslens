@@ -1,5 +1,5 @@
 {
- "what": "Real proposed street-safety projects, each as an engineer would type it, from the public source named. Split by a fixed hash within each city: 'registered' (T26), 'team' (tried by the team before submission), 'held_out' (not run by the project before review; for reviewers to try).",
+ "what": "Real proposed street-safety projects, each as an engineer would type it, from the public source named. Split by a fixed hash within each city: 'registered' (T26), 'independent' (the first three of the team's rows by hash, run by an independent tester that has seen only TESTING.md), 'team' (tried by hand by the team), 'held_out' (not run by the project before review; for reviewers to try).",
  "made": "validation/examples/proposals.json, built 2026-11-03 before any review was run",
  "proposals": [
   {
@@ -79,7 +79,7 @@
    "source": "https://chicago.suntimes.com/transportation/2026/09/28/chicagos-first-pedestrian-hybrid-beacon-accessible-signals-edgewater-intersection-2021-crash",
    "source_kind": "news of an agency project",
    "source_date": "2026-09-28",
-   "split": "team",
+   "split": "independent",
    "asof": "2026-10-31"
   },
   {
@@ -89,7 +89,7 @@
    "source": "https://anc2a.org/wp-content/uploads/2026/05/23L-Draft-Resolution.pdf",
    "source_kind": "neighborhood commission resolution",
    "source_date": "2026-05-20",
-   "split": "team",
+   "split": "independent",
    "asof": "2026-10-31"
   },
   {
@@ -99,7 +99,7 @@
    "source": "https://cbmanhattan.cityofnewyork.us/cb4/wp-content/uploads/sites/10/2025/12/25-TPC-Letter-to-DOT-re-W.-21st-Street-and-10th-Avenue-Intersection.pdf",
    "source_kind": "community board letter",
    "source_date": "2025-12",
-   "split": "team",
+   "split": "independent",
    "asof": "2026-10-31"
   },
   {

@@ -128,7 +128,7 @@ def test_an_unsupported_city_gets_a_plain_answer():
 def test_the_test_set_is_real_split_and_place_free_in_code():
     import json
     rows = json.loads(review.EXAMPLES.read_text())["proposals"]
-    assert {r["split"] for r in rows} == {"registered", "team", "held_out"}
+    assert {r["split"] for r in rows} == {"registered", "independent", "team", "held_out"}
     assert all(r["source"].startswith("https://") and r["city"] and r["proposal"] for r in rows)
     assert len({r["id"] for r in rows}) == len(rows)
     spec = json.loads((review.EXAMPLES.parent.parent / "experiments" / "T26.json").read_text())
@@ -161,3 +161,12 @@ def test_the_site_gets_the_saved_reviews_and_the_proposals_to_try(monkeypatch, t
     assert blob["summary"]["published"] == 1 and blob["cases"][0]["verdict"] == "proceed"
     assert blob["try"] and all(t["split"] in ("team", "held_out") for t in blob["try"])
     assert "ABC1234" not in (out / "reviews.json").read_text()
+
+
+def test_the_check_test_set_says_what_each_input_should_get():
+    import json
+    from nearmisslens import check
+    d = json.loads((review.EXAMPLES.parent / "checks_testset.json").read_text())
+    assert {i["split"] for i in d["inputs"]} == {"independent", "team", "held_out"}
+    assert all(i["expect"] and i["kind"] in check.KINDS for i in d["inputs"])
+    assert len({i["id"] for i in d["inputs"]}) == len(d["inputs"])
