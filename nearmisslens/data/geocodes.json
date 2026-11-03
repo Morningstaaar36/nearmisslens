@@ -1,8 +1,38 @@
 {
+"chicago|ashland avenue & cullerton street": {
+"lat": 41.8550631,
+"lon": -87.6661332,
+"name": "Ashland Avenue & Cullerton Street",
+"city": "chicago"
+},
+"chicago|belmont avenue & kilbourn avenue": {
+"lat": 41.9389391,
+"lon": -87.739491,
+"name": "Kilbourn Avenue & Belmont Avenue",
+"city": "chicago"
+},
 "chicago|division street & milwaukee avenue": {
 "lat": 41.9033638,
 "lon": -87.6664876,
 "name": "Milwaukee Avenue & Division Street",
+"city": "chicago"
+},
+"chicago|foster avenue & pulaski road": {
+"lat": 41.9755275,
+"lon": -87.7282337,
+"name": "Foster Avenue & Pulaski Road",
+"city": "chicago"
+},
+"chicago|hollywood avenue & ridge avenue": {
+"lat": 41.9851049,
+"lon": -87.6624561,
+"name": "Ridge Avenue & Hollywood Avenue",
+"city": "chicago"
+},
+"chicago|north franklin street & west lake street": {
+"lat": 41.8857333,
+"lon": -87.6354195,
+"name": "West Lake Street & North Franklin Street",
 "city": "chicago"
 },
 "dc|14th street northwest & u street northwest": {
@@ -21,6 +51,18 @@
 "lat": 38.9037447,
 "lon": -77.0365424,
 "name": "16th Street Northwest & L Street Northwest",
+"city": "dc"
+},
+"dc|22nd street northwest & l street northwest": {
+"lat": 38.9037391,
+"lon": -77.048815,
+"name": "22nd Street Northwest & L Street Northwest",
+"city": "dc"
+},
+"dc|23rd street northwest & l street northwest": {
+"lat": 38.9037384,
+"lon": -77.0501136,
+"name": "23rd Street Northwest & L Street Northwest",
 "city": "dc"
 },
 "dc|7th street northwest & florida avenue northwest": {
@@ -71,6 +113,12 @@
 "name": "Pennsylvania Avenue Southeast & L'Enfant Square Southeast",
 "city": "dc"
 },
+"dc|new york avenue northeast & north capitol street": {
+"lat": 38.9073409,
+"lon": -77.0089215,
+"name": "North Capitol Street & New York Avenue Northeast",
+"city": "dc"
+},
 "dc|pennsylvania avenue southeast & prout street southeast": {
 "lat": 38.874329,
 "lon": -76.9727817,
@@ -111,6 +159,12 @@
 "lat": 40.8644629120571,
 "lon": -73.9189422564482,
 "name": "West 207 Street & 10 Avenue",
+"city": "nyc"
+},
+"nyc|10th avenue & west 21st street": {
+"lat": 40.7464102,
+"lon": -74.0050981,
+"name": "West 21st Street & 10th Avenue",
 "city": "nyc"
 },
 "nyc|11 avenue & west 34 street": {
@@ -273,6 +327,12 @@
 "lat": 40.7503820107479,
 "lon": -73.9396334880883,
 "name": "Queens Plaza & 27 Street",
+"city": "nyc"
+},
+"nyc|2nd avenue & east 57th street": {
+"lat": 40.7593168,
+"lon": -73.9653081,
+"name": "East 57th Street & 2nd Avenue",
 "city": "nyc"
 },
 "nyc|3 avenue & 60 street": {
@@ -923,10 +983,22 @@
 "name": "Queens Boulevard & Broadway",
 "city": "nyc"
 },
+"nyc|broadway & suydam street": {
+"lat": 40.6953633,
+"lon": -73.9323704,
+"name": "Suydam Street & Broadway",
+"city": "nyc"
+},
 "nyc|broadway & west 230 street": {
 "lat": 40.8768772274137,
 "lon": -73.9064960099633,
 "name": "Broadway & West 230 Street",
+"city": "nyc"
+},
+"nyc|broadway & west 262nd street": {
+"lat": 40.9101937,
+"lon": -73.8966324,
+"name": "Broadway & West 262nd Street",
 "city": "nyc"
 },
 "nyc|broadway & west 96th street": {
@@ -1185,6 +1257,18 @@
 "lat": 40.8307373725139,
 "lon": -73.9104901064049,
 "name": "East 167 Street & Webster Avenue",
+"city": "nyc"
+},
+"nyc|east 169th street & prospect avenue": {
+"lat": 40.829423,
+"lon": -73.897569,
+"name": "East 169th Street & Prospect Avenue",
+"city": "nyc"
+},
+"nyc|east 169th street & reverend james a polite avenue": {
+"lat": 40.828766,
+"lon": -73.8963937,
+"name": "Reverend James A Polite Avenue & East 169th Street",
 "city": "nyc"
 },
 "nyc|east 170 street & walton avenue": {
@@ -1943,10 +2027,22 @@
 "name": "White Plains Road & Westchester Avenue",
 "city": "nyc"
 },
+"seattle|15th avenue south & south lander street": {
+"lat": 47.5794787,
+"lon": -122.3134285,
+"name": "15th Avenue South & South Lander Street",
+"city": "seattle"
+},
 "seattle|2nd avenue & cherry street": {
 "lat": 47.6030293,
 "lon": -122.3331773,
 "name": "2nd Avenue & Cherry Street",
+"city": "seattle"
+},
+"seattle|33rd avenue south & south myrtle place": {
+"lat": 47.5383701,
+"lon": -122.2900097,
+"name": "33rd Avenue South & South Myrtle Place",
 "city": "seattle"
 },
 "seattle|3rd avenue & pine street": {
@@ -1985,10 +2081,34 @@
 "name": "Stewart Street & 5th Avenue",
 "city": "seattle"
 },
+"seattle|5th avenue north & broad street": {
+"lat": 47.62069,
+"lon": -122.347594,
+"name": "Broad Street & 5th Avenue North",
+"city": "seattle"
+},
 "seattle|aurora avenue north & north 97th street": {
 "lat": 47.6996254,
 "lon": -122.3446406,
 "name": "Aurora Avenue North & North 97th Street",
+"city": "seattle"
+},
+"seattle|beacon avenue south & south webster street": {
+"lat": 47.5353787,
+"lon": -122.2911246,
+"name": "Beacon Avenue South & South Webster Street",
+"city": "seattle"
+},
+"seattle|bellevue avenue & east pine street": {
+"lat": 47.6152241,
+"lon": -122.3268033,
+"name": "Bellevue Avenue & East Pine Street",
+"city": "seattle"
+},
+"seattle|broadway & east pine street": {
+"lat": 47.615259,
+"lon": -122.32083,
+"name": "Broadway & East Pine Street",
 "city": "seattle"
 },
 "seattle|dexter avenue north & john street": {
@@ -2021,6 +2141,12 @@
 "name": "16th Street & Julian Avenue",
 "city": "sf"
 },
+"sf|16th street & mission street": {
+"lat": 37.7651497,
+"lon": -122.4198261,
+"name": "Mission Street & 16th Street",
+"city": "sf"
+},
 "sf|22nd street & capp street": {
 "lat": 37.755509,
 "lon": -122.417681,
@@ -2037,6 +2163,12 @@
 "lat": 37.7509762,
 "lon": -122.412862,
 "name": "25th Street & Treat Avenue",
+"city": "sf"
+},
+"sf|4th street & channel street": {
+"lat": 37.7744007,
+"lon": -122.3916177,
+"name": "4th Street & Channel Street",
 "city": "sf"
 },
 "sf|4th street & howard street": {
@@ -2087,6 +2219,12 @@
 "name": "Arguello Boulevard & Fulton Street",
 "city": "sf"
 },
+"sf|beckett street & jackson street": {
+"lat": 37.7960671,
+"lon": -122.4063677,
+"name": "Beckett Street & Jackson Street",
+"city": "sf"
+},
 "sf|bryant street & morris street": {
 "lat": 37.7764744,
 "lon": -122.4019961,
@@ -2135,10 +2273,22 @@
 "name": "Jackson Street & Stockton Street",
 "city": "sf"
 },
+"sf|lyon street & turk boulevard": {
+"lat": 37.7790574,
+"lon": -122.443719,
+"name": "Turk Boulevard & Lyon Street",
+"city": "sf"
+},
 "sf|mission street & precita avenue": {
 "lat": 37.7467824,
 "lon": -122.4191289,
 "name": "Mission Street & Precita Avenue",
+"city": "sf"
+},
+"sf|mission street & south van ness avenue": {
+"lat": 37.7730548,
+"lon": -122.4187254,
+"name": "Mission Street & South Van Ness Avenue",
 "city": "sf"
 }
 }
