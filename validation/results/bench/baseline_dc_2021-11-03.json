@@ -1,0 +1,11 @@
+{
+"city": "dc",
+"since": "2021-11-03",
+"crashes": 10348,
+"counts": {
+"someone hurt": 2800,
+"only people in vehicles hurt": 2378,
+"a pedestrian hurt": 271,
+"a cyclist hurt": 153
+}
+}
