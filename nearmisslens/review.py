@@ -608,13 +608,16 @@ def run_summary(res: dict, spec: dict) -> dict:
     usd = [float((c.get("cost_usd") or {}).get("meta") or 0) + float((c.get("cost_usd") or {}).get("open_weights_red_team") or 0)
            for c in cases]
     kept = sum(len(c.get("objections") or []) for c in pub)
-    out = {"inputs": len(cases), "published": len(pub),
+    on_corner = [c for c in pub if same_corner((c.get("proposal") or {}).get("address") or c.get("input", ""),
+                                               c.get("corner") or "")]
+    out = {"inputs": len(cases), "published": len(pub), "on_proposed_corner": len(on_corner),
            "verdicts": {v: sum(c.get("verdict") == v for c in pub) for v in VERDICTS},
            "verdict_is_codes": all((c.get("memo") or {}).get("verdict") == c.get("verdict") for c in pub),
            "red_team_ran": sum(c.get("objections") is not None for c in pub), "objections_kept": kept,
            "mean_usd": round(sum(usd) / len(usd), 4) if usd else None, "total_usd": round(sum(usd), 4),
            "mean_seconds": round(sum(float(c.get("seconds") or 0) for c in cases) / len(cases), 1) if cases else None}
     met = {"published": len(pub) >= rule["min_published"],
+           **({"on_proposed_corner": len(on_corner) == len(pub)} if rule.get("every_memo_on_proposed_corner") else {}),
            "verdict_is_codes": out["verdict_is_codes"],
            "red_team_on_every_memo": out["red_team_ran"] == len(pub),
            "cost": out["mean_usd"] is not None and out["mean_usd"] <= rule["max_mean_usd"]}

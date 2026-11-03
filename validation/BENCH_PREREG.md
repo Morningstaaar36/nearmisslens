@@ -872,3 +872,31 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **T26 re-scored from its saved appraisals.**
     - Becomes "not covered by the evidence": the Lander St and Webster St proposals, and the Bronx case (which would now abstain instead, under the first change).
     - Unchanged: the other four.
+
+## T27 Before you commit after the fixes: T26's proposals again (registered 2026-11-03 evening, before any T27 review)
+- **Changes since T26** (all from T26's review and the independent test of 2026-11-03, `validation/independent/`; tested):
+  - **Proposals:**
+    - every part of a proposal is appraised, and a proposal whose parts differ is decided part by part;
+    - a device built for another control than the map shows is estimated as the proposal describes the site, with the control to be confirmed on site;
+    - a cost is compared only with the fix it pays for alone;
+    - the red team argues against the verdict.
+  - **Corners and coverage:**
+    - a review is only of the intersection proposed;
+    - initials match with or without a period, and "Rev" is "Reverend";
+    - "not covered by the evidence" is separated from "reconsider";
+    - a town inside a city's bounding box is not the city.
+  - **Checks and letters:**
+    - a check's claims must be the source's;
+    - a case cannot say a letter was drafted when none was;
+    - every receipt's data is saved;
+    - letters drop owner notes from the salutation, name the state-level road agency from the registry, keep planned projects apart from done ones, and never state a site condition as a fact;
+    - an inconclusive citywide program result is called inconclusive.
+- **Development runs since T26** (not part of this test): the independent tester's three proposals (rows 8–10) and two of its checks were rerun on the fixed code to see the fixes work.
+- **Inputs:** the same 7 proposals as T26 (the `registered` split). They are not fresh; this measures the fixes on the cases that exposed the problems. Fresh inputs are in the `independent2` split, for a second independent tester that has not seen them.
+- **Rule** (`validation/experiments/T27.json`):
+  - at least 6 of 7 memos published;
+  - every verdict the code's;
+  - the red team on every memo;
+  - mean cost at most $0.15;
+  - **new: every published memo is about the intersection proposed** (T26: 6 of 7).
+- **Also reported:** each memo's verdict against T26's, and the post-hoc review as for T26.

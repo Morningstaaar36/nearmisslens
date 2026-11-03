@@ -1,50 +1,132 @@
 {
- "what": "Inputs for testing `nml check` by people other than the registered runs, each with the outcome a correct check gives. Real news links from 2026 at corners no registered run investigated, plus controls. Splits: 'independent' (run by an independent tester that has seen only TESTING.md), 'team' (tried by hand by the team), 'held_out' (never run by the project before review; for reviewers).",
+ "what": "Inputs for testing `nml check` by people other than the registered runs, each with the outcome a correct check gives. Real news links from 2026 at corners no registered run investigated, plus controls. Splits: 'independent' (run by an independent tester that has seen only TESTING.md), 'team' (tried by hand by the team), 'held_out' (never run by the project before review; for reviewers). 'independent2' rows were added 2026-11-03 evening, before any was run, for a second independent tester.",
  "made": "2026-11-03, before any of these inputs was run",
  "asof": "2026-10-31",
  "inputs": [
-  {"id": "ind_url_sf", "split": "independent", "kind": "url", "city": "sf",
+  {
+   "id": "ind_url_sf",
+   "split": "independent",
+   "kind": "url",
+   "city": "sf",
    "input": "https://walksf.org/news/for-reporters/press-releases/pedestrian-fatality-mission-south-van-ness-2026/",
    "expect": "published at Mission Street & South Van Ness Avenue, quotes verified on the page",
-   "source_says": "a pedestrian killed at Mission Street and South Van Ness on April 13, 2026"},
-  {"id": "ind_url_dc", "split": "independent", "kind": "url", "city": "dc",
+   "source_says": "a pedestrian killed at Mission Street and South Van Ness on April 13, 2026"
+  },
+  {
+   "id": "ind_url_dc",
+   "split": "independent",
+   "kind": "url",
+   "city": "dc",
    "input": "https://wjla.com/news/local/metropolitan-police-department-mpd-northeast-dc-hit-and-run-north-capitol-street-new-york-avenue-woman-pedestrian-fatal-crash-vehicle-fled-major-investigations-unit-suspects-traffic-death-hospital-fire-ems-washington-sursum-corda-noma-truxton-circle",
    "expect": "published at North Capitol Street & New York Avenue, quotes verified on the page",
-   "source_says": "a woman killed in a hit-and-run at North Capitol Street and New York Avenue NE on August 16, 2026"},
-  {"id": "ind_false_statement", "split": "independent", "kind": "source", "city": "nyc",
+   "source_says": "a woman killed in a hit-and-run at North Capitol Street and New York Avenue NE on August 16, 2026"
+  },
+  {
+   "id": "ind_false_statement",
+   "split": "independent",
+   "kind": "source",
+   "city": "nyc",
    "input": "The transportation department said that Atlantic Avenue & Flatbush Avenue in Brooklyn had zero injury crashes in the last five years.",
    "expect": "the statement is called 'differs from the record' (the record holds many injury crashes there), citing the input text",
-   "control": "false statement"},
-  {"id": "ind_true_statement", "split": "independent", "kind": "source", "city": "chicago",
+   "control": "false statement"
+  },
+  {
+   "id": "ind_true_statement",
+   "split": "independent",
+   "kind": "source",
+   "city": "chicago",
    "input": "Police records show 66 injury crashes at Milwaukee Avenue & Division Street in Chicago in the five years to October 31, 2026.",
    "expect": "the statement is called 'consistent with the record', citing the input text",
-   "control": "true statement"},
-  {"id": "team_url_nyc", "split": "team", "kind": "url", "city": "nyc",
+   "control": "true statement"
+  },
+  {
+   "id": "team_url_nyc",
+   "split": "team",
+   "kind": "url",
+   "city": "nyc",
    "input": "https://qns.com/2026/08/kew-gardens-hills-woman-struck-killed-union-turnpike/",
    "expect": "published at Union Turnpike & Main Street, Queens, quotes verified",
-   "source_says": "a woman killed crossing Union Turnpike at Main Street, August 2026"},
-  {"id": "team_url_seattle_near", "split": "team", "kind": "url", "city": "seattle",
+   "source_says": "a woman killed crossing Union Turnpike at Main Street, August 2026"
+  },
+  {
+   "id": "team_url_seattle_near",
+   "split": "team",
+   "kind": "url",
+   "city": "seattle",
    "input": "https://komonews.com/news/local/seattle-traffic-ballard-15th-ave-nw-pedestrian-killed-after-running-into-ballard-traffic-saturday-morning-police-say",
    "expect": "a case at 15th Avenue NW & NW 51st Street (the page says 'just north of'), or a refusal that says no intersection is named; never another corner",
    "source_says": "a man killed on 15th Avenue NW just north of NW 51st Street, October 2026",
-   "control": "no cross street named"},
-  {"id": "team_offtopic_landmark", "split": "team", "kind": "url", "city": "chicago",
+   "control": "no cross street named"
+  },
+  {
+   "id": "team_offtopic_landmark",
+   "split": "team",
+   "kind": "url",
+   "city": "chicago",
    "input": "https://en.wikipedia.org/wiki/Wrigley_Field",
    "expect": "not published: the page names a corner but says nothing about street safety",
-   "control": "off-topic page that names an intersection"},
-  {"id": "team_outside_city", "split": "team", "kind": "find", "city": "boston",
+   "control": "off-topic page that names an intersection"
+  },
+  {
+   "id": "team_outside_city",
+   "split": "team",
+   "kind": "find",
+   "city": "boston",
    "input": "A pedestrian was hit at Boylston Street & Arlington Street",
    "expect": "unsupported_city at once, no model call",
-   "control": "a city outside the registry"},
-  {"id": "held_find_chicago", "split": "held_out", "kind": "find", "city": "chicago",
+   "control": "a city outside the registry"
+  },
+  {
+   "id": "held_find_chicago",
+   "split": "held_out",
+   "kind": "find",
+   "city": "chicago",
    "input": "A pedestrian or cyclist was hit by a driver at a named intersection in Chicago between June and October 2026",
-   "expect": "published at the intersection a found 2026 source names, quotes verified"},
-  {"id": "held_find_nyc", "split": "held_out", "kind": "find", "city": "nyc",
+   "expect": "published at the intersection a found 2026 source names, quotes verified"
+  },
+  {
+   "id": "held_find_nyc",
+   "split": "held_out",
+   "kind": "find",
+   "city": "nyc",
    "input": "A pedestrian or cyclist was hit by a driver at a named intersection in New York City between June and October 2026",
-   "expect": "published at the intersection a found 2026 source names, quotes verified"},
-  {"id": "held_report_seattle", "split": "held_out", "kind": "report", "city": "seattle",
+   "expect": "published at the intersection a found 2026 source names, quotes verified"
+  },
+  {
+   "id": "held_report_seattle",
+   "split": "held_out",
+   "kind": "report",
+   "city": "seattle",
    "input": "Drivers turning left run the red light here every evening; I have nearly been hit twice crossing",
    "address": "Rainier Ave S & S Genesee St",
-   "expect": "published at Rainier Avenue South & South Genesee Street with how urgent it is given the record, and a work order to the road owner"}
+   "expect": "published at Rainier Avenue South & South Genesee Street with how urgent it is given the record, and a work order to the road owner"
+  },
+  {
+   "id": "ind2_url_sf_near",
+   "split": "independent2",
+   "kind": "url",
+   "city": "sf",
+   "input": "https://walksf.org/news/for-reporters/press-releases/pedestrian-fatality-mission-16th-2026/",
+   "expect": "a case at Mission Street & 16th Street (the release says 'near 16th Street'), or a refusal saying no intersection is named; never another corner",
+   "source_says": "a pedestrian killed on Mission Street near 16th Street, May 25, 2026",
+   "control": "no exact intersection named"
+  },
+  {
+   "id": "ind2_url_nyc",
+   "split": "independent2",
+   "kind": "url",
+   "city": "nyc",
+   "input": "https://api-prod.gothamist.com/news/police-searching-for-information-on-bushwick-hit-and-run-that-killed-a-pedestrian",
+   "expect": "published at the intersection the article names (Bushwick, Brooklyn), quotes verified"
+  },
+  {
+   "id": "ind2_suburb_trap",
+   "split": "independent2",
+   "kind": "find",
+   "city": "chicago",
+   "input": "A pedestrian safety project at Lake Street & Franklin Avenue in River Forest",
+   "expect": "not published as a Chicago case: River Forest is outside Chicago's limits and its crash records",
+   "control": "a town inside the city's bounding box"
+  }
  ]
 }

@@ -1,5 +1,5 @@
 {
- "what": "Real proposed street-safety projects, each as an engineer would type it, from the public source named. Split by a fixed hash within each city: 'registered' (T26), 'independent' (the first three of the team's rows by hash, run by an independent tester that has seen only TESTING.md), 'team' (tried by hand by the team), 'held_out' (not run by the project before review; for reviewers to try).",
+ "what": "Real proposed street-safety projects, each as an engineer would type it, from the public source named. Split by a fixed hash within each city: 'registered' (T26), 'independent' (the first three of the team's rows by hash, run by an independent tester that has seen only TESTING.md), 'team' (tried by hand by the team), 'held_out' (not run by the project before review; for reviewers to try). 'independent2' (added 2026-11-03 evening after the changes from the first independent test, before any of them was run; for a second independent tester).",
  "made": "validation/examples/proposals.json, built 2026-11-03 before any review was run",
  "proposals": [
   {
@@ -170,6 +170,56 @@
    "source_kind": "agency plan",
    "source_date": "2026",
    "split": "held_out",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "sf_8239b4",
+   "city": "sf",
+   "proposal": "Rectangular rapid flashing beacons at Monterey Boulevard & Acadia Street",
+   "source": "https://www.sfmta.com/node/44778",
+   "source_kind": "agency plan (approved at a public hearing, August 2026)",
+   "source_date": "2026-08",
+   "split": "independent2",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "sf_32b7f5",
+   "city": "sf",
+   "proposal": "Pedestrian side islands, rectangular rapid flashing beacons and crosswalk upgrades at Fulton Street & 40th Avenue",
+   "source": "https://www.sfcta.org/projects/fulton-street-safety-improvements",
+   "source_kind": "agency plan",
+   "source_date": "2026",
+   "split": "independent2",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "chicago_9b7df7",
+   "city": "chicago",
+   "proposal": "A rectangular rapid flashing beacon at Lake Street & Franklin Avenue, River Forest, part of a $360,000 safety project",
+   "source": "https://www.oakpark.com/2026/05/26/traffic-measures-coming-to-lake-st-river-forest/",
+   "source_kind": "news of a village project (River Forest is a suburb inside Chicago's bounding box, outside its crash records)",
+   "source_date": "2026-05-26",
+   "split": "independent2",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "dc_269ae8",
+   "city": "dc",
+   "proposal": "Curb extensions at 14th Street NE & Tennessee Avenue NE",
+   "source": "https://anc6a.org/wp-content/uploads/TPSM0225.pdf",
+   "source_kind": "neighborhood commission minutes reporting DDOT's decision",
+   "source_date": "2025-02",
+   "split": "independent2",
+   "asof": "2026-10-31"
+  },
+  {
+   "id": "nyc_9df0ad",
+   "city": "nyc",
+   "proposal": "Pedestrian refuge islands at Coney Island Avenue & Avenue C, Brooklyn",
+   "source": "https://www.nyc.gov/html/dot/downloads/pdf/coney-island-ave-ave-c-whh.pdf",
+   "source_kind": "agency plan",
+   "source_date": "undated",
+   "split": "independent2",
    "asof": "2026-10-31"
   }
  ]

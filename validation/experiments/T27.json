@@ -1,0 +1,9 @@
+{
+ "id": "T27",
+ "registered": "validation/BENCH_PREREG.md, T27",
+ "what": "nml review after the changes from T26's review and the independent test, on T26's seven proposals again (the 'registered' split of validation/examples/proposals.json)",
+ "split": "registered",
+ "asof": "2026-10-31",
+ "budget_usd": 0.50,
+ "rule": {"min_published": 6, "max_mean_usd": 0.15, "every_memo_on_proposed_corner": true}
+}
