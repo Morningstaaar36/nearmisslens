@@ -196,3 +196,29 @@ def test_letters_say_only_what_is_checked():
     bad = "The current yellow plus all-red here is shorter than ITE practice."
     good = "Please check on site whether the current yellow plus all-red is shorter than ITE practice."
     assert letter.condition_errors(bad, facts) and not letter.condition_errors(good, facts)
+
+
+def test_a_town_inside_a_citys_box_is_not_the_city(monkeypatch):
+    """A suburb inside the bounding box (River Forest in Chicago's) would be investigated against the city's crash
+    records, which do not cover it, and show no crashes. An address that names such a town is refused; a long street
+    whose first match is in a suburb is not (the address names the city)."""
+    from nearmisslens import opendata
+    chi = opendata.city("chicago")
+    assert not brief.in_city_limits("Lake Street, River Forest, Proviso Township, Cook County, Illinois, 60305, United States", chi)
+    assert brief.in_city_limits("Division Street, West Town, Chicago, Cook County, Illinois, 60622, United States", chi)
+    assert not brief.in_city_limits("Main Street, Yonkers, Westchester County, New York, 10701, United States", opendata.city("nyc"))
+
+    def fetch(url, params=None, data=None, **k):
+        if data:
+            return {"elements": []}, None
+        if "River Forest" in params["q"]:
+            return [{"lat": "41.888", "lon": "-87.814", "display_name": "Lake Street, River Forest, Proviso Township, "
+                                                                       "Cook County, Illinois, 60305, United States"}], None
+        return [{"lat": "41.70", "lon": "-87.66", "display_name": "Ashland Avenue, Calumet Park, Cook County, Illinois, "
+                                                                   "60827, United States"}], None
+    monkeypatch.setattr(brief.context, "fetch", fetch)
+    with pytest.raises(brief.OutsideCoverage, match="River Forest"):
+        brief._lookup("Lake Street & Franklin Avenue, River Forest")
+    with pytest.raises(ValueError) as e:  # a city street whose first match is in a suburb goes on to the crossing search
+        brief._lookup("Ashland Avenue & Cullerton Street, Chicago")
+    assert not isinstance(e.value, brief.OutsideCoverage)

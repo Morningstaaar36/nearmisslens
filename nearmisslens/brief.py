@@ -195,6 +195,22 @@ class OutsideCoverage(ValueError):
     """The place is in no registry city: refused at once, before any slow intersection search."""
 
 
+def in_city_limits(display_name: str, city: dict) -> bool:
+    """Whether the geocoder's place is inside the registry city, not a town inside its bounding box: one of the
+    city's names (registry name, short name, aliases) is among the place's parts once the state, postcode and
+    country are set aside (a street in a town inside the city's box is not in the city).
+    A place with no description is not refused here."""
+    parts = [x.strip() for x in (display_name or "").split(",") if x.strip()]
+    if not parts:
+        return True
+    zips = [i for i, x in enumerate(parts) if re.fullmatch(r"\d{5}(-\d{4})?", x)]
+    if zips:  # "..., <state>, <postcode>, <country>": keep what comes before the state
+        parts = parts[:max(zips[-1] - 1, 0)]
+    names = {city["name"], city.get("short_name") or city["name"], *(city.get("aliases") or [])}
+    text = ", ".join(parts)
+    return any(re.search(r"(?<![A-Za-z])" + re.escape(n) + r"(?![A-Za-z])", text, re.I) for n in names if n)
+
+
 def _covered() -> str:
     from . import opendata
     return ", ".join(c["name"] for c in opendata.load_cities())
@@ -211,6 +227,13 @@ def _lookup(address: str) -> tuple[float, float, str]:
     if not js:
         raise ValueError(f"address not found: {address}")
     lat, lon, name = float(js[0]["lat"]), float(js[0]["lon"]), js[0].get("display_name", address)
+    here = opendata.city(context.city_of(lat, lon) or "")
+    place = rest.split(",")[0].strip() if rest.strip() else ""
+    shown = js[0].get("display_name", "")
+    if here and place and re.search(r"(?<![A-Za-z])" + re.escape(place) + r"(?![A-Za-z])", shown, re.I) \
+            and not in_city_limits(shown, here):  # the address names a town inside the city's box, and it is there
+        raise OutsideCoverage(f"{address!r} is in {js[0]['display_name'].split(',')[1].strip() if ',' in js[0].get('display_name', '') else 'another place'}"
+                              f", outside {here['name']}'s own limits: its crash records do not cover it")
     if context.city_of(lat, lon) is None:
         raise OutsideCoverage(f"{address!r} is outside the cities this copy covers ({_covered()}); add a city with "
                               "nml add-city")
