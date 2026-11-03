@@ -22,6 +22,13 @@ What we changed between runs, and what reviews of the published cases still foun
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs (a static replay, not a live endpoint), with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
+**Review it in five minutes:**
+1. On the site, **"Before you commit: review a proposed project"**: real proposals from five cities' plans, each with a verdict set by code, a pre-mortem by a second model family, and the answers.
+2. **"Checks of fresh inputs"**: the desk on 12 inputs nobody chose for it (T25), including the controls it had to catch.
+3. **"The desk: saved runs of real cases"**: every step and every refusal.
+4. With a Meta key, try a held-out proposal nobody has run: `uv run nml review --example 15` (to 17). See [`TESTING.md`](TESTING.md).
+5. `validation/independent/` holds what an independent tester found wrong, kept as written; BENCH_PREREG.md says what we changed after.
+
 ![New York's action plan: the largest low-cost estimates add up to 338 fewer crashes a year, the evidence supports 86; tiles for harm, supported corners, road owners, turn calming and denied requests, then the corners where a fix was asked for and turned down](docs/img/plan_nyc.png)
 
 ## One real case, end to end
