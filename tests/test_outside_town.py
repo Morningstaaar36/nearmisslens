@@ -58,3 +58,26 @@ def test_same_corner_lives_in_brief_and_review_still_uses_it():
 def test_a_place_after_a_comma_is_checked_too():
     assert brief.places_named("A beacon at Main Street & Oak Avenue, Elmwood, part of a $360,000 project", CITY) == \
         ["Elmwood"]
+
+
+def test_a_town_the_model_added_does_not_block_the_right_address(monkeypatch):
+    """T29: the model wrote "White Center" into a West Seattle address; the refusal must not stick to the streets."""
+    from nearmisslens import engineer
+    desk = _desk(monkeypatch)
+    desk.task = "Review: install all-way stops at SW Main St & 34th Ave SW"
+
+    def refuse(variant, letter_client=None):
+        raise brief.OutsideCoverage("outside")
+    monkeypatch.setattr(engineer, "plan", refuse)
+    inv = {t.name: t for t in orchestrator.core_tools(desk)}["investigate"]
+    try:
+        inv.fn(address="SW Main St & 34th Ave SW, Elmwood", draft_letter=False)
+    except brief.OutsideCoverage:
+        pass
+    assert desk.outside == []
+    desk.task = "A project at SW Main St & 34th Ave SW in Elmwood"
+    try:
+        inv.fn(address="SW Main St & 34th Ave SW, Elmwood", draft_letter=False)
+    except brief.OutsideCoverage:
+        pass
+    assert desk.outside == ["SW Main St & 34th Ave SW, Elmwood"]

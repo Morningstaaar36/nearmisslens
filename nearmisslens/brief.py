@@ -160,6 +160,44 @@ def _directional(street: str) -> str:
     return f"(({DIRECTIONS}) )?{' '.join(words)}( ({DIRECTIONS}))?"
 
 
+DIRECTION_WORDS = {"n": "north", "s": "south", "e": "east", "w": "west", "ne": "northeast", "nw": "northwest",
+                   "se": "southeast", "sw": "southwest"}
+
+
+def street_pattern(name: str) -> str:
+    """An OpenStreetMap name pattern for a street as people write it: each abbreviation or its full word ("Ave" or
+    "Avenue"), the direction before or after the name, abbreviated or not ("SW Hinds St" is "Southwest Hinds
+    Street"), ordinal numbers with or without their suffix, and initials with or without a period."""
+    full_dir = {**DIRECTION_WORDS, **{v: v for v in DIRECTION_WORDS.values()}}
+    toks = [t for t in re.split(r"\s+", name.strip()) if t]
+    lowered = [t.lower().rstrip(".") for t in toks]
+    direction = None
+    if len(toks) > 1 and lowered[0] in full_dir:
+        direction, toks, lowered = full_dir[lowered[0]], toks[1:], lowered[1:]
+    elif len(toks) > 1 and lowered[-1] in full_dir:
+        direction, toks, lowered = full_dir[lowered[-1]], toks[:-1], lowered[:-1]
+    words = []
+    for t, low in zip(toks, lowered):
+        full = ABBREV_FULL.get(low)
+        if full and len(low) > 1 and low not in ("n", "s", "e", "w"):
+            short = next((k for k, v in ABBREV_FULL.items() if v.lower() == full.lower() and len(k) > 1), low)
+            words.append(f"({re.escape(short)}[.]?|{re.escape(full)})")
+        elif re.fullmatch(r"0*\d+(st|nd|rd|th)?", low):
+            n = re.match(r"0*(\d+)", low).group(1)
+            words.append(f"{n}(st|nd|rd|th)?")
+        elif len(low) == 1:
+            words.append(f"{re.escape(low)}[.]?")
+        else:
+            words.append(re.escape(t.rstrip(".")))
+    core = " ".join(words)
+    if direction:
+        abbr = next(k for k, v in DIRECTION_WORDS.items() if v == direction)
+        d = f"({abbr}[.]?|{direction})"
+    else:
+        d = f"({DIRECTIONS})"
+    return f"({d} )?{core}( {d})?"
+
+
 def _crossing(a: str, b: str, area: str) -> list[tuple[float, float]]:
     """The nodes where streets named a and b (patterns, case-insensitive) meet in the area (an Overpass filter:
     "around:R,LAT,LON" or a bounding box "S,W,N,E"). Each public Overpass server is asked once, within a time limit;
@@ -353,7 +391,7 @@ def _lookup(address: str) -> tuple[float, float, str]:
     jb = _nominatim(f"{b},{rest}", country, named)
     if jb:  # long streets: search around the midpoint of the two streets' anchors, wide enough to reach both
         lat, lon = (lat + float(jb[0]["lat"])) / 2, (lon + float(jb[0]["lon"])) / 2
-    nodes = _crossing(a, b, f"around:12000,{lat},{lon}")
+    nodes = _crossing(street_pattern(a), street_pattern(b), f"around:12000,{lat},{lon}")
     c = opendata.city(named) if named else None
     if not nodes and c:  # the whole named city, with a direction before or after each name ("North Milwaukee Avenue"):
         s, w, n, e = c["bbox"]  # a common name's best match can be another street of that name across town

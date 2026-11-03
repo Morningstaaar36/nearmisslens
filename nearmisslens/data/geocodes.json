@@ -59,6 +59,12 @@
 "name": "16th Street Northwest & L Street Northwest",
 "city": "dc"
 },
+"dc|16th street southeast & frankford street southeast": {
+"lat": 38.856236,
+"lon": -76.982241,
+"name": "Frankford Street Southeast & 16th Street Southeast",
+"city": "dc"
+},
 "dc|22nd street northwest & l street northwest": {
 "lat": 38.9037391,
 "lon": -77.048815,
@@ -129,6 +135,12 @@
 "lat": 38.874329,
 "lon": -76.9727817,
 "name": "Pennsylvania Avenue Southeast & Prout Street Southeast",
+"city": "dc"
+},
+"dc|sheridan road southeast & stanton road southeast": {
+"lat": 38.853485,
+"lon": -76.983407,
+"name": "Stanton Road Southeast & Sheridan Road Southeast",
 "city": "dc"
 },
 "nyc|1 avenue & east 116 street": {
@@ -389,6 +401,18 @@
 "name": "30 Avenue & 38 Street",
 "city": "nyc"
 },
+"nyc|31st road & union street": {
+"lat": 40.770642,
+"lon": -73.826566,
+"name": "31st Road & Union Street",
+"city": "nyc"
+},
+"nyc|31st street & 37th avenue": {
+"lat": 40.754974,
+"lon": -73.931057,
+"name": "37th Avenue & 31st Street",
+"city": "nyc"
+},
 "nyc|33 street & broadway": {
 "lat": 40.7612260860767,
 "lon": -73.9237884861526,
@@ -411,6 +435,12 @@
 "lat": 40.6449897,
 "lon": -74.0176757,
 "name": "3rd Avenue & 55th Street",
+"city": "nyc"
+},
+"nyc|3rd avenue & 65th street": {
+"lat": 40.7653085,
+"lon": -73.9638433,
+"name": "3rd Avenue & 65th Street",
 "city": "nyc"
 },
 "nyc|4 avenue & 85 street": {
@@ -1157,6 +1187,12 @@
 "name": "Dyckman Street & Sherman Avenue",
 "city": "nyc"
 },
+"nyc|e 169th st & rev james a polite ave": {
+"lat": 40.828766,
+"lon": -73.8963937,
+"name": "E 169th St & Rev James A Polite Ave",
+"city": "nyc"
+},
 "nyc|east 105 street & flatlands avenue": {
 "lat": 40.6475293348957,
 "lon": -73.8946791245162,
@@ -1281,6 +1317,12 @@
 "lat": 40.8395519738549,
 "lon": -73.9159400877387,
 "name": "Walton Avenue & East 170 Street",
+"city": "nyc"
+},
+"nyc|east 170th street & teller avenue": {
+"lat": 40.8369692,
+"lon": -73.9091912,
+"name": "East 170th Street & Teller Avenue",
 "city": "nyc"
 },
 "nyc|east 180th street & prospect avenue": {
@@ -1509,6 +1551,12 @@
 "lat": 40.6666958340877,
 "lon": -73.7671295423619,
 "name": "South Conduit Avenue & Farmers Boulevard",
+"city": "nyc"
+},
+"nyc|farragut avenue & regis drive": {
+"lat": 40.6209218,
+"lon": -74.1651656,
+"name": "Farragut Avenue & Regis Drive",
 "city": "nyc"
 },
 "nyc|farragut road & flatbush avenue": {
@@ -1847,6 +1895,12 @@
 "name": "Undercliff Avenue & Major Deegan Expwy Et 7 N Sb",
 "city": "nyc"
 },
+"nyc|malcolm x boulevard & west 145th street": {
+"lat": 40.8204475,
+"lon": -73.9362503,
+"name": "West 145th Street & Malcolm X Boulevard",
+"city": "nyc"
+},
 "nyc|mermaid avenue & west 33 street": {
 "lat": 40.5749842073613,
 "lon": -73.9996151232393,
@@ -2045,16 +2099,34 @@
 "name": "15th Avenue South & South Lander Street",
 "city": "seattle"
 },
+"seattle|25th avenue south & rainier avenue south": {
+"lat": 47.5815591,
+"lon": -122.3005549,
+"name": "Rainier Avenue South & 25th Avenue South",
+"city": "seattle"
+},
 "seattle|2nd avenue & cherry street": {
 "lat": 47.6030293,
 "lon": -122.3331773,
 "name": "2nd Avenue & Cherry Street",
 "city": "seattle"
 },
+"seattle|31st avenue & east spruce street": {
+"lat": 47.6031904,
+"lon": -122.2925089,
+"name": "31st Avenue & East Spruce Street",
+"city": "seattle"
+},
 "seattle|33rd avenue south & south myrtle place": {
 "lat": 47.5383701,
 "lon": -122.2900097,
 "name": "33rd Avenue South & South Myrtle Place",
+"city": "seattle"
+},
+"seattle|3rd avenue & 65th street": {
+"lat": 47.6759885,
+"lon": -122.3607115,
+"name": "65th Street & 3rd Avenue",
 "city": "seattle"
 },
 "seattle|3rd avenue & pine street": {
@@ -2111,6 +2183,12 @@
 "name": "Aurora Avenue North & North 97th Street",
 "city": "seattle"
 },
+"seattle|beacon avenue south & south myrtle street": {
+"lat": 47.538961,
+"lon": -122.2964849,
+"name": "Beacon Avenue South & South Myrtle Street",
+"city": "seattle"
+},
 "seattle|beacon avenue south & south webster street": {
 "lat": 47.5353787,
 "lon": -122.2911246,
@@ -2129,10 +2207,40 @@
 "name": "Broadway & East Pine Street",
 "city": "seattle"
 },
+"seattle|california ave sw & sw hinds st": {
+"lat": 47.5731808,
+"lon": -122.3867901,
+"name": "California Ave SW & SW Hinds St",
+"city": "seattle"
+},
+"seattle|california avenue southwest & southwest hinds street": {
+"lat": 47.5731808,
+"lon": -122.3867901,
+"name": "California Avenue Southwest & Southwest Hinds Street",
+"city": "seattle"
+},
+"seattle|california avenue southwest & southwest spokane street": {
+"lat": 47.5720364,
+"lon": -122.3867868,
+"name": "Southwest Spokane Street & California Avenue Southwest",
+"city": "seattle"
+},
 "seattle|dexter avenue north & john street": {
 "lat": 47.6197321,
 "lon": -122.3424026,
 "name": "Dexter Avenue North & John Street",
+"city": "seattle"
+},
+"seattle|elliott avenue west & west harrison street": {
+"lat": 47.6221257,
+"lon": -122.3626669,
+"name": "Elliott Avenue West & West Harrison Street",
+"city": "seattle"
+},
+"seattle|harbor avenue southwest & southwest avalon way": {
+"lat": 47.5714661,
+"lon": -122.3706772,
+"name": "Southwest Avalon Way & Harbor Avenue Southwest",
 "city": "seattle"
 },
 "seattle|north 48th street & stone way north": {
@@ -2159,6 +2267,18 @@
 "name": "Rainier Avenue South & South Walden Street",
 "city": "seattle"
 },
+"seattle|seward park avenue south & south henderson street": {
+"lat": 47.5233032,
+"lon": -122.264579,
+"name": "Seward Park Avenue South & South Henderson Street",
+"city": "seattle"
+},
+"sf|14th street & mission street": {
+"lat": 37.7682771,
+"lon": -122.4200052,
+"name": "Mission Street & 14th Street",
+"city": "sf"
+},
 "sf|16th street & julian avenue": {
 "lat": 37.764977,
 "lon": -122.420901,
@@ -2171,6 +2291,12 @@
 "name": "Mission Street & 16th Street",
 "city": "sf"
 },
+"sf|16th street & sanchez street": {
+"lat": 37.7643693,
+"lon": -122.4309164,
+"name": "16th Street & Sanchez Street",
+"city": "sf"
+},
 "sf|22nd street & capp street": {
 "lat": 37.755509,
 "lon": -122.417681,
@@ -2181,6 +2307,12 @@
 "lat": 37.7538439,
 "lon": -122.4186155,
 "name": "23rd Street & Mission Street",
+"city": "sf"
+},
+"sf|25th avenue & clement street": {
+"lat": 37.7820218,
+"lon": -122.4848906,
+"name": "25th Avenue & Clement Street",
 "city": "sf"
 },
 "sf|25th street & treat avenue": {
@@ -2213,6 +2345,12 @@
 "name": "Market Street & 5th Street",
 "city": "sf"
 },
+"sf|6th avenue & irving street": {
+"lat": 37.7641912,
+"lon": -122.4631192,
+"name": "6th Avenue & Irving Street",
+"city": "sf"
+},
 "sf|6th street & mission street": {
 "lat": 37.7809779,
 "lon": -122.4087215,
@@ -2235,6 +2373,12 @@
 "lat": 37.7774549,
 "lon": -122.4131749,
 "name": "8th Street & Mission Street",
+"city": "sf"
+},
+"sf|acadia st & monterey blvd": {
+"lat": 37.7316378,
+"lon": -122.4374725,
+"name": "Monterey Blvd & Acadia St",
 "city": "sf"
 },
 "sf|acadia street & monterey boulevard": {
@@ -2267,6 +2411,18 @@
 "name": "Bryant Street & Morris Street",
 "city": "sf"
 },
+"sf|california street & larkin street": {
+"lat": 37.7907935,
+"lon": -122.4190579,
+"name": "California Street & Larkin Street",
+"city": "sf"
+},
+"sf|cesar chavez street & florida street": {
+"lat": 37.7483939,
+"lon": -122.4096701,
+"name": "Florida Street & Cesar Chavez Street",
+"city": "sf"
+},
 "sf|charles j. brenham place & market street": {
 "lat": 37.7804885,
 "lon": -122.4125281,
@@ -2277,6 +2433,12 @@
 "lat": 37.7831061,
 "lon": -122.4191918,
 "name": "Polk Street & Eddy Street",
+"city": "sf"
+},
+"sf|evans avenue & phelps street": {
+"lat": 37.7429869,
+"lon": -122.3884479,
+"name": "Evans Avenue & Phelps Street",
 "city": "sf"
 },
 "sf|france avenue & moscow street": {
@@ -2303,6 +2465,18 @@
 "name": "Market Street & Gough Street",
 "city": "sf"
 },
+"sf|haight street & steiner street": {
+"lat": 37.7719064,
+"lon": -122.4321098,
+"name": "Haight Street & Steiner Street",
+"city": "sf"
+},
+"sf|holloway avenue & junipero serra boulevard": {
+"lat": 37.7215802,
+"lon": -122.4726359,
+"name": "Holloway Avenue & Junipero Serra Boulevard",
+"city": "sf"
+},
 "sf|jackson street & stockton street": {
 "lat": 37.7958275,
 "lon": -122.408269,
@@ -2325,6 +2499,12 @@
 "lat": 37.7730548,
 "lon": -122.4187254,
 "name": "Mission Street & South Van Ness Avenue",
+"city": "sf"
+},
+"sf|portola drive & twin peaks boulevard": {
+"lat": 37.7458893,
+"lon": -122.450821,
+"name": "Portola Drive & Twin Peaks Boulevard",
 "city": "sf"
 }
 }

@@ -280,22 +280,34 @@ def _text(r: dict, fields: list[str]) -> str:
 
 def crash_place(r: dict, a: dict) -> tuple[str, ...] | None:
     """Where the dataset says one crash happened, from its adapter's coding: ("pair", A, B) at an intersection,
-    ("street", A) on a street away from its intersections, or None when the row does not say. Codings (registry.json):
+    ("street", A) on a street (where the dataset cannot say which intersection), ("segment", ...) away from any
+    intersection (the dataset's own mid-block field, a distance past its limit, "A BETWEEN B AND C", or one street with
+    no cross street in a dataset that codes both), or None when the row does not say. Codings (registry.json):
     "street_fields" [on, cross]; "location" {"text_field", "and", "between"} ("A AND B", "A BETWEEN B AND C");
     {"address_field", "cross_field"} (a street address and its nearest cross street); {"street_field"} (a street)."""
     tidy = lambda v: " ".join(str(v or "").split()).title()
     loc = a.get("location") or {}
+    mid = loc.get("midblock")  # the dataset's own field saying a crash was away from the intersection
+    if mid and re.search(mid["pattern"], str(r.get(mid["field"]) if r.get(mid["field"]) is not None else "None"), re.I):
+        return ("segment",)
+    off = loc.get("max_offset")  # or its distance from the nearest intersection
+    if off:
+        try:
+            if float(r.get(off["field"])) > off["metres"]:
+                return ("segment",)
+        except (TypeError, ValueError):
+            pass
     if a.get("street_fields"):
         names = [tidy(r.get(f)) for f in a["street_fields"][:2]]
         if all(names):
             return ("pair", *names)
-        return ("street", names[0]) if names[0] else None
+        return ("segment", names[0]) if names[0] else None  # one street and no cross street: mid-block
     if loc.get("text_field"):
         t = tidy(r.get(loc["text_field"]))
         if not t:
             return None
         if loc.get("between") and loc["between"].strip().lower() in t.lower().split():
-            return ("street", re.split(loc["between"].strip(), t, flags=re.I)[0].strip())
+            return ("segment", re.split(loc["between"].strip(), t, flags=re.I)[0].strip())  # a block, not a corner
         if loc.get("and") and re.search(rf"\s{loc['and'].strip()}\s", t, re.I):
             x, y = re.split(rf"\s{loc['and'].strip()}\s", t, maxsplit=1, flags=re.I)
             return ("pair", x.strip(), y.strip())
@@ -317,6 +329,8 @@ def at_corner(place: tuple[str, ...] | None, corner: str) -> bool | None:
     from .brief import same_corner
     if place is None:
         return None
+    if place[0] == "segment":  # the dataset places it away from any intersection
+        return False
     if place[0] == "pair":
         pair = f"{place[1]} & {place[2]}"
         return same_corner(pair, corner) and same_corner(corner, pair)

@@ -1,0 +1,16 @@
+{
+ "id": "T29b",
+ "registered": "validation/BENCH_PREREG.md, T29b",
+ "what": "T29's saved reviews ranked again with ties broken by the proposal's text, and its 3 unreviewed proposals retried after the fixes",
+ "programs": [
+  "sea_srts_2026",
+  "sf_contract35_signals",
+  "nyc_dot_2025_projects"
+ ],
+ "asof": "2026-10-31",
+ "budget_usd": 0.5,
+ "rule": {
+  "min_reviewed_share": 0.8,
+  "max_mean_usd": 0.15
+ }
+}

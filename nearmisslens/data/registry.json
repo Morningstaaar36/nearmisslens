@@ -71,7 +71,7 @@
   },
   {
    "id": "dc-crashes",
-   "location": {"address_field": "ADDRESS", "_note": "NEARESTINTSTREETNAME is not the cross street (L St rows give M St, which never meets L): street only"},
+   "location": {"address_field": "ADDRESS", "max_offset": {"field": "OFFINTERSECTION", "metres": 30}, "_note": "NEARESTINTSTREETNAME is not the cross street (L St rows give M St, which never meets L): street only"},
    "kind": "crash",
    "place": "Washington DC",
    "bbox": [
@@ -134,7 +134,7 @@
   },
   {
    "id": "chicago-crashes",
-   "location": {"street_field": "street_name"},
+   "location": {"street_field": "street_name", "midblock": {"field": "intersection_related_i", "pattern": "^(N|None|)$", "_note": "the officer's judgment that the intersection played a role: the dataset's closest field to where the crash was"}},
    "kind": "crash",
    "place": "Chicago",
    "bbox": [
@@ -466,7 +466,7 @@
   },
   {
    "id": "auto-seattle-5b98ff2b96b34af5b1e774cd9ec1f202",
-   "location": {"text_field": "LOCATION", "between": " BETWEEN ", "and": " AND "},
+   "location": {"text_field": "LOCATION", "between": " BETWEEN ", "and": " AND ", "midblock": {"field": "JUNCTIONTYPE", "pattern": "^(Mid-Block \\(not related|Driveway)"}},
    "kind": "crash",
    "place": "Seattle, Washington",
    "bbox": [
@@ -690,6 +690,7 @@
   },
   {
    "id": "sf-crashes",
+   "location": {"midblock": {"field": "intersection", "pattern": "^Midblock"}},
    "kind": "crash",
    "city": "sf",
    "place": "San Francisco",

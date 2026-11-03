@@ -39,10 +39,16 @@ def test_every_location_coding_places_a_crash():
     from nearmisslens import opendata as O
     pair = {"street_fields": ["on", "cross"]}
     assert O.crash_place({"on": "MISSION ST", "cross": "16TH ST"}, pair) == ("pair", "Mission St", "16Th St")
-    assert O.crash_place({"on": "BROADWAY", "cross": ""}, pair) == ("street", "Broadway")
+    assert O.crash_place({"on": "BROADWAY", "cross": ""}, pair) == ("segment", "Broadway")  # no cross street: mid-block
     text = {"location": {"text_field": "LOC", "between": " BETWEEN ", "and": " AND "}}
     assert O.crash_place({"LOC": "RAINIER AVE S AND S GENESEE ST"}, text) == ("pair", "Rainier Ave S", "S Genesee St")
-    assert O.crash_place({"LOC": "RAINIER AVE S BETWEEN S OREGON ST AND S ALASKA ST"}, text) == ("street", "Rainier Ave S")
+    assert O.crash_place({"LOC": "RAINIER AVE S BETWEEN S OREGON ST AND S ALASKA ST"}, text) == ("segment", "Rainier Ave S")
+    mid = {"location": {"text_field": "LOC", "and": " AND ", "midblock": {"field": "J", "pattern": "^Mid-Block \\(not"}}}
+    assert O.crash_place({"LOC": "A ST AND B ST", "J": "Mid-Block (not related to intersection)"}, mid) == ("segment",)
+    assert O.crash_place({"LOC": "A ST AND B ST", "J": "At Intersection"}, mid) == ("pair", "A St", "B St")
+    off = {"location": {"address_field": "ADDRESS", "max_offset": {"field": "OFF", "metres": 30}}}
+    assert O.crash_place({"ADDRESS": "10 A ST", "OFF": "45.2"}, off) == ("segment",)
+    assert O.crash_place({"ADDRESS": "10 A ST", "OFF": "7.5"}, off) == ("street", "A St")
     addr = {"location": {"address_field": "ADDRESS", "cross_field": "NEAR"}}
     assert O.crash_place({"ADDRESS": "1120 22ND STREET NW", "NEAR": "M ST NW"}, addr) == ("pair", "22Nd Street Nw", "M St Nw")
     assert O.crash_place({"street_name": "ASHLAND AVE"}, {"location": {"street_field": "street_name"}}) == ("street", "Ashland Ave")
@@ -57,6 +63,7 @@ def test_a_crash_is_the_corners_unless_placed_elsewhere():
     assert O.at_corner(("street", "22Nd Street Nw"), corner) is True  # on one of its streets, not placed elsewhere
     assert O.at_corner(("street", "K St Nw"), corner) is False
     assert O.at_corner(None, corner) is None  # the dataset does not say: kept
+    assert O.at_corner(("segment", "22Nd Street Nw"), corner) is False  # placed mid-block by the dataset
 
 
 def test_the_summary_keeps_the_corners_own_crashes_and_says_what_it_left_out(monkeypatch):
@@ -71,3 +78,15 @@ def test_the_summary_keeps_the_corners_own_crashes_and_says_what_it_left_out(mon
                                                              "within_radius": 19, "kept": 5, "left_out_elsewhere": 14,
                                                              "not_placed": 2}
     assert O.crash_summary(a, 0, 0)["injury_crashes"] == 19  # without a corner name: the circle, as before
+
+
+def test_a_street_is_found_however_its_name_is_written():
+    """T29: "SW Hinds St" was searched as "Hinds Street Southwest"; the map names it "Southwest Hinds Street"."""
+    import re
+    p = brief.street_pattern
+    for written, mapped in [("SW Hinds St", "Southwest Hinds Street"), ("SW Hinds St", "Hinds Street Southwest"),
+                            ("Seward Park Ave S", "Seward Park Avenue South"), ("E 169th St", "East 169 Street"),
+                            ("Rev James A Polite Ave", "Reverend James A. Polite Avenue")]:
+        assert re.fullmatch(p(written), mapped, re.I), (written, mapped)
+    assert not re.fullmatch(p("9th Ave"), "19th Avenue", re.I)
+    assert not re.fullmatch(p("SW Hinds St"), "Southwest Hinds Way", re.I)

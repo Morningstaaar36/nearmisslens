@@ -235,7 +235,11 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                 try:
                     r = engineer.plan(variant, letter_client=letters)
                 except brief.OutsideCoverage as e:
-                    desk.outside.append(address)
+                    # remembered only when the input names that town: a town the model added itself (T29: "White
+                    # Center" for a West Seattle corner) must not block the right address
+                    town = address.partition(",")[2].split(",")[0].strip()
+                    if town and re.search(r"(?<![A-Za-z])" + re.escape(town) + r"(?![A-Za-z])", desk.task or "", re.I):
+                        desk.outside.append(address)
                     raise e
                 except ValueError as e:
                     last = e

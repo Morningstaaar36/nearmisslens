@@ -1022,6 +1022,30 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Rule:** the tool's count agrees with the independent count (within 1, or within 15% of the independent count if that is larger) at **at least 8 of the 10 corners**.
 - **Also reported:** the 100 m circle's count at each corner, against the same independent count.
 
+### T29 result (2026-11-04)
+- **Rule not met.** 20 of the 23 proposals reviewed (87%; the rule asked 80%), all 20 on the intersection proposed, $0.078 a proposal ($1.79 in all), 90 checked objections kept. But **code's program was not reproduced exactly from the saved reviews**: within a group, proposals with no cost and no estimate tie on every ranking key, and their order followed which review finished first (three run at a time). Totals and group membership were the same; only the order of tied rows differed. Fixed after: the proposal's own text breaks ties.
+- **Groups:** 16 not covered by the evidence (signal upgrades, all-way stops, curb bulbs and crosswalk markings are not on the federal list, or no record on it fits the site), 4 decide part by part, 0 build, 0 reconsider.
+- **Not reviewed (3, Seattle):**
+  - SW Myrtle St & 34th Ave SW: the model wrote "White Center" into the address, the geocoder refused that town as outside Seattle, and the suburb-trap memory added in T28's changes then blocked every retry with the same street names. Fixed after: a refusal is remembered only when the input itself names that town.
+  - Seward Park Ave S & S Hamlet St, and California Ave SW & SW Hinds St: the crossing was not found ("SW Hinds St" was searched as "Hinds Street Southwest"; the map names it "Southwest Hinds Street"). Fixed after: the crossing search matches a street however it is written (abbreviated or not, the direction before or after, numbers with or without "th").
+
+## T29b Program review: T29's saved reviews ranked again, its three unreviewed proposals retried (registered 2026-11-04)
+- **Changes:** ties broken by the proposal's text; a town refusal remembered only when the input names the town; street names matched however written.
+- **Inputs:** T29's three lists. The 20 published reviews are reused as saved (`runs/programs/T29_*`); the 3 not reviewed are run again. The rule is T29's (`validation/experiments/T29b.json`).
+
+### T31 result (2026-11-04)
+- **Rule not met.** The tool's count agreed with the independent count at **2 of the 10 corners** (the rule asked 8). The independent counts are kept as written: `validation/independent/t31_independent_counts_2026-11-04.md`.
+- **Still, much closer than the circle:** mean absolute error 13.5 injury crashes against the 100 m circle's 30.1; closer at 7 corners, equal at 2, further at 1 (the circle agreed at 1 of 10).
+- **Why it missed:**
+  - **Mid-block crashes counted.** A crash on one of the corner's streets but placed mid-block (Seattle's "RAINIER AVE S BETWEEN ..."; New York's on-street with no cross street) was kept. At Rainier Ave S & 25th Ave S the tool said 36 where the city files 1 at the intersection.
+  - **The datasets' own fields unused.** San Francisco says "Intersection <= 20ft" or "Midblock > 20ft"; Seattle has a junction type; DC gives each crash's distance from the nearest intersection.
+  - **Definitions:** Cross Bay Blvd and Woodhaven Blvd do not cross (one becomes the other); DC has two intersections named Stanton & Sheridan; in DC and Chicago, which place crashes by street address only, the independent counter's own count moves with its distance cut-off (it chose 30 m).
+
+## T31b A corner's own crashes, on fresh corners (registered 2026-11-04, before any T31b count)
+- **Change (made after seeing T31's counts, so it is tested on fresh corners):** a crash the city's data places away from the intersection is not the corner's: the dataset's own mid-block field (Seattle's junction type, San Francisco's intersection field, Chicago's "intersection related" flag), a distance past 30 m from the nearest intersection (DC), a block "between" two streets (Seattle), or one street with no cross street where the dataset codes both (New York). The 30 m is the T31 counter's cut-off for DC.
+- **Inputs** (`validation/experiments/T31b.json`): 10 corners none of T31's, drawn with seed 20261105, the same way (2 per screened city, 2 Chicago corners from the test sets).
+- **Method and rule:** T31's. A new counter agent, with T31's instructions, counts them independently.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

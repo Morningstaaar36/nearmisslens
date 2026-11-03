@@ -1,0 +1,53 @@
+{
+ "id": "T31b",
+ "registered": "validation/BENCH_PREREG.md, T31b",
+ "what": "T31 again on 10 fresh corners, after the change T31 led to: a crash the city's data places away from the intersection (its own mid-block field, a distance past 30 m, a block 'between' two streets, or one street with no cross street) is not the corner's",
+ "asof": "2026-10-31",
+ "window": "2021-10-31 to 2026-10-31",
+ "corners": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast"
+  },
+  {
+   "city": "dc",
+   "corner": "Southeast Freeway & 11th Street Southeast"
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street"
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue"
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street"
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South"
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street"
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street"
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue"
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue"
+  }
+ ],
+ "rule": {
+  "agree_within": "max(1, 15% of the independent count)",
+  "min_agree": 8
+ }
+}

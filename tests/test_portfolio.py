@@ -112,3 +112,15 @@ def test_a_spoken_proposal_is_transcribed_then_reviewed_and_silence_is_refused(m
     monkeypatch.setattr(voice, "transcribe", lambda client, wav, tag: {"transcript": ""})
     with pytest.raises(ValueError):
         voice.spoken_proposal(None, tmp_path / "memo.m4a")
+
+
+def test_ties_are_ordered_by_the_proposal_not_by_which_review_finished_first(tmp_path):
+    """T29: two proposals with no cost and no estimate tied, and their order followed the threads' finishing order."""
+    import random
+    results = []
+    for k in range(6):
+        r = fake_review(f"Corner {k} St & Z Ave|verdict=outside_evidence", "zz")
+        results.append({**r, "program_text": r["input"]})
+    first = portfolio.rank(results)
+    random.Random(1).shuffle(results)
+    assert portfolio.rank(results)["groups"] == first["groups"]

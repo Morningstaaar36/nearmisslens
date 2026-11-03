@@ -157,7 +157,8 @@ def rank(results: list[dict], budget_usd: float | None = None) -> dict:
             not_reviewed.append(x)
         else:
             groups[g].append(x)
-    key = lambda x: (-(x["per_million_usd"] or -1), -(x["injury_crashes_avoided_per_year"] or 0))
+    # the proposal's own text breaks ties, so the order never depends on which review finished first (T29)
+    key = lambda x: (-(x["per_million_usd"] or -1), -(x["injury_crashes_avoided_per_year"] or 0), x["input"] or "")
     for g in groups:
         groups[g].sort(key=key)
     fundable = groups["build"] + groups["site_check"] + [x for x in groups["parts"] if x["injury_crashes_avoided_per_year"]]
