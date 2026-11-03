@@ -39,7 +39,9 @@ STUDIES = {"fusion": "T10, residents' near-miss reports in Washington DC",
 # single words allowed in one module's code, with the reason
 ALLOWED = {"complaints": {"la": "Spanish phrasing (girando a la izquierda)"},
            "cli": {"community": "the --letter help names the offices (council member, community board)",
-                   "board": "the same help text"}}
+                   "board": "the same help text"},
+           "brief": {"junior": "the abbreviation Jr in street names, not a place",
+                     "ramp": "a roadway tag in crash records (a ramp of a street), not a place"}}
 
 
 def forbidden() -> set[str]:

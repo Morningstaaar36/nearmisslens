@@ -90,3 +90,11 @@ def test_a_street_is_found_however_its_name_is_written():
         assert re.fullmatch(p(written), mapped, re.I), (written, mapped)
     assert not re.fullmatch(p("9th Ave"), "19th Avenue", re.I)
     assert not re.fullmatch(p("SW Hinds St"), "Southwest Hinds Way", re.I)
+
+
+def test_initials_jr_and_roadway_tags_match_the_full_name():
+    """T31b: Seattle's record writes "M L King Jr Wr Way S" (WR: the west roadway) for Martin Luther King Jr Way S."""
+    full = "Martin Luther King Junior Way South & South Othello Street"
+    assert brief.same_corner("M L King Jr Wr Way S & S Othello St", full)
+    assert brief.same_corner(full, "M L King Jr Er Way S & S Othello St")
+    assert not brief.same_corner("Lake St & Franklin Ave", "Lake St & Frank Ave")

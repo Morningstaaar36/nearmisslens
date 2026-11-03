@@ -98,7 +98,8 @@ def save_gazetteer(extra: list[dict] | None = None) -> int:
 ABBREV_FULL = {"st": "Street", "ave": "Avenue", "av": "Avenue", "blvd": "Boulevard", "rd": "Road", "pkwy": "Parkway",
                "dr": "Drive", "pl": "Place", "ln": "Lane", "ct": "Court", "hwy": "Highway", "expy": "Expressway",
                "sq": "Square", "ter": "Terrace", "way": "Way", "n": "North", "s": "South", "e": "East", "w": "West",
-               "rev": "Reverend"}
+               "rev": "Reverend", "jr": "Junior", "mt": "Mount", "ft": "Fort"}
+ROADWAY_TAGS = {"wr", "er", "nr", "sr", "nb", "sb", "eb", "wb", "ramp", "rp"}  # a carriageway or ramp of one street
 QUADRANT = {"nw": "Northwest", "ne": "Northeast", "sw": "Southwest", "se": "Southeast"}
 
 
@@ -240,7 +241,7 @@ def _street_words(name: str) -> list[set[str]]:
     for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
         words = {re.sub(r"^0*(\d+?)(st|nd|rd|th)?$", r"\1", ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower())
                  for w in re.findall(r"[a-z0-9]+", part.lower())}  # "169th", "169" and "04th" are one street each
-        words = {w for w in words if w not in drop}
+        words = {w for w in words if w not in drop and w not in ROADWAY_TAGS}
         if words:
             out.append(words)
     return out
@@ -250,7 +251,16 @@ def same_corner(proposed: str, corner: str) -> bool:
     """Whether the investigated corner is the proposal's intersection: every street the proposal names is one of the
     corner's streets (word for word, abbreviations and direction words aside)."""
     want, have = _street_words(proposed), _street_words(corner)
-    return bool(want) and all(any(w <= h or h <= w for h in have) for w in want)
+    return bool(want) and all(any(_words_match(w, h) for h in have) for w in want)
+
+
+def _words_match(a: set[str], b: set[str]) -> bool:
+    """One street's words against another's: the smaller set's every word is in the larger, where an initial matches
+    a word that starts with it ("M L King Jr Way" is "Martin Luther King Junior Way")."""
+    small, big = (a, b) if len(a) <= len(b) else (b, a)
+    hit = lambda w: w in big or (len(w) == 1 and w.isalpha() and any(x.startswith(w) for x in big)) or \
+        (len(w) > 1 and any(len(x) == 1 and w.startswith(x) for x in big))
+    return all(hit(w) for w in small)
 
 
 CODED_SHARE = 0.5  # below this share of the circle's coded crashes at the corner itself, the circle is mostly others'
