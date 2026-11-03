@@ -1028,6 +1028,7 @@
     -73.68
    ],
    "agency": "the NYC Department of Transportation (NYC DOT)",
+   "state_agency": "the New York State Department of Transportation (NYSDOT)",
    "short_name": "New York",
    "aliases": ["New York", "NY", "Manhattan", "Brooklyn", "Bronx", "Queens", "Staten Island"]
   },
@@ -1060,6 +1061,7 @@
     -87.52
    ],
    "agency": "the Chicago Department of Transportation (CDOT)",
+   "state_agency": "the Illinois Department of Transportation (IDOT)",
    "short_name": "Chicago"
   },
   {
@@ -1072,6 +1074,7 @@
     -118.15
    ],
    "agency": "the Los Angeles Department of Transportation (LADOT)",
+   "state_agency": "the California Department of Transportation (Caltrans)",
    "short_name": "Los Angeles",
    "aliases": ["LA"]
   },
@@ -1085,6 +1088,7 @@
     -121.99998618281417
    ],
    "agency": "the Seattle Department of Transportation (SDOT)",
+   "state_agency": "the Washington State Department of Transportation (WSDOT)",
    "short_name": "Seattle",
    "screen": {
     "from": "crashes",
@@ -1102,6 +1106,7 @@
     -122.35
    ],
    "agency": "the San Francisco Municipal Transportation Agency (SFMTA)",
+   "state_agency": "the California Department of Transportation (Caltrans)",
    "short_name": "San Francisco",
    "aliases": ["SF"],
    "screen": {
