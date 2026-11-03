@@ -67,12 +67,13 @@ def take(k: int, name: str, text: str) -> Path | None:
     return None
 
 
-def serve(port: int = 8792) -> int:
-    from . import demo_copilot
+def serve(port: int = 8792, desk: bool = False) -> int:
+    from . import demo_copilot, demo_desk
+    which = demo_desk if desk else demo_copilot  # the Before you commit demo, or the safety-engineer one
 
     def lines():
         out = []
-        for k, s in enumerate(demo_copilot.script()):
+        for k, s in enumerate(which.script()):
             wav = voice_dir() / f"{k:02d}_{s.name}.wav"
             state = "recorded" if take(k, s.name, s.narration) else ("stale" if wav.exists() else "none")
             out.append({"k": k, "name": s.name, "text": s.narration, "state": state,

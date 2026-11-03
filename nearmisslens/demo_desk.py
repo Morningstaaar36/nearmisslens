@@ -58,6 +58,22 @@ def facts() -> dict:
     return out
 
 
+def _clean_check() -> str | None:
+    """The saved check to show, read from the results: a published real input whose claims are all the source's own
+    sentences (T25 also checked some of the desk's own sentences, fixed after) and whose letter needs no correction.
+    The false-statement control is not shown: T25's review found it had drifted to another corner."""
+    import re
+    from . import pages
+    p = pages.DOCS / "data" / "checks.json"
+    if not p.exists():
+        return None
+    cases = [c for c in json.loads(p.read_text())["cases"] if c.get("status") == "published" and not c.get("control")
+             and not c.get("letter_correction")]
+    own = lambda c: any(re.search(r"in police records since", x.get("claim", "")) for x in c.get("claims") or [])
+    good = [c for c in cases if c.get("claims") and not own(c)]
+    return (good or cases or [{}])[0].get("id")
+
+
 def script(f: dict | None = None) -> list[Scene]:
     f = f or facts()
     rv, t25, t24 = f["rv"], f["t25"], f["t24"]
@@ -98,9 +114,9 @@ def script(f: dict | None = None) -> list[Scene]:
     scenes += [
         Scene("check", f"The same desk checks claims. On {t25['inputs']} inputs nobody chose for it, all "
                        f"{_words(t25['published_real'])} real ones were published at the right corner, and all "
-                       f"{t25['quotes_verified']} of their quotes were found on their pages. A false statement that a "
-                       "corner had zero injury crashes was caught.",
-              "page", target="check", q={"route": "check", "match": "control_false_claim"},
+                       f"{t25['quotes_verified']} of their quotes were found on their pages. An off-topic page that names a "
+                       "corner was refused.",
+              "page", target="check", q={"route": "check", "match": _clean_check()},
               caption="Check a claim: every quote against its page, every number against the record"),
         Scene("gates", f"Why the gates matter: Muse Spark alone, with the same web search, cited {t24['quotes_absent']} "
                        f"quotes out of {t24['quotes_verified'] + t24['quotes_absent']} that are not on the page it cites. "
@@ -135,9 +151,10 @@ def _steps(s: Scene, seconds: float):
         if s.target == "premortem":
             page.evaluate("() => { const h = [...document.querySelectorAll('details[open] h4')].find(x => "
                           "/Pre-mortem/.test(x.textContent)); if (h) h.scrollIntoView({block: 'start'}); }")
-        for _ in range(int(seconds)):
+        for k in range(int(seconds)):
             page.wait_for_timeout(1000)
-            page.mouse.wheel(0, 30)
+            if k >= 3:  # hold the verdict (or the opening of the section) in view first, then read down
+                page.mouse.wheel(0, 30)
     return run
 
 

@@ -587,7 +587,7 @@ def cmd_cities(_args) -> int:
 
 def cmd_voice_studio(args) -> int:
     from . import voicestudio
-    return voicestudio.serve(args.port)
+    return voicestudio.serve(args.port, desk=args.desk)
 
 
 def cmd_treatments(args) -> int:
@@ -771,6 +771,7 @@ def main(argv: list[str] | None = None) -> int:
     ga.add_argument("city")
     vs = sub.add_parser("voice-studio", help="voice studio: record the demo narration line by line in the browser")
     vs.add_argument("--port", type=int, default=8792)
+    vs.add_argument("--desk", action="store_true", help="the lines of the Before you commit demo (nml demo --desk)")
     tm = sub.add_parser("treatments", help="city treatment studies with the causal gate (validation/studies/*.json)")
     tm.add_argument("study", nargs="*", help="study ids (default: all registered studies)")
     ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")
