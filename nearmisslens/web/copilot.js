@@ -54,10 +54,10 @@ async function boot() {
     `Records as of ${date(INDEX.asof)}.` +
     (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "") +
     ` <button class="quiet planlink" id="desklink">The desk: saved runs of real cases</button>` +
-    (LIVE !== null ? ` <button class="quiet planlink" id="checklink">Check a claim yourself</button>` : "");
+    ` <button class="quiet planlink" id="checklink">${LIVE !== null ? "Check a claim yourself" : "Checks of fresh inputs"}</button>`;
   if (INDEX.plan) $("planlink").onclick = () => showPlan();
   $("desklink").onclick = () => showDesk();
-  if (LIVE !== null) $("checklink").onclick = () => showCheck();
+  $("checklink").onclick = () => showCheck();
   const [sLat, wLon, nLat, eLon] = INDEX.bbox;
   map = L.map("map", {scrollWheelZoom: false}).fitBounds([[sLat, wLon], [nLat, eLon]]);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "© OpenStreetMap contributors"}).addTo(map);
@@ -72,15 +72,37 @@ async function boot() {
   listCorners(INDEX.corners);
   const hit = r.corner && INDEX.corners.find(c => c.slug === r.corner);
   if (r.corner === "desk") { showDesk(); return; }
-  if (r.corner === "check" && LIVE !== null) { showCheck(); return; }
+  if (r.corner === "check") { showCheck(); return; }
   if (hit) openCorner(hit);
   else if (INDEX.plan) showPlan();  // a city opens on its action plan
 }
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
 
+async function savedChecks() {
+  // the registered run of nml check (T25): inputs fixed before the run, each outcome as the live page shows it
+  let d;
+  try { d = await getJSON("data/checks.json"); } catch (e) { return ""; }
+  const s = d.summary, m = s.met, ok = v => v ? "met" : "not met";
+  return `<section class="step"><h3>Saved checks: ${esc(d.run)}, ${s.inputs} inputs fixed before the run</h3>` +
+    `<p class="legend">Registered in ${esc(d.registered)}. ${s.published_real} of ${s.real} real inputs published (${ok(m.published)}); ` +
+    `${s.quotes_verified} of ${s.quotes_published} published quotes found on their page; the off-topic page ${s.offtopic_published ? "was" : "was not"} published ` +
+    `and the false zero-crash statement was ${esc(s.false_claim_status)} (${esc((s.false_claim_verdicts || []).join("; ") || "no verdict")}). ` +
+    `Rule ${s.rule_met ? "met" : "not met"}; mean $${Number(s.mean_usd).toFixed(3)} of Meta API per input.</p>` +
+    d.cases.map(c => `<details><summary>${esc(c.id)}${c.control ? " (control)" : ""} · ${esc(c.city_name || c.city)} · ` +
+      `<b>${esc(c.status)}</b>${c.corner ? " · " + esc(c.corner) : ""}</summary>` +
+      `<p class="legend">Input (${esc(c.kind)}): ${esc(c.input)}</p>${checkResult(c)}</details>`).join("") + `</section>`;
+}
+
 async function showCheck() {
   // the live desk on your own input: a link, a claim, a source's text or a resident's report, in a registry city
+  if (LIVE === null) {
+    $("out").innerHTML = `<p class="where">Checks of fresh inputs · saved</p><h2 class="corner">The desk on inputs nobody chose for it</h2>` +
+      `<p class="lede">Each input went to <code>nml check</code>, the same path as the live page's "Check a claim yourself". ` +
+      `Run your own with a Meta key: <code>nml check "a news link or a claim" --city CITY</code> (see TESTING.md).</p>` +
+      (await savedChecks() || `<p class="legend">No saved checks in this copy.</p>`);
+    return;
+  }
   let cities = [];
   try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* listed below */ }
   $("out").innerHTML = `<p class="where">Check a claim · live</p><h2 class="corner">Give the desk something real</h2>` +
@@ -95,7 +117,7 @@ async function showCheck() {
     `<label><input type="checkbox" id="checkreport"> it is a resident's report</label> ` +
     `<input id="checkaddr" maxlength="200" placeholder="where (for a report)"> ` +
     `<input id="checkphoto" maxlength="500" placeholder="photo URL (optional)"> <button>Check</button></form>` +
-    `<div id="checkout"></div>`;
+    `<div id="checkout"></div>` + await savedChecks();
   if (!cities.length) { $("checkout").innerHTML = `<p class="legend">No city can be checked on this server.</p>`; return; }
   $("checkform").onsubmit = async ev => {
     ev.preventDefault();

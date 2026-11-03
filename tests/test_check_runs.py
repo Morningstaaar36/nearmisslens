@@ -44,3 +44,19 @@ def test_every_input_is_valid_for_its_city(monkeypatch):
     monkeypatch.setattr(orchestrator, "public_url", lambda u: u.startswith("https://"))
     for i in check_runs.spec("T25")["inputs"]:
         assert check.validate(i["input"], i["city"], i["kind"]) [0] == i["kind"], i["id"]
+
+
+def test_the_site_gets_the_saved_checks_with_their_record_notes(monkeypatch, tmp_path):
+    from nearmisslens import pages
+    bench = tmp_path / "bench"
+    bench.mkdir()
+    (bench / "experiment_T25.json").write_text(json.dumps({"id": "T25", "cases": [
+        {**_case("url_nyc", "published", sources=["verified"]), "asof": "2026-10-31", "kind": "url", "city": "nyc",
+         "input": "https://example.org/a", "letter": "Plate ABC1234 seen."}]}))
+    monkeypatch.setattr(check_runs, "RESULTS_DIR", tmp_path)
+    out = tmp_path / "site"
+    out.mkdir()
+    pages.checks_page(out)
+    blob = json.loads((out / "checks.json").read_text())
+    assert blob["summary"]["by_input"] == {"url_nyc": "published"} and "2026-10-31" in blob["cases"][0]["record_notes"][0]
+    assert "ABC1234" not in (out / "checks.json").read_text()  # plates are redacted from what the site publishes

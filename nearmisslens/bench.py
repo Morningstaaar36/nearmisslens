@@ -701,7 +701,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1272,6 +1272,40 @@ def _or_rule(v, reported: bool = True, n: int | None = None) -> str:
     if v is None:
         return "not reported (rule)"
     return str(v) if reported else f"{v} (on {n} corners; not a finding: the rule needs 20)"
+
+
+def _t25_section() -> list[str]:
+    """T25: nml check, as deployed, on inputs fixed before the run."""
+    r = _load("experiment_T25.json")
+    if not r:
+        return []
+    from .check_runs import spec, summary
+    s, sp = summary(r), spec("T25")
+    met = s["met"]
+    yes = lambda b: "met" if b else "not met"
+    named = {i["id"]: i.get("corner_named") for i in sp["inputs"]}
+    L = ["## T25 `nml check` on inputs nobody chose for it", "",
+         f"Registered in BENCH_PREREG.md (T25). {s['inputs']} inputs fixed in `validation/experiments/T25.json` before the "
+         f"run: news links, claims to find, and two controls. Records as of {sp['asof']}; ${sp['budget_usd']:.2f} Meta "
+         "budget per input; the settings the deployed app uses.", "",
+         "| Rule | Measured | |", "|---|---|---|",
+         f"| at least {sp['rule']['min_published_real']} of {s['real']} real inputs published | {s['published_real']} | "
+         f"{yes(met['published'])} |",
+         f"| mean Meta cost at most ${sp['rule']['max_mean_usd']:.2f} | ${s['mean_usd']:.3f} | {yes(met['cost'])} |",
+         f"| at least {round(100 * sp['rule']['min_verified_quote_share'])}% of published quotes verified | "
+         f"{s['quotes_verified']} of {s['quotes_published']} | {yes(met['quotes'])} |",
+         f"| no licence plate published | {s['plates_published']} | {yes(met['plates'])} |",
+         f"| the off-topic page is not published | {'published' if s['offtopic_published'] else 'not published'} | "
+         f"{yes(met['control_offtopic'])} |",
+         f"| the false zero-crash statement is not called consistent | {s['false_claim_status']}: "
+         f"{'; '.join(s['false_claim_verdicts']) or 'no verdict'} | {yes(met['control_false_claim'])} |", "",
+         f"**Rule: {'met' if s['rule_met'] else 'not met'}.** Mean {s['mean_seconds']:.0f} s per input; "
+         f"${s['total_usd']:.2f} in all.", "",
+         "| Input | Kind | City | Outcome | Corner | Named in the input | Meta $ |", "|---|---|---|---|---|---|---|"]
+    for c in r["cases"]:
+        L.append(f"| {c['id']} | {c.get('kind')} | {c.get('city')} | {c['status']} | {c.get('corner') or ''} | "
+                 f"{named.get(c['id']) or ''} | {(c.get('cost_usd') or {}).get('meta') or 0:.3f} |")
+    return L + [""]
 
 
 def _t23_section(run: str = "T23") -> list[str]:

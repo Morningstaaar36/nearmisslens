@@ -147,6 +147,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     from .app import evidence
     (root / "evidence.json").write_text(json.dumps(evidence(), indent=0, default=str))
     desk_page(root)
+    checks_page(root)
     (docs / "index.html").write_text(page("static", live))
     for name in ("copilot.js", "copilot.css"):
         shutil.copyfile(WEB / name, docs / name)
@@ -187,6 +188,24 @@ def desk_page(root: Path) -> None:
     blob = redact(json.dumps({"run": res.get("id"), "runs": [desk_stats(r) for r in runs], "cases": cases,
                               "review": review}, default=str))
     (root / "desk.json").write_text(blob)  # no licence plate is published, even one a 311 report printed
+
+
+def checks_page(root: Path) -> None:
+    """The saved `nml check` results of the latest registered check run (T25), for the site: each input with its
+    outcome, as the live page would show it, and the run's rule as measured."""
+    from .check import record_lag
+    from .check_runs import results_path, spec, summary
+    from .orchestrator import redact
+    path = results_path("T25")
+    if not path.exists():
+        return
+    res = json.loads(path.read_text())
+    keep = ("id", "control", "status", "reason", "city", "city_name", "kind", "input", "corner", "summary", "findings",
+            "sources", "claims", "letter", "cost_usd", "turns", "seconds", "asof")
+    cases = [{**{k: c.get(k) for k in keep}, "record_notes": c.get("record_notes") or record_lag(c)}
+             for c in res["cases"]]
+    blob = {"run": "T25", "registered": spec("T25")["registered"], "summary": summary(res), "cases": cases}
+    (root / "checks.json").write_text(redact(json.dumps(blob, default=str)))
 
 
 def published_verdict(text: str) -> str | None:
