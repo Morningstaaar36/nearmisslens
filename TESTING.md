@@ -2,6 +2,10 @@
 
 This is for someone who did not build it and wants to see whether it holds up on inputs nobody chose for it.
 
+## Without installing anything
+
+Open the [live page](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run). The task bar at the top has the four things to try: review a project, review a list, check a claim, and look up a corner. Each form has real examples to click. Live work runs under a daily budget; if the page says the budget is used up for the day, the saved results still open, and the command line below runs everything with your own key.
+
 ## Install
 
 ```bash
@@ -31,7 +35,7 @@ In the registered runs a case cost $0.06 to $0.13 of Meta API (it is capped by `
 it waiting for public map and data servers. The result is printed and saved as `runs/checks/<time>_<slug>/result.json`
 and `report.md`.
 
-The web app does the same: `uv run nml app`, open http://127.0.0.1:8770, choose "Check a claim yourself".
+The web app does the same: `uv run nml app`, open http://127.0.0.1:8770, choose "Check a claim".
 
 A city that is not in the registry, or has no crash data, gets a plain answer and no run. To add one:
 `nml add-city ID --name NAME --bbox LAT_MIN LON_MIN LAT_MAX LON_MAX --agency AGENCY`, then

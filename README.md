@@ -1,6 +1,22 @@
 # NearMissLens
 
-**A street-safety desk run by Meta's models and refereed by code.** Give it something real: a news report of a crash, an official's claim that a safety program worked, a resident's 311 report with a photo, a corner, or a whole city. Muse Spark works the case with a fixed set of checked tools: its instructions set the order, and it decides what to search, read, check and write.
+**Check a street-safety project against the city's own crash record before the money is spent.**
+
+[Use it live](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) (no account, key or install) · [Saved results](https://morningstaaar36.github.io/nearmisslens/) · [Test it yourself](TESTING.md)
+
+A traffic engineer or an agency describes what it plans to build, pastes a list of projects or the web page that lists them, or pastes a news story about a corner. NearMissLens looks up the corner's police crash records, the city's own past safety programs, the federal studies of each fix and the owner of each road, and returns a memo with a verdict and its sources. Meta's models do the research. Code sets the verdict, and nothing is shown until code has checked every number against the record and every quote against its page.
+
+What you can do with it:
+- **Review a project** before funding it: one fix at one intersection. The verdict is proceed, proceed after a site check, compare first, not covered by the evidence, or reconsider, with the reasons and a pre-mortem written by a second model.
+- **Review a list**: several proposals, or a whole program read from the agency's own web page. Each is reviewed, and code ranks them by what the evidence supports, within a budget if you give one.
+- **Check a claim**: a news link or an official's statement about a corner, tested against the crash record.
+- **Look up a corner**: what its crashes have in common, what the city already tried, which fix the record supports, who must act, and a drafted request letter.
+
+It covers New York, Washington DC, Chicago, Seattle and San Francisco, the cities that publish geocoded crash records. An engineer at the site can also speak a proposal (`nml review --audio`). Live work runs under a daily budget; when it is used up, the page says so and the saved results stay open.
+
+### How the research is done
+
+Muse Spark works each case with a fixed set of checked tools: its instructions set the order, and it decides what to search, read, check and write.
 - It finds and reads the source on the live web with Meta's `web_search`.
 - It loads the city's open datasets with tool search.
 - It investigates the intersection with checked tools.
@@ -20,9 +36,7 @@ Nothing is published until code has checked every number against the record and 
 
 What we changed between runs, and what reviews of the published cases still found wrong, is below.
 
-**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs (a static replay, not a live endpoint), with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
-
-**Use it live:** [the live copilot](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) runs everything on this page for any address or proposal in the covered cities: a new corner's report, "Check a claim yourself", "Before you commit" for one proposal, and a program review of two to four. It runs under a daily dollar cap; when the cap is reached it says so, and the saved runs stay open.
+**Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs, with every step the agent took, and each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. New work (a corner, a check, a review) goes to the live server. No key or install is needed.
 
 **Review it in five minutes:**
 1. On the site, **"Before you commit: review a proposed project"**: real proposals from five cities' plans, each with a verdict set by code, a pre-mortem by a second model family, and the answers.
