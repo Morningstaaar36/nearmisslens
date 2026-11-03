@@ -89,6 +89,12 @@
 "name": "8th Street Southeast & Pennsylvania Avenue Southeast",
 "city": "dc"
 },
+"dc|alabama avenue southeast & stanton road southeast": {
+"lat": 38.8469114,
+"lon": -76.980308,
+"name": "Alabama Avenue Southeast & Stanton Road Southeast",
+"city": "dc"
+},
 "dc|arkansas avenue northwest & iowa avenue northwest": {
 "lat": 38.9473396,
 "lon": -77.0307693,
@@ -2099,6 +2105,12 @@
 "name": "15th Avenue South & South Lander Street",
 "city": "seattle"
 },
+"seattle|21st ave nw & nw 96th st": {
+"lat": 47.6989728,
+"lon": -122.3830546,
+"name": "NW 96th St & 21st Ave NW",
+"city": "seattle"
+},
 "seattle|25th avenue south & rainier avenue south": {
 "lat": 47.5815591,
 "lon": -122.3005549,
@@ -2111,6 +2123,12 @@
 "name": "2nd Avenue & Cherry Street",
 "city": "seattle"
 },
+"seattle|31st ave ne & ne 115th st": {
+"lat": 47.7119908,
+"lon": -122.2949789,
+"name": "NE 115th St & 31st Ave NE",
+"city": "seattle"
+},
 "seattle|31st avenue & east spruce street": {
 "lat": 47.6031904,
 "lon": -122.2925089,
@@ -2121,6 +2139,18 @@
 "lat": 47.5383701,
 "lon": -122.2900097,
 "name": "33rd Avenue South & South Myrtle Place",
+"city": "seattle"
+},
+"seattle|35th ave sw & sw myrtle st": {
+"lat": 47.5392359,
+"lon": -122.3765721,
+"name": "35th Ave SW & SW Myrtle St",
+"city": "seattle"
+},
+"seattle|35th avenue south & south oregon street": {
+"lat": 47.56283,
+"lon": -122.2888309,
+"name": "South Oregon Street & 35th Avenue South",
 "city": "seattle"
 },
 "seattle|3rd avenue & 65th street": {
@@ -2213,6 +2243,12 @@
 "name": "California Ave SW & SW Hinds St",
 "city": "seattle"
 },
+"seattle|california ave sw & sw spokane st": {
+"lat": 47.5720364,
+"lon": -122.3867868,
+"name": "California Ave SW & SW Spokane St",
+"city": "seattle"
+},
 "seattle|california avenue southwest & southwest hinds street": {
 "lat": 47.5731808,
 "lon": -122.3867901,
@@ -2223,6 +2259,12 @@
 "lat": 47.5720364,
 "lon": -122.3867868,
 "name": "Southwest Spokane Street & California Avenue Southwest",
+"city": "seattle"
+},
+"seattle|california avenue southwest & spokane street southwest": {
+"lat": 47.5720364,
+"lon": -122.3867868,
+"name": "California Avenue Southwest & Spokane Street Southwest",
 "city": "seattle"
 },
 "seattle|dexter avenue north & john street": {
@@ -2241,6 +2283,12 @@
 "lat": 47.5714661,
 "lon": -122.3706772,
 "name": "Southwest Avalon Way & Harbor Avenue Southwest",
+"city": "seattle"
+},
+"seattle|martin luther king junior way south & south othello street": {
+"lat": 47.5370532,
+"lon": -122.2809468,
+"name": "Martin Luther King Junior Way South & South Othello Street",
 "city": "seattle"
 },
 "seattle|north 48th street & stone way north": {
@@ -2265,6 +2313,12 @@
 "lat": 47.5729299,
 "lon": -122.2939985,
 "name": "Rainier Avenue South & South Walden Street",
+"city": "seattle"
+},
+"seattle|s henderson st & seward park ave s": {
+"lat": 47.5233032,
+"lon": -122.264579,
+"name": "Seward Park Ave S & S Henderson St",
 "city": "seattle"
 },
 "seattle|seward park avenue south & south henderson street": {
@@ -2337,6 +2391,12 @@
 "lat": 37.7832509,
 "lon": -122.4027076,
 "name": "Howard Street & 4th Street",
+"city": "sf"
+},
+"sf|5th street & bryant street": {
+"lat": 37.7778095,
+"lon": -122.400319,
+"name": "5th Street & Bryant Street",
 "city": "sf"
 },
 "sf|5th street & market street": {
