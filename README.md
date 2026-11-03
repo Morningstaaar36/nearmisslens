@@ -22,6 +22,8 @@ What we changed between runs, and what reviews of the published cases still foun
 
 **Open it:** [morningstaaar36.github.io/nearmisslens](https://morningstaaar36.github.io/nearmisslens/). It has the desk's saved runs (a static replay, not a live endpoint), with every step the agent took, plus each city's action plan: New York's 304 Vision Zero priority intersections and the 50 worst crash locations in each of Seattle, Washington DC and San Francisco, found from their own crash records. No key or install is needed.
 
+**Use it live:** [the live copilot](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) runs everything on this page for any address or proposal in the covered cities: a new corner's report, "Check a claim yourself", "Before you commit" for one proposal, and a program review of two to four. It runs under a daily dollar cap; when the cap is reached it says so, and the saved runs stay open.
+
 **Review it in five minutes:**
 1. On the site, **"Before you commit: review a proposed project"**: real proposals from five cities' plans, each with a verdict set by code, a pre-mortem by a second model family, and the answers.
 2. **"Checks of fresh inputs"**: the desk on 12 inputs nobody chose for it (T25), including the controls it had to catch.
