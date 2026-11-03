@@ -841,3 +841,4 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   - **A check must cite its own input.** A link must be among the published sources, and a text handed in as the source (`input:text`) must be cited with a quote from it; otherwise the gate refuses.
   - **A mistyped id resolves.** When exactly one text was handed in, a read of a non-web id ("text") reads that text.
   - Both are tested.
+- **The control again, after the change** (a development run, not part of T25's registered result): the same statement, as the source's text. The desk investigated 6th Street & Mission Street, cited the input text (verified), and called "zero injury crashes in the last five years" **"differs from the record"** (the record has 67 injury crashes since 2021-10-31). $0.026 of Meta API, 31 s.
