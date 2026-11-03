@@ -49,6 +49,8 @@ A city that is not in the registry, or has no crash data, gets a plain answer an
 | `letter` | a drafted request to the agency that owns the road; every number in it was checked. Nothing is sent |
 | `cost_usd.meta`, `seconds`, `asof` | what it cost, how long it took, and the date the records were read as of |
 
+**Whose crashes a corner's counts are.** The record is read within 100 m of the corner. A crash the city's own data places at another intersection, on another street, or away from any intersection (its own mid-block field, a distance from the intersection past 30 m, a block "between" two streets, or one street with no cross street) is left out, and the report says how many were. A crash the data does not place is kept. How each city's data places crashes is in its crash adapter in `nearmisslens/data/registry.json` (`street_fields` or `location`): New York and San Francisco record both streets; Seattle a location text and a junction type; DC a street address and a distance from the nearest intersection; Chicago a street and an "intersection related" flag. Registered runs before T31 used the whole 100 m circle.
+
 ## What counts as a failure
 
 Report any of these, with the `result.json`:
