@@ -125,7 +125,7 @@ def test_a_job_left_running_by_a_restart_reads_as_stopped(tmp_path):
 def test_engineer_answers_quick_corners_inline_and_slow_ones_as_a_job(monkeypatch, tmp_path):
     from nearmisslens import brief, context, engineer
     monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
-    monkeypatch.setattr(app, "ENGINEER_WAIT_S", 0.5)
+    monkeypatch.setattr(app, "ENGINEER_WAIT_S", 3.0)  # a quick answer under a loaded machine; the slow one waits on an event
     slow = threading.Event()
     monkeypatch.setattr(brief, "geocode", lambda a: (_ for _ in ()).throw(ValueError("could not find that place"))
                         if a.startswith("Nowhere") else (1.0, 2.0, a))

@@ -1,0 +1,145 @@
+{
+ "id": "T31",
+ "tool": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast",
+   "lat": 38.8469114,
+   "lon": -76.980308,
+   "tool_injury_crashes": 34,
+   "circle_injury_crashes": 47,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 176,
+    "kept": 130,
+    "left_out_elsewhere": 46,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "dc",
+   "corner": "Southeast Freeway & 11th Street Southeast",
+   "error": "ValueError: no intersection of Southeast Freeway and 11th Street Southeast found near Southeast Freeway, Navy Yard, Southeast, Ward 6, Washington, District of Columbia, 20374, United States"
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street",
+   "lat": 40.7429100197963,
+   "lon": -73.9928034095111,
+   "tool_injury_crashes": 32,
+   "circle_injury_crashes": 52,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 103,
+    "kept": 66,
+    "left_out_elsewhere": 37,
+    "not_placed": 25
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue",
+   "lat": 40.669172665529,
+   "lon": -73.9863042919239,
+   "tool_injury_crashes": 20,
+   "circle_injury_crashes": 31,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 69,
+    "kept": 49,
+    "left_out_elsewhere": 20,
+    "not_placed": 29
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street",
+   "lat": 47.5370532,
+   "lon": -122.2809468,
+   "tool_injury_crashes": 0,
+   "circle_injury_crashes": 71,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 266,
+    "kept": 0,
+    "left_out_elsewhere": 266,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South",
+   "lat": 47.56283,
+   "lon": -122.2888309,
+   "tool_injury_crashes": 0,
+   "circle_injury_crashes": 51,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 156,
+    "kept": 0,
+    "left_out_elsewhere": 156,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street",
+   "lat": 37.7831061,
+   "lon": -122.4191918,
+   "tool_injury_crashes": 21,
+   "circle_injury_crashes": 35,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 35,
+    "kept": 21,
+    "left_out_elsewhere": 14,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street",
+   "lat": 37.7778095,
+   "lon": -122.400319,
+   "tool_injury_crashes": 20,
+   "circle_injury_crashes": 25,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 25,
+    "kept": 20,
+    "left_out_elsewhere": 5,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue",
+   "lat": 41.9389391,
+   "lon": -87.739491,
+   "tool_injury_crashes": 3,
+   "circle_injury_crashes": 14,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 75,
+    "kept": 21,
+    "left_out_elsewhere": 54,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue",
+   "lat": 41.9851049,
+   "lon": -87.6624561,
+   "tool_injury_crashes": 13,
+   "circle_injury_crashes": 23,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 214,
+    "kept": 80,
+    "left_out_elsewhere": 134,
+    "not_placed": 0
+   }
+  }
+ ]
+}
