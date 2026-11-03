@@ -642,6 +642,13 @@ def cmd_cities(_args) -> int:
 
 def cmd_voice_studio(args) -> int:
     from . import voicestudio
+    if args.lines:
+        print(voicestudio.script_md(desk=args.desk))
+        return 0
+    if args.import_dir:
+        out = voicestudio.import_takes(Path(args.import_dir), desk=args.desk)
+        print(json.dumps(out, indent=1))
+        return 0
     return voicestudio.serve(args.port, desk=args.desk)
 
 
@@ -839,6 +846,9 @@ def main(argv: list[str] | None = None) -> int:
     vs = sub.add_parser("voice-studio", help="voice studio: record the demo narration line by line in the browser")
     vs.add_argument("--port", type=int, default=8792)
     vs.add_argument("--desk", action="store_true", help="the lines of the Before you commit demo (nml demo --desk)")
+    vs.add_argument("--lines", action="store_true", help="print the lines to read, numbered as the files are to be named")
+    vs.add_argument("--import", dest="import_dir", help="a folder of recordings made elsewhere (01_open.m4a, ...): "
+                    "each becomes its line's take")
     tm = sub.add_parser("treatments", help="city treatment studies with the causal gate (validation/studies/*.json)")
     tm.add_argument("study", nargs="*", help="study ids (default: all registered studies)")
     ap = sub.add_parser("app", help="Junction Safety Copilot web app on 127.0.0.1")

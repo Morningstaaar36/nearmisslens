@@ -120,3 +120,43 @@ def serve(port: int = 8792, desk: bool = False) -> int:
     print(f"Voice studio: http://127.0.0.1:{port}  (Ctrl+C to stop)")
     ThreadingHTTPServer(("127.0.0.1", port), H).serve_forever()
     return 0
+
+
+def _clean(src: Path, wav: Path) -> None:
+    """Any recording (a phone's m4a, a wav, an mp3) as the take format: 24 kHz mono, silence trimmed, loudness set."""
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-ac", "1", "-ar", "24000", "-af",
+                    "silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
+                    "silenceremove=start_periods=1:start_threshold=-45dB,areverse,loudnorm=I=-16", str(wav)], check=True)
+
+
+def import_takes(folder: Path, desk: bool = True) -> dict:
+    """Takes recorded anywhere (an iPad's Voice Memos, a laptop): one file per line, named by the line's number and
+    scene as the script lists them ("01_open.m4a"; the number or the scene name alone also works). Each becomes the
+    take for its line's current text. Returns {scene: file used} and the lines with no file."""
+    from . import demo_copilot, demo_desk
+    which = demo_desk if desk else demo_copilot
+    files = [f for f in Path(folder).iterdir() if f.is_file() and f.suffix.lower() in
+             (".m4a", ".wav", ".mp3", ".aac", ".ogg", ".webm", ".caf", ".flac")]
+    used, missing = {}, []
+    for k, s in enumerate(which.script()):
+        stem = lambda f: f.stem.lower().replace(" ", "_")
+        f = next((f for f in files if stem(f) == f"{k + 1:02d}_{s.name}"), None) or \
+            next((f for f in files if s.name in stem(f).split("_")), None) or \
+            next((f for f in files if stem(f).split("_")[0] in (f"{k + 1:02d}", str(k + 1))), None)
+        if f is None:
+            missing.append(f"{k + 1:02d}_{s.name}")
+            continue
+        _clean(f, voice_dir() / f"{k:02d}_{s.name}.wav")
+        (voice_dir() / f"{k:02d}_{s.name}.json").write_text(json.dumps({"text": _digest(s.narration)}))
+        used[s.name] = f.name
+    return {"imported": used, "missing": missing}
+
+
+def script_md(desk: bool = True) -> str:
+    """The lines to read, numbered as the files are to be named."""
+    from . import demo_copilot, demo_desk
+    which = demo_desk if desk else demo_copilot
+    out = []
+    for k, s in enumerate(which.script()):
+        out += [f"## {k + 1:02d}_{s.name}", "", s.narration, ""]
+    return "\n".join(out)
