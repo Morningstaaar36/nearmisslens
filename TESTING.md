@@ -70,3 +70,33 @@ the input was ordinary and checkable, and the reason shows the desk went wrong (
 - Choose inputs before running any of them, and include some the desk should refuse.
 - Note the commit you tested (`git rev-parse HEAD`); results differ between commits.
 - Replay (`nml --replay ...`) reproduces saved runs only; new cases need live mode and a key.
+
+## Before you commit: review a proposed project
+
+For the engineer or directorate deciding whether to fund a project. Describe it as you would to a colleague:
+
+```bash
+uv run nml review "Leading pedestrian intervals at Street A & Street B, about \$15,000" --city CITY_ID
+uv run nml review --example N          # a real proposal from validation/examples/proposals.json
+```
+
+What happens:
+1. Muse Spark registers the proposal against the federal list of Proven Safety Countermeasures, then investigates the corner with the checked tools.
+2. Code tests the proposal against the crash record and **sets the verdict**:
+   - **proceed**;
+   - **proceed only after a site check** (the estimate assumes something the public data cannot show);
+   - **compare before committing** (another supported fix is expected to avoid at least twice as many injury crashes);
+   - **reconsider** (the record shows none of the crashes it targets, the fix is already installed, the city's own record contradicts it, no evidence fits the site, or the stated cost is above the lifetime value of the harm it avoids).
+3. Muse Spark Open (Baseten) red-teams the decision. Code keeps an objection only if the fact it cites is in a receipt.
+4. Muse Spark writes the memo, and the gate holds it to the code's verdict, the receipts' numbers and an answer to every kept objection.
+
+The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`. A review cost about $0.03 Meta plus $0.02 Muse Spark Open in development.
+
+**The real proposals** in `validation/examples/proposals.json` come from agency plans, neighborhood commission resolutions, a community board letter, a petition and a news report. They are split by a fixed hash within each city:
+- `registered`: run by the project as T26;
+- `team`: tried by the team;
+- `held_out`: never run by the project before review, so you can try proposals nobody tuned for.
+
+`nml review --example N` runs row N; each row keeps its source link.
+
+**What counts as a failure here:** the memo is about a different corner than proposed; a number is not in the receipt it cites; an answer does not address its objection; or the verdict's reason is wrong given the receipts (for example "reconsider: no target crashes" where the record shows them).
