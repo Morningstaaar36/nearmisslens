@@ -133,7 +133,8 @@ function checkResult(r) {
   const srcs = (r.sources || []).length ? `<h4>Sources</h4><ul>` + r.sources.map(s =>
     `<li><a href="${safeUrl(s.url)}" rel="noopener">${esc(s.url)}</a> (${esc(s.quote_check || "unchecked")}): “${esc(s.quote)}”</li>`).join("") + `</ul>` : "";
   const letter = r.letter ? `<h4>Draft letter (review it; nothing is sent)</h4><pre class="letter">${esc(r.letter)}</pre>` : "";
-  return head + claims + finds + srcs + letter +
+  const notes = (r.record_notes || []).map(n => `<p class="legend">${esc(n)}</p>`).join("");
+  return head + claims + finds + srcs + notes + letter +
     `<p class="legend">Records as of ${esc(r.asof || "")}; $${esc((r.cost_usd || {}).meta)} of Meta API, ${esc(r.turns)} turns, ${Math.round(r.seconds || 0)} s.</p>`;
 }
 

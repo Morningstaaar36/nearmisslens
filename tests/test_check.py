@@ -121,3 +121,14 @@ def test_a_source_must_name_the_corners_street():
     assert names_corner("Police closed 8th Street after the crash.", corner)
     assert not names_corner("A cyclist was hit near Rhode Island Ave NW in Logan Circle.", corner)
     assert not names_corner("A crash on 18th Street.", corner)  # '8th' must be a word of its own
+
+
+def test_the_record_date_is_stated_and_a_death_the_record_lacks_is_flagged():
+    base = {"status": "published", "asof": "2026-10-31", "summary": "",
+            "sources": [{"quote": "A pedestrian was struck and killed at the corner on Tuesday."}],
+            "letter": "The record shows 12 injury crashes; no one was killed."}
+    notes = check.record_lag(base)
+    assert "2026-10-31" in notes[0] and len(notes) == 2 and "not what happened on the street" in notes[1]
+    assert len(check.record_lag({**base, "letter": "The record shows 12 injury crashes and 1 death."})) == 1
+    assert len(check.record_lag({**base, "status": "abstained"})) == 1
+    assert "About the record's date" in check.report_md({**base, "record_notes": notes, "kind": "url", "input": "x"})

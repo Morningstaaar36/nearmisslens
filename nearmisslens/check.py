@@ -129,8 +129,27 @@ def check(text: str, city: str, kind: str | None = None, photo: str | None = Non
            "receipts": r.get("receipts"), "cost_usd": {"meta": r.get("usd")}, "turns": r.get("turns"),
            "refusals": r.get("refusals"), "trace": r.get("trace"), "web": r.get("web"),  # search results, to trace a URL
            "seconds": round(time.time() - t0, 1), "asof": r.get("asof"), "source": "live" if not SETTINGS.replay else "replay"}
+    out["record_notes"] = record_lag(out)
     save(out, out_dir)
     return out
+
+
+DEATH = re.compile(r"\b(killed|died|dies|dead|death|fatal|fatally)\b", re.I)
+NO_DEATH = re.compile(r"\b(no (one|deaths?|people|fatalities)( (was|were))?( (killed|recorded))?|0 people killed|"
+                      r"nobody was killed|zero deaths)\b", re.I)
+
+
+def record_lag(out: dict) -> list[str]:
+    """What the reader must know about the record's date: police records arrive days to weeks after a crash, so a crash
+    in the news may not be in them yet; and when a published source speaks of a death the letter says the record does
+    not hold, that the letter describes the record, not the street."""
+    notes = [f"Police crash records arrive days to weeks after a crash. These counts are read as of {out.get('asof')}, "
+             "so a crash reported shortly before that date, or after it, may not be in them yet."]
+    said = " ".join([s.get("quote") or "" for s in out.get("sources") or []] + [out.get("summary") or ""])
+    if out.get("status") == "published" and DEATH.search(said) and NO_DEATH.search(out.get("letter") or ""):
+        notes.append("The source reports a death, and the letter says the record holds none here: the letter describes "
+                     "the record as of its date, not what happened on the street. Say so if you send it.")
+    return notes
 
 
 def save(out: dict, out_dir: Path | None = None) -> Path:
@@ -164,6 +183,8 @@ def report_md(r: dict) -> str:
     if r.get("sources"):
         L += ["## Sources", ""] + [f"- {s.get('url')} ({s.get('quote_check', 'unchecked')}): \"{s.get('quote')}\""
                                    for s in r["sources"]] + [""]
+    if r.get("record_notes"):
+        L += ["## About the record's date", ""] + [f"- {n}" for n in r["record_notes"]] + [""]
     if r.get("letter"):
         L += ["## Draft letter (review it; NearMissLens sends nothing)", "", r["letter"], ""]
     return "\n".join(L)
