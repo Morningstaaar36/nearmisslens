@@ -703,7 +703,7 @@ def write_bench_md() -> str:
                   + "; ".join(f"{r['old']} → {r['verdict']}" for r in c14["runs"] if r["program_key"] == "lpi") + "."]
     if a14 and b14:
         L += ["", _t14_verdict(a14, b14), ""]
-    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27") + _t26_section("T28") + _t29_section()
+    L += _t15_section() + _t16_section() + _t17_section() + _t18_section() + _t19_section() + _t20_section() + _t21_section() + _t22_section() + _t23_section() + _t23_section("T23b") + _t24_section() + _t25_section() + _t26_section() + _t26_section("T27") + _t26_section("T28") + _t29_section() + _t30_section()
     from . import opendata
     auto = [a for a in opendata.load_registry() if a.get("provenance", {}).get("found_by") == "data agent"]
     if auto:
@@ -1337,6 +1337,26 @@ def _t29_section() -> list[str]:
         L.append(f"| {p['title'][:70]} ({p['city']}) | {t['proposals']} | " + " | ".join(str(t[g]) for g, _, _ in GROUPS)
                  + f" | {t['not_reviewed']} |")
     return L + [""]
+
+
+def _t30_section() -> list[str]:
+    """T30, T30b, T30c: program intake from an agency's own pages."""
+    from .intake import run_summary
+    L = []
+    for run in ("T30", "T30b", "T30c"):
+        r = _load(f"experiment_{run}.json")
+        if not r:
+            continue
+        sp = json.loads((ROOT / "validation" / "experiments" / f"{run}.json").read_text())
+        s = run_summary(r, sp)
+        if not L:
+            L += ["## T30 Program intake: `nml intake` on agencies' own pages", "",
+                  "Registered in BENCH_PREREG.md (T30, T30b, T30c: the same pages and rule, after fixes). Scored against "
+                  "the projects collected by hand from the same pages (`validation/examples/programs.json`).", "",
+                  "| Run | Hand-collected found | Controls give nothing | $ a readable page | Rule |", "|---|---|---|---|---|"]
+        L.append(f"| {run} | {s['hand_found']} of {s['hand_projects']} | {'yes' if s['controls_empty'] else 'no'} | "
+                 f"${s['mean_usd_per_readable_page']:.3f} | {'met' if s['rule_met'] else 'not met'} |")
+    return L + [""] if L else []
 
 
 def _t25_section() -> list[str]:

@@ -726,6 +726,16 @@ Registered in BENCH_PREREG.md (T28). The 7 proposals of the `registered` split o
 | A crosswalk on the south side of the intersection at Beacon Ave S & S Webster St | seattle | outside_evidence | Beacon Avenue South & South Webster Street, Seattle | 0.091 |
 | Replace the painted median island with a concrete median island at Turk Boulevard & Lyon S | sf | reconsider | Turk Boulevard & Lyon Street, San Francisco | 0.071 |
 
+## T30 Program intake: `nml intake` on agencies' own pages
+
+Registered in BENCH_PREREG.md (T30, T30b, T30c: the same pages and rule, after fixes). Scored against the projects collected by hand from the same pages (`validation/examples/programs.json`).
+
+| Run | Hand-collected found | Controls give nothing | $ a readable page | Rule |
+|---|---|---|---|---|
+| T30 | 5 of 16 | yes | $0.035 | not met |
+| T30b | 8 of 16 | yes | $0.013 | not met |
+| T30c | 16 of 16 | yes | $0.063 | met |
+
 ## Data agent: adapters found and validated without hand-written code
 
 | place | dataset | validator attempts | records near the test point | latest record |

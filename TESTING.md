@@ -117,6 +117,15 @@ uv run nml portfolio list.csv --city CITY_ID --budget-total 500000  # a CSV with
 uv run nml portfolio --example ID                                   # a real list from validation/examples/programs.json
 ```
 
+Or start from the agency's own page:
+
+```bash
+uv run nml intake URL [URL ...] --city CITY_ID               # the projects on the page(s), checked; edit before reviewing
+uv run nml portfolio --from-url URL [URL ...] --city CITY_ID  # read the page(s), then review and rank every project
+```
+
+Intake keeps a project only when its passage is on the page word for word and names both streets (a location list may rest on the list item plus the passage describing the work), keeps a cost only when the passage states it, and leaves out projects the page says are completed. A page that refuses automated readers is reported unreadable; save the page or paste its list into a file instead.
+
 Each proposal is reviewed as above (three at a time). Then code, not a model, groups the list (build; build after a site check; compare first; decide part by part; not covered by the evidence; reconsider; not reviewed) and ranks each group by injury crashes avoided per dollar, then per year. With `--budget-total`, it lists the supported projects that fit, best value first, and the supported ones with no cost to rank. The program is saved as `runs/programs/<time>_<city>/program.md` and `program.json`, beside every proposal's review; an interrupted program resumes from that folder (`--out`) without paying twice. The web page takes 2 to 4 proposals at a time.
 
 The real lists in `validation/examples/programs.json` come from the agencies' own pages, each project with the source's sentence: `registered` lists were run by the project as T29; the `held_out` list (DDOT notices of intent) was never run by the project before review.

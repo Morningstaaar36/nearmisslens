@@ -1,0 +1,694 @@
+{
+ "id": "T30c",
+ "inputs": [
+  {
+   "id": "seattle_srts",
+   "city": "seattle",
+   "program": "sea_srts_2026",
+   "url": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+   "projects": [
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "N 77th St & Linden Ave N",
+     "treatment": "mark crosswalk and daylight intersection",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalk and \u201c daylight \u201d intersection at N 77th St and Linden Ave N near Daniel Bagley Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "Mark crosswalk and daylight intersection at N 77th St & Linden Ave N"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 65th St & 20th Ave NW",
+     "treatment": "hardened center lines to slow turns",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install hardened center lines to slow turns at NW 65th St and 20th Ave NW leading to Salmon Bay K-8 and Ballard High School (completed in 2026)",
+     "treatment_says": null,
+     "text": "Hardened center lines to slow turns at NW 65th St & 20th Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "62nd Ave NE & NE 65th St",
+     "treatment": "push button flashing beacon and marked crosswalk",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Walkway on 62nd Ave NE and push button flashing beacon and marked crosswalk at 62nd Ave NE and NE 65th St by Sand Point Elementary (completed in 2025)",
+     "treatment_says": null,
+     "text": "Push button flashing beacon and marked crosswalk at 62nd Ave NE & NE 65th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "8th Ave NE & NE 86th St",
+     "treatment": "all way stops and marked crosswalks",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stops and marked crosswalks at 8th Ave NE/NE 86th St and 8th Ave NE/NE 85th St next to St. Catherine School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops and marked crosswalks at 8th Ave NE & NE 86th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "8th Ave NE & NE 85th St",
+     "treatment": "all way stops and marked crosswalks",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stops and marked crosswalks at 8th Ave NE/NE 86th St and 8th Ave NE/NE 85th St next to St. Catherine School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops and marked crosswalks at 8th Ave NE & NE 85th St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NE 110th St & 40th Ave NE",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at NE 110th St and 40th Ave NE next to John Rogers Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at NE 110th St & 40th Ave NE"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 65th St & 3rd Ave NW",
+     "treatment": "paint and post curb bulbs",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Paint and post curb bulbs at NW 65th St and 3rd Ave NW leading to West Woodland Elementary and Ballard High School (expected in 2026)",
+     "treatment_says": null,
+     "text": "Paint and post curb bulbs at NW 65th St & 3rd Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 96th St & 17th Ave NW",
+     "treatment": "marked crosswalks",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks leading along NW 96th St at 17th Ave NW, 21st Ave NW, and 23rd Ave NW leading to Whitman Middle School and North Beach Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalks at NW 96th St & 17th Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 96th St & 21st Ave NW",
+     "treatment": "marked crosswalks",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks leading along NW 96th St at 17th Ave NW, 21st Ave NW, and 23rd Ave NW leading to Whitman Middle School and North Beach Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalks at NW 96th St & 21st Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NW 96th St & 23rd Ave NW",
+     "treatment": "marked crosswalks",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks leading along NW 96th St at 17th Ave NW, 21st Ave NW, and 23rd Ave NW leading to Whitman Middle School and North Beach Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalks at NW 96th St & 23rd Ave NW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "NE 115th St & 31st Ave NE",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "(north section expected in 2026 or 2027 which includes an all way stop at NE 115th St/31st Ave NE)",
+     "treatment_says": null,
+     "text": "All way stop at NE 115th St & 31st Ave NE"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "7th Ave S & W Wheeler St",
+     "treatment": "curb ramps",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Curb ramps at 7th Ave S/W Wheeler St at Coe Elementary (completed in 2025)",
+     "treatment_says": null,
+     "text": "Curb ramps at 7th Ave S & W Wheeler St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "6th Ave W & W Smith St",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 6th Ave W/W Smith St at Coe Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at 6th Ave W & W Smith St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "4th & Newton",
+     "treatment": "all way stops",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 4th/Newton, 4th/Crockett, Bigelow/Newton next to Queen Anne Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 4th & Newton"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "4th & Crockett",
+     "treatment": "all way stops",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 4th/Newton, 4th/Crockett, Bigelow/Newton next to Queen Anne Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 4th & Crockett"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Bigelow & Newton",
+     "treatment": "all way stops",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 4th/Newton, 4th/Crockett, Bigelow/Newton next to Queen Anne Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at Bigelow & Newton"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "31st Ave & E Spruce St",
+     "treatment": "all way stops",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 31st Ave/E Spruce St and 32nd Ave/E Spruce St next to Leschi Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 31st Ave & E Spruce St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "32nd Ave & E Spruce St",
+     "treatment": "all way stops",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 31st Ave/E Spruce St and 32nd Ave/E Spruce St next to Leschi Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 32nd Ave & E Spruce St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "E Harrison & 19th Ave S",
+     "treatment": "marked crosswalk and daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Marked crosswalk and \" daylighting \" at E Harrison and 19th Ave S next to Meany Middle School (completed in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalk and daylighting at E Harrison & 19th Ave S"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "18th Ave E & E Galer St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 18th Ave E and E Galer St and Stevens Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at 18th Ave E & E Galer St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "20th Ave S & S Weller St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 20th Ave S/S Weller St and marked crosswalks at 20th Ave S/S Lane St and 20th Pl S/S Lane St near Washington Middle School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at 20th Ave S & S Weller St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "13th Ave S & S Massachusetts St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 13th Ave S and S Massachusetts St leading to Beacon Hill Intl' Elementary (completed in 2025)",
+     "treatment_says": null,
+     "text": "All way stop at 13th Ave S & S Massachusetts St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "S Lucile St & 13th Ave S",
+     "treatment": "push button crossing beacon, curb ramps, marked crosswalk on all legs, sidewalk repair and tree replacement",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Push button crossing beacon and curb ramps at S Lucile St and 13th Ave S leading to Cleveland High School (expected in summer 2026). Includes:",
+     "treatment_says": null,
+     "text": "Push button crossing beacon, curb ramps, marked crosswalk on all legs, sidewalk repair and tree replacement at S Lucile St & 13th Ave S"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "27th Ave SW & SW Kenyon St",
+     "treatment": "all way stops",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 27th Ave SW/SW Kenyon St and 27th Ave SW/SW Elmgrove St next to Denny Intl\u2019 Middle School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 27th Ave SW & SW Kenyon St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "27th Ave SW & SW Elmgrove St",
+     "treatment": "all way stops",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stops at 27th Ave SW/SW Kenyon St and 27th Ave SW/SW Elmgrove St next to Denny Intl\u2019 Middle School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stops at 27th Ave SW & SW Elmgrove St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Brandon St & Fauntleroy Ave SW",
+     "treatment": "daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "\u201c Daylighting \u201d at SW Brandon St and Fauntleroy Ave SW at Fairmount Park Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "Daylighting at SW Brandon St & Fauntleroy Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "32nd Ave S & Mt Baker Blvd S",
+     "treatment": "curb ramps",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Curb ramps on 32nd Ave S and Mt Baker Blvd S at Franklin High School (completed in 2025)",
+     "treatment_says": null,
+     "text": "Curb ramps at 32nd Ave S & Mt Baker Blvd S"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "41st Ave SW & SW Dakota St",
+     "treatment": "all way stop",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "All way stop at 41st Ave SW and SW Dakota St at Holy Rosary School (completed in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at 41st Ave SW & SW Dakota St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Genesee St & 51st Ave SW",
+     "treatment": "marked crosswalks and daylighting",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Marked crosswalks and \" daylighting \" at SW Genesee St and 51st Ave SW next to Genesee Hill Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalks and daylighting at SW Genesee St & 51st Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Rainier Ave S & S Walden St",
+     "treatment": "turn wedge to slow right turns",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install \"turn wedge\" on the southwest corner of Rainier Ave S/S Walden St to slow right turns from Walden onto Rainier leading to John Muir Elementary (expected in 2026)",
+     "treatment_says": null,
+     "text": "Turn wedge to slow right turns at Rainier Ave S & S Walden St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "California & Hinds",
+     "treatment": "push button flashing beacons and painted bulbs",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons and painted bulbs at California/Hinds & California/Spokane near Madison Middle School (expected in 2026)",
+     "treatment_says": null,
+     "text": "Push button flashing beacons and painted bulbs at California & Hinds"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "California & Spokane",
+     "treatment": "push button flashing beacons and painted bulbs",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons and painted bulbs at California/Hinds & California/Spokane near Madison Middle School (expected in 2026)",
+     "treatment_says": null,
+     "text": "Push button flashing beacons and painted bulbs at California & Spokane"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "15th Ave S & S Columbian Way",
+     "treatment": "seating, art, and a tree to plaza space",
+     "status": "not stated",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Partner with Mercer Intl\u2019 Middle School as well as SDOT\u2019s Community & Mobility Hub and Urban Design program to add seating, art, and a tree to plaza space at 15th Ave S and S Columbian Way across from Mercer Intl' Middle School (ongoing in 2026 and 2027)",
+     "treatment_says": null,
+     "text": "Seating, art, and a tree to plaza space at 15th Ave S & S Columbian Way"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "16th Ave S & S Columbian Way",
+     "treatment": "mark crosswalk, extend protected bike lane, school loading and no turn on red signs",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Extend the protected bike lane on S Columbian Way, mark crosswalk at 16th Ave S/S Columbian Way, add school loading, and add no turn on red signs to 15th Ave S/S Columbian Way to improve walking and biking connections to Mercer Intl' Middle School (completed in 2026)",
+     "treatment_says": null,
+     "text": "Mark crosswalk, extend protected bike lane, school loading and no turn on red signs at 16th Ave S & S Columbian Way"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "SW Myrtle St & 34th Ave SW",
+     "treatment": "all way stop",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install all way stop at SW Myrtle St and 34th Ave SW at Our Lady of Guadalupe School (expected in 2026)",
+     "treatment_says": null,
+     "text": "All way stop at SW Myrtle St & 34th Ave SW"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "19th Ave SW & SW Genesee St",
+     "treatment": "curb ramps",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Build curb ramps on 19th Ave SW and SW Genesee St at Pathfinder K-8 (completed in 2025)",
+     "treatment_says": null,
+     "text": "Curb ramps at 19th Ave SW & SW Genesee St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Seward Park Ave S & S Hamlet St",
+     "treatment": "marked crosswalks",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Mark crosswalks at Seward Park Ave S/S Hamlet St next to Rainier Beach High School (expected in 2026)",
+     "treatment_says": null,
+     "text": "Marked crosswalks at Seward Park Ave S & S Hamlet St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "Beacon Ave S & S 55th St",
+     "treatment": "push button flashing beacons",
+     "status": "completed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Install push button flashing beacons at Beacon Ave S/S 55th St next to Rainier View Elementary (completed in 2026)",
+     "treatment_says": null,
+     "text": "Push button flashing beacons at Beacon Ave S & S 55th St"
+    }
+   ],
+   "completed_left_out": 0,
+   "refused": [
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "20th Ave S & S Lane St",
+     "treatment": "marked crosswalks",
+     "why": "source_says does not name S Lane St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "20th Pl S & S Lane St",
+     "treatment": "marked crosswalks",
+     "why": "source_says does not name S Lane St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "20th Ave S & S Lane St",
+     "treatment": "marked crosswalks",
+     "why": "source_says does not name S Lane St"
+    },
+    {
+     "page": "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school",
+     "intersection": "20th Pl S & S Lane St",
+     "treatment": "marked crosswalks",
+     "why": "source_says does not name S Lane St"
+    }
+   ],
+   "unreadable": [],
+   "usd": 0.1054,
+   "pages": [
+    "https://www.seattle.gov/transportation/projects-and-programs/safety-first/safe-routes-to-school"
+   ]
+  },
+  {
+   "id": "sf_contract35",
+   "city": "sf",
+   "program": "sf_contract35_signals",
+   "url": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+   "projects": [
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "6th Avenue & Irving Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "6th Avenue & Irving Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 6th Avenue & Irving Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "25th Avenue & Clement Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "25th Avenue & Clement Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 25th Avenue & Clement Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "25th Avenue & Anza Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "25th Avenue & Anza Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 25th Avenue & Anza Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "30th Avenue & Fulton Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "30th Avenue & Fulton Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 30th Avenue & Fulton Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "36th Avenue & Fulton Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "36th Avenue & Fulton Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 36th Avenue & Fulton Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "29th Street & San Jose Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "29th Street & San Jose Avenue",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 29th Street & San Jose Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "30th Street & San Jose Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "30th Street & San Jose Avenue",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 30th Street & San Jose Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Anza Street & Stanyan Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Anza Street & Stanyan Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Anza Street & Stanyan Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Baker Street & Hayes Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Baker Street & Hayes Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Baker Street & Hayes Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Evans Avenue & Phelps Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Evans Avenue & Phelps Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Evans Avenue & Phelps Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Haight Street & Steiner Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Haight Street & Steiner Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Haight Street & Steiner Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Holloway Avenue & Junipero Serra Boulevard",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Holloway Avenue & Junipero Serra Boulevard",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Holloway Avenue & Junipero Serra Boulevard"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Portola Drive & Twin Peaks Boulevard",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Portola Drive & Twin Peaks Boulevard",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Portola Drive & Twin Peaks Boulevard"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "16th Street & Sanchez Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "16th Street & Sanchez Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at 16th Street & Sanchez Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Alemany Boulevard & Sickles Avenue",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Alemany Boulevard & Sickles Avenue",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Alemany Boulevard & Sickles Avenue"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "California Street & Larkin Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "California Street & Larkin Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at California Street & Larkin Street"
+    },
+    {
+     "page": "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0",
+     "intersection": "Larkin Street & Post Street",
+     "treatment": "new signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed",
+     "status": "planned or proposed",
+     "cost_usd": null,
+     "cost_covers": "not stated",
+     "source_says": "Larkin Street & Post Street",
+     "treatment_says": "The Contract 35 Traffic Signals Modification project will implement signal and related pedestrian improvements at 17 intersections.",
+     "text": "New signal poles with larger signal heads, pedestrian countdown signals, accessible pedestrian signals, and new or updated curb ramps, plus controllers, conduit and wiring as needed at Larkin Street & Post Street"
+    }
+   ],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0209,
+   "pages": [
+    "https://www.sfmta.com/projects/contract-35-traffic-signal-modifications-0"
+   ]
+  },
+  {
+   "id": "control_unreadable",
+   "city": "nyc",
+   "program": null,
+   "url": "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml",
+   "control": "a page that refuses automated readers: reported unreadable, nothing invented",
+   "projects": [],
+   "refused": [],
+   "unreadable": [
+    "https://www.nyc.gov/html/dot/html/about/projects-2025.shtml"
+   ],
+   "usd": 0.0,
+   "pages": []
+  },
+  {
+   "id": "control_offtopic",
+   "city": "chicago",
+   "program": null,
+   "url": "https://en.wikipedia.org/wiki/Wrigley_Field",
+   "control": "a page that names an intersection but lists no safety project",
+   "projects": [],
+   "completed_left_out": 0,
+   "refused": [],
+   "unreadable": [],
+   "usd": 0.0616,
+   "pages": [
+    "https://en.wikipedia.org/wiki/Wrigley_Field"
+   ]
+  }
+ ]
+}

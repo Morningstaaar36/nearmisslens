@@ -299,6 +299,9 @@ An engineer or directorate about to fund a fix describes it in plain words: "a p
 - **T27 reran the same 7 proposals after the fixes:** 7 of 7 memos, all on the proposed corner, at $0.068 a review. A three-part proposal is decided part by part, and a corner the map shows as signalized is reviewed for beacons with the control to be confirmed on site.
 - **T28 reworked the red team** (it was uneven in T27: 3 of 7 memos had no objection that survived the fact check). Muse Spark Open now sees every fact in the receipts as receipt, field and value, an objection resting on the verdict itself is dropped, and it may replace dropped ones once. On the same 7 proposals, **every memo has at least 3 kept objections** (32 in all, against 13), with the same verdicts, at $0.084 a review.
 
+**A whole program, from the agency's own page.** An agency rarely has one proposal; it has a list on a web page or in an agenda. `nml intake` has Muse Spark read the page and list every project at one intersection, with the page's own status; code keeps a project only when its passage is on the page word for word and names both streets, and a cost only when the passage states it. `nml portfolio` then reviews every project and code ranks the list: build, build after a site check, compare first, decide part by part, not covered by the evidence, reconsider, with a budget plan if you give a budget. `nml portfolio --from-url URL --city CITY` does both in one command.
+- **T30c, registered:** on SDOT's Safe Routes to School page and SFMTA's Contract 35 page, intake found **all 16 of the 16 projects we had collected by hand**, plus the rest of each list (55 projects kept, each with the page's status), at $0.063 a page. A page that refuses automated readers was reported unreadable, and a page with no projects gave none. The first two registered attempts did not meet the rule (a long page was cut short, a location list could not be kept, an answer ran out of room); both are in BENCH_PREREG.md.
+
 A real-proposal test set (`validation/examples/proposals.json`) keeps three proposals held out, never run by us, for reviewers: `uv run nml review --example 15` (to 17).
 
 ## Check a claim yourself
@@ -365,6 +368,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T26 | Does Before you commit publish a code-set verdict, red-teamed, for at least 6 of 7 real proposed projects at no more than $0.15 each? | met (7 of 7; one memo was about a neighbouring corner, fixed after) |
   | T27 | The same after the fixes, with every memo about the intersection proposed? | met (7 of 7, all on the proposed corner) |
   | T28 | The same with the reworked red team: at least 3 kept objections on 6 of 7 memos, none on the verdict itself? | met (7 of 7 memos, 32 objections) |
+  | T30 / T30b / T30c | Does intake find at least 75% of the projects collected by hand from an agency's own pages, and nothing on the controls? | not met / not met / met (16 of 16) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.

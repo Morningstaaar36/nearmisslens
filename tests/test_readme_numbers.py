@@ -181,3 +181,15 @@ def test_t28_numbers():
     _has(f"{s['objections_kept']} in all, against {t27['objections_kept']}")
     _has(f"${s['mean_usd']:.3f} a review")
     _has(f"{s['memos_with_3_objections']} of {s['published']} memos, {s['objections_kept']} objections")
+
+
+def test_t30_numbers():
+    from nearmisslens.intake import run_summary
+    sp = json.loads((ROOT / "validation" / "experiments" / "T30c.json").read_text())
+    s = run_summary(_load("experiment_T30c.json"), sp)
+    assert s["rule_met"] and s["controls_empty"]
+    _has(f"all {s['hand_found']} of the {s['hand_projects']} projects we had collected by hand")
+    _has(f"({sum(r['kept'] for r in s['rows'])} projects kept")
+    _has(f"${s['mean_usd_per_readable_page']:.3f} a page")
+    for run in ("T30", "T30b"):
+        assert not run_summary(_load(f"experiment_{run}.json"), sp)["rule_met"]

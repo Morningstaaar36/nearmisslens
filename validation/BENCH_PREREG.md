@@ -990,6 +990,12 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Changes:** intake answers may use up to 32,000 output tokens; a cut-off answer's cost is counted (in every agent run).
 - **Inputs and rule:** the same as T30 and T30b (`validation/experiments/T30c.json`).
 
+### T30c result (2026-11-04)
+- **Rule met.** **16 of the 16 hand-collected projects found**; both controls gave no project (NYC's page reported unreadable; the encyclopedia page none); $0.063 a readable page.
+- **Seattle:** 38 projects kept (14 planned, 23 completed, 1 not stated), 4 refused (the passages the model gave did not name "S Lane St" as it wrote it: refused, not guessed). A passage naming several crossings ("Mark crosswalks leading along NW 96th St at 17th Ave NW, 21st Ave NW, and 23rd Ave NW") became one project per intersection.
+- **San Francisco:** all 17 locations kept as planned signal upgrades, each resting on its list item and the passage describing the work.
+- **Post-hoc read** (ours): a sample of 5 kept Seattle projects beyond the hand list were all real single-intersection projects with the page's own status. T30 and T30b, both not met, are kept above; T30c is the third registered attempt on the same pages, so it measures the fixes, not fresh pages.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).
