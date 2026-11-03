@@ -233,15 +233,15 @@ def reviews_page(root: Path) -> None:
     from .evaluate import RESULTS_DIR
     from .orchestrator import redact
     from . import review
-    path = RESULTS_DIR / "bench" / "experiment_T26.json"
-    if not path.exists():
+    run = next((r for r in ("T27", "T26") if (RESULTS_DIR / "bench" / f"experiment_{r}.json").exists()), None)
+    if run is None:  # the latest registered review run
         return
-    res = json.loads(path.read_text())
-    sp = json.loads((ROOT / "validation" / "experiments" / "T26.json").read_text())
+    res = json.loads((RESULTS_DIR / "bench" / f"experiment_{run}.json").read_text())
+    sp = json.loads((ROOT / "validation" / "experiments" / f"{run}.json").read_text())
     keep = ("id", "status", "reason", "city", "city_name", "input", "source", "proposal", "corner", "verdict",
             "verdict_text", "appraisal", "objections", "memo", "letter", "cost_usd", "seconds", "asof")
     rows = json.loads(review.EXAMPLES.read_text())["proposals"]
-    blob = {"run": "T26", "registered": sp["registered"], "summary": review.run_summary(res, sp),
+    blob = {"run": run, "registered": sp["registered"], "summary": review.run_summary(res, sp),
             "cases": [{k: c.get(k) for k in keep} for c in res["cases"]],
             "try": [{k: r[k] for k in ("id", "city", "proposal", "source", "split")} for r in rows if r["split"] != "registered"]}
     (root / "reviews.json").write_text(redact(json.dumps(blob, default=str)))
