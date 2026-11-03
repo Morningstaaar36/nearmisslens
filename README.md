@@ -283,6 +283,10 @@ An engineer or directorate about to fund a fix describes it in plain words: "a p
 3. **Muse Spark Open on Baseten**, another model family, writes the pre-mortem. Each objection must point at a receipt field and its value, and code keeps only the objections whose fact is there.
 4. Muse Spark writes the memo. The gate holds it to the code's verdict and the receipts' numbers, and it must answer every kept objection. A work order to the road owner can be drafted.
 
+![A saved memo: a neighborhood commission's request for a leading pedestrian interval at 22nd St & L St NW in Washington. Code sets "reconsider" because DC's own records show one is already installed; the findings cite their receipts, and the red team's objections, each resting on a checked fact, are answered](docs/img/review_memo.png)
+
+![The pre-mortem for a Chicago refuge island that code says to proceed with: Muse Spark Open argues against it (a cheaper beacon avoids more crashes, the cost is unstated, the owner is inferred), each objection pinned to a receipt field and value that code checked, each answered](docs/img/review_premortem.png)
+
 **T26, registered before it ran:**
 - **Results:** 7 real proposed projects from SDOT's safety program, SFCTA, a DC neighborhood commission, a Chicago petition and NYC DOT. 7 of 7 memos published, at $0.057 a review.
 - **The finding the tool is for:** a DC neighborhood commission asked for a leading pedestrian interval at 22nd & L NW, and DC's own signal records show one is already there.
