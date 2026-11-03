@@ -53,7 +53,10 @@ VERDICTS = {
     "outside_evidence": "not covered by the evidence: no crash-modification study fits this fix at this site, so the "
                         "decision rests on a site study and an engineer's assessment, not on this record",
     "reconsider": "reconsider: the record or the evidence does not support this fix here as proposed",
+    "mixed": "decide part by part: the parts of this proposal get different verdicts",
 }
+CAUTION = ("reconsider", "outside_evidence", "proceed_after_site_check", "compare_alternative", "proceed")
+COST_COVERS = ("this fix only", "a package with other work", "not stated")
 
 
 def _no_target_crashes(reason: str | None) -> bool:
@@ -128,17 +131,76 @@ def appraise(fx: dict, countermeasure: str, cost_usd: float | None) -> dict:
     return out
 
 
+def implied_control(countermeasure: str) -> str | None:
+    """The traffic control a countermeasure is built for (its PSC entry), or None for any control."""
+    item = next((i for i in countermeasures.psc_items() if i["name"] == countermeasure), None)
+    c = (item or {}).get("site_control")
+    return None if c in (None, "any") else c
+
+
+def appraise_proposal(fx: dict, parts: list[dict], cost_usd: float | None, cost_covers: str,
+                      fx_for_control=None) -> dict:
+    """Every part of a proposal against the corner's evidence, each with a verdict by rule, and the proposal's.
+    A part built for another control than the map shows (beacons at a mapped signal, a signal phase where none is
+    mapped) is estimated as the proposal describes the site (fx_for_control), and must have the control confirmed
+    on site first: a signal within the mapping radius may belong to a nearby crossing. The stated cost is compared
+    with a fix's benefit only when it pays for that fix alone. Pure: fx_for_control(control) -> fix options."""
+    mapped = fx.get("control")
+    one = len(parts) == 1 and cost_covers == "this fix only"
+    rows = []
+    for part in parts:
+        cm = part["countermeasure"]
+        if cm == "other":
+            rows.append({"countermeasure": "other", "what": part.get("what"), "verdict": "outside_evidence",
+                         "verdict_text": VERDICTS["outside_evidence"],
+                         "reasons": [f"{part.get('what') or 'this part'} is not one of the federal Proven Safety "
+                                     "Countermeasures, so no crash-modification evidence is applied to it here; it needs "
+                                     "its own study"]})
+            continue
+        need = implied_control(cm)
+        conflict = bool(need and mapped and mapped != "unknown" and need != mapped and fx_for_control)
+        a = appraise(fx_for_control(need) if conflict else fx, cm, cost_usd if one else None)
+        a["what"] = part.get("what")
+        if conflict:
+            a["control_check"] = {"proposal_implies": need, "mapped": mapped,
+                                  "basis": "OpenStreetMap: traffic signals and stop signs mapped within 80 m"}
+            if a["verdict"] in ("proceed", "compare_alternative"):
+                a["verdict"], a["verdict_text"] = "proceed_after_site_check", VERDICTS["proceed_after_site_check"]
+            a["reasons"].insert(0, f"{cm} is built for {need.lower()} crossings, and the map shows the corner as "
+                                   f"{mapped.lower()} (a signal or stop within 80 m may belong to a nearby crossing): "
+                                   f"confirm the control on site; the estimate here is for a {need.lower()} site")
+        rows.append(a)
+    verdicts = {r["verdict"] for r in rows}
+    verdict = rows[0]["verdict"] if len(verdicts) == 1 else "mixed"
+    out = {"parts": rows, "verdict": verdict, "verdict_text": VERDICTS[verdict], "site_control": mapped,
+           "cost_usd": cost_usd, "cost_covers": cost_covers,
+           "reasons": [f"{r['countermeasure'] if r['countermeasure'] != 'other' else r.get('what')}: {r['verdict_text']} "
+                       f"({'; '.join(r['reasons'])})" for r in rows] if len(rows) > 1 else list(rows[0]["reasons"])}
+    if cost_usd and not one:
+        out["reasons"].append(f"the stated cost (${cost_usd:,.0f}) pays for "
+                              f"{'several parts' if len(parts) > 1 else 'more than this fix'}"
+                              f"{'' if cost_covers != 'not stated' else ' or is not said to be for this fix alone'}, "
+                              "so it is not compared with one fix's benefit")
+    first = rows[0]
+    for k in ("proposed", "best_alternative", "in_place", "not_estimated_reason", "benefit_cost_ratio", "countermeasure"):
+        if k in first:
+            out[k] = first[k]  # the first part's numbers, where a single-fix reader looks for them
+    return out
+
+
 INSTRUCTIONS = """You review a proposed street-safety project before an agency commits money to it. You are the
 analyst; code referees every step. Work in this order:
-1. register_proposal: the intersection ("Street A & Street B, City"), which federal countermeasure it is (choose from
-   the list; "other" if none fits), the cost in dollars if the proposal states one (0 if not), and the goal in its
-   own words.
+1. register_proposal: the intersection ("Street A & Street B, City"); every part of the proposal, each as the
+   federal countermeasure it is (choose from the list; "other" with a short description if none fits; never drop a
+   part); the cost in dollars if the proposal states one (0 if not) and what that cost pays for; the goal in its own
+   words.
 2. investigate the intersection (draft_letter true: a work order to the road owner).
-3. appraise: code tests the proposal against the corner's evidence and sets the verdict.
+3. appraise: code tests each part against the corner's evidence and sets each verdict and the proposal's.
 4. program_record for the countermeasure, if the city may have run it as a program.
 5. red_team: an independent model argues against the decision; code keeps only objections whose facts check out.
 6. check_memo, fix what it names, then finish.
-The memo: a summary of two or three sentences that states the verdict, findings that each cite the D receipt holding
+The memo: a summary of two or three sentences that states the verdict (and each part's), the parts with their
+verdicts exactly as appraised, findings that each cite the D receipt holding
 their numbers (crashes, what they have in common, the expected effect and its evidence, cost against benefit, the
 best alternative, the road owner), and an answer to every kept objection, citing a receipt. Never state a number that
 is not in the receipt you cite, never claim a fix will prevent a crash for certain, and never change the verdict."""
@@ -153,6 +215,7 @@ class Review:
         self.final: dict | None = None
         self.red_team_usd = 0.0
         self.off_corner: str | None = None
+        self.lat_lon: tuple[float, float] | None = None
 
 
 def _receipt_of(desk, tool: str) -> tuple[str, dict] | None:
@@ -201,10 +264,13 @@ def _matches(found, value) -> bool:
     return bool(vs) and len(vs) >= 3 and (vs == fs or re.search(r"(?<!\w)" + re.escape(vs) + r"(?!\w)", fs) is not None)
 
 
-RED_TEAM = """You are the red team for a street-safety project an agency is about to fund. Read the proposal, the code's
-appraisal and the receipts, and write a pre-mortem: the strongest reasons committing to this project as proposed
-could be the wrong decision (wrong target crashes, weak or contradicted evidence, a precondition the site may not
-meet, a better alternative, cost against benefit, crashes the fix does not touch, a road owner who must agree).
+RED_TEAM = """You are the red team for a street-safety project an agency is deciding on. Read the proposal, the code's
+appraisal (its verdict, and each part's) and the receipts, and argue AGAINST the verdict: if it says proceed, the
+strongest reasons proceeding could be wrong (wrong target crashes, weak evidence, a precondition the site may not
+meet, a better alternative, cost against benefit, crashes the fix does not touch, a road owner who must agree); if it
+says reconsider or not covered by the evidence, the strongest reasons the agency might still be right to fund it
+(serious harm the record shows, crashes the fix does target, what the evidence cannot see). Do not restate the
+verdict or agree with it: an objection that supports the verdict is useless.
 Each objection must rest on one fact in the receipts: give the receipt id, the field path to it (dots, list
 positions as numbers, e.g. "options.0.evidence" or "proposed.break_even_cost_usd") and its value exactly as it is
 there. Code checks each fact and keeps only those that are right. At most five objections; submit once."""
@@ -276,11 +342,19 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
     txt, num = {"type": "string"}, {"type": "number"}
     names = site_fixes() + ["other"]
 
-    def register_proposal(address: str, countermeasure: str, cost_usd: float, goal: str):
-        if countermeasure not in names:
-            return {"error": f"choose the countermeasure from: {', '.join(names)}"}
-        rv.proposal = {"address": address, "countermeasure": countermeasure,
-                       "cost_usd": float(cost_usd) if cost_usd and cost_usd > 0 else None, "goal": goal}
+    def register_proposal(address: str, parts: list[dict], cost_usd: float, cost_covers: str, goal: str):
+        if not parts or len(parts) > 4:
+            return {"error": "give every part of the proposal (one to four), each as a countermeasure from the list"}
+        bad = [x.get("countermeasure") for x in parts if x.get("countermeasure") not in names]
+        if bad:
+            return {"error": f"{bad} not in the list; choose from: {', '.join(names)}"}
+        if cost_covers not in COST_COVERS:
+            return {"error": f"cost_covers is one of {COST_COVERS}"}
+        rv.proposal = {"address": address, "parts": [{"countermeasure": x["countermeasure"], "what": x.get("what")}
+                                                     for x in parts],
+                       "countermeasure": parts[0]["countermeasure"],
+                       "cost_usd": float(cost_usd) if cost_usd and cost_usd > 0 else None,
+                       "cost_covers": cost_covers if cost_usd and cost_usd > 0 else "not stated", "goal": goal}
         return {"receipt": desk.receipt("proposal", rv.proposal), "next": "investigate the intersection"}
 
     def appraise_tool():
@@ -295,7 +369,15 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             return {"error": f"the case is about {corner}, not the proposed intersection ({rv.proposal['address']}). "
                              "A review is only of the intersection proposed: if it cannot be found, stop; never review "
                              "another corner"}
-        rv.appraisal = appraise(got[1], rv.proposal["countermeasure"], rv.proposal["cost_usd"])
+        j = (desk.report or {}).get("junction") or {}
+
+        def fx_for_control(control):
+            from . import brief
+            from .countermeasures import load_cmf
+            d = engineer.Desk().dossier(j["lat"], j["lon"])
+            return brief.fix_options(d, load_cmf(), control=control)
+        rv.appraisal = appraise_proposal(got[1], rv.proposal["parts"], rv.proposal["cost_usd"],
+                                         rv.proposal["cost_covers"], fx_for_control if j.get("lat") is not None else None)
         rid = desk.receipt("appraisal", rv.appraisal)
         return {"receipt": rid, **rv.appraisal,
                 "note": f"the verdict is set: {rv.appraisal['verdict_text']}. Cite {rid} for these numbers."}
@@ -312,7 +394,7 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
                                                           ["objection", "answer", "receipt"])}
     claim = {"type": "array", "items": orchestrator._obj({"text": txt, "receipt": txt}, ["text", "receipt"])}
 
-    def gate(summary: str, verdict: str, findings: list[dict], answers: list[dict]) -> list[str]:
+    def gate(summary: str, verdict: str, findings: list[dict], answers: list[dict], parts: list[dict]) -> list[str]:
         errors = []
         if rv.appraisal is None:
             return ["appraise before writing the memo"]
@@ -320,6 +402,10 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             errors.append("run red_team before writing the memo")
         if verdict != rv.appraisal["verdict"]:
             errors.append(f"the verdict is the appraisal's ({rv.appraisal['verdict']}), not {verdict!r}")
+        want = sorted((x["countermeasure"], x["verdict"]) for x in rv.appraisal.get("parts") or [])
+        got_parts = sorted((x.get("countermeasure"), x.get("verdict")) for x in parts)
+        if want and got_parts != want:
+            errors.append(f"list every part with its appraised verdict: {want}")
         places = orchestrator._places(desk)
         numbered = 0
         for k, f in enumerate(findings, 1):
@@ -351,24 +437,31 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             errors.append("a licence plate is written out")
         return errors
 
-    def check_memo(summary: str, verdict: str, findings: list[dict], answers: list[dict]):
-        e = gate(summary, verdict, findings, answers)
+    def check_memo(summary: str, verdict: str, findings: list[dict], answers: list[dict], parts: list[dict]):
+        e = gate(summary, verdict, findings, answers, parts)
         return {"would_publish": not e, "problems": e[:15]}
 
-    def finish(summary: str, verdict: str, findings: list[dict], answers: list[dict]):
-        e = gate(summary, verdict, findings, answers)
+    def finish(summary: str, verdict: str, findings: list[dict], answers: list[dict], parts: list[dict]):
+        e = gate(summary, verdict, findings, answers, parts)
         if e:
             return {"error": "refused by the memo gate", "errors": e[:12]}
-        rv.final = {"summary": summary, "verdict": verdict, "findings": findings, "answers": answers}
+        rv.final = {"summary": summary, "verdict": verdict, "findings": findings, "answers": answers, "parts": parts}
         return {"ok": True}
 
+    part_verdict = {"type": "array", "items": orchestrator._obj(
+        {"countermeasure": {"type": "string", "enum": names}, "verdict": {"type": "string", "enum": list(VERDICTS)}},
+        ["countermeasure", "verdict"])}
     memo = orchestrator._obj({"summary": txt, "verdict": {"type": "string", "enum": list(VERDICTS)},
-                              "findings": claim, "answers": answer}, ["summary", "verdict", "findings", "answers"])
+                              "parts": part_verdict, "findings": claim, "answers": answer},
+                             ["summary", "verdict", "parts", "findings", "answers"])
     return [
-        Tool("register_proposal", "Register the proposal: the intersection, the countermeasure (from the list), the "
-             "cost in dollars (0 if not stated) and the goal.",
-             orchestrator._obj({"address": txt, "countermeasure": {"type": "string", "enum": names}, "cost_usd": num,
-                                "goal": txt}, ["address", "countermeasure", "cost_usd", "goal"]), register_proposal),
+        Tool("register_proposal", "Register the proposal: the intersection; every part as a countermeasure from the "
+             "list (with what it is); the cost in dollars (0 if not stated) and what it pays for; the goal.",
+             orchestrator._obj({"address": txt, "parts": {"type": "array", "items": orchestrator._obj(
+                 {"countermeasure": {"type": "string", "enum": names}, "what": txt}, ["countermeasure", "what"])},
+                                "cost_usd": num, "cost_covers": {"type": "string", "enum": list(COST_COVERS)},
+                                "goal": txt}, ["address", "parts", "cost_usd", "cost_covers", "goal"]),
+             register_proposal),
         core["investigate"],
         Tool("appraise", "Code tests the registered proposal against the corner's evidence and sets the verdict.",
              orchestrator._obj({}, []), appraise_tool),
@@ -451,6 +544,10 @@ def memo_md(r: dict) -> str:
           f"- **Records as of:** {r.get('asof')}",
           f"- **Cost of this review:** ${(r.get('cost_usd') or {}).get('meta')} Meta API + "
           f"${(r.get('cost_usd') or {}).get('open_weights_red_team')} Muse Spark Open, {r.get('seconds')} s", ""]
+    if len(a.get("parts") or []) > 1:
+        L += ["## Each part", "", "| Part | Verdict |", "|---|---|"] + [
+            f"| {x['countermeasure'] if x['countermeasure'] != 'other' else x.get('what')} | {x['verdict_text']} |"
+            for x in a["parts"]] + [""]
     if a.get("reasons"):
         L += ["## Why", ""] + [f"- {x}" for x in a["reasons"]] + [""]
     m = r.get("memo") or {}

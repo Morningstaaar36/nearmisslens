@@ -82,7 +82,7 @@ async function boot() {
 
 const TIER = {"measured here": "passed the causal gate in this city (estimate uses the smaller national CMF)", "FHWA-cited": "the study FHWA cites", "national studies": "national studies"};
 
-const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", reconsider: "bad"};
+const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", mixed: "warn", reconsider: "bad"};
 
 function reviewResult(r) {
   // a decision memo: the verdict code set, why, the findings with receipts, the red team's checked objections and the answers
@@ -91,6 +91,8 @@ function reviewResult(r) {
   for (const x of m.answers || []) ans[x.objection] = x;
   const cost = r.cost_usd || {};
   return `<p class="verdict ${VERDICT_CLASS[r.verdict] || ""}"><b>${esc(r.verdict_text)}</b> <span class="legend">(set by code from the receipts)</span></p>` +
+    ((a.parts || []).length > 1 ? `<table><tr><th>Part</th><th>Verdict</th></tr>${a.parts.map(x =>
+      `<tr><td>${esc(x.countermeasure === "other" ? x.what : x.countermeasure)}</td><td>${esc(x.verdict_text)}</td></tr>`).join("")}</table>` : "") +
     `<ul>${(a.reasons || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
     `<p>${esc(m.summary || "")}</p>` +
     `<h4>Findings</h4><ul>${(m.findings || []).map(f => `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("")}</ul>` +

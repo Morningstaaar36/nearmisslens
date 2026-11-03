@@ -318,15 +318,16 @@ def evidence_tier(o: dict) -> str:
     return "FHWA-cited" if o.get("fhwa_cited") else "national studies"
 
 
-def fix_options(d: dict, cmf) -> dict:
+def fix_options(d: dict, cmf, control: str | None = None) -> dict:
     """Every FHWA Proven Safety Countermeasure for the junction. A fix is estimated (crashes avoided per year,
     dollars) only when one of its curated CMF records applies to this site's control, kind and a crash population
     the record shows; otherwise it is listed with the reason and no number. Each estimate carries its evidence tier
-    (EVIDENCE). Order: low-cost before reconstruction, then by tier, then by crashes avoided."""
+    (EVIDENCE). Order: low-cost before reconstruction, then by tier, then by crashes avoided. `control` overrides
+    the mapped control, to estimate the site as a proposal describes it."""
     cr = d.get("crashes") or {}
     if not cr or "error" in cr:
         return {"options": [], "not_estimated": [], "note": "no crash record available for this location"}
-    control = site_control(d)
+    control = control or site_control(d)
     conds = _conditions(d)
     pops = populations(cr)
     have = in_place(d)

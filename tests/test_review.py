@@ -66,7 +66,8 @@ def _review_with_receipts():
                    "cost_usd": 15000.0, "goal": "fewer pedestrians hit"}
     rv.desk.receipt("proposal", rv.proposal)
     rv.desk.receipt("choose_fixes", FX)
-    rv.appraisal = review.appraise(FX, "Leading Pedestrian Interval", 15000.0)
+    rv.appraisal = review.appraise_proposal(FX, [{"countermeasure": "Leading Pedestrian Interval", "what": "LPI"}],
+                                            15000.0, "this fix only")
     rv.desk.receipt("appraisal", rv.appraisal)
     return rv
 
@@ -100,23 +101,31 @@ def test_the_memo_gate_holds_the_verdict_the_numbers_and_the_answers(monkeypatch
             {"text": "The stated cost is $15,000.", "receipt": "D1"}]
     ans = [{"objection": "O1", "answer": "Both can be done; backplates target all crashes.", "receipt": "D3"}]
     v = "compare_alternative"
-    assert ts["check_memo"].fn(summary="Compare before committing.", verdict=v, findings=good, answers=ans)["would_publish"]
-    bad_verdict = ts["finish"].fn(summary="Go ahead.", verdict="proceed", findings=good, answers=ans)
+    parts = [{"countermeasure": "Leading Pedestrian Interval", "verdict": v}]
+    assert ts["check_memo"].fn(summary="Compare before committing.", verdict=v, findings=good, answers=ans,
+                               parts=parts)["would_publish"]
+    bad_verdict = ts["finish"].fn(summary="Go ahead.", verdict="proceed", findings=good, answers=ans, parts=parts)
     assert "the verdict is the appraisal's" in " ".join(bad_verdict["errors"])
-    unanswered = ts["finish"].fn(summary="Compare.", verdict=v, findings=good, answers=[])
+    no_parts = ts["finish"].fn(summary="Compare.", verdict=v, findings=good, answers=ans, parts=[])
+    assert any("list every part" in e for e in no_parts["errors"])
+    unanswered = ts["finish"].fn(summary="Compare.", verdict=v, findings=good, answers=[], parts=parts)
     assert any("O1" in e for e in unanswered["errors"])
-    wrong_number = ts["finish"].fn(summary="Compare.", verdict=v, answers=ans,
+    wrong_number = ts["finish"].fn(summary="Compare.", verdict=v, answers=ans, parts=parts,
                                    findings=good[:2] + [{"text": "It is expected to avoid 4.2 injury crashes a year.", "receipt": "D3"}])
     assert "error" in wrong_number and rv.final is None
-    assert ts["finish"].fn(summary="Compare before committing.", verdict=v, findings=good, answers=ans) == {"ok": True}
+    assert ts["finish"].fn(summary="Compare before committing.", verdict=v, findings=good, answers=ans,
+                           parts=parts) == {"ok": True}
     assert rv.final["verdict"] == v
 
 
 def test_the_proposal_must_name_a_federal_countermeasure():
     rv = review.Review("zz")
     ts = {t.name: t for t in review.tools(rv, None, None, None)}
-    assert "error" in ts["register_proposal"].fn(address="A & B", countermeasure="Magic paint", cost_usd=0, goal="x")
-    ok = ts["register_proposal"].fn(address="A & B", countermeasure="Lighting", cost_usd=0, goal="x")
+    reg = lambda parts, cost=0, covers="not stated": ts["register_proposal"].fn(
+        address="A & B", parts=parts, cost_usd=cost, cost_covers=covers, goal="x")
+    assert "error" in reg([{"countermeasure": "Magic paint", "what": "x"}])
+    assert "error" in reg([])
+    ok = reg([{"countermeasure": "Lighting", "what": "lights"}])
     assert ok["receipt"] == "D1" and rv.proposal["cost_usd"] is None
     assert "error" in ts["appraise"].fn()  # nothing investigated yet
 
@@ -190,7 +199,8 @@ def test_the_appraisal_refuses_another_corner():
     rv = review.Review("zz")
     ts = {t.name: t for t in review.tools(rv, None, None, None)}
     ts["register_proposal"].fn(address="East 169th Street & Rev James A Polite Avenue, Bronx",
-                               countermeasure="Lighting", cost_usd=0, goal="x")
+                               parts=[{"countermeasure": "Lighting", "what": "lights"}], cost_usd=0,
+                               cost_covers="not stated", goal="x")
     rv.desk.receipt("choose_fixes", FX)
     rv.desk.report = {"junction": {"name": "East 169th Street & Prospect Avenue, Bronx"}}
     out = ts["appraise"].fn()
@@ -219,3 +229,36 @@ def test_no_target_crashes_is_reconsider_but_no_fitting_study_is_outside_the_evi
     assert review.appraise(fx, "Medians and Pedestrian Refuge Islands in Urban and Suburban Areas", None)["verdict"] == "reconsider"
     assert review.appraise(fx, "Crosswalk Visibility Enhancements", None)["verdict"] == "outside_evidence"
     assert review.appraise(fx, "Pedestrian Hybrid Beacons", None)["verdict"] == "outside_evidence"
+
+
+
+def test_every_part_is_appraised_and_a_mixed_proposal_is_decided_part_by_part():
+    """Independent test: 'an LPI and a protected left-turn phase' was cut down to the LPI."""
+    parts = [{"countermeasure": "Yellow Change Intervals", "what": "LPI already there"},
+             {"countermeasure": "other", "what": "a protected left-turn phase"}]
+    a = review.appraise_proposal(FX, parts, None, "not stated")
+    assert [p["verdict"] for p in a["parts"]] == ["reconsider", "outside_evidence"] and a["verdict"] == "mixed"
+    assert "protected left-turn phase" in a["parts"][1]["reasons"][0]
+
+
+def test_a_package_cost_is_not_charged_to_one_fix():
+    """Independent test: a $1.3M package (realignment, signals, crosswalks) was charged to one beacon."""
+    one = [{"countermeasure": "Leading Pedestrian Interval", "what": "LPI"}]
+    assert review.appraise_proposal(FX, one, 5000000, "this fix only")["verdict"] == "reconsider"
+    pkg = review.appraise_proposal(FX, one, 5000000, "a package with other work")
+    assert pkg["verdict"] != "reconsider" and any("not compared with one fix" in r for r in pkg["reasons"])
+
+
+def test_a_control_the_map_contradicts_is_confirmed_on_site_and_estimated_as_proposed():
+    """Independent test: an unsignalized five-way corner, mapped as signalized from a signal within 80 m, had its
+    beacon refused and signal-only fixes recommended. The beacon is now estimated as at an uncontrolled site."""
+    seen = []
+    uncontrolled = {**FX, "control": "Uncontrolled",
+                    "options": [{"countermeasure": "Pedestrian Hybrid Beacons", "evidence": "FHWA-cited",
+                                 "targets": "pedestrian", "target_crashes_per_year": 1.2,
+                                 "injury_crashes_avoided_per_year": 0.5, "break_even_cost_usd": 1500000}]}
+    a = review.appraise_proposal(FX, [{"countermeasure": "Pedestrian Hybrid Beacons", "what": "a beacon"}], None,
+                                 "not stated", lambda c: (seen.append(c), uncontrolled)[1])
+    assert seen == ["Uncontrolled"] and a["verdict"] == "proceed_after_site_check"
+    assert a["parts"][0]["control_check"]["mapped"] == "signal" and "confirm the control on site" in a["reasons"][0]
+    assert review.implied_control("Lighting") is None and review.implied_control("Leading Pedestrian Interval") == "Signalized"
