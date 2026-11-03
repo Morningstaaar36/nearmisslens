@@ -78,8 +78,8 @@ def rescore(spec_id: str, desk_run: str) -> dict:
     desk = json.loads((RESULTS_DIR / "bench" / f"experiment_{desk_run}.json").read_text())
     path = RESULTS_DIR / "bench" / f"experiment_{spec_id}.json"
     res = json.loads(path.read_text())
-    for c, dc in zip(res["cases"], desk["cases"]):
-        c["score"] = score(c, dc)
+    for c, dcase in zip(res["cases"], desk["cases"]):
+        c["score"] = score(c, dcase)
     path.write_text(orchestrator.redact(portable(json.dumps(res, indent=1, default=str))))
     return res
 
@@ -90,14 +90,14 @@ def run(spec_id: str, client, desk_run: str) -> dict:
     path = RESULTS_DIR / "bench" / f"experiment_{spec_id}.json"
     done = json.loads(path.read_text())["cases"] if path.exists() else []
     out = []
-    for k, dc in enumerate(desk["cases"]):
-        if k < len(done) and done[k].get("task") == dc["task"]:
+    for k, dcase in enumerate(desk["cases"]):
+        if k < len(done) and done[k].get("task") == dcase["task"]:
             out.append(done[k])
             continue
-        r = run_case(dc["task"], client)
-        r.update(kind=dc.get("kind"), city=dc.get("city"), desk_corner=dc.get("corner"), score=score(r, dc))
+        r = run_case(dcase["task"], client)
+        r.update(kind=dcase.get("kind"), city=dcase.get("city"), desk_corner=dcase.get("corner"), score=score(r, dcase))
         out.append(r)
-        print(dc.get("kind"), dc.get("city"), "finished", r["finished"], "usd", r["usd"], flush=True)
+        print(dcase.get("kind"), dcase.get("city"), "finished", r["finished"], "usd", r["usd"], flush=True)
         path.write_text(orchestrator.redact(portable(json.dumps({"id": spec_id, "desk_run": desk_run, "cases": out},
                                                                 indent=1, default=str))))
     return {"id": spec_id, "cases": out}

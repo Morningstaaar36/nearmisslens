@@ -55,7 +55,7 @@ def parse(raw: bytes) -> dict:
 def address(q: dict) -> str:
     a = q.get("address")
     if not isinstance(a, str) or not 3 <= len(a.strip()) <= 160 or not a.isprintable():
-        raise BadRequest("give an intersection as text, e.g. \"Delancey Street & Essex Street, Manhattan, NY\"")
+        raise BadRequest("give an intersection as text: two street names joined by \"&\", and the city")
     return a.strip()
 
 

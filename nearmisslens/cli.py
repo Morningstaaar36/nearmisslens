@@ -603,7 +603,7 @@ def main(argv: list[str] | None = None) -> int:
     of.add_argument("--complaint", action="append", help="a resident complaint to check (repeatable)")
     of.add_argument("--auto", action="store_true", help="approve the sign-off automatically")
     br = sub.add_parser("brief", help="Junction Safety Brief: official record, ranked cited fixes, checked memo")
-    br.add_argument("place", nargs="?", help='an intersection, e.g. "Delancey Street & Essex Street, Manhattan, NY"')
+    br.add_argument("place", nargs="?", help='an intersection: two street names joined by "&", and the city (nml cities lists them)')
     br.add_argument("--lat", type=float)
     br.add_argument("--lon", type=float)
     br.add_argument("--illustrate", action="store_true", help="draw the top fix on the aerial photo (Muse Image + SAM)")
@@ -676,7 +676,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--meta", action="store_true")
     en = sub.add_parser("engineer", help="the safety engineer: worst corner, what its crashes have in common, what the "
                                          "city tried, the fix, who must act, the request; every claim with a receipt")
-    en.add_argument("query", help='a city id (e.g. nyc: take its worst corner) or an intersection address')
+    en.add_argument("query", help='a city id from nml cities (take its worst corner) or an intersection address')
     en.add_argument("--agent", action="store_true", help="let Muse Spark Open choose the steps and write the claims")
     en.add_argument("--letter", action="store_true", help="draft the checked request letter (Muse Spark Open)")
     en.add_argument("--meta", action="store_true", help="draft the letter on the Meta API instead")

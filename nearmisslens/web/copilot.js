@@ -242,7 +242,7 @@ $("search").onsubmit = async e => {
   e.preventDefault();
   const q = $("q").value.trim();
   if (!q || !INDEX) return;
-  const words = q.toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w.length > 1 && !["and", "ny", "street", "avenue"].includes(w));
+  const words = q.toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => (w.length > 2 || /\d/.test(w)) && !["and", "street", "avenue"].includes(w));  // drops "&", state codes
   const hits = INDEX.corners.filter(c => words.every(w => c.name.toLowerCase().includes(w)));
   if (hits.length) { listCorners(hits); if (hits.length === 1) openCorner(hits[0]); return; }
   listCorners(INDEX.corners);
@@ -307,7 +307,7 @@ function agentHTML(a) {
 function busy(text) { $("out").innerHTML = `<p class="busy">${text}</p>`; }
 function failed(err, q) {
   $("out").innerHTML = `<div class="empty"><h2>No case for that corner yet.</h2><p>${esc(err.message)}</p>` +
-    `<p>Try the cross streets with the borough, e.g. "Delancey Street & Essex Street, Manhattan, NY", or pick a corner from the list.</p></div>`;
+    `<p>Try the two cross streets joined by "&", with the city (and the borough, where there is one), or pick a corner from the list.</p></div>`;
 }
 
 async function openCorner(c) {
