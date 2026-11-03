@@ -996,6 +996,21 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **San Francisco:** all 17 locations kept as planned signal upgrades, each resting on its list item and the passage describing the work.
 - **Post-hoc read** (ours): a sample of 5 kept Seattle projects beyond the hand list were all real single-intersection projects with the page's own status. T30 and T30b, both not met, are kept above; T30c is the third registered attempt on the same pages, so it measures the fixes, not fresh pages.
 
+## Independent test, round 3: intake and the review of what it finds (2026-11-04; post hoc, not registered)
+- **Who and what:** a new tester agent that had read only TESTING.md (not the README, the BENCH files, the earlier reports or `programs.json`) ran 4 live runs at commit 386e18b, for $0.16: intake on three DDOT notices of intent (from the held-out DC list; intake only, no review of them was run by the project), intake on a page it chose itself (SFMTA Contract 66, new traffic signals, 14 locations), and a review of one project from each. Its report is kept as written: `validation/independent/independent_test_round3_intake_2026-11-04.md`.
+- **Result:** 1 PASS, 2 PARTIAL, 1 FAIL.
+  - **Held up:** all 14 projects intake kept were real, at the right corner, with the page's status, a passage word for word and no invented cost; both reviews were about the corner intake found and kept the code's verdict.
+  - **FAIL, the most important finding of the three rounds:** the crash counts come from a 100 m circle and are all credited to the named corner. At Cesar Chavez & Florida in San Francisco the memo said 23 injury crashes and $1.6 million a year; the city's own record codes 3 of them at that intersection (14 at Alabama, 6 at Bryant). At 16th & Frankford SE in DC the pedestrian and cyclist injuries are at the 15th Pl SE end.
+  - **PARTIAL:** intake left out the 3 junctions where three streets meet (11 of 14 kept) without listing them as refused; the DC review called a crosswalk built for an elementary school "not a school crossing"; "no crash-modification study fits" was said of new signals, which are simply not on the federal list.
+- **Fixed after (each with a test):**
+  - **Crashes coded at the corner:** where the crash dataset codes each crash's two streets (San Francisco and New York), the record now lists the intersections the circle takes in. When fewer than half of its coded crashes are at the corner itself, the report says so in plain words ("The city's record codes 3 of the 23 crashes within the circle at Florida Street & Cesar Chavez Street itself; the rest are coded at neighbouring intersections (Alabama St & Cesar Chavez St 14, Bryant St & Cesar Chavez St 6) ..."), and a review cannot say "proceed" or "compare": it says to count the corner's own crashes on site first. Ordinal street numbers match with or without "th".
+  - **Intake:** junctions of three streets are asked for and kept.
+  - **Wording:** "not covered by the evidence" now says the fix is not on the federal list or no record on it fits this site.
+- **Not fixed:**
+  - The estimates still use the 100 m circle. Counting only the crashes coded at the corner would change every saved number; it needs its own registered run.
+  - Datasets that do not code streets (Chicago, DC, Seattle) cannot be checked this way.
+  - A school named only in a notice's attachment is not read.
+
 ## Independent audit of published desk cases (2026-11-03; post hoc, not registered)
 - **Who:** an auditor agent that had not seen the builders' reviews (it was told not to read README.md, BENCH.md or this file). It downloaded every cited page, and counted each corner's crashes and deaths itself from the cities' public data. Its report, kept as written: `validation/independent/audit_published_2026-11-03.md`.
 - **Sample:** 12 of the 44 published cases in T21c, T21d, T21e and T25, drawn with a fixed seed (20261103).

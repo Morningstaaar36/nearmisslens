@@ -50,7 +50,8 @@ VERDICTS = {
     "proceed": "proceed: the evidence supports this fix here",
     "proceed_after_site_check": "proceed only after a site check confirms what the estimate assumes",
     "compare_alternative": "compare before committing: another supported fix is expected to avoid much more",
-    "outside_evidence": "not covered by the evidence: no crash-modification study fits this fix at this site, so the "
+    "outside_evidence": "not covered by the evidence used here: the fix is not on the federal list of proven "
+                        "countermeasures, or no crash-modification record on that list fits it at this site, so the "
                         "decision rests on a site study and an engineer's assessment, not on this record",
     "reconsider": "reconsider: the record or the evidence does not support this fix here as proposed",
     "mixed": "decide part by part: the parts of this proposal get different verdicts",
@@ -139,7 +140,7 @@ def implied_control(countermeasure: str) -> str | None:
 
 
 def appraise_proposal(fx: dict, parts: list[dict], cost_usd: float | None, cost_covers: str,
-                      fx_for_control=None) -> dict:
+                      fx_for_control=None, coded: dict | None = None) -> dict:
     """Every part of a proposal against the corner's evidence, each with a verdict by rule, and the proposal's.
     A part built for another control than the map shows (beacons at a mapped signal, a signal phase where none is
     mapped) is estimated as the proposal describes the site (fx_for_control), and must have the control confirmed
@@ -169,6 +170,12 @@ def appraise_proposal(fx: dict, parts: list[dict], cost_usd: float | None, cost_
             a["reasons"].insert(0, f"{cm} is built for {need.lower()} crossings, and the map shows the corner as "
                                    f"{mapped.lower()} (a signal or stop within 80 m may belong to a nearby crossing): "
                                    f"confirm the control on site; the estimate here is for a {need.lower()} site")
+        if coded and coded.get("mostly_elsewhere"):  # the circle's crashes are mostly other corners' (round 3)
+            if a["verdict"] in ("proceed", "compare_alternative"):
+                a["verdict"], a["verdict_text"] = "proceed_after_site_check", VERDICTS["proceed_after_site_check"]
+            a["reasons"].insert(0, f"the city codes {coded['at_corner']} of the {coded['coded']} crashes within 100 m "
+                                   "at this intersection itself, so the estimate counts neighbouring corners' crashes: "
+                                   "count this corner's own before committing")
         rows.append(a)
     verdicts = {r["verdict"] for r in rows}
     verdict = rows[0]["verdict"] if len(verdicts) == 1 else "mixed"
@@ -181,6 +188,8 @@ def appraise_proposal(fx: dict, parts: list[dict], cost_usd: float | None, cost_
                               f"{'several parts' if len(parts) > 1 else 'more than this fix'}"
                               f"{'' if cost_covers != 'not stated' else ' or is not said to be for this fix alone'}, "
                               "so it is not compared with one fix's benefit")
+    if coded:
+        out["coded_at_corner"] = coded
     first = rows[0]
     for k in ("proposed", "best_alternative", "in_place", "not_estimated_reason", "benefit_cost_ratio", "countermeasure"):
         if k in first:
@@ -417,8 +426,10 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
             from .countermeasures import load_cmf
             d = engineer.Desk().dossier(j["lat"], j["lon"])
             return brief.fix_options(d, load_cmf(), control=control)
+        from .brief import coded_here
         rv.appraisal = appraise_proposal(got[1], rv.proposal["parts"], rv.proposal["cost_usd"],
-                                         rv.proposal["cost_covers"], fx_for_control if j.get("lat") is not None else None)
+                                         rv.proposal["cost_covers"], fx_for_control if j.get("lat") is not None else None,
+                                         coded=coded_here(got[1].get("crashes") or {}, corner))
         rid = desk.receipt("appraisal", rv.appraisal)
         return {"receipt": rid, **rv.appraisal,
                 "note": f"the verdict is set: {rv.appraisal['verdict_text']}. Cite {rid} for these numbers."}

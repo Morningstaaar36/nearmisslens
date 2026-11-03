@@ -20,7 +20,7 @@ def test_a_project_is_kept_only_when_its_passage_is_on_the_page_and_names_both_s
     assert intake.check_project(ok, PAGES) is None
     assert "word for word" in intake.check_project({**ok, "source_says": "A beacon at S Elm St and 13th Ave S is planned"}, PAGES)
     assert "does not name" in intake.check_project({**ok, "intersection": "S Elm St & 14th Ave S"}, PAGES)
-    assert "two streets" in intake.check_project({**ok, "intersection": "Main St"}, PAGES)
+    assert "streets joined" in intake.check_project({**ok, "intersection": "Main St"}, PAGES)
     assert "no page" in intake.check_project({**ok, "page": "https://other.example"}, PAGES)
 
 
@@ -76,3 +76,12 @@ def test_a_location_list_rests_on_the_list_item_and_the_description_of_the_work(
          "treatment_says": "The project will upgrade traffic signals with larger signal heads."}
     assert intake.check_project(x, pages) is None
     assert "treatment_says" in intake.check_project({**x, "treatment_says": "New signals everywhere."}, pages)
+
+
+def test_a_junction_of_three_streets_is_kept():
+    """Independent test round 3: junctions where three streets meet were silently left out."""
+    pages = {"https://agency.example/c66": "Project Locations: Castro St/Divisadero St/Waller St. New traffic signals will be installed."}
+    x = {"page": "https://agency.example/c66", "intersection": "Castro St & Divisadero St & Waller St",
+         "treatment": "new traffic signals", "source_says": "Project Locations: Castro St/Divisadero St/Waller St.",
+         "treatment_says": "New traffic signals will be installed."}
+    assert intake.check_project(x, pages) is None

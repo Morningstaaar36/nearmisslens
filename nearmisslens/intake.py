@@ -24,9 +24,10 @@ MAX_OUTPUT_TOKENS = 32_000
 STATUS = ("planned or proposed", "completed", "not stated")
 
 INSTRUCTIONS = """You read pages a street-safety agency published and list the projects on them that are each at ONE
-intersection (two named streets that cross). For each project give:
+intersection (two or three named streets that meet). For each project give:
 - page: the page id it is on;
-- intersection: "Street A & Street B", the street names as the page writes them;
+- intersection: "Street A & Street B" (or "Street A & Street B & Street C" where three streets meet), the street
+  names as the page writes them;
 - treatment: what will be built or changed there, in plain words (e.g. "rapid flashing beacons and curb ramps");
 - status: "planned or proposed", "completed" or "not stated", as the page says;
 - cost_usd: only if the page states a cost for this project alone or for the package it belongs to, else null;
@@ -71,8 +72,8 @@ def check_project(x: dict, pages: dict[str, str]) -> str | None:
     if orchestrator.quote_check(said, page, pages) != "verified":
         return "source_says is not on the page word for word"
     streets = [s.strip() for s in str(x.get("intersection") or "").split("&") if s.strip()]
-    if len(streets) != 2:
-        return "intersection must be two streets joined by '&'"
+    if len(streets) not in (2, 3):  # round 3: three-street junctions were silently left out
+        return "intersection must be two or three streets joined by '&'"
     missing = [s for s in streets if not orchestrator.names_corner(said, s)]
     if missing:
         return f"source_says does not name {', '.join(missing)}"

@@ -87,7 +87,7 @@ What happens:
    - **proceed**;
    - **proceed only after a site check** (the estimate assumes something the public data cannot show);
    - **compare before committing** (another supported fix is expected to avoid at least twice as many injury crashes);
-   - **not covered by the evidence** (no crash-modification study fits this fix at this site: the decision rests on a site study and an engineer's assessment);
+   - **not covered by the evidence** (the fix is not on the federal list of proven countermeasures, or no crash-modification record on that list fits it at this site: the decision rests on a site study and an engineer's assessment);
    - **reconsider** (the record shows none of the crashes it targets, the fix is already installed, the city's own record contradicts it, or the stated cost is above the lifetime value of the harm it avoids);
    - **decide part by part** (a proposal with several parts, such as an interval and a turn phase, whose parts get different verdicts; each part's verdict is listed).
 

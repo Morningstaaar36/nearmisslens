@@ -455,6 +455,10 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
     cr = fx.get("crashes") or {}
     if cr and "error" not in cr:
         out.append({"text": crash_sentence(name, cr), "receipt": rf})
+        from .brief import coded_here, coded_sentence
+        ch = coded_here(cr, name)
+        if ch and ch["mostly_elsewhere"]:  # say so whenever the circle mostly holds other corners' crashes
+            out.append({"text": coded_sentence(name, ch), "receipt": rf})
         if fx.get("harm"):
             dead = fx["harm"].get("deaths_in_record") or 0
             out.append({"text": f"At the U.S. DOT's values that harm costs about {_usd(fx['harm']['usd_per_year'])} "

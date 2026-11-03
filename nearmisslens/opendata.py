@@ -286,7 +286,12 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
     sums = Counter()
     injury_crashes, groups, factors, years_c = 0, Counter(), Counter(), Counter()
     dark = wet = dark_lit = 0
+    pairs, pair_injury = Counter(), Counter()  # the intersection the city codes each crash at, where it records one
     for r in rows:
+        names = [" ".join(str(r.get(f) or "").split()).title() for f in a.get("street_fields", [])]
+        if len(names) >= 2 and all(names[:2]):
+            key = " & ".join(sorted(names[:2]))
+            pairs[key] += 1
         d = _date(r.get(a.get("date_field")))
         years_c[str(d.year) if d else "unknown"] += 1
         per = {}
@@ -297,6 +302,8 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             sums[k] += v
         if any(v > 0 for v in per.values()) or _sum(r, a.get("serious_injured", [])) > 0:
             injury_crashes += 1
+            if len(names) >= 2 and all(names[:2]):
+                pair_injury[" & ".join(sorted(names[:2]))] += 1
         kind = _text(r, a.get("crash_type_fields", []))
         fac = _text(r, a.get("factor_fields", []))
         if per["pedestrian_injured"] + per["pedestrian_killed"] > 0 or _sum(r, a.get("pedestrian_involved", [])) > 0 \
@@ -337,6 +344,11 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
             "dark_lit_share": round(dark_lit / dark, 3) if dark and a.get("light_fields") else None,
             "dark_crashes": dark if a.get("light_fields") else None,
             "wet_share": round(wet / n, 3) if n and a.get("surface_fields") else None,
+            # where the dataset codes each crash's two streets: the intersections the circle takes in (round 3 of
+            # the independent test: a 100 m circle can hold more of the neighbouring corners' crashes than this one's)
+            **({"street_pairs": [{"pair": k, "crashes": v, "injury_crashes": pair_injury[k]}
+                                 for k, v in pairs.most_common(8)],
+                "street_coded": sum(pairs.values())} if a.get("street_fields") else {}),
             "top_factors": [{"factor": f, "crashes": c} for f, c in factors.most_common(3)],
             "factor_counts": dict(factors.most_common(15))}
 

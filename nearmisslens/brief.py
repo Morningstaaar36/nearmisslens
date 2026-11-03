@@ -200,7 +200,8 @@ def _street_words(name: str) -> list[set[str]]:
     head = name.split(",")[0]
     out = []
     for part in re.split(r"\s+(?:&|and|at|/)\s+|\s*&\s*", head, flags=re.I):
-        words = {ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower() for w in re.findall(r"[a-z0-9]+", part.lower())}
+        words = {re.sub(r"^(\d+)(st|nd|rd|th)$", r"\1", ABBREV_FULL.get(w, QUADRANT.get(w, w)).lower())
+                 for w in re.findall(r"[a-z0-9]+", part.lower())}  # "169th" and "169" are one street
         words = {w for w in words if w not in drop}
         if words:
             out.append(words)
@@ -212,6 +213,31 @@ def same_corner(proposed: str, corner: str) -> bool:
     corner's streets (word for word, abbreviations and direction words aside)."""
     want, have = _street_words(proposed), _street_words(corner)
     return bool(want) and all(any(w <= h or h <= w for h in have) for w in want)
+
+
+CODED_SHARE = 0.5  # below this share of the circle's coded crashes at the corner itself, the circle is mostly others'
+
+
+def coded_here(cr: dict, corner: str, min_coded: int = 5) -> dict | None:
+    """Where the crash dataset codes each crash's two streets: how many of the crashes in the circle the city codes
+    at this intersection, and the neighbouring intersections that hold the rest. None when the dataset does not code
+    streets, or codes too few crashes here to say."""
+    pairs, coded = (cr or {}).get("street_pairs") or [], (cr or {}).get("street_coded") or 0
+    if coded < min_coded:
+        return None
+    here = [p for p in pairs if same_corner(p["pair"], corner) and same_corner(corner, p["pair"])]
+    others = [p for p in pairs if p not in here]
+    at = sum(p["crashes"] for p in here)
+    return {"coded": coded, "at_corner": at, "injury_at_corner": sum(p["injury_crashes"] for p in here),
+            "share": round(at / coded, 3), "elsewhere": others[:3], "mostly_elsewhere": at / coded < CODED_SHARE}
+
+
+def coded_sentence(name: str, ch: dict) -> str:
+    """The plain sentence for a circle that mostly holds other corners' crashes."""
+    rest = ", ".join(f"{p['pair']} {p['crashes']}" for p in ch["elsewhere"])
+    return (f"The city's record codes {ch['at_corner']} of the {ch['coded']} crashes within the circle at "
+            f"{name.split(',')[0]} itself; the rest are coded at neighbouring intersections ({rest}), so the counts "
+            "and estimates here include other corners' crashes.")
 
 
 SETTLEMENT = {"city", "town", "village", "hamlet", "municipality", "suburb", "borough", "quarter", "neighbourhood",
