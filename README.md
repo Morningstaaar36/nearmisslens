@@ -137,6 +137,14 @@ In Seattle most estimates rest on a pavement-friction study whose sites were cho
 - **A city or a consultant writing an SS4A action plan:** the high-risk map and the prioritized project list with the evidence behind each fix (worksheet questions 3 and 6), as a page and a CSV, for a city in the registry with crash data (New York, Seattle, Washington DC and San Francisco are screened now; adding a city is guided, see "Try it"). It is meant to replace the pulling of records and looking up of CMFs, not the engineer's site visit.
 - **A community board, council office or advocacy group:** a corner's case in plain language, and a letter addressed to the agency that owns the road, with every number checked. In New York that includes the 19 corners where a fix was asked for and turned down.
 - **A city's own safety team:** which of its programs the record backs (leading pedestrian intervals) and which it does not (turn calming), before the same program is proposed again.
+- **An engineer or directorate about to fund a project:** `nml review` ("Before you commit") tests a proposed fix against the corner's record before money is committed. The tests:
+  - whether the crashes it targets are there;
+  - what it is expected to prevent and how strong that evidence is;
+  - cost against benefit;
+  - whether it is already installed;
+  - whether a better-supported alternative exists.
+
+  Code sets the verdict, a second model family argues against it, and the memo must answer every objection whose facts check out (see "Before you commit" below).
 
 ## One corner: Bruckner Boulevard & Hunts Point Avenue
 
