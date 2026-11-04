@@ -46,6 +46,16 @@ def test_a_failed_job_says_so_plainly_and_counts_its_reservation(tmp_path):
     assert jobs.status("../../etc") is None and jobs.status("0" * 16) is None
 
 
+def test_a_job_stopped_by_the_model_budget_says_that_not_a_data_source(tmp_path):
+    from nearmisslens.cost import BudgetExceeded
+
+    def runner(q):
+        raise BudgetExceeded("turn 3: would exceed the cap")
+    jobs = Jobs(runner, None, 0.5, tmp_path / "j")
+    rec = wait(jobs, jobs.submit({}))
+    assert rec["status"] == "failed" and "budget" in rec["error"] and "cap" not in rec["error"]
+
+
 def _port():
     s = socket.socket()
     s.bind(("127.0.0.1", 0))
@@ -155,7 +165,7 @@ def test_engineer_answers_quick_corners_inline_and_slow_ones_as_a_job(monkeypatc
         if rec["status"] != "running":
             break
         time.sleep(0.05)
-    assert rec["status"] == "done" and rec["result"]["junction"]["name"] == "Slow St & Long Ave"
+    assert rec["status"] == "done" and rec["result"]["junction"]["name"] == "Slow St & Long Ave", rec
 
 
 def test_review_endpoints_end_to_end(monkeypatch, tmp_path):

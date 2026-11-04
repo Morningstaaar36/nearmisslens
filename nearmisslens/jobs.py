@@ -8,6 +8,7 @@ and their results are kept for 24 hours under runs/checks/jobs/, with no caller 
 from __future__ import annotations
 
 import json
+import os
 import secrets
 import threading
 import time
@@ -44,7 +45,9 @@ class Jobs:
 
     def _write(self, job: str, rec: dict) -> None:
         self.store.mkdir(parents=True, exist_ok=True)
-        self._path(job).write_text(json.dumps(rec, default=str))
+        tmp = self._path(job).with_suffix(".tmp")  # written whole, then swapped in, so a poll never reads half a file
+        tmp.write_text(json.dumps(rec, default=str))
+        os.replace(tmp, self._path(job))
 
     def _prune(self) -> None:
         for p in self.store.glob("*.json") if self.store.exists() else []:
@@ -76,8 +79,10 @@ class Jobs:
         except Exception as e:  # the visitor gets a plain sentence; the operator's log gets the cause
             print(f"{time.strftime('%H:%M:%S')} job failed: {type(e).__name__}: {e}", flush=True)
             spent = self.reserve_usd  # unknown spend counts as the whole reservation
-            rec = {"status": "failed", "started": started, "error": "it could not finish (a public data source did "
-                                                                     "not answer); try again later"}
+            why = ("the model budget ran out while it worked; try again tomorrow, saved results stay open"
+                   if type(e).__name__ == "BudgetExceeded" else
+                   "it could not finish (a public data source did not answer); try again later")
+            rec = {"status": "failed", "started": started, "error": why}
         finally:
             if self.budget is not None:
                 self.budget.settle(self.reserve_usd, spent)
@@ -98,13 +103,14 @@ class Jobs:
     def status(self, job: str) -> dict | None:
         if not job.isalnum() or len(job) != 16:
             return None
+        alive = job in self.running  # asked before reading: a job writes its result before it leaves the set
         p = self._path(job)
         if not p.exists():
             return None
         rec = json.loads(p.read_text())
         if rec["status"] == "running":
             rec["seconds"] = round(time.time() - rec["started"], 1)
-            if job not in self.running or rec["seconds"] > MAX_RUN_S:  # the server restarted, or the job hung
+            if not alive or rec["seconds"] > MAX_RUN_S:  # the server restarted, or the job hung
                 return {"status": "failed", "seconds": rec["seconds"],
                         "error": "it stopped before it finished (the server restarted); try again"}
         return rec
