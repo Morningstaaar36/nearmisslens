@@ -1169,6 +1169,12 @@
 "name": "Hamilton Avenue & Court Street",
 "city": "nyc"
 },
+"nyc|court street & union street": {
+"lat": 40.682399,
+"lon": -73.9958868,
+"name": "Court Street & Union Street",
+"city": "nyc"
+},
 "nyc|cross bay boulevard & woodhaven boulevard": {
 "lat": 40.6807003276581,
 "lon": -73.8446446578818,
@@ -1455,6 +1461,12 @@
 "lat": 40.7222419197319,
 "lon": -73.9862857400163,
 "name": "East Houston Street & Essex Street",
+"city": "nyc"
+},
+"nyc|east houston street & lafayette street": {
+"lat": 40.7251518,
+"lon": -73.9952749,
+"name": "Lafayette Street & East Houston Street",
 "city": "nyc"
 },
 "nyc|east kingsbridge road & elm place": {
@@ -2092,6 +2104,12 @@
 "lon": -73.8627227344839,
 "name": "White Plains Road & Westchester Avenue",
 "city": "nyc"
+},
+"seattle|13th ave s & s lucile st": {
+"lat": 47.5534501,
+"lon": -122.316143,
+"name": "S Lucile St & 13th Ave S",
+"city": "seattle"
 },
 "seattle|13th avenue south & south lucile street": {
 "lat": 47.5534501,

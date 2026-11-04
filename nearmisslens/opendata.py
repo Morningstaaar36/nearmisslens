@@ -104,10 +104,10 @@ def _date(v) -> dt.date | None:
     if v is None or v == "":
         return None
     if isinstance(v, (int, float)):
-        return dt.datetime.utcfromtimestamp(v / 1000).date()
+        return dt.datetime.fromtimestamp(v / 1000, dt.timezone.utc).date()
     text = str(v).strip()
     if text.isdigit() and len(text) >= 11:  # epoch milliseconds written as text
-        return dt.datetime.utcfromtimestamp(int(text) / 1000).date()
+        return dt.datetime.fromtimestamp(int(text) / 1000, dt.timezone.utc).date()
     try:
         return dt.date.fromisoformat(text[:10])
     except ValueError:

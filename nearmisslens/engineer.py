@@ -448,7 +448,8 @@ def crash_sentence(name: str, cr: dict) -> str:
     if rec.get("killed"):
         parts.append(f"{killed} {'person' if killed == 1 else 'people'} killed")
     body = (", ".join(parts[:-1]) + " and " + parts[-1]) if len(parts) > 1 else "".join(parts)
-    return (f"{name} had {cr.get('injury_crashes', 0)} injury crashes in police records since {cr.get('since')}"
+    n = cr.get('injury_crashes', 0)
+    return (f"{name} had {n} injury {'crash' if n == 1 else 'crashes'} in police records since {cr.get('since')}"
             + (f": {body}." if body else "."))
 
 
@@ -525,8 +526,10 @@ def claims_for(name: str, rec: dict[str, tuple[dict, str]]) -> list[dict]:
                "FHWA-cited": "the record FHWA cites", "national studies": "national studies only",
                "needs a site check": "only if a site check confirms it",
                "contradicted here": "the city's own record contradicts the national figure"}[tier]
-        out.append({"text": f"{o['countermeasure']} would avoid about {o['expected_crashes_avoided_per_year']} "
-                            f"crashes a year (CMF {o['cmf_id']}, {o['chosen_by']}; evidence: {why}), worth "
+        v = o['expected_crashes_avoided_per_year']
+        out.append({"text": f"{o['countermeasure']} would avoid "
+                            + (f"about {v} crashes a year" if v else "almost none of them (0.0 crashes a year)")
+                            + f" (CMF {o['cmf_id']}, {o['chosen_by']}; evidence: {why}), worth "
                             f"{_usd(o['harm_avoided_usd_per_year'])} a year"
                             + (f"; check on site: {o['verify_on_site']}" if o.get("verify_on_site") else "") + ".",
                     "receipt": rf})

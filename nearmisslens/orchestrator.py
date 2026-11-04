@@ -319,8 +319,9 @@ def core_tools(desk: Desk, letter_client=None, model_check_client=None, model_cl
                                                 corner=((desk.report or {}).get("junction") or {}).get("name"),
                                                 city=opendata.city(desk.city) if desk.city else None)
         asof = (desk.report or {}).get("asof")
-        frame = (f"the record counts police-reported crashes within {context.CRASH_RADIUS_M:g} m of this corner over "
-                 f"{context.YEARS} years to {asof or 'its as-of date'}; a source counting another area or period can differ")
+        frame = (f"the record counts the police-reported crashes the city's data places at this corner (within "
+                 f"{context.CRASH_RADIUS_M:g} m) over {context.YEARS} whole years to {asof or 'its as-of date'}; a source "
+                 "counting another area, another period or one year can differ")
         rid = desk.receipt("check_claim", {"claim": text, "verdict": verdict, "reasons": reasons, "flags": flags,
                                            "against": receipt, "frame": frame})
         return {"verdict": verdict, "reasons": reasons, **({"model_read_flags": flags} if flags else {}),

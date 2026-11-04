@@ -136,17 +136,35 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
 HEDGE = re.compile(r"\b(check|checked|confirm|confirmed|verify|verified|if|whether|survey|study|assess)\b", re.I)
 
 
+# words that name the place or the record, not the condition: a sentence may use them freely
+GENERIC = frozenset("the a an is are has have and or of on at in it its now not no plus all do does show alone here "
+                    "corner junction intersection street road crashes current time".split())
+NEGATION = re.compile(r"\b(no|not|without|lacks?|missing)\b", re.I)
+
+
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"[a-z]{3,}", re.sub(r"\([^)]*\)", " ", text.lower()))) - GENERIC
+
+
 def condition_errors(text: str, facts: dict) -> list[str]:
     """A fix's site condition ("the current yellow plus all-red is shorter than practice") is something to check on
-    site, never a fact about the junction: a sentence that states one must say it is to be checked."""
-    conds = [c.strip() for fx in (facts.get("fixes") or []) + [facts.get("measured_in_this_city") or {}]
-             for c in (fx.get("needs_site_check_for") or "").split(";") if c.strip()]
+    site, never a fact about the junction: a sentence that states one must say it is to be checked. Naming the fix is
+    not stating its condition, so the fix's own words do not count ("better street lighting" does not claim the corner
+    has none); a condition made only of those words counts when the sentence negates them ("no street lighting")."""
+    conds = []
+    for fx in (facts.get("fixes") or []) + [facts.get("measured_in_this_city") or {}]:
+        named = _words(" ".join(str(fx.get(k) or "") for k in ("name", "federal_name", "fix")))
+        for c in (fx.get("needs_site_check_for") or "").split(";"):
+            if _words(c):
+                conds.append((_words(c) - named, _words(c)))
     errors = []
-    for sent in re.split(r"(?<=[.!?;])\s+", text):  # a clause after ";" stands alone: its own hedge or none
-        low = sent.lower()
-        for c in conds:
-            words = [w for w in re.findall(r"[a-z]{4,}", c.lower())]
-            if words and sum(w in low for w in words) / len(words) >= 0.6 and not HEDGE.search(sent):
+    for sent in re.split(r"(?<=[.!?;])\s+|\n+", text):  # a clause after ";" or a list item stands alone
+        if not sent.strip() or HEDGE.search(sent):
+            continue
+        said = _words(sent)
+        for own, every in conds:
+            states = (len(own & said) / len(own) >= 0.6) if own else (every <= said and NEGATION.search(sent))
+            if states:
                 errors.append(f"'{sent.strip()[:90]}' states a site condition as a fact: say it must be checked on site")
                 break
     return errors

@@ -261,3 +261,19 @@ def test_lighting_is_not_estimated_where_the_record_says_the_lights_were_on():
     names = lambda fx: {o["countermeasure"] for o in fx["options"]}
     assert "Lighting" in names(unlit) and "Lighting" not in names(lit)
     assert any("street lights on" in (o.get("reason") or "") for o in lit["not_estimated"] if o["countermeasure"] == "Lighting")
+
+
+def test_naming_a_fix_is_not_stating_its_site_condition():
+    """Live cases, 4 November 2026 (Seattle, Chicago): every letter was refused because a sentence naming "better
+    street lighting" or "high-friction pavement" read as claiming the corner lacks them."""
+    from nearmisslens import letter
+    facts = {"fixes": [
+        {"name": "Better street lighting", "federal_name": "Lighting", "needs_site_check_for": "the corner has no street lighting now"},
+        {"name": "High-friction pavement", "federal_name": "Pavement Friction Management",
+         "needs_site_check_for": "the pavement's friction is low now (wet-road crashes alone do not show it)"}]}
+    for fine in ("* Better street lighting, which is expected to prevent injury crashes in darkness.",
+                 "- high-friction pavement, expected to prevent wet-road crashes",
+                 "Please check on site whether the corner has no street lighting."):
+        assert not letter.condition_errors(fine, facts), fine
+    for wrong in ("The corner has no street lighting.", "The pavement's friction is low here."):
+        assert letter.condition_errors(wrong, facts), wrong
