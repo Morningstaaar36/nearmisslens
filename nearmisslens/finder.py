@@ -57,8 +57,6 @@ def check_report(x: dict, city: dict, corner: str | None, seen: set[str], read: 
     url = str(x.get("url") or "")
     if url in seen:
         return "the same page twice"
-    if read is not None and url not in read:
-        return "not opened with read_page: open it and copy the passage from its text"
     if not orchestrator.public_url(url):
         return "not a public web page"
     text = orchestrator.text_of(url)
@@ -68,7 +66,9 @@ def check_report(x: dict, city: dict, corner: str | None, seen: set[str], read: 
     if years and max(years) < asof().year - MAX_AGE_YEARS:  # a 2019 release about signals already built (DC, live)
         return f"published in {max(years)}: look for pages from the last {MAX_AGE_YEARS} years"
     if orchestrator.quote_check(str(x.get("passage") or ""), url) != "verified":
-        return "the passage is not on the page word for word"
+        # code opens every page itself, so a page the model did not open still counts when its passage is on it
+        return ("the passage is not on the page word for word" if read is None or url in read else
+                "the passage is not on the page word for word: open it with read_page and copy from its text")
     agency = re.search(r"\(([^)]+)\)", city.get("agency") or "")
     if not (_mentions(text, city["name"]) or (agency and _mentions(text, agency.group(1)))):
         return f"the page does not name {city['name']}"
@@ -88,15 +88,15 @@ def find(city_id: str, client, corner: str | None = None, budget_usd: float = 0.
     task = TASKS["corner" if corner else "projects"].format(
         agency=re.sub(r"^the\s+", "", city.get("agency") or f"{city['name']}'s transportation agency"),
         city=city["name"], corner=corner or "")
-    kept, refused, reads, rounds, searches, opened = [], [], [], [], [], set()
+    kept, refused, reads, rounds, searches, opened = [], [], [], [], [], []
 
     def read_page(url: str) -> dict:
         reads.append(url)
         if len(reads) > MAX_READS:
             return {"error": f"read {MAX_READS} pages already: submit what you have"}
         text = orchestrator.text_of(url) if orchestrator.public_url(url) else None
-        if text:
-            opened.add(url)
+        if text and url not in opened:
+            opened.append(url)
         return {"text": text[:READ_CHARS], "pages_left": MAX_READS - len(reads)} if text else \
             {"error": "this page could not be read here; try another", "pages_left": MAX_READS - len(reads)}
 
@@ -136,12 +136,13 @@ def find(city_id: str, client, corner: str | None = None, budget_usd: float = 0.
 
     run = run_agent(client, orchestrator.MODEL, INSTRUCTIONS.format(n=MAX_REPORTS, kinds=", ".join(KINDS), searches=MAX_SEARCHES,
                                                                        reads=MAX_READS), task, tools,
-                    10, budget_usd, effort="low", tag=f"find {city_id} {corner or 'projects'}",
+                    14, budget_usd, effort="low", tag=f"find {city_id} {corner or 'projects'}",
                     required=("submit_reports",), governor=True, server_tools=[{"type": "web_search"}],
                     include=("web_search_call.results",), on_response=collect)
     # pages Muse Spark opened and that name the city but were never submitted: listed apart, never as found reports
     named = re.search(r"\(([^)]+)\)", city.get("agency") or "")
-    unsubmitted = [u for u in sorted(opened) if u not in {k["url"] for k in kept} and (
+    too_old = {r["url"] for r in refused if str(r.get("why", "")).startswith("published in")}
+    unsubmitted = [u for u in opened if u not in {k["url"] for k in kept} and u not in too_old and (
         _mentions(orchestrator.text_of(u) or "", city["name"]) or (named and _mentions(orchestrator.text_of(u) or "", named.group(1))))]
     return {"city": city_id, "corner": corner, "task": task, "reports": kept, "refused": refused, "opened_not_submitted": unsubmitted,
             "searches": [s for s in searches if s], "pages_read": len(reads), "usd": round(run.usd, 4),

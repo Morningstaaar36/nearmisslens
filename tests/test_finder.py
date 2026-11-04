@@ -17,7 +17,8 @@ def test_a_page_is_kept_only_with_its_passage_on_it(monkeypatch):
     assert finder.check_report(ok, city, None, set(), {ok["url"]}) is None
     assert "word for word" in finder.check_report({**ok, "passage": "a roundabout at Main Street and Oak Avenue"},
                                                   city, None, set(), {ok["url"]})
-    assert "read_page" in finder.check_report(ok, city, None, set(), set())
+    assert finder.check_report(ok, city, None, set(), set()) is None  # not opened by the model, but its passage is on it
+    assert "read_page" in finder.check_report({**ok, "passage": "a roundabout at Main Street"}, city, None, set(), set())
     assert "could not be read" in finder.check_report({**ok, "url": "https://blocked.example/x"}, city, None, set(),
                                                       {"https://blocked.example/x"})
     assert "public" in finder.check_report({**ok, "url": "http://10.0.0.1/x"}, city, None, set(), {"http://10.0.0.1/x"})
