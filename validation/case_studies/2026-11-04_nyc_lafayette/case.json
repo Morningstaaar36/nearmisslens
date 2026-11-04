@@ -1,0 +1,20 @@
+{
+ "title": "NYC DOT's leading pedestrian intervals on Lafayette Street",
+ "city": "nyc",
+ "run": "2026-11-04, on the public live site",
+ "source": {"label": "NYC DOT to Manhattan Community Board 2, April 28, 2026", "url": "https://www.nyc.gov/html/dot/downloads/pdf/lafayette-st-4th-ave-prince-st-e15-st-apr2026.pdf"},
+ "quote": "Install left turn lane treatment: Plus, Leading Pedestrian Interval (LPI): Prince St, Houston St, Great Jones",
+ "question": "Is each of the three intervals supported by its corner's own crash record?",
+ "results": [
+  {"where": "Lafayette St & Prince St", "sign": "stop", "label": "Reconsider", "why": "the city's records show an interval already installed there (2024)"},
+  {"where": "Lafayette St & Great Jones St", "sign": "warn", "label": "Compare first", "why": "backplates are expected to avoid 0.39 injury crashes a year, against 0.08"},
+  {"where": "Lafayette St & E Houston St", "sign": "warn", "label": "Proceed after a site check", "why": "the estimate holds only if a turning movement is confirmed; 13 injury crashes and 1 death in five years"}
+ ],
+ "proof": [
+  "NYC's own signal dataset (xc4v-ntf4) lists Lafayette Street & Prince Street, installed 2024-10-11, and none at Houston or Great Jones",
+  "NYC's crash dataset (h9gi-nx95), by street names: 12 crashes with an injury and 1 with a death at Lafayette & Houston, 13 in all, as the tool says"
+ ],
+ "fixed": "6 faults this case found, all fixed the same day, among them a 2023 death the New York mapping missed",
+ "cost": "about $0.40 of model use for the whole case",
+ "write_up": "validation/case_studies/2026-11-04_nyc_lafayette/README.md"
+}

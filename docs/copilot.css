@@ -237,6 +237,14 @@ details.saved>summary{font-family:var(--head);font-weight:700;font-size:18px;col
 .tiles.tally .tile .vsign{grid-row:span 2}
 .tiles.tally .tile b{font-size:28px}
 
+/* real cases run live: one card each, verdicts as signs */
+section.cases{margin:0 0 36px}
+article.case{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:16px 20px;margin:14px 0;max-width:860px}
+article.case h3{margin:0 0 4px;font-size:21px}
+article.case blockquote{margin:10px 0;padding:6px 14px;border-left:4px solid var(--rule);font-style:italic}
+ul.caserows{list-style:none;padding:0;margin:12px 0;display:grid;gap:10px}
+ul.caserows li{display:flex;gap:12px;align-items:flex-start}
+
 /* 7 corner view: city switch, search, map and the ranked list ------------------------------------------------------ */
 .rail{border-right:1px solid var(--rule);display:flex;flex-direction:column;height:calc(100vh - 60px);position:sticky;top:60px}
 .cityswitch{padding:12px 18px 10px;font-size:15px}

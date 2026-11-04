@@ -121,6 +121,17 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
             shutil.copyfile(photo, dst)
             rep["media"] = {"aerial": f"data/{city}/media/{row['slug']}/aerial.jpg"}
         (data / "j" / f"{row['slug']}.json").write_text(json.dumps(rep, separators=(",", ":"), default=str))
+    # the list shows each corner's own injury crashes, as its report does, worst first (the screen's circle counts
+    # took in neighbouring corners' crashes; a list that said 129 above a report that says 75 contradicted itself)
+    own = {r["_slug"]: ((r.get("findings") or {}).get("choose_fixes") or {}).get("crashes", {}).get("injury_crashes") for r in refreshed}
+    for row in index:
+        if own.get(row["slug"]) is not None:
+            row["injury_crashes"] = own[row["slug"]]
+            # a plan gap: no recorded safety work, and at least the minimum of the corner's own injury crashes
+            row["plan_gap"] = bool(row.get("plan_gap")) and own[row["slug"]] >= context.GAP_MIN_INJURY_CRASHES
+    index.sort(key=lambda r: -(r.get("injury_crashes") or 0))
+    for k, row in enumerate(index):
+        row["rank"] = k + 1
     # the city's action plan from the same refreshed cases: every number on the plan view and in its letters
     from . import plan as plan_
     pl = plan_.build(city, reports=refreshed)
@@ -130,7 +141,9 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     screen = dict(citywide.screened()).get(city, {})
     c = opendata.city(city) or {}
     (data / "index.json").write_text(json.dumps({"city": city, "city_name": c.get("name", city), "bbox": c.get("bbox"),
-                                                 "asof": asof().isoformat(), "summary": screen.get("summary", {}),
+                                                 "asof": asof().isoformat(),
+                                                 "summary": {**screen.get("summary", {}),
+                                                             "plan_gap": sum(bool(r.get("plan_gap")) for r in index)},
                                                  "screen": "priority list" if citywide.junction_adapters(city) else "crash clusters",
                                                  "plan": True, "years": context.YEARS,
                                                  "gap_min_injury_crashes": context.GAP_MIN_INJURY_CRASHES,
@@ -148,6 +161,7 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
             shutil.rmtree(root / legacy)
     from .app import evidence
     (root / "evidence.json").write_text(json.dumps(evidence(), indent=0, default=str))
+    cases_page(root)
     desk_page(root)
     checks_page(root)
     reviews_page(root)
@@ -163,6 +177,19 @@ def build(city: str | None = None, live: str = "", docs: Path = DOCS, media_top:
     return {"corners": len(index), "letters": sum(r["letter"] for r in index), "mb": round(size / 1e6, 1),
             "claim_errors": sum(r["claim_errors"] for r in index),
             "path": str(docs.relative_to(ROOT)) if docs.is_relative_to(ROOT) else str(docs)}
+
+
+def cases_page(root: Path) -> None:
+    """The real cases run live on the public site (validation/case_studies/*/case.json), newest first, for the Saved
+    results view: the proposal, each verdict as a sign, and the hand checks against the city's own data."""
+    from .app import repo_url
+    cases = []
+    for f in sorted((ROOT / "validation" / "case_studies").glob("*/case.json"), reverse=True):
+        c = json.loads(f.read_text())
+        if repo_url() and c.get("write_up"):
+            c["write_up_url"] = f"{repo_url()}/blob/main/{c['write_up']}"
+        cases.append(c)
+    (root / "cases.json").write_text(json.dumps({"cases": cases}, indent=0))
 
 
 def desk_page(root: Path) -> None:

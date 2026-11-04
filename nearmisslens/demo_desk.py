@@ -62,6 +62,12 @@ def facts() -> dict:
     return out
 
 
+def _live_case() -> dict | None:
+    """The newest real case run on the live site (validation/case_studies/*/case.json)."""
+    files = sorted((ROOT / "validation" / "case_studies").glob("*/case.json"), reverse=True)
+    return json.loads(files[0].read_text()) if files else None
+
+
 def _clean_check() -> str | None:
     """The saved check to show, read from the results: a published real input whose claims are all the source's own
     sentences (T25 also checked some of the desk's own sentences, fixed after) and whose letter needs no correction.
@@ -128,6 +134,14 @@ def script(f: dict | None = None) -> list[Scene]:
                                        "instead of promising a number.",
                             "page", target="program", q={"route": "program"},
                             caption="A whole program, reviewed and ranked by code"))
+    case = _live_case()
+    if case:
+        first = case["results"][0]
+        scenes.append(Scene("case", f"Then we gave it a proposal nobody had run before: {case['title']}. On the live site, "
+                                    f"at {first['where']} the answer is {first['label'].lower()}: {first['why']}. We checked "
+                                    "that against the city's own data by hand, and it holds.",
+                            "page", target="case", q={"route": "desk"},
+                            caption=f"A new real case, run live: {case['run']}"))
     scenes += [
         Scene("check", f"The same desk checks claims. On {t25['inputs']} inputs nobody chose for it, all "
                        f"{_words(t25['published_real'])} real ones were published at the right corner, and all "
@@ -155,20 +169,22 @@ def _steps(s: Scene, seconds: float):
         page.goto(f"{base}/#{q.get('route', 'review')}")
         page.wait_for_selector("h2.corner", timeout=60000)
         page.wait_for_timeout(int(demo.LOAD_S * 1000))
-        if s.target == "program":
-            page.evaluate("() => { const d = [...document.querySelectorAll('details')].find(x => x.closest('section')"
-                          " && /program/i.test(x.closest('section').textContent.slice(0, 60))); if (d) { d.open = true;"
-                          " d.scrollIntoView({block: 'start'}); } }")
+        if s.target == "case":
+            page.evaluate("() => { const c = document.querySelector('section.cases'); if (c) c.scrollIntoView({block: 'start'}); }")
+        elif s.target == "program":
+            page.evaluate("() => { const sv = document.querySelector('details.saved'); if (!sv) return; sv.open = true; "
+                          "const d = sv.querySelector(':scope > details'); if (d) { d.open = true; "
+                          "(d.querySelector('.chart') || d).scrollIntoView({block: 'start'}); } }")
         elif q.get("match"):
-            # open the saved case whose data id matches, by its summary text (the page lists cases in file order)
-            page.evaluate("(m) => { const sec = [...document.querySelectorAll('section')].find(x => /^Saved (reviews|checks)/"
-                          ".test((x.querySelector('h3') || {}).textContent || '')); if (!sec) return; const ds = "
-                          "[...sec.querySelectorAll(':scope > details')]; const i = (window.__ids || []).indexOf(m); "
+            # open the saved run whose data id matches (the page lists them in file order, folded under one line)
+            page.evaluate("(m) => { const sv = document.querySelector('details.saved'); if (!sv) return; sv.open = true; "
+                          "const ds = [...sv.querySelectorAll(':scope > details')]; const i = (window.__ids || []).indexOf(m); "
                           "const d = ds[i] || ds[0]; if (d) { d.open = true; d.scrollIntoView({block: 'start'}); } }",
                           q["match"])
         if s.target == "premortem":
-            page.evaluate("() => { const h = [...document.querySelectorAll('details[open] h4')].find(x => "
-                          "/Pre-mortem/.test(x.textContent)); if (h) h.scrollIntoView({block: 'start'}); }")
+            page.evaluate("() => { const d = [...document.querySelectorAll('details.saved details[open] details.more')].find(x => "
+                          "/case against/i.test(x.querySelector('summary').textContent)); if (d) { d.open = true; "
+                          "d.scrollIntoView({block: 'start'}); } }")
         for k in range(int(seconds)):
             page.wait_for_timeout(1000)
             if k >= 3:  # hold the verdict (or the opening of the section) in view first, then read down

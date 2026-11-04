@@ -122,28 +122,36 @@ NearMissLens drafts the safety analysis and the project list from public records
 
 ## What it found
 
-From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 October 2026:
+From `nml plan CITY` (validation/results/bench/plan_*.json), records as of 31 October 2026. The plans were rebuilt on
+4 November 2026 from each corner's own crashes (the T32 rule) and with New York's death total. The earlier build
+counted every crash within 100 m, and the same rows then read 338, 108, 76 and 58 crashes a year, and 86, 8, 2 and 0
+supported.
 
 | | New York | Seattle | Washington DC | San Francisco |
 |---|---|---|---|---|
 | Corners | 303 distinct points among the 304 priority intersections | 50 worst | 50 worst | 50 worst |
-| Harm a year, each crash counted once (U.S. DOT injury-crash value; deaths not valued separately, so this is low) | $786 million | $183 million | $192 million | $129 million |
-| Largest low-cost estimate at each corner, added up | 338 crashes a year | 108 | 76 | 58 |
-| Supported without a site visit | **86** at 129 corners; **83** with each crash counted once, **79** after regression to the mean | **8** at 8 corners (6 counted once) | **2** at 5 corners | **0** |
+| Harm a year, from the city screen, each crash within 100 m counted once (U.S. DOT injury-crash value; deaths not valued separately, so this is low) | $786 million | $183 million | $192 million | $129 million |
+| Largest low-cost estimate at each corner, added up | 136 crashes a year | 12 | 16 | 24 |
+| Supported without a site visit | **52** at 142 corners; **52** with each crash counted once, **46** after regression to the mean | **0.4** at 2 corners | **1.3** at 2 corners | **21** at 40 corners, **16** after regression to the mean |
 
-The gap between the last two rows is the point. In New York the largest estimate at 270 of the corners is signal backplates, which hold only where the record shows red-light entries; elsewhere they need a check nobody has made. Yellow timing needs a timing check, and the only crosswalk study in the set was done at school crossings.
+The gap between the last two rows is the point. In New York the largest estimate at 275 of the corners is signal
+backplates, which hold only where the record shows red-light entries; elsewhere they need a check nobody has made.
+Yellow timing needs a timing check, and the only crosswalk study in the set was done at school crossings.
 
-What the evidence supports now:
-- **leading pedestrian intervals at 83 corners**, a fix the city's own past installs passed the causal gate on;
-- **backplates at 44 corners**, where FHWA's cited study fits the record;
+What the evidence supports now in New York:
+- **backplates at 71 corners**, where the corner's own record shows entries on red and FHWA's cited study fits;
+- **leading pedestrian intervals at 69 corners**, a fix the city's own past installs passed the causal gate on;
 - **rectangular rapid flashing beacons at 2** uncontrolled crossings.
 
-In Seattle most estimates rest on a pavement-friction study whose sites were chosen for low friction, which the crash record cannot show, so they need a site check too. San Francisco's records support no low-cost estimate without a site visit.
+In San Francisco the record now codes why each crash happened, and at 36 signalized corners it shows entries on red,
+so backplates are supported there; 4 more get leading pedestrian intervals. Seattle's and Washington's records place
+most crashes near these corners on a block or at another junction, so each corner's own count, and every estimate
+built on it, is small; flashing beacons at 2 uncontrolled crossings in each are what the evidence supports.
 
 **New York, also from the same cases:**
 - **Who must act.** The city's transportation department is not the only road owner at 12 corners: the state DOT at 11 and MTA Bridges and Tunnels at 1. Each agency gets its own letter, number-checked like every claim.
 - **Programs the record does not back.** 54 corners already got turn calming. Its citywide drop began before the work, so the engineer flags it before the same thing is proposed again.
-- **Asked for and turned down.** At 19 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded in the city's open datasets there now, and pedestrians were injured there in the records since 2021. The city has since installed thousands of leading pedestrian intervals elsewhere (1,651 in the window our causal gate measured), so these corners stand out. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
+- **Asked for and turned down.** At 18 corners, a leading pedestrian interval was requested and denied (2004–2016, NYC study requests w76s-c5u4). None is recorded in the city's open datasets there now, and pedestrians were injured there in the corner's own records since 2021. The city has since installed thousands of leading pedestrian intervals elsewhere (1,651 in the window our causal gate measured), so these corners stand out. Ryan E. Kelly found that leading-interval and left-turn requests in Queens Community Board 5 had a 0% approval rate over five years ([2026](https://junipercivic.com/?p=19593)); here each denial is tied to a priority corner and to the injuries in its five years of records.
 
 **Seattle's own cameras (Corner Watch, T23 and T23b).** SAM 3.1 counts people and cars in the city's traffic-camera frames at the 40 camera corners with the most injury crashes, and Muse Spark answers five layout questions per corner that SAM 3.1 must confirm. The first run (T23) had only one early morning: 337 frames from the traffic cameras at 34 of the 40 camera corners, and only 2 cameras saw the 20 people a rate needs. The midday rerun (T23b, registered before its frames were collected) used 811 frames. Packed-video counts agreed with image mode within ±1 person in 58 of 68 sampled frames (rule met), but every disagreement was the video counting fewer, so busy corners are undercounted. 15 cameras saw at least 20 people, short of the 20 the ranking needs, so the crashes-per-person ranking is not reported (rule) again. A spot-check found the top-ranked camera looking at an industrial lot, not the crossing: a camera's count is a corner's exposure only where the crossing is in view, and that check comes before any ranking. Of 170 layout answers in T23b, 29 are present, 83 absent and 58 unsure. The two runs cost $1.27 and $1.28 of Meta API. Frames stay on this machine.
 
@@ -163,12 +171,12 @@ In Seattle most estimates rest on a pavement-friction study whose sites were cho
 
 ## One corner: Bruckner Boulevard & Hunts Point Avenue
 
-The worst of the 304:
-- **The record.** 129 injury crashes in five years: 29 pedestrians and 3 cyclists injured. That is about $8.8 million a year at the U.S. DOT's values.
-- **What the crashes have in common.** A truck or bus was involved in 28% of its 310 police-reported crashes, against 16% at the other priority corners. "Following too closely" was recorded in 12%, against 6%. Both survive a correction for testing many patterns, and the truck share held up on later years the analysis never saw. The corner sits beside the Hunts Point Food Distribution Center; police records cannot say why the share is high.
+First on the city's list of 304:
+- **The record.** 75 injury crashes in five years at the corner itself: 17 pedestrians and 1 cyclist injured. The city's record places 79 of the 310 crashes within 100 m at another intersection or street, and they are left out. That is about $5.1 million a year at the U.S. DOT's values.
+- **What the crashes have in common.** A truck or bus was involved in 30% of its crashes, against 16% at the other priority corners. The share survives a correction for testing many patterns, and it held up on later years the analysis never saw (31% since May 2024). The corner sits beside the Hunts Point Food Distribution Center; police records cannot say why the share is high.
 - **The fix, by evidence.**
-  - Reflective signal backplates: about 3.9 fewer injury crashes a year, $1.3 million (CMF 1410, the study FHWA's fact sheet cites).
-  - Longer yellow plus all-red time: about 2.0 a year, but only if a timing check shows the current interval is below ITE practice. All four eligible records come from one study (NCHRP Report 705) at signals with short intervals. FHWA's own page cites lower-rated records (380/384, 8–14% fewer crashes), which the code's three-star rule leaves out.
+  - Reflective signal backplates: about 2.3 fewer injury crashes a year, $770,000 (CMF 1410, the study FHWA's fact sheet cites).
+  - Longer yellow plus all-red time: about 1.2 a year, but only if a timing check shows the current interval is below ITE practice. All four eligible records come from one study (NCHRP Report 705) at signals with short intervals. FHWA's own page cites lower-rated records (380/384, 8–14% fewer crashes), which the code's three-star rule leaves out.
 - **Who must act.** The state DOT (Region 11) owns the Bruckner Expressway (I-278) and the Sheridan Boulevard (NY 895), according to the state road inventory. The surface streets are not in that inventory, so they are presumed the city's. Council District 17 and Bronx Community Board 2 can push for the work.
 - **What the city's data does not show.** The city's open datasets record no safety work here since a 2015 street project. But New York State's Hunts Point access project improved this intersection in its first phase, completed in 2022 ([announcement](https://www.governor.ny.gov/news/governor-hochul-announces-completion-phase-one-17-billion-hunts-point-access-improvement)). A request to the state should start from that project.
 
@@ -401,7 +409,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
 - **The causal gate is observational.** Cities choose their sites, and 5.5% of fake programs passed it.
 - **Police factors are an officer's account.** "Have in common" is a pattern in the record, not a cause.
 - **"No recorded treatment" means none in the city's open datasets.** The state's 2022 work at Bruckner is one example of what they miss.
-- **Signal control comes from OpenStreetMap.** At 25 of the 303 New York corners on the site the street layout could not be fetched before the deadline (the API limited our requests), so their control is unknown and signal-only fixes are not estimated there. The supported totals are low rather than high for that reason.
+- **Signal control comes from OpenStreetMap.** At 0 of the 303 New York corners on the site is the control unknown since the rebuild of 4 November (25 were unknown before, when the map API limited our requests); a corner OpenStreetMap maps wrongly still gets the wrong control, so signal-only fixes say what to check on site.
 - **Matching requests to corners uses street names and the borough.** 255 of 303 corners matched; the rest are left out, not guessed.
 - **US cities only so far.** The method needs geocoded crash records, a log of fixes made or denied, a road-owner layer and local crash costs. Bangladesh's police counted 5,084 road deaths in 2021 where WHO estimates 31,578 ([Dhaka Tribune](https://www.dhakatribune.com/bangladesh/381561/who-road-crashes-claiming-young-lives-in)), and no official geocoded record is public, so Dhaka is the next step, not a claim.
 

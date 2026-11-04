@@ -54,7 +54,7 @@ async function boot() {
   const kind = INDEX.screen === "crash clusters" ? "corners with the most injury crashes (found from the crash records)" : "priority corners";
   $("citynote").innerHTML = `<b>${INDEX.corners.length}</b> ${esc(INDEX.city_name)} ${kind}, worst first. ` +
     (s.plan_gap != null ? `<span class="gapdot"></span><b>${s.plan_gap}</b> had at least ${INDEX.gap_min_injury_crashes} injury crashes and no recorded safety work in ${INDEX.years} years. ` : "") +
-    (s.injury_crashes_distinct ? `Together their ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
+    (s.injury_crashes_distinct ? `The ${Number(s.injury_crashes_distinct).toLocaleString("en-US")} injury crashes within 100 m of them, each counted once, cost about ${usd(s.harm_usd_per_year)} a year. ` : "") +
     `Records as of ${date(INDEX.asof)}.` +
     (INDEX.plan ? ` <button class="quiet planlink" id="planlink">The city's action plan</button>` : "");
   if (INDEX.plan) $("planlink").onclick = () => { location.hash = `${CITY}/plan`; };
@@ -680,6 +680,23 @@ function checkResult(r) {
     `<p class="legend">Records as of ${esc(r.asof || "")}; $${esc((r.cost_usd || {}).meta)} of Meta API, ${esc(r.turns)} turns, ${Math.round(r.seconds || 0)} s.</p>`;
 }
 
+async function liveCases() {
+  // real proposals run on the public live site, each verdict as its sign, with the checks made by hand on the city's data
+  let d;
+  try { d = await getJSON("data/cases.json"); } catch (e) { return ""; }
+  if (!(d.cases || []).length) return "";
+  return `<section class="cases"><p class="where">Real cases, run live</p><h2 class="corner">New proposals, checked before the money is spent</h2>` +
+    d.cases.map(c => `<article class="case"><h3>${esc(c.title)}</h3>` +
+      `<p class="legend">${esc(c.run)} · <a href="${safeUrl(c.source.url)}" target="_blank" rel="noopener">${esc(c.source.label)}</a></p>` +
+      `<blockquote>${esc(c.quote)}</blockquote><p><b>The question:</b> ${esc(c.question)}</p>` +
+      `<ul class="caserows">` + c.results.map(x => `<li><span class="vsign mini ${esc(x.sign)}" aria-hidden="true"><span>${SIGN_GLYPH[x.sign] || "?"}</span></span>` +
+        `<span><b>${esc(x.where)}: ${esc(x.label)}</b><br><span class="legend">${esc(x.why)}</span></span></li>`).join("") + `</ul>` +
+      `<details class="more"><summary>Checked by hand against the city's own data</summary><ul>${c.proof.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
+      `<p class="legend">${esc(c.fixed || "")}${c.cost ? ` · ${esc(c.cost)}` : ""}</p></details>` +
+      (c.write_up_url ? `<p><a href="${safeUrl(c.write_up_url)}" target="_blank" rel="noopener">The full write-up, with screenshots and the data</a></p>` : "") +
+      `</article>`).join("") + `</section>`;
+}
+
 async function showDesk() {
   setView("desk");
   // the desk: Muse Spark took a real-world input, searched the live web, worked the case with the checked tools and
@@ -713,7 +730,8 @@ async function showDesk() {
   };
   const pub = d.cases.filter(c => c.finished).length;
   const runs = (d.runs || []).map(r => `<tr><td>${esc(r.id)}</td><td>${r.published} of ${r.cases}</td><td>${r.quotes ? r.verified + " of " + r.quotes : "n/a"}</td><td>$${Number(r.usd_per_case).toFixed(3)}</td><td>${r.seconds_per_case} s</td></tr>`).join("");
-  $("out").innerHTML = `<p class="where">The desk · saved run ${esc(d.run)} (a replay, not a live endpoint)</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
+  $("out").innerHTML = (await liveCases()) +
+    `<p class="where">The desk · saved run ${esc(d.run)} (a replay, not a live endpoint)</p><h2 class="corner">Real cases, worked by agents, checked by code</h2>` +
     `<p class="lede">Each case started from a real input: a news report or official statement found on the live web, or a resident's 311 report with a photo. ` +
     `Muse Spark planned the work, searched, opened the source and investigated the corner with the checked tools; Muse Spark Open drafted the letter. ` +
     `${pub} of ${d.cases.length} passed the publish gate; the rest are shown with the gate's reasons. ` +

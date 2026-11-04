@@ -269,8 +269,8 @@ def refreshed_fixes(report: dict) -> dict | None:
     j = report.get("junction") or {}
     if j.get("lat") is None or j.get("lon") is None:
         return None
-    try:
-        d = context.dossier(j["lat"], j["lon"])
+    try:  # the corner's own crashes, as the report was built (its name picks them out of the 100 m circle)
+        d = context.dossier(j["lat"], j["lon"], corner=(j.get("name") or "").split(",")[0] or None)
     except Exception:  # no cache and no network: keep what was saved
         return None
     if not d.get("crashes") or "error" in (d.get("crashes") or {}):
