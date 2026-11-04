@@ -102,16 +102,17 @@ function setView(name) {
 function showStart() {
   setView("start");
   const live = LIVE !== null;
-  const card = (href, t, d, k, primary) => `<li><a href="${href}"${primary ? ' class="primary"' : ""}><span class="t">${t}</span>` +
-    `<span class="d">${d}</span><span class="k">${k}</span><span class="go">${primary ? "Start here" : "Open"}</span></a></li>`;
+  const card = (href, t, d, k, primary) => `<li><a href="${href}" class="task-${href.slice(1)}${primary ? " primary" : ""}">` +
+    `<span class="tsign" aria-hidden="true"></span><span class="t">${t}</span>` +
+    `<span class="d">${d}</span><span class="k" data-time="${k}"></span><span class="go">${primary ? "Start here" : "Open"}</span></a></li>`;
   $("out").innerHTML = `<section class="start"><h2>Check a street-safety project against the city's own crash record before money is spent</h2>` +
     `<p class="lede">For traffic engineers and agencies in <span id="citylist">the covered cities</span>. ` +
     `Meta's models do the research; code sets every verdict and checks every number and quote.</p>` +
     `<h3 class="ask">What do you want to do?</h3><ul class="cards">` +
-    card("#review", "Review a project", "One proposed fix at one intersection: is it supported here, what would it avoid, what does the record say against it?", live ? "About 1–2 minutes" : "Saved reviews", true) +
-    card("#program", "Review a list", "Two to four proposals, or a whole program: each reviewed, then ranked by what the evidence supports, within your budget.", live ? "A few minutes" : "Saved program reviews") +
-    card("#check", "Check a claim", "A news link or an official's statement about a corner, tested against the crash record.", live ? "About 2 minutes" : "Saved checks") +
-    card("#corners", "Look up a corner", `The worst corners in ${esc(INDEX.city_name)}: what their crashes have in common, what was tried, who must act.`, "Opens at once") +
+    card("#review", "Review a project", "One proposed fix at one intersection: is it supported here, what would it avoid, what does the record say against it?", "review", true) +
+    card("#program", "Review a list", "Several proposals, or a whole program: each reviewed, then ranked by what the evidence supports, within your budget.", "program") +
+    card("#check", "Check a claim", "A news link or an official's statement about a corner, tested against the crash record.", "check") +
+    card("#corners", "Look up a corner", `The worst corners in ${esc(INDEX.city_name)}: what their crashes have in common, what was tried, who must act.`, "corner") +
     `</ul><div id="sample"></div><h3>How a review works</h3><ol class="how">` +
     `<li>Muse Spark reads your proposal and investigates the corner with checked tools: crash records, past city programs, federal crash-reduction studies, road owners.</li>` +
     `<li>Code, not the model, sets the verdict: proceed, check on site first, compare, not covered by the evidence, or reconsider.</li>` +
@@ -120,6 +121,7 @@ function showStart() {
     `${live ? "Live work runs under a daily budget; saved results always open." : ""}</p></section>`;
   sampleResult();
   coveredCities();
+  loadDurations().then(fillDurations);
 }
 
 async function coveredCities() {
@@ -153,18 +155,19 @@ async function showProgram() {
   // a whole list: each proposal reviewed, then grouped and ranked by code
   setView("program");
   const head = `<p class="where">Review a list</p><h2 class="corner">Which of these projects should be built first?</h2>` +
-    `<p class="lede">Paste two to four proposals, one per line. Each is reviewed like a single project; then the list is sorted ` +
+    `<p class="lede">Paste <span id="maxitems">a few</span> proposals, one per line. Each is reviewed like a single project; then the list is sorted ` +
     `into build, check on site first, compare, needs a study, and reconsider, and fitted to your budget.</p>` +
-    steps(["<b>Paste</b> one project per line, with its intersection and cost", "<b>We review</b> each one: a few minutes",
+    steps(["<b>Paste</b> one project per line, with its intersection and cost", `<b>We review</b> each one: <span data-time="program"></span>`,
            "<b>Read the ranked list</b> and what fits the budget"], 0);
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` + (await savedPrograms());
     return;
   }
-  let cities = [];
-  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
-  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  const cities = await liveCities();
+  await loadDurations();
   $("out").innerHTML = head + programForm(cities) + (await savedPrograms());
+  if (LIMITS.program_items) $("maxitems").textContent = `two to ${LIMITS.program_items}`;
+  fillDurations();
   wireProgram();
 }
 
@@ -202,6 +205,42 @@ function verdictCard(v, extra) {
     `<p class="vnext"><b>Next:</b> ${esc(i.next)}</p>${extra || ""}</div></div>`;
 }
 
+let DURATIONS = null, LIMITS = {};
+async function loadDurations() {
+  // how long each task usually takes, from the saved runs' own timings
+  if (DURATIONS) return DURATIONS;
+  DURATIONS = {};
+  try { DURATIONS.review = (await getJSON("data/reviews.json")).summary.mean_seconds; } catch (e) { /* unknown */ }
+  try { DURATIONS.check = (await getJSON("data/checks.json")).summary.mean_seconds; } catch (e) { /* unknown */ }
+  if (DURATIONS.review) DURATIONS.program = DURATIONS.review * 2;  // reviews run three at a time
+  return DURATIONS;
+}
+const minutes = s => !s ? "a few minutes" : s < 100 ? "about a minute" : `about ${Math.round(s / 60)} minutes`;
+function fillDurations() {
+  for (const el of document.querySelectorAll("[data-time]")) {
+    const k = el.dataset.time;
+    el.textContent = k === "corner" ? "Saved corners open at once" : `Usually ${minutes((DURATIONS || {})[k])}`;
+  }
+}
+async function liveCities() {
+  // the cities the server can check, and its limits; the site's own index when it cannot be reached
+  let cities = [];
+  try {
+    const d = await getJSON(`${LIVE}cities`);
+    cities = (d.cities || []).filter(c => c.checkable);
+    LIMITS = d.limits || {};
+  } catch (e) { /* below */ }
+  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  return cities;
+}
+
+function verdictLegend() {
+  // the answers a review can give, as the signs the result will show
+  return `<details class="vlegend"><summary>What the verdicts mean</summary><ul>` + Object.values(VERDICT_INFO).map(i =>
+    `<li><span class="vsign mini ${i.shape}" aria-hidden="true"><span>${i.glyph}</span></span><span><b>${esc(i.label)}</b>: ${esc(i.meaning)}</span></li>`).join("") +
+    `</ul></details>`;
+}
+
 function steps(items, now) {
   // the task as a sequence the visitor can see: what they do, what happens, what they get
   return `<ol class="steps">` + items.map((t, k) => `<li${k === now ? ' aria-current="step"' : ""}><span>${t}</span></li>`).join("") + `</ol>`;
@@ -220,9 +259,9 @@ const STAGES = {
             "Ranks the supported ones by crashes avoided per dollar and fits your budget"],
 };
 
-function working(kind, secs, typical) {
+function working(kind, secs) {
   return `<div class="working" role="status" aria-live="polite"><p><span class="spin" aria-hidden="true"></span>` +
-    `<b>Working: ${Math.round(secs || 0)} s</b> <span class="legend">(usually ${typical})</span></p>` +
+    `<b>Working: ${Math.round(secs || 0)} s</b> <span class="legend">(usually ${minutes((DURATIONS || {})[kind])})</span></p>` +
     `<p class="legend">What happens now:</p><ol>${STAGES[kind].map(t => `<li>${t}</li>`).join("")}</ol>` +
     `<p class="legend">Keep this page open; the result appears here.</p></div>`;
 }
@@ -291,7 +330,7 @@ async function showReview() {
   const head = `<p class="where">Review a project</p><h2 class="corner">Is this fix worth funding at this corner?</h2>` +
     `<p class="lede">Describe what you plan to build and where. You get a verdict, the reasons from the corner's own crash record, ` +
     `and the strongest case against it.</p>` +
-    steps(["<b>Describe</b> the fix, the intersection and, if you know it, the cost", "<b>We investigate</b> the corner: about 1 to 2 minutes",
+    steps(["<b>Describe</b> the fix, the intersection and, if you know it, the cost", `<b>We investigate</b> the corner: <span data-time="review"></span>`,
            "<b>Read the verdict</b>, why, and what to do next"], 0);
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code>, ` +
@@ -299,19 +338,20 @@ async function showReview() {
       (await savedReviews() || `<p class="legend">No saved reviews in this copy.</p>`);
     return;
   }
-  let cities = [];
-  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
-  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  const cities = await liveCities();
+  await loadDurations();
   $("out").innerHTML = head + `<form id="reviewform" class="search ask"><label class="flabel" for="reviewin">What do you plan to build, and where?</label>` +
     `<textarea id="reviewin" maxlength="1500" rows="3" ` +
     `placeholder="For example: Rapid flashing beacons at Street A &amp; Street B, about $60,000"></textarea>` +
     `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review this project</button></form>` +
+    verdictLegend() +
     `<div id="reviewout"></div>` + await savedReviews();
   await reviewExamples(cities);
+  fillDurations();
   $("reviewform").onsubmit = async ev => {
     ev.preventDefault();
-    $("reviewout").innerHTML = working("review", 0, "1 to 2 minutes");
+    $("reviewout").innerHTML = working("review", 0);
     let job;
     try {
       job = (await getJSON(`${LIVE}review`, {method: "POST", headers: {"Content-Type": "application/json"},
@@ -322,7 +362,7 @@ async function showReview() {
       let rec;
       try { rec = await getJSON(`${LIVE}review/${encodeURIComponent(job)}`); }
       catch (e) { $("reviewout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("reviewout").innerHTML = working("review", rec.seconds, "1 to 2 minutes"); continue; }
+      if (rec.status === "running") { $("reviewout").innerHTML = working("review", rec.seconds); continue; }
       if (rec.status === "failed") { $("reviewout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("reviewout").innerHTML = reviewResult(rec.result);
       return;
@@ -394,7 +434,7 @@ function wireProgram() {
   programExamples();
   $("programform").onsubmit = async ev => {
     ev.preventDefault();
-    $("programout").innerHTML = working("program", 0, "a few minutes");
+    $("programout").innerHTML = working("program", 0);
     const budget = Number($("programbudget").value) || null;
     let job;
     try {
@@ -406,7 +446,7 @@ function wireProgram() {
       let rec;
       try { rec = await getJSON(`${LIVE}portfolio/${encodeURIComponent(job)}`); }
       catch (e) { $("programout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("programout").innerHTML = working("program", rec.seconds, "a few minutes"); continue; }
+      if (rec.status === "running") { $("programout").innerHTML = working("program", rec.seconds); continue; }
       if (rec.status === "failed") { $("programout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("programout").innerHTML = programResult(rec.result);
       return;
@@ -439,13 +479,12 @@ async function showCheck() {
       (await savedChecks() || `<p class="legend">No saved checks in this copy.</p>`);
     return;
   }
-  let cities = [];
-  try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* listed below */ }
-  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  const cities = await liveCities();
+  await loadDurations();
   $("out").innerHTML = `<p class="where">Check a claim</p><h2 class="corner">Is what was said about this corner true?</h2>` +
     `<p class="lede">Paste a news link, an official's statement, or a resident's report. Each number is tested against the ` +
     `city's crash record, and each quote against its page.</p>` +
-    steps(["<b>Paste</b> a link or a statement", "<b>We check</b> it against the record: about 2 minutes",
+    steps(["<b>Paste</b> a link or a statement", `<b>We check</b> it against the record: <span data-time="check"></span>`,
            "<b>Read</b> which claims hold, which differ, and which the record cannot test"], 0) +
     `<form id="checkform" class="search ask"><label class="flabel" for="checkin">A news link, or the statement itself</label>` +
     `<textarea id="checkin" maxlength="2000" rows="3" ` +
@@ -456,13 +495,14 @@ async function showCheck() {
     `<input id="checkaddr" maxlength="200" placeholder="where (for a report)"> ` +
     `<input id="checkphoto" maxlength="500" placeholder="photo URL (optional)"> <button>Check</button></form>` +
     `<div id="checkout"></div>` + await savedChecks();
+  fillDurations();
   if (!cities.length) { $("checkout").innerHTML = `<p class="legend">No city can be checked on this server.</p>`; return; }
   $("checkform").onsubmit = async ev => {
     ev.preventDefault();
     const report = $("checkreport").checked;
     const body = {input: $("checkin").value, city: $("checkcity").value, kind: report ? "report" : null,
                   address: report ? $("checkaddr").value : null, photo: report ? $("checkphoto").value : null};
-    $("checkout").innerHTML = working("check", 0, "about 2 minutes");
+    $("checkout").innerHTML = working("check", 0);
     let job;
     try {
       job = (await getJSON(`${LIVE}check`, {method: "POST", headers: {"Content-Type": "application/json"},
@@ -473,7 +513,7 @@ async function showCheck() {
       let rec;
       try { rec = await getJSON(`${LIVE}check/${encodeURIComponent(job)}`); }
       catch (e) { $("checkout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("checkout").innerHTML = working("check", rec.seconds, "about 2 minutes"); continue; }
+      if (rec.status === "running") { $("checkout").innerHTML = working("check", rec.seconds); continue; }
       if (rec.status === "failed") { $("checkout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("checkout").innerHTML = checkResult(rec.result);
       return;

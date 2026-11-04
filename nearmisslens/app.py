@@ -210,7 +210,7 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                 return self._send(200, (WEB / u.path[1:]).read_bytes(),
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
             if u.path == "/cities":
-                return self._json(200, {"cities": check.cities()})
+                return self._json(200, {"cities": check.cities(), "limits": {"program_items": PROGRAM_ITEMS}})
             if u.path.startswith(("/check/", "/engineer/", "/review/", "/portfolio/")):
                 rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing,
                        "/portfolio/": programming}[u.path[:u.path.index("/", 1) + 1]] \

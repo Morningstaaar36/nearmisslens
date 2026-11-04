@@ -207,3 +207,51 @@ ol.steps li span{display:block}
 form.ask .examples button{background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);padding:6px 12px;font-size:14px;border-radius:999px}
 form.ask .examples button:hover{border-color:var(--ink);background:var(--sheet)}
 .examples .hint{flex:1 1 100%}
+
+/* v3: each task wears the colour of a real sign family, so colour says where you are.
+   guide green: review a project; service blue: review a list; work-zone orange: check a claim;
+   school-zone yellow-green: look up a corner; saved results stay neutral. */
+:root{--t-review:#00704A;--t-program:#0057A8;--t-check:#E3650F;--t-corners:#8DB31A;--t-desk:#5C6670;--task:var(--marking);--task-ink:#fff}
+body.view-review{--task:var(--t-review)}
+body.view-program{--task:var(--t-program)}
+body.view-check{--task:var(--t-check)}
+body.view-corners{--task:var(--t-corners);--task-ink:#1E252B}
+body.view-desk{--task:var(--t-desk)}
+nav.tasks a[data-view="review"]{box-shadow:inset 0 -3px 0 var(--t-review)}
+nav.tasks a[data-view="program"]{box-shadow:inset 0 -3px 0 var(--t-program)}
+nav.tasks a[data-view="check"]{box-shadow:inset 0 -3px 0 var(--t-check)}
+nav.tasks a[data-view="corners"]{box-shadow:inset 0 -3px 0 var(--t-corners)}
+nav.tasks a[data-view="desk"]{box-shadow:inset 0 -3px 0 var(--t-desk)}
+nav.tasks a[aria-current="page"]{background:var(--task);color:var(--task-ink);box-shadow:none}
+body:not(.view-start) main::before{content:"";display:block;height:6px;width:96px;border-radius:3px;background:var(--task);margin:0 0 14px}
+ol.steps li[aria-current="step"]::before{background:var(--task);border-color:var(--task);color:var(--task-ink)}
+form.ask button:not(.examples button){background:var(--task);color:var(--task-ink)}
+form.ask button:not(.examples button):hover{filter:brightness(.92);background:var(--task)}
+form.ask textarea:focus,form.ask select:focus,form.ask input:focus{outline:3px solid var(--task);outline-offset:1px}
+.cards a{position:relative;padding-top:22px;border-top-width:6px}
+.cards a.task-review{border-top-color:var(--t-review)}
+.cards a.task-program{border-top-color:var(--t-program)}
+.cards a.task-check{border-top-color:var(--t-check)}
+.cards a.task-corners{border-top-color:var(--t-corners)}
+.cards a.primary{border-color:var(--rule);border-top-color:var(--t-review);box-shadow:0 0 0 2px var(--t-review)}
+.cards a:hover{box-shadow:0 0 0 2px currentColor}
+.cards a.task-review:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-review)}
+.cards a.task-program:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-program)}
+.cards a.task-check:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-check)}
+.cards a.task-corners:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-corners)}
+.tsign{display:block;width:34px;height:34px;margin-bottom:4px}
+.task-review .tsign{background:var(--t-review);border-radius:5px;box-shadow:inset 0 0 0 2px var(--t-review),inset 0 0 0 4px #fff}
+.task-program .tsign{background:var(--t-program);border-radius:5px;box-shadow:inset 0 0 0 2px var(--t-program),inset 0 0 0 4px #fff}
+.task-check .tsign{width:28px;height:28px;margin:3px 3px 7px;background:var(--t-check);transform:rotate(45deg);border-radius:4px;box-shadow:inset 0 0 0 2px #111}
+.task-corners .tsign{background:var(--t-corners);clip-path:polygon(50% 0,100% 38%,100% 100%,0 100%,0 38%)}
+.cards .go{color:var(--ink)}
+.vlegend{max-width:780px;margin:0 0 18px;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:10px 16px}
+.vlegend summary{font-weight:700;color:var(--ink);font-size:16px;margin:0}
+.vlegend ul{list-style:none;padding:0;margin:10px 0 4px;display:grid;gap:10px}
+.vlegend li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
+.vsign.mini{width:30px;height:30px;font-size:15px;border-radius:5px}
+.vsign.mini.warn{width:24px;height:24px;margin:3px}
+.vsign.mini.go{box-shadow:inset 0 0 0 2px var(--signgo),inset 0 0 0 3px #fff}
+.vsign.mini.warn{box-shadow:inset 0 0 0 2px #111}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}}
+:root[data-theme="dark"]{--t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}

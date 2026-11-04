@@ -77,7 +77,7 @@ def test_check_endpoints_end_to_end(monkeypatch, tmp_path):
     base = f"http://127.0.0.1:{port}"
     for _ in range(100):
         try:
-            assert _call(base + "/cities") == (200, {"cities": [{"id": "zz", "checkable": True}]})
+            assert _call(base + "/cities") == (200, {"cities": [{"id": "zz", "checkable": True}], "limits": {"program_items": app.PROGRAM_ITEMS}})
             break
         except OSError:
             time.sleep(0.05)
