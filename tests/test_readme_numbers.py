@@ -1,4 +1,5 @@
-"""The README's headline numbers are the committed results' numbers (validation/results/bench/*.json), so a rebuild that
+"""The headline numbers in README.md and EVIDENCE.md (the long version) are the committed results' numbers
+(validation/results/bench/*.json), so a rebuild that
 changes a result fails here until the prose follows."""
 import json
 import re
@@ -6,7 +7,7 @@ import re
 from nearmisslens.config import ROOT
 
 BENCH = ROOT / "validation" / "results" / "bench"
-README = (ROOT / "README.md").read_text()
+README = (ROOT / "README.md").read_text() + "\n" + (ROOT / "EVIDENCE.md").read_text()
 
 
 def _load(name):

@@ -73,7 +73,7 @@ def test_docs_never_say_judge():
     import subprocess
     from nearmisslens.config import ROOT
     word = "jud" + "ge"
-    paths = ["README.md", "FEATURES.md", "docs", "validation/BENCH.md", "validation/RESULTS.md", "validation/PREREG.md",
+    paths = ["README.md", "EVIDENCE.md", "TESTING.md", "FEATURES.md", "docs", "validation/BENCH.md", "validation/RESULTS.md", "validation/PREREG.md",
              "validation/BENCH_PREREG.md", "PRIVACY.md", "LICENSES.md"]
     found = subprocess.run(["git", "grep", "-n", "-i", word[:4], "--", *[p for p in paths if (ROOT / p).exists()]],
                            cwd=ROOT, capture_output=True, text=True).stdout
