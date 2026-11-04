@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 from . import engineer
-from .config import SETTINGS
+from .config import ROOT, SETTINGS
 from .evaluate import RESULTS_DIR
 from .config import MODELS
 
@@ -26,7 +26,11 @@ INSTRUCTIONS = (
 
 
 def _report(city: str, slug: str) -> dict:
+    """The corner's saved case: the full run where it was built, else the copy the site publishes (the live server
+    holds only the published copy; the live check of 4 November 2026 found every question refused for that)."""
     p = SETTINGS.runs_dir / "engineer" / city / f"{slug}.json"
+    if not p.exists():
+        p = ROOT / "docs" / "data" / city / "j" / f"{slug}.json"
     if not p.exists():
         raise ValueError(f"no saved case for {slug!r} in {city}; run nml pages")
     return {**json.loads(p.read_text()), "source": "saved"}  # built earlier, as of its asof date; not a live run

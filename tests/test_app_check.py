@@ -377,3 +377,11 @@ def test_an_unknown_city_is_told_only_the_cities_that_can_be_checked():
     why = check.supported("atlantis")[1]
     listed = set(why.split("can check ")[1].split(")")[0].split(", "))
     assert listed == checkable and (set(ids) - checkable).isdisjoint(listed)
+
+
+def test_ask_reads_the_published_case_when_the_run_is_not_on_this_server(tmp_path, monkeypatch):
+    """Live check, 4 Nov 2026: the server holds only docs/data, so every question was refused."""
+    from nearmisslens import askeng
+    monkeypatch.setattr(askeng.SETTINGS, "runs_dir", tmp_path)  # no runs/engineer here, as on the live server
+    rep = askeng._report("nyc", "bruckner_boulevard_hunts_point_avenue")
+    assert rep["receipts"] and rep["findings"] and rep["source"] == "saved"
