@@ -164,8 +164,7 @@ def screen(city: str, workers: int = 4) -> pd.DataFrame:
         years = [p["year"] for p in pl.get("projects", []) if isinstance(p.get("year"), int) and not p.get("planned")]
         return {**j, "since": cr.get("since"), "crashes": cr.get("crashes"), "injury_crashes": cr.get("injury_crashes"),
                 "pedestrians_injured": cr.get("pedestrian_injured"), "cyclists_injured": cr.get("cyclist_injured"),
-                "killed": sum(cr.get(k, 0) for k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
-                or cr.get("any_killed", 0),  # cities that record deaths without the mode
+                "killed": context.deaths(cr),  # by mode or the dataset's total, whichever is larger
                 "projects_ever": len(years), "last_project_year": max(years) if years else None,
                 "recent_projects": d.get("recent_projects"), "plan_gap": d.get("plan_gap"),
                 "error": "; ".join(v["error"] for v in (cr, pl) if isinstance(v, dict) and "error" in v) or None}

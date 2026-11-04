@@ -36,6 +36,9 @@
     ],
     "motorist": [
      "number_of_motorist_killed"
+    ],
+    "any": [
+     "number_of_persons_killed"
     ]
    },
    "factor_fields": [

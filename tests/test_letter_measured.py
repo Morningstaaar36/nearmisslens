@@ -60,3 +60,14 @@ def test_the_live_letter_reads_the_corners_own_crashes_from_the_first_read(monke
         except OSError:
             time.sleep(0.05)
     assert corners_seen == ["A Street & B Street", "A Street & B Street"]
+
+
+def test_a_death_counted_only_in_the_total_is_not_lost():
+    """New York records some deaths in number_of_persons_killed with every mode at zero (a 2023 death at Lafayette St &
+    E Houston St): the larger of the two counts is the deaths, so a letter never says no one was killed there."""
+    from nearmisslens import context, opendata
+    assert context.deaths({"pedestrian_killed": 0, "cyclist_killed": 0, "motorist_killed": 0, "any_killed": 1}) == 1
+    assert context.deaths({"pedestrian_killed": 2, "any_killed": 3}) == 3
+    assert context.deaths({"pedestrian_killed": 1}) == 1
+    nyc = next(a for a in opendata.adapters_of("nyc", "crash") if a["id"] == "nyc-crashes")
+    assert nyc["killed"].get("any") == ["number_of_persons_killed"]
