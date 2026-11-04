@@ -1,6 +1,50 @@
 {
 "cases": [
 {
+"title": "SFMTA's planned traffic signals, found on the web and reviewed",
+"city": "sf",
+"run": "2026-11-04, the full flow, clicked by a script in full-screen Chrome",
+"source": {
+"label": "SFMTA, Contract 66 New Traffic Signals (found by Muse Spark)",
+"url": "https://www.sfmta.com/projects/contract-66-new-traffic-signals"
+},
+"quote": "4th Avenue and Fulton Street, new traffic signals",
+"question": "Which of the agency's planned projects does the crash record support?",
+"results": [
+{
+"where": "Find on the web",
+"sign": "go",
+"label": "29 planned projects",
+"why": "4 SFMTA pages kept, every passage and project found on its page"
+},
+{
+"where": "4th St & Mission Rock St (beacons)",
+"sign": "warn",
+"label": "Build after a site check",
+"why": "the map shows a stop; beacons are for uncontrolled crossings"
+},
+{
+"where": "3 new signals",
+"sign": "quiet",
+"label": "Not covered by the evidence",
+"why": "a new signal is not a federal Proven Safety Countermeasure"
+},
+{
+"where": "4th Ave & Fulton St",
+"sign": "go",
+"label": "1 injury crash in five years",
+"why": "the record does not call for the signal; transit priority might"
+}
+],
+"proof": [
+"DataSF's injury crashes (ubvf-ztfx) by street names: 1 at Fulton St & 04th Ave since 2021-11-04 (2025-08-21), as the tool says"
+],
+"fixed": "3 display faults this case found, fixed the same evening",
+"cost": "$0.45 of Meta API for the whole flow",
+"write_up": "validation/case_studies/2026-11-04_sf_signal_contracts/README.md",
+"write_up_url": "https://github.com/Morningstaaar36/nearmisslens/blob/main/validation/case_studies/2026-11-04_sf_signal_contracts/README.md"
+},
+{
 "title": "SDOT's new signal at Dexter Ave N & John St",
 "city": "seattle",
 "run": "2026-11-04, on the public live site",

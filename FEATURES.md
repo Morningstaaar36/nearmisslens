@@ -1,6 +1,6 @@
 # Features and checklist
 
-A box is ticked only when a unit test or a `nml selftest` row verifies the feature. "Built" means the code is done and tested with a scripted fake model. "Run" means it has produced real results on FLUID with the Meta Model API.
+A box is ticked only when a unit test or a `nml selftest` row verifies the feature. "Built" means the code is done and tested with a scripted fake model. "Run" means it has produced real results with the Meta Model API.
 
 ## The desk (real cases from the live world)
 - [x] **Muse Spark orchestrator** (`orchestrator.py`, `nml desk SPEC`): Meta `web_search` to find the source, `read_page` for the text the citation gate checks, tool search over one deferred tool per registry dataset (generated from `registry.json`), `investigate` (the engineer's checked tools), `check_claim`, `program_record`, `view_photo`, a Muse Spark Open letter, and `check_findings` (a dry run of the gate). Verified by `tests/test_orchestrator.py`.
@@ -12,7 +12,8 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Baseline without the desk** (`baseline_desk.py`, `nml alone`, T24): Muse Spark with `web_search` alone on the same inputs, scored by code.
 - [x] **Corner Watch** (`cameras.py`, `corner_watch.py`, T23): Seattle traffic cameras at the 40 camera corners with the most injury crashes. A frame is used only if it is inside the registry's daylight UTC hours (`cameras.daylight_utc_hours`) and brighter than `config.DARK_MEAN`. SAM 3.1 counts people and cars from frames packed into one video; Muse Spark points at layout features, and SAM must agree for "present" or "absent". Frames stay local. T23 ran on one morning's frames (06:00–07:42) and T23b at midday (811 frames): packed counts met their rule both times, but undercount busy frames; 2 and then 15 cameras saw enough people, short of the 20 the ranking needs. Verified by `tests/test_corner_watch.py` and `tests/test_review_fixes_3.py`.
 - [x] **Check a claim** (`check.py`, `nml check INPUT --city CITY`, `nml cities`): a URL, a claim to find, a source's own text or a resident's report, in any registry city with crash data, through the desk and its gates; JSON and Markdown report under `runs/checks/`. Verified by `tests/test_check.py` and `tests/test_no_hardcoding.py`.
-- [x] **Web check jobs** (`jobs.py`, `app.py`: `GET /cities`, `POST /check`, `GET /check/<id>`, and the page's "Check a claim yourself" panel): one case at a time, reserved against the daily budget first. Built and tested (`tests/test_app_check.py`); not deployed.
+- [x] **Find on the web** (`finder.py`, `nml find CITY [--corner "A & B"]`, `POST /find`): Muse Spark with `web_search` finds the agency's own pages listing planned intersection projects, or what was published about a corner; code opens each page and keeps it only when the passage is on it word for word and it names the city (and the corner's streets); the projects are then read off the pages by `intake.py`. Run live in all five cities on 4 November 2026: 26 to 32 projects in Seattle and 29 in San Francisco; Chicago and DC pages held few single-intersection projects, and nyc.gov refuses automated readers (EVIDENCE.md, limits). Verified by `tests/test_finder.py`.
+- [x] **Web check jobs** (`jobs.py`, `app.py`: `GET /cities`, `POST /check`, `GET /check/<id>`, and the page's "Check a claim yourself" panel): one case at a time, reserved against the daily budget first. Live on the public page; tested by `tests/test_app_check.py`.
 - [x] **Desk page** on the site (saved runs, a static replay) (`#city/desk`): every case, every step, refusals with the gate's reasons, and each run's totals.
 
 ## The safety engineer
@@ -27,7 +28,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] **Pinned as-of date** (`validation/ASOF`) and an offline gazetteer, so replay gives the same answers on any later day. Verified by `tests/test_hygiene.py`.
 - [x] **Static copilot** (`nml pages`, `docs/`): one engineer report per screened corner, checked for machine paths and key-like strings. Verified by `tests/test_hosting.py` and headless Chrome at desktop and phone width.
 - [x] **Live endpoint hardening** (`app.py`, `budget.py`): bad JSON or points are 400, paths stay inside `docs/`, no request log, global daily caps on requests and model dollars. Verified by `tests/test_hosting.py`.
-- [ ] **Hosted live endpoint on Modal** (`modal_web.py`): one container, a named secret, caps in a `modal.Dict`. Built; deployment waits for the go-ahead to make it public.
+- [x] **Hosted live endpoint on Modal** (`modal_web.py`): one container, a named secret, caps in a `modal.Dict`, `GET /health`, 10 paid jobs an hour per visitor. Live.
 
 ## Drone video: measurement
 - [x] **Calibration:** video pixels to metres via homography to the base map. Verified by the selftest `calibration` row (median 0.31–0.39 m).
@@ -116,8 +117,7 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] Replay cache published as a release asset (v2.0).
 - [ ] Replay cache refreshed for the engineer (`nml pack-cache`: contact details removed, refused if a key is found).
 - [x] No keys in the tree, the git history, the replay cache or run outputs (scanned for every key value in `.env` and the Modal token).
-- [ ] Repo public, Pages live.
-- [ ] Submitted on the portal before Nov 4, 12:00 Dhaka.
+- [x] Repo public, Pages live.
 
 ## How to check
 ```bash

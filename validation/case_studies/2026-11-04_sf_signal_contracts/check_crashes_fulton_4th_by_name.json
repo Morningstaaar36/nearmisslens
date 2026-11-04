@@ -1,0 +1,29 @@
+[
+ {
+  "collision_datetime": "2022-01-30T20:07:00.000",
+  "primary_rd": "FULTON ST",
+  "secondary_rd": "44TH AVE",
+  "distance": "0",
+  "number_injured": "1",
+  "number_killed": "0",
+  "collision_severity": "Injury (Severe)"
+ },
+ {
+  "collision_datetime": "2025-04-17T19:00:00.000",
+  "primary_rd": "FULTON ST",
+  "secondary_rd": "34TH AVE",
+  "distance": "0",
+  "number_injured": "2",
+  "number_killed": "0",
+  "collision_severity": "Injury (Complaint of Pain)"
+ },
+ {
+  "collision_datetime": "2025-08-21T16:11:00.000",
+  "primary_rd": "FULTON ST",
+  "secondary_rd": "04TH AVE",
+  "distance": "0",
+  "number_injured": "1",
+  "number_killed": "0",
+  "collision_severity": "Injury (Complaint of Pain)"
+ }
+]

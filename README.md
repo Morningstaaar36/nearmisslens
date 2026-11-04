@@ -1,5 +1,8 @@
 # NearMissLens
 
+[![tests](https://github.com/Morningstaaar36/nearmisslens/actions/workflows/tests.yml/badge.svg)](https://github.com/Morningstaaar36/nearmisslens/actions/workflows/tests.yml)
+version 1.0.0 · [changelog](CHANGELOG.md)
+
 **Check a street-safety project against the city's own crash record before the money is spent.**
 
 [**Use it live**](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) (no account, key or install) ·
@@ -17,10 +20,10 @@ is shown until code has checked every number against the record and every quote 
 
 | Task | You give it | You get back | Usually |
 |---|---|---|---|
-| **Review a project** | one fix at one intersection, with its cost if known | a verdict (proceed, proceed after a site check, compare first, not covered by the evidence, reconsider), its reasons, and a pre-mortem written by a second model | about a minute |
-| **Review a list** | several proposals, or an agency's web page that lists them | each one reviewed, then ranked by code by what the evidence supports, within your budget | a few minutes |
+| **Review a project** | one fix at one intersection, with its cost if known, or one the agency plans that Muse Spark finds on the web | a verdict (proceed, proceed after a site check, compare first, not covered by the evidence, reconsider), its reasons, and a pre-mortem written by a second model | about a minute |
+| **Review a list** | several proposals, or the agency's own project pages, found by Muse Spark with web search | each one reviewed, then ranked by code by what the evidence supports, within your budget | a few minutes |
 | **Check a claim** | a news link or an official's statement about a corner | which numbers hold, which differ, and which the record cannot test, with every quote checked on its page | about 8 minutes |
-| **Look up a corner** | an intersection | what its crashes have in common, what the city already tried, which fix the record supports, who must act, and a drafted request letter | at once for saved corners |
+| **Look up a corner** | an intersection | what its crashes have in common, what the city already tried, which fix the record supports, who must act, what has been published about it, and a drafted request letter | at once for saved corners |
 
 It covers **New York, Washington DC, Chicago, Seattle and San Francisco**, the cities that publish geocoded crash
 records. Cities are data, not code: each is an entry in [`registry.json`](nearmisslens/data/registry.json).
@@ -50,6 +53,11 @@ NYC DOT proposed leading pedestrian intervals at three Lafayette Street corners.
 records show one already installed at Prince Street since 2024 (confirmed against NYC's dataset), said "compare first" at
 Great Jones Street, and "proceed after a site check" at Houston Street. The run also found six faults, including a 2023
 death the New York mapping missed; all are fixed.
+Two more cases the same day: SDOT's new signal at Dexter Ave N & John St, Seattle
+([write-up](validation/case_studies/2026-11-04_seattle_dexter_john/)), and the all-way stop Chicago's council ordered
+at W 41st St & S Albany Ave ([write-up](validation/case_studies/2026-11-04_chicago_41st_albany/)), where the record
+holds one injury crash in five years, as the city's data confirms by address. Both found that every request letter was
+refused by an over-strict check; that is fixed.
 
 Independent testers saw only [TESTING.md](TESTING.md); their reports are kept as written in
 [`validation/independent/`](validation/independent/), with what we changed after each.
@@ -57,6 +65,7 @@ Independent testers saw only [TESTING.md](TESTING.md); their reports are kept as
 ## How it works
 
 ```
+a city      ──▶ Muse Spark 1.3 + web_search finds the agency's project pages ─▶ code opens each page: passage on it word for word
 your input ──▶ Muse Spark 1.3 (Meta Model API) works the case with checked tools
                  ├─ web_search, read_page        find and read the source        ─▶ quote must be on the page
                  ├─ tool search over the registry the city's open datasets
@@ -88,6 +97,7 @@ uv run nml --replay engineer "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY
 uv run nml --replay plan nyc                                   # no key: a city's action plan
 uv run nml app                                                 # the page on http://127.0.0.1:8770
 uv run nml review "Leading pedestrian intervals at Street A & Street B, about \$15,000" --city CITY   # needs MODEL_API_KEY
+uv run nml find CITY                                           # the agency's planned projects, found on the web
 uv run nml portfolio --from-url URL --city CITY --budget-total 500000                              # a whole program
 uv run pytest -q                                               # the test suite, no network or keys
 ```
@@ -111,7 +121,7 @@ The live page runs on Modal (`nearmisslens/modal_web.py`) as one small container
 
 | Path | What it holds |
 |---|---|
-| `nearmisslens/review.py`, `portfolio.py`, `intake.py`, `check.py` | the four tasks: review a project, review a list, read an agency page, check a claim |
+| `nearmisslens/review.py`, `portfolio.py`, `finder.py`, `intake.py`, `check.py` | the four tasks: review a project, review a list, find and read an agency's pages, check a claim |
 | `nearmisslens/orchestrator.py`, `agent.py`, `meta_client.py` | the desk: Muse Spark's tool loop, the finish gate and the Meta API client |
 | `nearmisslens/engineer.py`, `brief.py`, `opendata.py`, `context.py`, `rootcause.py`, `jurisdiction.py`, `harm.py` | the checked tools: geocoding, crash records, patterns, fixes, road owners, costs |
 | `nearmisslens/treatments.py`, `falsify.py` | the causal gate |

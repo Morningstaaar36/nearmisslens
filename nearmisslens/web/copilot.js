@@ -478,7 +478,7 @@ function programResult(p) {
       (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project${plan.no_cost_given.length > 1 ? "s have" : " has"} no cost to rank.` : "") + `</p>` : "") +
     programChart(p) +
     PROGRAM_GROUPS.filter(([g]) => (p.groups[g] || []).length).map(([g, label]) => `<h4>${esc(label)}</h4><table><tr><th>Proposal</th><th>Avoided a year</th><th>Cost</th><th>Why</th></tr>` +
-      p.groups[g].map(x => `<tr><td>${esc(x.input)}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
+      p.groups[g].map(x => `<tr><td>${esc(proposalName(x.input))}${proposalSays(x.input) ? `<br><span class="legend">The agency's page: “${esc(proposalSays(x.input))}”</span>` : ""}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
         `<td>${reasonList(x.reasons)}${x.alternative ? `<p class="legend">Alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year</p>` : ""}</td></tr>`).join("") + `</table>`).join("") +
     ((p.not_reviewed || []).length ? `<h4>Not reviewed</h4><ul>${p.not_reviewed.map(x => `<li>${esc(x.input)}: ${esc(x.reason || x.status)}</li>`).join("")}</ul>` : "") +
     `<p class="legend">Cost of the reviews: $${esc(t.review_cost_usd)}.</p>`;
@@ -497,13 +497,16 @@ function hbars(rows, unit) {
 }
 const SIGN_GLYPH = {go: "✓", warn: "!", stop: "✕", quiet: "?"};
 
+// a proposal read off an agency's page carries the page's own sentence: shown apart, under the proposal's name
+const proposalName = t => String(t || "").replace(/\. The agency's page says: ".*$/s, "");
+const proposalSays = t => (String(t || "").match(/\. The agency's page says: "(.*)"$/s) || [])[1] || "";
 const GROUP_SIGN = {build: "go", site_check: "warn", compare: "warn", parts: "warn", study: "quiet", reconsider: "stop"};
 const GROUP_SHORT = {build: "build", site_check: "build after a site check", compare: "compare first", parts: "decide part by part",
   study: "not covered by the evidence", reconsider: "reconsider"};
 function programChart(p) {
   // every proposal on one scale, ranked as code ranked them, each bar wearing its group's sign and name
   const rows = PROGRAM_GROUPS.flatMap(([g]) => (p.groups[g] || []).map(x => ({
-    label: esc((x.input || "").replace(/,? as .*$/, "").slice(0, 80)), value: x.injury_crashes_avoided_per_year ?? null,
+    label: esc(proposalName(x.input).replace(/,? as .*$/, "").slice(0, 80)), value: x.injury_crashes_avoided_per_year ?? null,
     sign: GROUP_SIGN[g], note: GROUP_SHORT[g]})));
   return rows.length ? `<div class="chart"><h4>Injury crashes avoided a year, in the order code ranks them</h4>${hbars(rows, "injury crashes avoided a year")}</div>` : "";
 }
@@ -971,7 +974,7 @@ function show(r, corner) {
       ` <span class="found">${m.found_by.map(x => esc(by[x] || x)).join(" + ")}</span>` +
       (m.mechanism ? `<div class="note">${esc(m.mechanism)}</div>` : "") + `</li>`).join("") + `</ul></div>` : "";
   const pats = (rc.patterns || []).filter(p => p.city_share != null).slice(0, 8);
-  const bars = pats.map(p => `<div class="lab ${p.over_represented ? "over" : ""}">${esc(p.phrase || p.pattern)}</div>` +
+  const bars = rc.enough_crashes === false ? "" : pats.map(p => `<div class="lab ${p.over_represented ? "over" : ""}">${esc(p.phrase || p.pattern)}</div>` +
     `<div class="bar ${p.over_represented ? "over" : ""}" role="img" aria-label="${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}">` +
     `<i style="width:${Math.min(100, 100 * p.share)}%"></i><b class="city" style="left:${Math.min(100, 100 * p.city_share)}%"></b>` +
     `<span>${pct(p.share)} here, ${pct(p.city_share)} at ${esc(peers)}</span></div>`).join("");
@@ -1030,7 +1033,7 @@ function show(r, corner) {
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>
       <ul class="claims">${r.claims.map(c => `<li>${esc(c.text)}${tag(c.receipt)}</li>`).join("")}</ul></section>
     <section class="step"><h3><span class="no">2</span>What the crashes have in common</h3>
-      <p class="why">${rc.crashes ?? "?"} police-reported crashes at this corner. Yellow marks a pattern that is more common here than at ${esc(peers)} after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
+      <p class="why">${rc.crashes ?? "?"} police-reported ${rc.crashes === 1 ? "crash" : "crashes"} at this corner. Yellow marks a pattern that is more common here than at ${esc(peers)} after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
       <div class="bars">${bars || '<p class="legend">Too few crashes to compare.</p>'}</div>
       ${rc.not_recorded && rc.not_recorded.length ? `<p class="legend">Not recorded in this dataset: ${esc(rc.not_recorded.join(", "))}.</p>` : ""}
       ${rc.factor_unspecified_share != null ? `<p class="legend">${pct(rc.factor_unspecified_share)} of these crashes have no contributing factor recorded.</p>` : ""}
