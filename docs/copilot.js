@@ -573,8 +573,13 @@ function foundPages(r) {
   // the pages Muse Spark found on the web, each opened again by code: its passage is on it word for word
   const refused = r.refused || [];
   const tally = `<p class="legend">${(r.searches || []).length} web searches · ${r.pages_read} pages opened · ` +
-    `${r.reports.length} kept${refused.length ? ` · ${refused.length} refused (${esc([...new Set(refused.map(x => x.why))].join("; "))})` : ""} · $${Number(r.usd || 0).toFixed(2)} of Meta API</p>`;
-  if (!r.reports.length) return `<p class="legend">No page passed the checks.</p>` + tally;
+    `${r.reports.length} kept${(r.read_for_projects || []).length ? ` · ${r.read_for_projects.length} read for projects` : ""}${refused.length ? ` · ${refused.length} refused (${esc([...new Set(refused.map(x => x.why))].join("; "))})` : ""} · $${Number(r.usd || 0).toFixed(2)} of Meta API</p>`;
+  const opened = r.opened_not_submitted || [];
+  if (!r.reports.length) return (opened.length && (r.read_for_projects || []).length
+    ? `<p class="legend">Muse Spark opened these pages but submitted no passage from them, so none is listed as found; ` +
+      `their projects were still read and each checked against its page:</p><ul class="webfound">` +
+      r.read_for_projects.map(u => `<li><span class="vsign mini warn" aria-hidden="true"><span>!</span></span><div><a href="${safeUrl(u)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\//, "").slice(0, 90))}</a></div></li>`).join("") + `</ul>`
+    : `<p class="legend">No page passed the checks.</p>`) + tally;
   return `<ul class="webfound">` + r.reports.map(x => `<li><span class="vsign mini go" aria-hidden="true"><span>✓</span></span><div>` +
     `<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>` +
     `<span class="legend"> ${esc(x.publisher)}${x.published ? ", " + esc(x.published) : ""}</span>` +
@@ -733,7 +738,7 @@ async function liveCases() {
   return `<section class="cases"><p class="where">Real cases, run live</p><h2 class="corner">New proposals, checked before the money is spent</h2>` +
     d.cases.map(c => `<article class="case"><h3>${esc(c.title)}</h3>` +
       `<p class="legend">${esc(c.run)} · <a href="${safeUrl(c.source.url)}" target="_blank" rel="noopener">${esc(c.source.label)}</a></p>` +
-      `<blockquote>${esc(c.quote)}</blockquote><p><b>The question:</b> ${esc(c.question)}</p>` +
+      (c.quote ? `<blockquote>${esc(c.quote)}</blockquote>` : `<p>${esc(c.summary || "")}</p>`) + `<p><b>The question:</b> ${esc(c.question)}</p>` +
       `<ul class="caserows">` + c.results.map(x => `<li><span class="vsign mini ${esc(x.sign)}" aria-hidden="true"><span>${SIGN_GLYPH[x.sign] || "?"}</span></span>` +
         `<span><b>${esc(x.where)}: ${esc(x.label)}</b><br><span class="legend">${esc(x.why)}</span></span></li>`).join("") + `</ul>` +
       `<details class="more"><summary>Checked by hand against the city's own data</summary><ul>${c.proof.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +

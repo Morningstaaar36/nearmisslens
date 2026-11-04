@@ -1,6 +1,44 @@
 {
 "cases": [
 {
+"title": "SDOT's new signal at Dexter Ave N & John St",
+"city": "seattle",
+"run": "2026-11-04, on the public live site",
+"source": {
+"label": "SDOT, Dexter Ave N and John St Traffic Signal Project",
+"url": "https://www.seattle.gov/transportation/dexter-john-signal"
+},
+"question": "Does the corner's own record back the signal, and SDOT's numbers?",
+"results": [
+{
+"where": "The new signal",
+"sign": "quiet",
+"label": "Not covered by the evidence",
+"why": "a new signal is not a federal Proven Safety Countermeasure, so no reduction can be promised"
+},
+{
+"where": "SDOT's three numbers",
+"sign": "warn",
+"label": "Cannot test",
+"why": "the record reads five whole years; SDOT counts three years and one year"
+},
+{
+"where": "Dexter Ave N & John St",
+"sign": "warn",
+"label": "8 injury crashes",
+"why": "88% angle crashes, about $548,000 a year in harm"
+}
+],
+"proof": [
+"Seattle's collision records for the corner: 2 in 2023, 14 in 2024, 1 in 2025 (8 with an injury); SDOT's page says 11 in 2024. Both show 2024 as the bad year"
+],
+"fixed": "3 faults this case found: every letter was refused, the memo used the verdict's code, and single-year claims are a written limit",
+"cost": "about $0.11 of Meta API for the claim check",
+"write_up": "validation/case_studies/2026-11-04_seattle_dexter_john/README.md",
+"summary": "SDOT will replace the interim median and crosswalk with a signal, citing 15 collisions in three years, one serious, eleven of them in 2024.",
+"write_up_url": "https://github.com/Morningstaaar36/nearmisslens/blob/main/validation/case_studies/2026-11-04_seattle_dexter_john/README.md"
+},
+{
 "title": "NYC DOT's leading pedestrian intervals on Lafayette Street",
 "city": "nyc",
 "run": "2026-11-04, on the public live site",
@@ -38,6 +76,38 @@
 "cost": "about $0.40 of model use for the whole case",
 "write_up": "validation/case_studies/2026-11-04_nyc_lafayette/README.md",
 "write_up_url": "https://github.com/Morningstaaar36/nearmisslens/blob/main/validation/case_studies/2026-11-04_nyc_lafayette/README.md"
+},
+{
+"title": "Chicago's all-way stop at W 41st St & S Albany Ave",
+"city": "chicago",
+"run": "2026-11-04, on the public live site",
+"source": {
+"label": "Chicago City Council, ordinance O2026-0026671 (passed 2026-09-23, 50 to 0)",
+"url": "https://chicago.councilmatic.org/legislation/o2026-0026671/"
+},
+"question": "Does the corner's crash record call for the stop the council ordered?",
+"results": [
+{
+"where": "The all-way stop",
+"sign": "quiet",
+"label": "Not covered by the evidence",
+"why": "an all-way stop is not a federal Proven Safety Countermeasure"
+},
+{
+"where": "W 41st St & S Albany Ave",
+"sign": "go",
+"label": "1 injury crash in five years",
+"why": "a quiet corner; the record does not call for the stop, though sight lines or a school might"
+}
+],
+"proof": [
+"Chicago's crash dataset (85ca-t3if) by address: 9 crashes at the corner's block numbers since 2021-10-31, 1 with an injury (2026-05-10), as the tool says"
+],
+"fixed": "3 faults this case found, among them every letter refused for naming a fix",
+"cost": "cents of model use",
+"write_up": "validation/case_studies/2026-11-04_chicago_41st_albany/README.md",
+"summary": "The council ordered an all-way stop at West 41st Street and South Albany Avenue.",
+"write_up_url": "https://github.com/Morningstaaar36/nearmisslens/blob/main/validation/case_studies/2026-11-04_chicago_41st_albany/README.md"
 }
 ]
 }

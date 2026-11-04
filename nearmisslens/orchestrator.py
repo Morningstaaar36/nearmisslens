@@ -55,7 +55,7 @@ def page_text(url: str) -> str:
     path = context._cache_dir() / f"page_{key}.txt"
     from .config import SETTINGS
     cached = path.read_text() if path.exists() else None
-    if cached is not None and (SETTINGS.replay or len(cached) >= READABLE):
+    if cached is not None and (SETTINGS.replay or (len(cached) >= READABLE and not cached.startswith("%PDF"))):
         return cached  # a short page saved by an older version is fetched again when live
     if SETTINGS.replay:
         return ""
@@ -69,10 +69,24 @@ def page_text(url: str) -> str:
         return ""  # not cached: a network failure is not remembered as the page's text
     if r.status_code != 200:
         return ""  # a refusal or a missing page is not cached as the page's text
-    text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", r.text, flags=re.S | re.I)
-    text = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", text)))
+    if r.content[:5] == b"%PDF-" or "pdf" in r.headers.get("content-type", ""):
+        text = re.sub(r"\s+", " ", pdf_text(r.content))  # agencies publish project lists and notices as PDFs
+    else:
+        text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", r.text, flags=re.S | re.I)
+        text = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", text)))
     atomic_write(path, text)
     return text
+
+
+def pdf_text(data: bytes, max_pages: int = 60) -> str:
+    """A PDF's text layer (a scanned PDF has none and reads as empty, so it counts as unreadable)."""
+    import io
+    try:
+        from pypdf import PdfReader
+        pages = PdfReader(io.BytesIO(data)).pages[:max_pages]
+        return " ".join(p.extract_text() or "" for p in pages)
+    except Exception:  # a damaged or encrypted file is unreadable, never a crash
+        return ""
 
 
 def public_url(url: str) -> bool:

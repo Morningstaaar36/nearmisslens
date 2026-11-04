@@ -22,6 +22,7 @@ def test_a_page_is_kept_only_with_its_passage_on_it(monkeypatch):
                                                       {"https://blocked.example/x"})
     assert "public" in finder.check_report({**ok, "url": "http://10.0.0.1/x"}, city, None, set(), {"http://10.0.0.1/x"})
     assert "twice" in finder.check_report(ok, city, None, {ok["url"]}, {ok["url"]})
+    assert "published in 2019" in finder.check_report({**ok, "published": "February 12, 2019"}, city, None, set(), {ok["url"]})
 
 
 def test_a_page_must_name_the_city_and_the_corner(monkeypatch):

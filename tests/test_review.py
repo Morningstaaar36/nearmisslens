@@ -128,6 +128,8 @@ def test_the_memo_gate_holds_the_verdict_the_numbers_and_the_answers(monkeypatch
     wrong_number = ts["finish"].fn(summary="Compare.", verdict=v, answers=ans, parts=parts,
                                    findings=good[:2] + [{"text": "It is expected to avoid 4.2 injury crashes a year.", "receipt": "D3"}])
     assert "error" in wrong_number and rv.final is None
+    coded = ts["finish"].fn(summary="Overall verdict is compare_alternative.", verdict=v, findings=good, answers=ans, parts=parts)
+    assert any("in words" in e and "compare before committing" in e for e in coded["errors"])  # live memos, 4 Nov 2026
     assert ts["finish"].fn(summary="Compare before committing.", verdict=v, findings=good, answers=ans,
                            parts=parts) == {"ok": True}
     assert rv.final["verdict"] == v

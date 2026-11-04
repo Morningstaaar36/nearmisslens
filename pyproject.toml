@@ -1,6 +1,6 @@
 [project]
 name = "nearmisslens"
-version = "0.1.0"
+version = "1.0.0"
 description = "NearMissLens: an agentic street-safety engineer whose claims are tested on the city's own records"
 readme = "README.md"
 license = "Apache-2.0"
@@ -11,6 +11,7 @@ dependencies = [
     "numpy>=1.26,<2",
     "opencv-python-headless>=4.10",
     "pandas>=2.2",
+    "pypdf>=6.21.4",
     "scipy>=1.14",
 ]
 

@@ -14,14 +14,18 @@ import re
 
 from . import opendata, orchestrator
 from .agent import Tool, run_agent
+from .config import asof
 
 MAX_REPORTS = 5
+MAX_AGE_YEARS = 3
 MAX_READS = 6
+MAX_SEARCHES = 6  # a live run (DC, 4 Nov 2026) made 19 searches and never submitted
 READ_CHARS = 12_000  # of a page shown to the model; the gate checks the passage against the whole page
 KINDS = ("project list", "agency page", "news", "study or plan", "other")
 
-INSTRUCTIONS = """You find pages on the live web for a street-safety reviewer. Use web_search, then read_page to open
-the most promising results. Return up to {n} pages, best first, in one submit_reports call:
+INSTRUCTIONS = """You find pages on the live web for a street-safety reviewer. Make at most {searches} web searches in
+all, then open the most promising results with read_page (it reads PDFs too). After at most {reads} pages, submit what
+you have, even if only one page fits. Return up to {n} pages, best first, in one submit_reports call:
 - url: the page's address exactly as you opened it;
 - title, publisher (who published it), published (the date the page states, or null);
 - kind: one of {kinds};
@@ -60,6 +64,9 @@ def check_report(x: dict, city: dict, corner: str | None, seen: set[str], read: 
     text = orchestrator.text_of(url)
     if text is None:
         return "the page could not be read here (it refuses automated readers or holds no text)"
+    years = [int(y) for y in re.findall(r"\b(19\d\d|20\d\d)\b", str(x.get("published") or ""))]
+    if years and max(years) < asof().year - MAX_AGE_YEARS:  # a 2019 release about signals already built (DC, live)
+        return f"published in {max(years)}: look for pages from the last {MAX_AGE_YEARS} years"
     if orchestrator.quote_check(str(x.get("passage") or ""), url) != "verified":
         return "the passage is not on the page word for word"
     agency = re.search(r"\(([^)]+)\)", city.get("agency") or "")
@@ -90,7 +97,8 @@ def find(city_id: str, client, corner: str | None = None, budget_usd: float = 0.
         text = orchestrator.text_of(url) if orchestrator.public_url(url) else None
         if text:
             opened.add(url)
-        return {"text": text[:READ_CHARS]} if text else {"error": "this page could not be read here; try another"}
+        return {"text": text[:READ_CHARS], "pages_left": MAX_READS - len(reads)} if text else \
+            {"error": "this page could not be read here; try another", "pages_left": MAX_READS - len(reads)}
 
     def submit_reports(reports: list[dict]) -> dict:
         rounds.append(1)
@@ -126,11 +134,16 @@ def find(city_id: str, client, corner: str | None = None, budget_usd: float = 0.
             if o.get("type") == "web_search_call":
                 searches.append((o.get("action") or {}).get("query"))
 
-    run = run_agent(client, orchestrator.MODEL, INSTRUCTIONS.format(n=MAX_REPORTS, kinds=", ".join(KINDS)), task, tools,
-                    14, budget_usd, effort="low", tag=f"find {city_id} {corner or 'projects'}",
+    run = run_agent(client, orchestrator.MODEL, INSTRUCTIONS.format(n=MAX_REPORTS, kinds=", ".join(KINDS), searches=MAX_SEARCHES,
+                                                                       reads=MAX_READS), task, tools,
+                    10, budget_usd, effort="low", tag=f"find {city_id} {corner or 'projects'}",
                     required=("submit_reports",), governor=True, server_tools=[{"type": "web_search"}],
                     include=("web_search_call.results",), on_response=collect)
-    return {"city": city_id, "corner": corner, "task": task, "reports": kept, "refused": refused,
+    # pages Muse Spark opened and that name the city but were never submitted: listed apart, never as found reports
+    named = re.search(r"\(([^)]+)\)", city.get("agency") or "")
+    unsubmitted = [u for u in sorted(opened) if u not in {k["url"] for k in kept} and (
+        _mentions(orchestrator.text_of(u) or "", city["name"]) or (named and _mentions(orchestrator.text_of(u) or "", named.group(1))))]
+    return {"city": city_id, "corner": corner, "task": task, "reports": kept, "refused": refused, "opened_not_submitted": unsubmitted,
             "searches": [s for s in searches if s], "pages_read": len(reads), "usd": round(run.usd, 4),
             "stopped": run.stopped}
 
@@ -140,8 +153,11 @@ def find_projects(city_id: str, client, budget_usd: float = 0.25, intake_usd: fl
     """Find the agency's project pages, then read their single-intersection projects (intake.extract)."""
     from . import intake
     found = find(city_id, client, budget_usd=budget_usd)
-    lists = [r["url"] for r in found["reports"] if r.get("kind") in ("project list", "agency page", "study or plan")]
-    lists = (lists or [r["url"] for r in found["reports"]])[:max_pages]
+    # the agency's own pages first, then the other kept pages, then pages it opened without submitting them: intake
+    # checks every project on them word for word, so a page that lists none costs a little and adds nothing
+    first = ("project list", "agency page", "study or plan")
+    kept = sorted(found["reports"], key=lambda r: r.get("kind") not in first)
+    lists = list(dict.fromkeys([r["url"] for r in kept] + found["opened_not_submitted"]))[:max_pages]
     got = intake.extract(lists, opendata.city(city_id)["name"], client, budget_usd=intake_usd) if lists else \
         {"projects": [], "refused": [], "unreadable": [], "usd": 0.0, "pages": []}
     return {**found, "read_for_projects": lists, "projects": got["projects"], "projects_refused": got["refused"],

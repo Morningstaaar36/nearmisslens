@@ -484,6 +484,11 @@ def tools(rv: Review, letter_client, open_client, client) -> list[Tool]:
         got_parts = sorted((x.get("countermeasure"), x.get("verdict")) for x in parts)
         if want and got_parts != want:
             errors.append(f"list every part with its appraised verdict: {want}")
+        prose = " ".join([summary] + [str(f.get("text") or "") for f in findings] + [str(x.get("answer") or "") for x in answers])
+        codes = sorted({c for c in VERDICTS if "_" in c and c in prose})
+        if codes:  # the reader sees words, not the code's enum (a live memo read "Overall verdict is outside_evidence")
+            errors.append("write each verdict in words, not as its code: " + "; ".join(
+                f"{c} -> \"{VERDICTS[c].split(':')[0]}\"" for c in codes))
         places = orchestrator._places(desk)
         numbered = 0
         for k, f in enumerate(findings, 1):
