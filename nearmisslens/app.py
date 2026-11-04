@@ -297,7 +297,8 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                                          "budget is used up); the facts above are still complete"})
                     spent = 0.0
                     try:
-                        desk = engineer.Desk()
+                        desk = engineer.Desk()  # the corner's own crashes from the first read, as in its case
+                        desk.corners[(round(lat, 6), round(lon, 6))] = name.split(",")[0]
                         who, _ = engineer.who_must_act(desk, lat, lon, name)
                         out, _ = engineer.draft_request(desk, lat, lon, name, who, memo_client)
                         spent = out.get("usd") or 0.0
