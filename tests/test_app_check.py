@@ -276,7 +276,7 @@ def test_health_says_the_server_is_up_and_what_it_reads(monkeypatch, tmp_path):
     assert code == 200 and d["ok"] is True and d["version"] and d["records_as_of"]
     req = urllib.request.Request(base + "/health")
     with urllib.request.urlopen(req) as r:
-        assert r.headers["X-Frame-Options"] == "DENY" and r.headers["Referrer-Policy"] == "no-referrer"
+        assert r.headers["X-Frame-Options"] == "DENY" and r.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
 
 
 def test_one_visitor_cannot_use_up_the_day():

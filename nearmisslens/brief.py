@@ -371,8 +371,8 @@ def in_city_limits(display_name: str, city: dict) -> bool:
 
 
 def _covered() -> str:
-    from . import opendata
-    return ", ".join(c["name"] for c in opendata.load_cities())
+    from . import opendata  # the cities whose crash records are registered: a city without them is not covered
+    return ", ".join(c["name"] for c in opendata.load_cities() if "crash" in opendata.coverage(c["id"])["kinds"])
 
 
 def _lookup(address: str) -> tuple[float, float, str]:

@@ -215,7 +215,7 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("X-Content-Type-Options", "nosniff")
-            self.send_header("Referrer-Policy", "no-referrer")
+            self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")  # map tiles need the origin
             self.send_header("X-Frame-Options", "DENY")
             self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
             self._cors()

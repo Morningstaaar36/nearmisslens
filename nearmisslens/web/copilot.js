@@ -12,7 +12,7 @@ const usd = v => v == null ? "n/a" : v >= 1e8 ? `$${Math.round(v / 1e6)} million
 const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
 const pct = v => `${Math.round(100 * v)}%`;
 const date = s => s ? new Date(s + "T12:00:00").toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}) : "";
-let INDEX = null, map = null, layer = null, pin = null;
+let INDEX = null, map = null, layer = null, pin = null, mapPlaced = false;  // placed: zoomed to the city or a corner while visible
 
 async function getJSON(url, opts) {
   const r = await fetch(url, opts);
@@ -45,7 +45,7 @@ async function boot() {
   if (ids.length > 1) {
     $("cityswitch").innerHTML = `<label for="city">City</label> <select id="city">` + top.cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)} (${c.corners} corners)</option>`).join("") + `</select>`;
-    $("city").onchange = e => { location.hash = e.target.value; location.reload(); };
+    $("city").onchange = e => { location.hash = `${e.target.value}/corners`; location.reload(); };
   }
   try { INDEX = await getJSON(`data/${encodeURIComponent(CITY)}/index.json`); } catch (e) {
     $("citynote").textContent = `The corner list did not load (${e.message}).`; return;
@@ -97,7 +97,10 @@ function setView(name) {
   for (const a of document.querySelectorAll("nav.tasks a")) {
     if (a.dataset.view === name) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   }
-  if (withMap && map) setTimeout(() => map.invalidateSize(), 60);
+  if (withMap && map) setTimeout(() => {
+    map.invalidateSize();  // the map was drawn while hidden: size it, and frame the city unless a corner already is
+    if (!mapPlaced) { const [sLat, wLon, nLat, eLon] = INDEX.bbox; map.fitBounds([[sLat, wLon], [nLat, eLon]]); mapPlaced = true; }
+  }, 60);
   window.scrollTo({top: 0});
 }
 
@@ -127,11 +130,12 @@ function showStart() {
 }
 
 let SERVER = null;
-function serverInfo() {
-  // the live server's cities, limits and service facts, asked once; null when there is no live server or it is down
-  if (!SERVER) SERVER = LIVE === null ? Promise.resolve(null) : getJSON(`${LIVE}cities`).catch(() => null);
+function serverInfo(fresh) {
+  // the live server's cities, limits and service facts, asked once (again when fresh); null when it cannot be reached
+  if (!SERVER || fresh) SERVER = LIVE === null ? Promise.resolve(null) : getJSON(`${LIVE}cities`).catch(() => null);
   return SERVER;
 }
+const refreshStatus = () => { serverInfo(true); serviceStatus(); };
 
 async function serviceStatus() {
   // the task bar says whether live work is possible right now, and the footer says how old the records are
@@ -346,6 +350,29 @@ async function reviewExamples(cities) {
   };
 }
 
+async function checkExamples(cities) {
+  // real news links from the saved checks of inputs nobody chose (controls left out): click one to fill the form
+  let d;
+  try { d = await getJSON("data/checks.json"); } catch (e) { return; }
+  const seen = new Set(), rows = (d.cases || []).filter(c => c.kind === "url" && !c.control && c.status === "published" &&
+    !seen.has(c.city) && seen.add(c.city)).slice(0, 3);
+  if (!rows.length || !$("checkin")) return;
+  const box = document.createElement("div");
+  box.className = "examples";
+  box.innerHTML = `<span class="hint">Try a real news report:</span>` + rows.map((c, i) =>
+    `<button type="button" data-i="${i}">${esc((cities.find(x => x.id === c.city) || {}).name || cityName(c.city))}: ` +
+    `${esc(new URL(c.input).hostname.replace(/^www\./, ""))}, ${esc((c.corner || "").slice(0, 50))}</button>`).join("");
+  $("checkin").before(box);
+  box.onclick = e => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    const c = rows[+b.dataset.i];
+    $("checkin").value = c.input;
+    if ($("checkcity")) $("checkcity").value = c.city;
+    $("checkin").focus();
+  };
+}
+
 async function showReview() {
   // Before you commit: a proposed project, reviewed against the city's record before anyone commits money to it
   setView("review");
@@ -387,6 +414,7 @@ async function showReview() {
       if (rec.status === "running") { $("reviewout").innerHTML = working("review", rec.seconds); continue; }
       if (rec.status === "failed") { $("reviewout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("reviewout").innerHTML = reviewResult(rec.result);
+      refreshStatus();
       return;
     }
   };
@@ -403,9 +431,12 @@ function programResult(p) {
   return `<p class="legend">${t.proposals} proposals, ${t.reviewed} reviewed. Code ranks them; no model compares one corner with another.` +
     (t.avoided_per_year_if_supported_built ? ` If every supported project is built, the reviews expect about <b>${t.avoided_per_year_if_supported_built}</b> injury crashes avoided a year.` : "") +
     (t.reconsider_cost_usd ? ` Projects to reconsider carry ${money(t.reconsider_cost_usd)} of stated cost.` : "") + `</p>` +
-    (plan ? `<p class="verdict ok"><b>Within ${money(plan.budget_usd)}:</b> ${plan.chosen.length} project(s), ${money(plan.spent_usd)}, ` +
-      `about ${plan.avoided_per_year} injury crashes avoided a year; ${money(plan.left_usd)} left.` +
-      (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project(s) have no cost to rank.` : "") + `</p>` : "") +
+    (plan ? (plan.chosen.length
+      ? `<p class="verdict ok"><b>Within ${money(plan.budget_usd)}:</b> fund ${plan.chosen.length} project${plan.chosen.length > 1 ? "s" : ""} ` +
+        `for ${money(plan.spent_usd)}, about ${plan.avoided_per_year} injury crashes avoided a year; ${money(plan.left_usd)} left.`
+      : `<p class="verdict warn"><b>Within ${money(plan.budget_usd)}:</b> nothing to fund yet. No project in this list has both ` +
+        `evidence that it fits its corner and a stated cost.`) +
+      (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project${plan.no_cost_given.length > 1 ? "s have" : " has"} no cost to rank.` : "") + `</p>` : "") +
     PROGRAM_GROUPS.filter(([g]) => (p.groups[g] || []).length).map(([g, label]) => `<h4>${esc(label)}</h4><table><tr><th>Proposal</th><th>Avoided a year</th><th>Cost</th><th>Why</th></tr>` +
       p.groups[g].map(x => `<tr><td>${esc(x.input)}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
         `<td>${esc((x.reasons || []).join("; "))}${x.alternative ? ` (alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year)` : ""}</td></tr>`).join("") + `</table>`).join("") +
@@ -471,6 +502,7 @@ function wireProgram() {
       if (rec.status === "running") { $("programout").innerHTML = working("program", rec.seconds); continue; }
       if (rec.status === "failed") { $("programout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("programout").innerHTML = programResult(rec.result);
+      refreshStatus();
       return;
     }
   };
@@ -517,6 +549,7 @@ async function showCheck() {
     `<input id="checkaddr" maxlength="200" placeholder="where (for a report)"> ` +
     `<input id="checkphoto" maxlength="500" placeholder="photo URL (optional)"> <button>Check</button></form>` +
     `<div id="checkout"></div>` + await savedChecks();
+  await checkExamples(cities);
   fillDurations();
   if (!cities.length) { $("checkout").innerHTML = `<p class="legend">No city can be checked on this server.</p>`; return; }
   $("checkform").onsubmit = async ev => {
@@ -538,6 +571,7 @@ async function showCheck() {
       if (rec.status === "running") { $("checkout").innerHTML = working("check", rec.seconds); continue; }
       if (rec.status === "failed") { $("checkout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("checkout").innerHTML = checkResult(rec.result);
+      refreshStatus();
       return;
     }
   };
@@ -751,7 +785,7 @@ function show(r, corner) {
   const f = r.findings, fx = f.choose_fixes || {}, cr = fx.crashes || {}, rc = f.root_cause || {}, pg = f.test_programs || {},
     who = f.who_must_act || {owners: [], requesters: []}, lt = f.draft_request || {};
   const j = r.junction;
-  if (map) { map.setView([j.lat, j.lon], 15); if (pin) pin.remove(); pin = L.circleMarker([j.lat, j.lon], {radius: 11, color: "#E8A800", weight: 4, fill: false}).addTo(map); }
+  if (map) { map.setView([j.lat, j.lon], 15); mapPlaced = true; if (pin) pin.remove(); pin = L.circleMarker([j.lat, j.lon], {radius: 11, color: "#E8A800", weight: 4, fill: false}).addTo(map); }
   const killed = (cr.pedestrian_killed || 0) + (cr.cyclist_killed || 0) + (cr.motorist_killed || 0);
   const owners = who.owners.length;
   const tag = id => `<button class="rtag" data-r="${esc(id)}" aria-label="show receipt ${esc(id)}">${esc(id)}</button>`;
