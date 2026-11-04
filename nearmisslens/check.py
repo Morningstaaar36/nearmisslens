@@ -40,8 +40,8 @@ def supported(city: str | None) -> tuple[dict | None, str | None]:
     """The registry city, or None and why it cannot be checked here (no such city, or no crash data)."""
     c = opendata.city(city)
     if c is None:
-        known = ", ".join(x["id"] for x in opendata.load_cities())
-        return None, (f"{city!r} is not a city this copy covers ({known})" + ("" if os.environ.get("NML_PUBLIC") == "1"
+        known = ", ".join(x["id"] for x in opendata.load_cities() if "crash" in opendata.coverage(x["id"])["kinds"])
+        return None, (f"{city!r} is not a city this copy covers (it can check {known})" + ("" if os.environ.get("NML_PUBLIC") == "1"
                       else "; add it with nml add-city, then nml discover"))
     if "crash" not in opendata.coverage(c["id"])["kinds"]:
         return None, (f"{c['name']} has no crash data registered, so nothing can be checked against its record; "

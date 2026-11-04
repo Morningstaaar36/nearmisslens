@@ -368,3 +368,12 @@ def test_refused_requests_do_not_use_up_a_visitors_hour(monkeypatch, tmp_path):
     req = urllib.request.Request(base + "/", method="HEAD")
     with urllib.request.urlopen(req, timeout=5) as r:
         assert r.status == 200 and r.read() == b""
+
+
+def test_an_unknown_city_is_told_only_the_cities_that_can_be_checked():
+    from nearmisslens import opendata
+    ids = [c["id"] for c in opendata.load_cities()]
+    checkable = {c["id"] for c in check.cities() if c["checkable"]}
+    why = check.supported("atlantis")[1]
+    listed = set(why.split("can check ")[1].split(")")[0].split(", "))
+    assert listed == checkable and (set(ids) - checkable).isdisjoint(listed)
