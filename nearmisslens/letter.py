@@ -122,6 +122,10 @@ def facts(brief: dict, offices_: list[dict] | None = None, who: dict | None = No
                        f"{treatments.pct(100 * (1 - ev['ci95'][1]))}% to {treatments.pct(100 * (1 - ev['ci95'][0]))}%) "
                        "compared with intersections that got it later"
                        + ("; a stricter check against fake programs is less certain" if ev.get("fake_rank") is not None else "")),
+            # the same figures as numbers, so the checker knows the letter may quote them (a sentence's numbers are not read)
+            "drop_pct": treatments.pct(100 * (1 - ev["theta"])),
+            "interval_low_drop_pct": treatments.pct(100 * (1 - ev["ci95"][1])),
+            "interval_high_drop_pct": treatments.pct(100 * (1 - ev["ci95"][0])),
             "needs_site_check_for": measured.get("verify_on_site")} if measured else None,
         "already_in_place": fx.get("in_place", []),
         "tried_here_before": [x["text"] for x in fx.get("repeat_risk") or []],

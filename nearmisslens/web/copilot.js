@@ -903,7 +903,8 @@ function show(r, corner) {
     ${agentHTML(r.agent)}
     <section class="step"><h3>Ask the engineer</h3>
       <p class="why">Muse Spark Open answers from this corner's receipts. Every sentence names its receipt; sentences the checker refuses are shown struck through with the reason.</p>
-      ${LIVE !== null ? `<form id="askform" class="search ask"><input id="askq" maxlength="300" placeholder="e.g. Why are trucks over-represented here, and who can fix it?"><button>Ask</button></form><div id="askout"></div>` : ""}
+      ${LIVE !== null && corner ? `<form id="askform" class="search ask"><input id="askq" maxlength="300" placeholder="e.g. Why are trucks over-represented here, and who can fix it?"><button>Ask</button></form><div id="askout"></div>` : ""}
+      ${LIVE !== null && !corner ? `<p class="legend">Questions are answered for the city's listed corners, whose receipts are saved; this searched corner's case above is complete.</p>` : ""}
       ${(r.asks || []).map(askHTML).join("") || (LIVE === null ? '<p class="legend">Questions are answered on the live page.</p>' : "")}</section>
     <section class="step"><h3>Receipts</h3><div class="receipts">${receipts}</div></section>`;
 
