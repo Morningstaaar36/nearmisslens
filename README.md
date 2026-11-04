@@ -5,9 +5,11 @@ version 1.0.1 · [changelog](CHANGELOG.md) · Apache-2.0
 
 **Check a street-safety project against the city's own crash record before the money is spent.**
 
-[**Use it live**](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) (no account, key or install) ·
+[**▶ Watch the 2:45 demo**](https://youtu.be/WjMjqWtJCO4) · [**Use it live**](https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run) (no account, key or install) ·
 [Saved results](https://morningstaaar36.github.io/nearmisslens/) · [Test it yourself](TESTING.md) ·
 [The evidence in full](EVIDENCE.md)
+
+[![The 2:45 demo on YouTube: a Seattle signal rebuild announced on 2 November 2026, reviewed live; code finds the leading pedestrian interval it would add is already installed (2019)](docs/img/demo_video.jpg)](https://youtu.be/WjMjqWtJCO4)
 
 ![The start screen: what you do, what Meta's models do and what code does, then four tasks, each in the colour of a road-sign family](docs/img/start.png)
 
