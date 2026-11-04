@@ -25,6 +25,8 @@ is shown until code has checked every number against the record and every quote 
 | **Check a claim** | a news link or an official's statement about a corner | which numbers hold, which differ, and which the record cannot test, with every quote checked on its page | about 8 minutes |
 | **Look up a corner** | an intersection | what its crashes have in common, what the city already tried, which fix the record supports, who must act, what has been published about it, and a drafted request letter | at once for saved corners |
 
+![Review a list, San Francisco: Muse Spark found four SFMTA project pages on the web; each passage was found on its page word for word, and 29 planned projects were read off them to tick and review](docs/img/find.png)
+
 It covers **New York, Washington DC, Chicago, Seattle and San Francisco**, the cities that publish geocoded crash
 records. Cities are data, not code: each is an entry in [`registry.json`](nearmisslens/data/registry.json).
 

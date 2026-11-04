@@ -273,7 +273,8 @@ def test_naming_a_fix_is_not_stating_its_site_condition():
          "needs_site_check_for": "the pavement's friction is low now (wet-road crashes alone do not show it)"}]}
     for fine in ("* Better street lighting, which is expected to prevent injury crashes in darkness.",
                  "- high-friction pavement, expected to prevent wet-road crashes",
-                 "Please check on site whether the corner has no street lighting."):
+                 "Please check on site whether the corner has no street lighting.",
+                 "We ask you to consider two low-cost fixes on the roads you are responsible for:"):  # live, Seattle
         assert not letter.condition_errors(fine, facts), fine
     for wrong in ("The corner has no street lighting.", "The pavement's friction is low here."):
         assert letter.condition_errors(wrong, facts), wrong

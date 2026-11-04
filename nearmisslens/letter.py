@@ -163,7 +163,10 @@ def condition_errors(text: str, facts: dict) -> list[str]:
             continue
         said = _words(sent)
         for own, every in conds:
-            states = (len(own & said) / len(own) >= 0.6) if own else (every <= said and NEGATION.search(sent))
+            if own:  # a condition left with one word ("low") must also name its subject ("friction"): "low-cost" is not it
+                states = len(own & said) / len(own) >= 0.6 and (len(own) > 1 or bool((every - own) & said))
+            else:
+                states = every <= said and bool(NEGATION.search(sent))
             if states:
                 errors.append(f"'{sent.strip()[:90]}' states a site condition as a fact: say it must be checked on site")
                 break
