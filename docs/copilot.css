@@ -119,9 +119,20 @@ h3.ask{font-size:22px;margin:26px 0 12px}
 .task-program .tsign{background:var(--t-program);border-radius:5px;box-shadow:inset 0 0 0 2px var(--t-program),inset 0 0 0 4px #fff}
 .task-check .tsign{width:28px;height:28px;margin:3px 3px 7px;background:var(--t-check);transform:rotate(45deg);border-radius:4px;box-shadow:inset 0 0 0 2px #111}
 .task-corners .tsign{background:var(--t-corners);clip-path:polygon(50% 0,100% 38%,100% 100%,0 100%,0 38%)}
-ol.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;padding:0;margin:0 0 24px;list-style:none;counter-reset:s}
-ol.how li{counter-increment:s;padding-top:10px;border-top:2px solid var(--rule)}
-ol.how li::before{content:counter(s);font-weight:800;color:var(--warn);margin-right:8px}
+/* the flow chart: boxes joined by arrows, each tagged with who does that part (you, a Meta model, code) */
+ol.flow{display:flex;list-style:none;padding:0;margin:20px 0 30px;gap:30px}
+ol.flow li{position:relative;flex:1 1 0;min-width:0;background:var(--sheet);border:2px solid var(--rule);border-radius:12px;
+  padding:12px 12px 14px;font-size:15px;line-height:1.35}
+ol.flow li b{display:block;font-family:var(--head);font-size:16px;font-weight:700;line-height:1.3}
+ol.flow li:not(:last-child)::after{content:"";position:absolute;top:50%;right:-25px;width:20px;height:20px;transform:translateY(-50%);
+  background:var(--mut);clip-path:polygon(0 35%,55% 35%,55% 10%,100% 50%,55% 90%,55% 65%,0 65%)}
+ol.flow .actor{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;margin-bottom:8px}
+ol.flow .by-you{border-color:var(--rule)}
+ol.flow .by-you .actor{background:var(--paper);color:var(--ink);border:1px solid var(--rule)}
+ol.flow .by-model{border-color:var(--t-program)}
+ol.flow .by-model .actor{background:var(--t-program);color:#fff}
+ol.flow .by-code{border-color:var(--t-review)}
+ol.flow .by-code .actor{background:var(--t-review);color:#fff}
 #sample{margin:8px 0 10px}
 
 /* the rail search and the task forms share .search; the task forms (.ask) override it below */
@@ -131,12 +142,19 @@ form.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 11p
 /* 5 task forms: examples, the text, then where and go ------------------------------------------------------------ */
 h2.corner{font-size:clamp(28px,3.6vw,42px);line-height:1.08;font-weight:800;margin:4px 0 10px;letter-spacing:-.015em}
 .lede{font-size:clamp(18px,2vw,21px);line-height:1.5;max-width:62ch;margin:0 0 6px}
-ol.steps{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:14px 0 22px;counter-reset:st}
-ol.steps li{counter-increment:st;display:flex;align-items:baseline;gap:8px;color:var(--mut);font-size:16px;max-width:30ch}
+/* a task's three boxes (you do, we check, you read), the current one in the task's colour, done ones ticked */
+ol.steps{display:flex;list-style:none;padding:0;margin:16px 0 24px;gap:28px;counter-reset:st;max-width:900px}
+ol.steps li{counter-increment:st;position:relative;flex:1 1 0;min-width:0;display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;border:2px solid var(--rule);border-radius:12px;background:var(--sheet);color:var(--mut);font-size:15px;line-height:1.4}
+ol.steps li:not(:last-child)::after{content:"";position:absolute;top:50%;right:-24px;width:18px;height:18px;transform:translateY(-50%);
+  background:var(--rule);clip-path:polygon(0 35%,55% 35%,55% 10%,100% 50%,55% 90%,55% 65%,0 65%)}
 ol.steps li span{display:block}
 ol.steps li::before{content:counter(st);flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--rule);font:800 14px var(--head);color:var(--mut)}
-ol.steps li[aria-current="step"]{color:var(--ink)}
+ol.steps li[aria-current="step"]{color:var(--ink);border-color:var(--task);box-shadow:0 0 0 2px var(--task)}
 ol.steps li[aria-current="step"]::before{background:var(--task);border-color:var(--task);color:var(--task-ink)}
+ol.steps li.done{color:var(--ink)}
+ol.steps li.done::before{content:"✓";background:var(--go-bg);border-color:var(--go);color:var(--go)}
+ol.steps li [data-time]{display:block;font-size:13px;color:var(--mut)}
 form.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:0;max-width:780px;margin:8px 0 18px}
 form.ask .examples,form.ask textarea{flex:1 1 100%}
 form.ask textarea{width:100%;min-height:96px;font:inherit;font-size:17px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);resize:vertical}
@@ -174,12 +192,24 @@ textarea{width:100%;max-width:100%;min-height:360px;font:15px/1.55 var(--body);p
 .vlegend li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
 .verdict{padding:.6em .8em;border-radius:6px;border-left:4px solid var(--mut);background:rgba(127,127,127,.08)}
 .verdict.ok{border-left-color:var(--go)}.verdict.warn{border-left-color:var(--warn)}.verdict.bad{border-left-color:var(--stop)}
-.working{border:1px dashed var(--rule);border-radius:10px;padding:16px 20px;max-width:780px;background:var(--sheet)}
-.working ol{margin:4px 0 8px;padding-left:22px;color:var(--mut)}
-.working p{margin:0 0 6px}
+.working{border:2px solid var(--task);border-radius:12px;padding:14px 18px;max-width:780px;background:var(--sheet)}
+.working p{margin:8px 0 0}
+.working .bar{height:8px;border-radius:4px;background:var(--paper);overflow:hidden}
+.working .bar i{display:block;height:100%;background:var(--task);transition:width 1s linear}
 .spin{display:inline-block;width:14px;height:14px;margin-right:8px;border:3px solid var(--rule);border-top-color:var(--marking);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* a result: the sign, why, chips, then folded detail */
+.why3 h4{margin:14px 0 4px;font-size:17px}
+.why3 ul{margin:0;padding-left:20px;max-width:74ch}
+.why3 li{margin:4px 0}
+p.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.chip{display:inline-block;font-size:14px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--sheet);border:1.5px solid var(--rule)}
+details.more{max-width:780px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet);padding:4px 16px;margin:8px 0}
+details.more>summary{font-family:var(--head);font-weight:700;color:var(--ink);font-size:16px;margin:8px 0}
+details.saved{max-width:900px;margin:28px 0 8px;border-top:2px solid var(--rule);padding-top:6px}
+details.saved>summary{font-family:var(--head);font-weight:700;font-size:18px;color:var(--ink)}
 
 /* 7 corner view: city switch, search, map and the ranked list ------------------------------------------------------ */
 .rail{border-right:1px solid var(--rule);display:flex;flex-direction:column;height:calc(100vh - 60px);position:sticky;top:60px}
@@ -195,6 +225,15 @@ ol.corners li button:focus-visible{outline:3px solid var(--warn);outline-offset:
 .rank{color:var(--mut)}.n{font-weight:700}
 .gapdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--stop);margin-right:6px;vertical-align:1px}
 button.planlink{margin-top:8px;font-size:15px;padding:6px 10px}
+
+/* the report's path: each section a stop, joined by arrows, each a jump */
+nav.jump{display:flex;flex-wrap:wrap;gap:8px 4px;margin:14px 0 4px;max-width:900px}
+nav.jump a{position:relative;font-family:var(--head);font-weight:700;font-size:14px;padding:6px 12px;border-radius:999px;
+  background:var(--sheet);border:1.5px solid var(--task);color:var(--ink);text-decoration:none;margin-right:16px}
+nav.jump a:not(:last-child)::after{content:"";position:absolute;right:-16px;top:50%;width:12px;height:12px;transform:translateY(-50%);
+  background:var(--mut);clip-path:polygon(0 35%,55% 35%,55% 10%,100% 50%,55% 90%,55% 65%,0 65%)}
+nav.jump a:hover{background:var(--task);color:var(--task-ink)}
+section.step{scroll-margin-top:80px}
 
 /* 8 corner report: numbered steps, claims with receipts, owners, the letter -------------------------------------- */
 section.step{padding:26px 0 8px;position:relative}
@@ -260,5 +299,7 @@ details.agency summary{cursor:pointer}
   .bars{grid-template-columns:1fr}
   main{padding-top:20px}
   table.fixes th:nth-child(4),table.fixes td:nth-child(4){display:none}
-  .svc{margin-left:0;flex:1 1 100%}}
+  .svc{margin-left:0;flex:1 1 100%}
+  ol.flow,ol.steps{flex-direction:column;gap:26px}
+  ol.flow li:not(:last-child)::after,ol.steps li:not(:last-child)::after{top:auto;right:auto;left:50%;bottom:-23px;transform:translateX(-50%) rotate(90deg)}}
 @media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}

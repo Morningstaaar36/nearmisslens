@@ -215,18 +215,51 @@ def _crossing(a: str, b: str, area: str) -> list[tuple[float, float]]:
     raise ValueError("OpenStreetMap servers are unavailable; try again or give coordinates")
 
 
+PHOTON = "https://photon.komoot.io/api/"
+
+
+def _photon(q: str, country: str, bbox: list | None = None) -> list:
+    """Photon (komoot's open geocoder over the same OpenStreetMap data), roads only, in Nominatim's shape: the
+    fallback when Nominatim refuses or does not answer, so a lookup is not blocked by one server's limits."""
+    params = {"q": q, "limit": 5, "osm_tag": "highway"}
+    if bbox:
+        s, w, n, e = bbox
+        params["bbox"] = f"{w},{s},{e},{n}"
+    js, _ = context.fetch(PHOTON, params, attempts=2)
+    out = []
+    for f in js.get("features") or []:
+        pr = f.get("properties") or {}
+        if country and (pr.get("countrycode") or "").lower() not in {c.strip().lower() for c in country.split(",")}:
+            continue
+        lon, lat = f["geometry"]["coordinates"][:2]
+        shown = ", ".join(str(pr[k]) for k in ("name", "locality", "district", "city", "county", "state", "postcode",
+                                               "country") if pr.get(k))
+        out.append({"lat": str(lat), "lon": str(lon), "display_name": shown, "name": pr.get("name", ""),
+                    "addresstype": pr.get("type", ""), "source": "photon"})
+    return out[:1]
+
+
+def _search(params: dict, country: str, bbox: list | None = None) -> list:
+    """Nominatim, else Photon when Nominatim is refusing or down."""
+    try:
+        js, _ = context.fetch("https://nominatim.openstreetmap.org/search", params)
+        return js
+    except RuntimeError:
+        return _photon(params["q"], country, bbox)
+
+
 def _nominatim(q: str, country: str, city: str | None) -> list:
-    """Nominatim's best match. A long street runs past the city line (its best match can be in a suburb on the same
-    road), so when the address names a registry city and the match is not in it, the search is repeated within that
-    city's bounding box. The first search's parameters are unchanged, so earlier lookups answer from the cache."""
+    """Nominatim's best match (Photon's when Nominatim refuses). A long street runs past the city line (its best match
+    can be in a suburb on the same road), so when the address names a registry city and the match is not in it, the
+    search is repeated within that city's bounding box. The first search's parameters are unchanged, so earlier
+    lookups answer from the cache."""
     from . import opendata
     params = {"q": q, "format": "jsonv2", "limit": 1, "countrycodes": country}
-    js, _ = context.fetch("https://nominatim.openstreetmap.org/search", params)
+    js = _search(params, country)
     c = opendata.city(city) if city else None
     if c and (not js or context.city_of(float(js[0]["lat"]), float(js[0]["lon"])) != c["id"]):
         s, w, n, e = c["bbox"]
-        inside, _ = context.fetch("https://nominatim.openstreetmap.org/search",
-                                  {**params, "viewbox": f"{w},{n},{e},{s}", "bounded": 1})
+        inside = _search({**params, "viewbox": f"{w},{n},{e},{s}", "bounded": 1}, country, c["bbox"])
         js = inside or js
     return js
 
