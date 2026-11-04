@@ -36,6 +36,23 @@ def voice_usd(seconds: float) -> float:
     return int(seconds) / 3600 * VOICE_USD_PER_HOUR
 
 
+def usd_since(ledgers, t: float) -> float:
+    """Dollars the ledgers recorded at or after time t (each row is {"t", "usd", ...}); a missing ledger is $0."""
+    total = 0.0
+    for path in ledgers:
+        path = Path(path)
+        if not path.exists():
+            continue
+        for line in path.read_text().splitlines():
+            try:
+                row = json.loads(line)
+            except ValueError:  # a line half-written by another thread
+                continue
+            if row.get("t", 0) >= t:
+                total += float(row.get("usd") or 0.0)
+    return total
+
+
 class CostMeter:
     def __init__(self, ledger: Path, cap_usd: float):
         self.ledger = Path(ledger)

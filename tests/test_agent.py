@@ -101,3 +101,21 @@ def test_open_weights_force_picks_the_next_missing_tool():
                "tools": [{"name": n, "parameters": {}} for n in ("look", "finish")], "x_next_tool": "look"}
     assert to_chat(payload, force_after=6)["tool_choice"]["function"]["name"] == "look"
     assert "x_next_tool" not in json.dumps(to_chat(payload, force_after=6))
+
+
+def test_a_run_says_how_many_turns_came_from_the_cache(tmp_path):
+    """The page tells a visitor when a review was answered from an earlier identical run (no new model call)."""
+    import dataclasses
+    from nearmisslens.config import SETTINGS
+    from nearmisslens.meta_client import MetaClient
+    s = dataclasses.replace(SETTINGS, cache_dir=tmp_path / "cache", runs_dir=tmp_path / "runs", replay=False,
+                            budget_usd=5.0)
+    tools = [Tool("finish", "stop", {"type": "object", "properties": {}, "required": [], "additionalProperties": False},
+                  lambda: {"ok": True})]
+    answers = [{"id": "r1", "status": "completed", "output": [call("finish", {}, "c1")], "usage": usage()}]
+    first, again = MetaClient(s), MetaClient(s)
+    first.create_response = lambda payload: answers[0]
+    again.create_response = lambda payload: (_ for _ in ()).throw(AssertionError("no model call on a cache hit"))
+    r1 = run_agent(first, "muse-spark-1.3", "x", "task", tools, max_turns=3, budget_usd=1.0)
+    r2 = run_agent(again, "muse-spark-1.3", "x", "task", tools, max_turns=3, budget_usd=1.0)
+    assert (r1.turns, r1.cached_turns) == (1, 0) and (r2.turns, r2.cached_turns) == (1, 1)

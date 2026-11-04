@@ -344,17 +344,17 @@ Two saved examples replay offline with no key: `uv run nml --replay check --exam
 
 ```bash
 uv sync                                                    # Python 3.12; no extras needed
-uv run nml --replay plan nyc                               # the city's plan: totals, tiers, one letter per agency
-uv run nml --replay engineer "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY"
-uv run nml app                                             # the copilot on http://127.0.0.1:8770
-uv run nml --replay pages --city nyc --saved-only          # rebuild the static site in docs/
-uv run nml treatments T11                                  # rerun New York's study and its gate
-uv run nml --replay selftest                               # offline self-test
+uv run nml --replay engineer "Bruckner Boulevard & Hunts Point Avenue, Bronx, NY"   # fresh clone: records ship in replay/
+uv run nml app                                             # fresh clone: the copilot on http://127.0.0.1:8770, saved results
+uv run nml --replay selftest                               # fresh clone: offline self-test (video checks skip without nml fetch)
+uv run nml treatments T11                                  # downloads New York's records (free; several minutes), reruns the gate
+uv run nml --replay plan nyc                               # needs the saved corner cases in runs/engineer/nyc (made by nml pages)
+uv run nml --replay pages --city nyc --saved-only          # needs the same; rebuilds the static site in docs/
 ```
 
 Each desk run reruns from its registered spec with `nml desk T21c` (paid, live web); it resumes from the saved results unless you add `--fresh`. The San Francisco 311 inbox snapshots the runs used (`data/inbox/`) are not in the repository. Its cached answers replay it offline at the commit it ran, since a later code change changes what the model is shown.
 
-`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network once the replay cache from the latest GitHub release is unpacked. Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
+`--replay` reads public records as of the pinned date in `validation/ASOF` and serves model calls from the cache, so these give the same answers without keys or network when the answers they need are cached. A fresh clone holds those of the README's example (`replay/`); the rest are made by running without `--replay` (public records are free; model calls are paid). Keys for live runs go in `.env`: `BASETEN_API_KEY` (Muse Spark Open) and `MODEL_API_KEY` (Meta Model API). Every paid call is cached and logged. The tests run on every push on a fresh clone (`.github/workflows/tests.yml`).
 
 **Cities are data, not code.** Each dataset, district map, road inventory, agency and request log is an entry in [`registry.json`](nearmisslens/data/registry.json). Adding a city is guided, not automatic: `nml add-city ID --name NAME --bbox LAT_MIN LON_MIN LAT_MAX LON_MAX --agency AGENCY` writes its entry and lists what it has and lacks, and `nml discover LAT LON` has Muse Spark find and validate its crash data. Road-owner and district-office data exist only for New York; elsewhere the city is presumed the road owner, marked inferred, and a letter goes to the road owner only. Each CMF's limits are in [`fhwa_psc.json`](nearmisslens/data/fhwa_psc.json), and each study is a JSON file in [`validation/studies/`](validation/studies/).
 

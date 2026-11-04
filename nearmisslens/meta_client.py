@@ -118,8 +118,8 @@ class MetaClient:
         """Serve from cache, or reserve budget, call, record the real cost and cache only complete results."""
         key = request_key(namespace, request)
         hit = self.cache.get(namespace, key)
-        if hit is not None:
-            return hit
+        if hit is not None:  # marked, so a run can say it was answered from an earlier identical run
+            return {**hit, "_from_cache": True} if isinstance(hit, dict) else hit
         self.meter.reserve(estimate_usd, what)
         try:
             result = run()

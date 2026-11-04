@@ -6,6 +6,7 @@ offices near a junction are public in OSM, but the project has no reason to repu
 any file holds something that looks like an API key."""
 from __future__ import annotations
 
+import gzip
 import io
 import json
 import re
@@ -52,3 +53,43 @@ def pack(out: Path, cache: Path | None = None) -> dict:
             info.size, info.mtime, info.mode = len(data), 0, 0o644
             tar.addfile(info, io.BytesIO(data))
     return {"files": len(files), "scrubbed": scrubbed, "mb": round(out.stat().st_size / 1e6, 1), "path": str(out)}
+
+
+def starter_queries() -> list[str]:
+    """The README's no-key example queries, one per line in replay/queries.txt (data, not code)."""
+    from .context import STARTER_DIR
+    lines = (STARTER_DIR.parent / "queries.txt").read_text().splitlines()
+    return [x.strip() for x in lines if x.strip() and not x.startswith("#")]
+
+
+def starter(queries: list[str] | None = None, cache: Path | None = None) -> dict:
+    """The small replay pack committed in replay/context/: exactly the public-data answers the README's --replay
+    engineer example reads, contact details removed, refused if any looks like it holds a key. It is built by
+    running the example on the full local cache and keeping every answer served."""
+    from . import context, engineer
+    if not SETTINGS.replay:
+        raise RuntimeError("build the starter pack with --replay, so only cached answers are read")
+    cache = cache or SETTINGS.cache_dir
+    context.SERVED.clear()
+    for q in queries or starter_queries():
+        engineer.plan(q)
+    out = context.STARTER_DIR
+    out.mkdir(parents=True, exist_ok=True)
+    for old in out.glob("*.json.gz"):
+        old.unlink()
+    total = scrubbed = 0
+    for key in sorted(context.SERVED):
+        src = cache / "context" / f"{key}.json"
+        if not src.exists():  # already served from the committed pack
+            continue
+        data = src.read_bytes()
+        if KEYISH.search(data):
+            raise RuntimeError(f"refusing to pack: {src.name} looks like it holds a key")
+        obj = json.loads(data)
+        if scrub(obj) != obj:
+            scrubbed += 1
+            obj = scrub(obj)
+        blob = gzip.compress(json.dumps(obj, separators=(",", ":")).encode(), compresslevel=9, mtime=0)
+        (out / f"{key}.json.gz").write_bytes(blob)
+        total += len(blob)
+    return {"files": len(list(out.glob("*.json.gz"))), "scrubbed": scrubbed, "mb": round(total / 1e6, 2), "path": str(out)}

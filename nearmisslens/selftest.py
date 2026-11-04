@@ -265,21 +265,25 @@ def check_engineer(address: str | None = None) -> Check:
             address = f"{h['name']}, {h['city_name']}"
         except Exception:  # no screened city saved in this copy
             address = ""
-    ch = Check("engineer", criterion="the safety engineer on the first screened city's worst corner, from records as of validation/ASOF: all five corner "
+    ch = Check("engineer", criterion="the safety engineer on the first screened city's worst corner (on a fresh clone, the README's example corner, from replay/), from records as of validation/ASOF: all five corner "
                                      "tools give receipts, every claim cites one and passes the checker, and the case names "
                                      "at least one road owner and one priced fix")
-    from . import engineer
-    try:
-        r = engineer.plan(address)
-    except (FileNotFoundError, ReplayMiss, ValueError) as e:
-        ch.detail = {"reason": f"public records for this corner are not in the replay cache ({str(e)[:120]})"}
-        return ch
+    from . import engineer, packcache
+    tries = [address] + [q for q in packcache.starter_queries() if q != address]  # then the committed pack's example
+    for i, a in enumerate(tries):
+        try:
+            r = engineer.plan(a)
+            break
+        except (FileNotFoundError, ReplayMiss, ValueError) as e:
+            if i == len(tries) - 1:
+                ch.detail = {"reason": f"public records for this corner are not in the replay cache ({str(e)[:120]})"}
+                return ch
     f = r["findings"]
     tools = {x["tool"] for x in r["receipts"]}
     ok = (not r["claim_errors"] and {"root_cause", "test_programs", "choose_fixes", "who_must_act", "draft_request"} <= tools
           and f["who_must_act"]["owners"] and f["choose_fixes"].get("options"))
     ch.status = "PASS" if ok else "FAIL"
-    ch.detail = {"claims": len(r["claims"]), "claim_errors": r["claim_errors"][:3], "receipts": sorted(tools),
+    ch.detail = {"corner": a, "claims": len(r["claims"]), "claim_errors": r["claim_errors"][:3], "receipts": sorted(tools),
                  "owners": [o["party"] for o in f["who_must_act"]["owners"]],
                  "top_fix": (f["choose_fixes"].get("options") or [{}])[0].get("countermeasure"), "seconds": r["seconds"]}
     return ch

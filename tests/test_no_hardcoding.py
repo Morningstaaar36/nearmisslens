@@ -27,7 +27,8 @@ COMMON = set("""street avenue boulevard road place drive lane court parkway high
 north south east west northeast northwest southeast southwest the and of at near center park bridge hill market
 main first second third fourth fifth sixth seventh eighth ninth tenth broadway plaza circle loop route state city
 new old union mission gates point upper cross states post approach roadway wheeler county view white district
-forest gate hook treat green fresh clean central centre inner island concourse expwy turnpike fell""".split())
+forest gate hook treat green fresh clean central centre inner island concourse expwy turnpike fell
+blvd hamlet reverend polite""".split())  # blvd: the abbreviation; hamlet: a place type; reverend: "Rev"; polite: aria-live
 # modules that are about one registered study, a saved example or the retired drone-video pipeline, by design; each
 # names the place its study is about. Every other module is product code and must reach a city only through data.
 STUDIES = {"fusion": "T10, residents' near-miss reports in Washington DC",
@@ -58,10 +59,35 @@ def forbidden() -> set[str]:
         p = json.loads(open(f).read())
         names |= {c["name"] for c in p.get("corners", [])}
         progs |= {k for k in (p.get("summary") or {}).get("repeat_risk_corners", {})}
+    names |= set(_corner_fields())
     out = {n.lower() for n in names} | hosts | {p.lower() for p in progs}
     out |= {w for n in names for w in re.findall(r"[a-z]{4,}", n.lower()) if w not in COMMON}
     for c in opendata.load_cities():
         out |= {c["id"].lower(), c["name"].lower(), *(a.lower() for a in c.get("aliases", []))}
+    return out
+
+
+def _corner_fields() -> list[str]:
+    """Every corner or intersection named anywhere in the registered results, the proposal sets and the case studies
+    (T26-T32, the 4-Nov live cases, ...): the list grows with every new run, not only the desk's."""
+    files = (glob.glob(str(BENCH / "experiment_*.json")) + glob.glob(str(ROOT / "validation" / "examples" / "*.json"))
+             + glob.glob(str(ROOT / "validation" / "case_studies" / "*" / "*.json")))
+    out = []
+
+    def walk(x):
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if k in ("corner", "intersection", "where") and isinstance(v, str) and "&" in v and len(v) < 120:
+                    out.append(re.sub(r"\s*\(.*?\)", "", v.split(",")[0]))  # "A St & B St (beacons)": the place only
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    for f in files:
+        try:
+            walk(json.loads(open(f).read()))
+        except ValueError:
+            continue
     return out
 
 
@@ -73,6 +99,7 @@ def _hits(text: str, words: set[str]) -> list[str]:
 def test_the_forbidden_list_is_built_from_real_results():
     f = forbidden()
     assert len(f) > 300 and "nyc" in f and any("." in w for w in f)  # corner words, ids and web hosts are all in it
+    assert {"lafayette", "albany", "dexter"} <= f  # the 4-Nov live cases' corners reach it through the case studies
 
 
 def test_generic_modules_name_no_place():
@@ -89,10 +116,19 @@ def test_prompts_and_task_templates_name_no_place():
         assert _hits(task, words) == [], kind
 
 
-def test_generic_modules_never_branch_on_a_city():
-    for m in GENERIC:
-        src = inspect.getsource(m)
-        assert not re.search(r"city\s*==|city\s+in\s*\(|city\s+in\s*\[", src), m.__name__
+def test_no_product_module_branches_on_a_city_literal():
+    """No `city == "..."` or `city in ("...", ...)` anywhere in product code: a city's behaviour comes from its
+    registry entry. Comparing two variables (city == c["id"]) is allowed; comparing with a literal is not."""
+    found = {}
+    for m in pkgutil.iter_modules(nearmisslens.__path__):
+        if m.name in STUDIES or m.ispkg:
+            continue
+        code = _code_only((Path(nearmisslens.__path__[0]) / f"{m.name}.py").read_text())
+        hit = re.findall(r"""city\w*\s*(?:==|!=)\s*['"][^'"]+['"]|['"][^'"]+['"]\s*(?:==|!=)\s*\w*city\b|"""
+                         r"""city\w*\s+(?:not\s+)?in\s*[\(\[{]\s*['"]""", code)
+        if hit:
+            found[m.name] = hit
+    assert found == {}
 
 
 def _code_only(src: str) -> str:

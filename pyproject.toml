@@ -1,6 +1,6 @@
 [project]
 name = "nearmisslens"
-version = "1.0.0"
+version = "1.0.1"
 description = "NearMissLens: an agentic street-safety engineer whose claims are tested on the city's own records"
 readme = "README.md"
 license = "Apache-2.0"

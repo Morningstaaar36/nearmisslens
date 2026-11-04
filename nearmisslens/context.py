@@ -9,6 +9,7 @@ adapter exists only OpenStreetMap is used, and the dossier says so."""
 from __future__ import annotations
 
 import datetime as dt
+import gzip
 import hashlib
 import json
 import math
@@ -52,6 +53,16 @@ def city_of(lat: float, lon: float) -> str | None:
                  if c["bbox"][0] <= lat <= c["bbox"][2] and c["bbox"][1] <= lon <= c["bbox"][3]), None)
 
 
+STARTER_DIR = Path(__file__).resolve().parent.parent / "replay" / "context"  # committed: the README's --replay example
+SERVED: set[str] = set()  # the cache keys served in this process (nml pack-cache --starter records them)
+
+
+def _starter(key: str) -> Path | None:
+    """The committed starter pack's copy of a cached answer, used only by --replay (live runs always ask the source)."""
+    p = STARTER_DIR / f"{key}.json.gz"
+    return p if SETTINGS.replay and p.exists() else None
+
+
 def _cache_dir() -> Path:
     p = Path(SETTINGS.cache_dir) / "context"
     p.mkdir(parents=True, exist_ok=True)
@@ -80,7 +91,12 @@ def fetch(url: str, params: dict | None = None, data: dict | None = None, timeou
     key = hashlib.sha256(json.dumps([url, params, data], sort_keys=True).encode()).hexdigest()[:24]
     path = _cache_dir() / f"{key}.json"
     if path.exists():
+        SERVED.add(key)
         return json.loads(path.read_text()), 0.0
+    starter = _starter(key)
+    if starter is not None:
+        SERVED.add(key)
+        return json.loads(gzip.decompress(starter.read_bytes())), 0.0
     if SETTINGS.replay:
         raise FileNotFoundError(f"context request not cached: {url}")
     t = time.time()
@@ -130,7 +146,7 @@ def overpass(query: str, timeout: float = 120) -> dict:
     """An Overpass query, unless Overpass failed in the last hour (then RuntimeError at once, so callers fall back
     without waiting through the retries again). A cached answer is always served."""
     key = hashlib.sha256(json.dumps([OVERPASS, None, {"data": query}], sort_keys=True).encode()).hexdigest()[:24]
-    if not (_cache_dir() / f"{key}.json").exists():
+    if not (_cache_dir() / f"{key}.json").exists() and _starter(key) is None:
         f = _down_file()
         if not _OVERPASS_DOWN and f.exists() and time.time() - f.stat().st_mtime < 3600:
             _OVERPASS_DOWN.append(f.read_text()[:120])

@@ -470,7 +470,7 @@ def cmd_agent_cases(args) -> int:
 def cmd_pack_cache(args) -> int:
     from pathlib import Path
     from . import packcache
-    out = packcache.pack(Path(args.out))
+    out = packcache.starter() if args.starter else packcache.pack(Path(args.out))
     print(f"{out['files']} files, contact details removed from {out['scrubbed']}, {out['mb']} MB: {out['path']}")
     return 0
 
@@ -489,9 +489,30 @@ def cmd_ask_engineer(args) -> int:
 
 
 def cmd_plan(args) -> int:
+    import json
+    from pathlib import Path
     from . import plan
-    out = plan.build(args.city)
-    path = plan.write(out)
+    if args.letters_only:  # the saved plans' letters written again by current code; no record is read, no total changes
+        docs = Path(__file__).resolve().parent.parent / "docs" / "data" / args.city / "plan.json"
+        reg = plan.registered_path(args.city)
+        if not reg.exists():
+            print(f"no saved plan for {args.city} at {reg}")
+            return 2
+        out = plan.redraft_letters(json.loads(reg.read_text()))
+        plan.write(out, reg)
+        if docs.exists():
+            docs.write_text(json.dumps(out, separators=(",", ":"), default=str))
+        for g in out["agencies"]:
+            print(f"  {g['party']}: letter {'checked' if g['letter']['body'] else 'refused: ' + '; '.join(g['letter']['refused'])}")
+        return 0 if all(g["letter"]["body"] for g in out["agencies"]) else 1
+    reports = plan.cases(args.city)
+    if not reports:
+        print(f"no saved corner cases for {args.city} in {SETTINGS.runs_dir / 'engineer' / args.city}: a plan is built "
+              f"from them (make them with `nml pages {args.city}`, which needs the city's records). The plan saved "
+              f"from them is {plan.registered_path(args.city)}; the page shows it under the city's action plan.")
+        return 2
+    out = plan.build(args.city, reports=reports)
+    path = plan.write(out, None if args.register else SETTINGS.runs_dir / "plans" / f"plan_{args.city}.json")
     path.with_suffix(".csv").write_text(plan.to_csv(out))
     s, r = out["summary"], out["regression_to_mean"]
     print(f"{out['city_name']}: {s['corners']} corners, {s['injury_crashes_total']:,} injury crashes "
@@ -625,7 +646,7 @@ def cmd_check(args) -> int:
     from . import check
     from .meta_client import MetaClient
     client = MetaClient(SETTINGS)
-    if args.example:
+    if args.example is not None:
         ex = check.example(args.example)
         args.input, args.city, args.kind, args.photo, args.address = (ex["input"], ex["city"], ex.get("kind"),
                                                                        ex.get("photo"), ex.get("address"))
@@ -697,7 +718,10 @@ def cmd_app(args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="nml", description="NearMissLens: an agentic safety engineer for city streets")
+    parser = argparse.ArgumentParser(
+        prog="nml", description="NearMissLens: check a street-safety project against the city's own crash record. "
+        "The product: review, portfolio, find, intake, check, engineer, plan, app, cities and selftest. The other "
+        "commands rerun the registered studies in validation/BENCH.md (the drone-video ones need nml fetch).")
     parser.add_argument("--replay", action="store_true", help="serve model calls from the cache only")
     sub = parser.add_subparsers(dest="cmd", required=True)
     fe = sub.add_parser("fetch", help="download FLUID clips and derived data, and the CMF Clearinghouse table (about 2 GB)")
@@ -773,7 +797,7 @@ def main(argv: list[str] | None = None) -> int:
                         "(paid: Muse Spark); e.g. nml check https://example.org/story --city CITY_ID")
     ck.add_argument("input", nargs="?", help="a URL, a claim in your own words, or (with --as-source) the source's own text")
     ck.add_argument("--city", help="a registry city id (nml cities lists them)")
-    ck.add_argument("--example", type=int, help="run saved example N (validation/examples/check.json); with --replay, offline")
+    ck.add_argument("--example", type=int, help="run saved example N, from 1 (validation/examples/check.json); paid: replay needs the full local cache")
     ck.add_argument("--kind", choices=["url", "find", "source", "report"], help="default: url for a link, else find")
     ck.add_argument("--as-source", action="store_true", help="the input text is itself the source (cited as input:text)")
     ck.add_argument("--photo", help="report: a public photo URL")
@@ -821,7 +845,7 @@ def main(argv: list[str] | None = None) -> int:
     po.add_argument("--from-url", nargs="+", help="read the projects from the agency's own pages (Muse Spark, checked "
                     "by code) instead of a list file")
     it = sub.add_parser("intake", help="read an agency's pages into a checked list of intersection projects (paid; "
-                        "about $0.02 a page)")
+                        "about $0.063 a page in T30c)")
     it.add_argument("sources", nargs="+", help="URLs, or saved pages / text files")
     it.add_argument("--city", required=True)
     it.add_argument("--include-completed", action="store_true", help="also list projects the page says are completed")
@@ -863,6 +887,10 @@ def main(argv: list[str] | None = None) -> int:
     ag.add_argument("--top", type=int, default=20)
     pl = sub.add_parser("plan", help="the city's action plan from its saved cases: evidence-tiered fixes, totals, one checked letter per agency")
     pl.add_argument("city")
+    pl.add_argument("--register", action="store_true",
+                    help="write the registered result (validation/results/bench/plan_CITY.json) instead of runs/plans/")
+    pl.add_argument("--letters-only", action="store_true",
+                    help="write the saved plan's agency letters again with the current code (no records read)")
     cw = sub.add_parser("citywide", help="plan-gap screen of every priority intersection a city lists (open data)")
     cw.add_argument("--city", help="registry city id (default: the first city with a priority-intersection list)")
     pg = sub.add_parser("programs", help="program agent: find a city's dated safety programs for the causal gate")
@@ -896,6 +924,8 @@ def main(argv: list[str] | None = None) -> int:
     ae.add_argument("--city", help="a registry city id (default: the first city with a saved screen)")
     pk = sub.add_parser("pack-cache", help="the replay cache for the GitHub release, contact details removed, refused if a key is found")
     pk.add_argument("--out", default="runs/release/nearmisslens_replay_cache.tar.gz")
+    pk.add_argument("--starter", action="store_true",
+                    help="write the small committed pack (replay/context/) the README's --replay example reads; run with --replay")
     pg2 = sub.add_parser("pages", help="the static copilot for GitHub Pages: one engineer report per screened corner (docs/)")
     pg2.add_argument("--city", help="a registry city id (default: the first city with a saved screen)")
     pg2.add_argument("--live", help="https URL of the live endpoint for addresses outside the precomputed corners")
@@ -921,6 +951,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"stopped by the spending cap: {e}")
     except brief.OutsideCoverage as e:  # a plain refusal, not a crash
         print(f"refused: {e}")
+    except FileNotFoundError as e:  # a public-data answer or saved run this copy does not have
+        if os.environ.get("NML_DEBUG"):
+            raise
+        if SETTINGS.replay:
+            print(f"not in the replay cache: {e}. A fresh clone holds the answers for the README's example only "
+                  f"(replay/); run without --replay to fetch the city's public records (free, needs network).")
+        else:
+            print(f"could not finish: {e}")
+    except OSError as e:  # e.g. the app's port is taken
+        if os.environ.get("NML_DEBUG"):
+            raise
+        hint = " (another program uses that port: try --port with another number)" if getattr(e, "errno", None) == 98 else ""
+        print(f"could not finish: {e}{hint}")
     except ValueError as e:  # a place not found and similar plain failures; NML_DEBUG=1 shows the traceback
         if os.environ.get("NML_DEBUG"):
             raise

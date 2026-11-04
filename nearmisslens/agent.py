@@ -41,6 +41,7 @@ class AgentRun:
     stopped: str = ""
     thoughts: list[dict] = field(default_factory=list)
     refusals: int = 0
+    cached_turns: int = 0  # turns answered from the cache: the same request was made before (no model call)
 
     def decision_log(self) -> list[dict]:
         return [{"turn": s.turn, "tool": s.tool, "arguments": s.arguments, "result": s.result} for s in self.steps]
@@ -164,7 +165,8 @@ def run_agent(client: MetaClient, model: str, instructions: str, task: str, tool
             run.usd += getattr(e, "usd", 0.0)  # T30b: a cut-off response was paid for but not counted
             run.stopped = f"incomplete: {e}"
             break
-        run.usd += cost(resp)[0]
+        run.usd += cost(resp)[0]  # a cached turn counts at its first run's price, so budgets stay conservative
+        run.cached_turns += bool(resp.get("_from_cache"))
         run.turns = turn
         if on_response is not None:
             on_response(resp)

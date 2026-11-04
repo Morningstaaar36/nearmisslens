@@ -38,12 +38,51 @@ def test_one_job_at_a_time_and_the_budget_is_reserved_then_settled(tmp_path):
         jobs.submit({"input": "z"})
 
 
-def test_a_failed_job_says_so_plainly_and_counts_its_reservation(tmp_path):
-    b = DailyBudget(usd=5, requests=10, path=tmp_path / "b.json")
-    jobs = Jobs(lambda q: 1 / 0, b, 0.5, tmp_path / "j")
-    rec = wait(jobs, jobs.submit({}))
-    assert rec["status"] == "failed" and "ZeroDivision" not in json.dumps(rec) and b.state()["usd"] == 0.5
+def test_a_failed_job_says_so_plainly_and_is_charged_what_it_spent(tmp_path):
+    """A failed job is charged the dollars the ledgers recorded while it ran, never more than its reservation; with
+    no reading at all, the whole reservation."""
+    for since, charged in ((lambda t: 0.0, 0.0), (lambda t: 0.2, 0.2), (lambda t: 9.0, 0.5), (None, 0.5)):
+        b = DailyBudget(usd=5, requests=10, path=tmp_path / f"b{charged}{since is None}.json")
+        jobs = Jobs(lambda q: 1 / 0, b, 0.5, tmp_path / "j", spent_since=since)
+        rec = wait(jobs, jobs.submit({}))
+        assert rec["status"] == "failed" and "ZeroDivision" not in json.dumps(rec)
+        assert b.state()["usd"] == pytest.approx(charged)
     assert jobs.status("../../etc") is None and jobs.status("0" * 16) is None
+
+
+def test_the_ledgers_are_read_for_what_a_failed_job_spent(tmp_path):
+    from nearmisslens.cost import usd_since
+    meta, open_ = tmp_path / "ledger.jsonl", tmp_path / "ledger_baseten.jsonl"
+    meta.write_text('{"t": 5, "usd": 0.5}\n{"t": 10, "usd": 0.25}\n{"t": 11, "us')  # the last line half-written
+    open_.write_text('{"t": 12, "usd": 0.125}\n')
+    assert usd_since([meta, open_, tmp_path / "none.jsonl"], 10) == pytest.approx(0.375)
+
+
+def test_a_runner_that_reports_an_error_is_a_failed_job_not_a_result(tmp_path):
+    """check.check returns {"status": "error"} rather than raising; the page must get a plain failure, not Python text."""
+    b = DailyBudget(usd=5, requests=10, path=tmp_path / "b.json")
+    jobs = Jobs(lambda q: {"status": "error", "reason": "ApiError: 503 upstream"}, b, 0.5, tmp_path / "j",
+                spent_since=lambda t: 0.1)
+    rec = wait(jobs, jobs.submit({}))
+    assert rec["status"] == "failed" and "result" not in rec and "ApiError" not in rec["error"]
+    assert "model service" in rec["error"] and b.state()["usd"] == pytest.approx(0.1)
+
+
+def test_a_real_check_that_hits_a_model_outage_fails_plainly(tmp_path, monkeypatch):
+    """End to end through check.check (not a stand-in runner): the model API fails mid-run."""
+    from nearmisslens.meta_client import ApiError
+
+    def outage(*a, **k):
+        raise ApiError(503, "upstream unavailable")
+    monkeypatch.setattr(check, "validate", lambda *a, **k: ("claim", {"id": "zz", "name": "Zed City"}))
+    jobs = Jobs(lambda q: check.check(q["input"], "zz", runner=outage, out_dir=tmp_path / "out"), None, 0.5,
+                tmp_path / "j")
+    rec = wait(jobs, jobs.submit({"input": "a claim about a corner"}))
+    assert rec["status"] == "failed" and rec["error"].startswith("the model service did not answer")
+    for kind, says in (("BudgetExceeded", "budget ran out"), ("ReplayMiss", "saved answers"),
+                       ("ConnectError", "public data source")):
+        assert says in __import__("nearmisslens.jobs", fromlist=["x"]).plain_reason(
+            type(kind, (RuntimeError,), {})("x"))
 
 
 def test_a_job_stopped_by_the_model_budget_says_that_not_a_data_source(tmp_path):
@@ -293,3 +332,39 @@ def test_one_visitor_cannot_use_up_the_day():
     assert not any("1.2.3.4" in k for k in lim._seen)
     lim.allow("9.9.9.9", now=500)
     assert len(lim._seen) == 1
+
+
+def test_refused_requests_do_not_use_up_a_visitors_hour(monkeypatch, tmp_path):
+    """In public mode a bad or refused request gives the visitor's slot back; only a started job counts."""
+    from nearmisslens import review
+    monkeypatch.setenv("NML_PUBLIC", "1")
+    monkeypatch.setenv("NML_VISITOR_JOBS_PER_HOUR", "2")
+    monkeypatch.setenv("NML_DAILY_USD", "5")
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    monkeypatch.setattr(check, "supported", lambda city: ({"id": city}, None) if city == "zz" else (None, "no crash data"))
+    monkeypatch.setattr(review, "review", lambda text, city, *a, **k: {"status": "published", "cost_usd": {"meta": 0.01}})
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            _call(base + "/cities")
+            break
+        except OSError:
+            time.sleep(0.05)
+    for _ in range(5):  # five refusals: none counts
+        assert _call(base + "/review", {"proposal": "short", "city": "zz"})[0] == 400
+        assert _call(base + "/review", {"proposal": "LPI at A St & B Ave, $10,000", "city": "la"})[0] == 422
+    codes = []
+    for _ in range(3):
+        code, body = _call(base + "/review", {"proposal": "LPI at A St & B Ave, $10,000", "city": "zz"})
+        codes.append(code)
+        if code == 202:
+            for _ in range(100):
+                if _call(f"{base}/review/{body['job']}")[1]["status"] != "running":
+                    break
+                time.sleep(0.05)
+    assert codes == [202, 202, 429]
+    req = urllib.request.Request(base + "/", method="HEAD")
+    with urllib.request.urlopen(req, timeout=5) as r:
+        assert r.status == 200 and r.read() == b""

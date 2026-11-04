@@ -28,12 +28,43 @@ class Paused(RuntimeError):
     pass
 
 
+class JobError(RuntimeError):
+    """A runner's own "status": "error" result, raised so it is a failed job and not a finished one."""
+
+    def __init__(self, reason: str, kind: str | None = None):
+        super().__init__(reason)
+        self.kind = kind or (reason.split(":", 1)[0] if ":" in reason else None)
+
+
+MODEL_ERRORS = ("ApiError", "IncompleteResponse")
+
+
+def plain_reason(e: Exception) -> str:
+    """One plain sentence for the visitor, naming which kind of service failed; the cause goes to the operator log."""
+    kind = getattr(e, "kind", None) or type(e).__name__
+    if kind == "BudgetExceeded":
+        return "the model budget ran out while it worked; try again tomorrow, saved results stay open"
+    if kind in MODEL_ERRORS:
+        return "the model service did not answer in time; try again in a few minutes"
+    if kind == "ReplayMiss":
+        return "this copy runs on saved answers only, and this request has none saved; run it with a model key"
+    return "it could not finish (a public data source did not answer); try again later"
+
+
+def ledgers_since(t: float) -> float:
+    """Meta and Baseten dollars recorded since t, from this server's ledgers."""
+    from .cost import usd_since
+    return usd_since([SETTINGS.ledger, SETTINGS.runs_dir / "ledger_baseten.jsonl"], t)
+
+
 class Jobs:
     def __init__(self, runner, budget=None, reserve_usd: float = 0.50, store: Path | None = None, slots: int = 1,
-                 busy: str = "another check is running; try again in a few minutes", plain: tuple = ()):
+                 busy: str = "another check is running; try again in a few minutes", plain: tuple = (),
+                 spent_since=ledgers_since):
         """runner(q) -> result dict (check.check's); budget: a DailyBudget in public mode, else None; slots: how many
-        jobs may run at once; plain: exception types whose message is already a plain sentence for the visitor."""
-        self.runner, self.budget, self.reserve_usd = runner, budget, reserve_usd
+        jobs may run at once; plain: exception types whose message is already a plain sentence for the visitor;
+        spent_since(t): dollars recorded since t, charged for a job that fails (None charges the reservation)."""
+        self.runner, self.budget, self.reserve_usd, self.spent_since = runner, budget, reserve_usd, spent_since
         self.store = store or SETTINGS.runs_dir / "checks" / "jobs"
         self.slots, self.busy, self.plain = slots, busy, plain
         self.lock = threading.Lock()
@@ -68,21 +99,30 @@ class Jobs:
         threading.Thread(target=self._run, args=(job, q), daemon=True).start()
         return job
 
+    def _measured(self, started: float) -> float:
+        """What the model ledgers recorded since the job started, at most its reservation: a failed job is charged
+        what it really spent (another job running at the same time can only make this an over-count)."""
+        if self.spent_since is None:
+            return self.reserve_usd
+        try:
+            return min(self.reserve_usd, max(0.0, float(self.spent_since(started))))
+        except Exception:  # noqa: BLE001: no reading, so the whole reservation, as before
+            return self.reserve_usd
+
     def _run(self, job: str, q: dict) -> None:
         started, spent = time.time(), 0.0
         try:
             result = self.runner(q)
+            if isinstance(result, dict) and result.get("status") == "error":  # a runner that reports, not raises
+                raise JobError(result.get("reason") or "the run failed", result.get("error_type"))
             spent = sum(float(v or 0.0) for v in (result.get("cost_usd") or {}).values())  # every model's dollars
             rec = {"status": "done", "started": started, "result": result}
         except self.plain as e:  # a plain refusal (a place not found, outside the cities): said as it is, nothing spent
             rec = {"status": "failed", "started": started, "error": str(e), "plain": True}
         except Exception as e:  # the visitor gets a plain sentence; the operator's log gets the cause
             print(f"{time.strftime('%H:%M:%S')} job failed: {type(e).__name__}: {e}", flush=True)
-            spent = self.reserve_usd  # unknown spend counts as the whole reservation
-            why = ("the model budget ran out while it worked; try again tomorrow, saved results stay open"
-                   if type(e).__name__ == "BudgetExceeded" else
-                   "it could not finish (a public data source did not answer); try again later")
-            rec = {"status": "failed", "started": started, "error": why}
+            spent = self._measured(started)
+            rec = {"status": "failed", "started": started, "error": plain_reason(e)}
         finally:
             if self.budget is not None:
                 self.budget.settle(self.reserve_usd, spent)

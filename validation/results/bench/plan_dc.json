@@ -105,10 +105,8 @@
    "letter": {
     "to": "the District Department of Transportation (DDOT)",
     "subject": "49 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 49 high-crash intersections in Washington DC where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 692 injury crashes that the records place at them (a crash placed at two of them counts for each). At 2 of them, a low-cost fix the evidence supports would avoid about 1.3 crashes a year, worth about $0.5 million a year at the U.S. DOT's values. At 24 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 49,
      "intersections_owner_recorded": 0,
@@ -644,10 +642,8 @@
    "letter": {
     "to": "the District Department of Transportation (DDOT) (route designation only; confirm ownership)",
     "subject": "15 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 15 high-crash intersections in Washington DC where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 175 injury crashes that the records place at them (a crash placed at two of them counts for each). None of them has a low-cost fix that the public evidence supports without a site visit. At 10 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 15,
      "intersections_owner_recorded": 0,

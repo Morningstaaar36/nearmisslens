@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.1 (November 4, 2026)
+
+Fixes from a fresh-clone walkthrough and a hardcoding and failure-path audit.
+
+**What a visitor sees**
+- The city plans' agency letters were all refused by the number checker ("number 100 is not in the dossier"): the letter
+  said "within 100 m", which is no longer how a corner's crashes are counted. It now says the crashes the records place
+  at the corners, and all 9 saved letters pass. Only the letters' text changed; every total is the same.
+- A failed job is charged what the model ledgers recorded while it ran (at most its reservation), not its whole
+  reservation: three failures could pause the live site's paid tasks for the day.
+- A failed claim check is a failed job with a plain sentence, not a "finished" result showing Python's error text at
+  $0 against the budget. A model outage says the model service did not answer, not that a data source failed.
+- A refused or invalid request no longer uses one of the visitor's 10 jobs an hour.
+- The working panel shows the time against the usual time and the steps in order; it no longer names a step as the
+  current one from the clock, since the server reports only that the job is running.
+- When the day's model budget is used, the task bar says so and when it resets; otherwise it shows the reset time.
+- A review answered entirely from an earlier identical run says so (no new model call; code rebuilt the verdict).
+- `HEAD /` answers 200 for uptime monitors.
+
+**For people running it**
+- The README's no-key command runs on a fresh clone: the public-data answers it reads ship in `replay/` (0.6 MB,
+  `nml --replay pack-cache --starter`), and a test runs it with an empty cache on every push.
+- `nml plan CITY` refuses plainly when no corner cases are saved, and writes to `runs/plans/` unless `--register`
+  (it overwrote the registered result before); `--letters-only` redrafts a saved plan's letters.
+- Plain messages instead of tracebacks for a replay miss, a taken port and `--example 0`.
+- The no-hardcoding test reads every corner in every registered result and case study, and checks every product
+  module for a branch on a city literal.
+- The README says what each city publishes, explains its terms, and its memo screenshot shows the current page.
+
 ## 1.0.0 (November 4, 2026)
 
 The first release meant for use by people outside the project: a public live site, a static copy on GitHub Pages,

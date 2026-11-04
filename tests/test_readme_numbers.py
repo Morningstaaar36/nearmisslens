@@ -213,7 +213,7 @@ def test_t32_numbers():
     assert frozen == scored  # the counts scored are the ones saved before the independent counts existed
     assert not c["rule_met"]
     _has(f"agrees at {c['tool_agree']} of 10 fresh corners")
-    _has(f"mean error {c['tool_mean_abs_error']} crashes against the 100 m circle's {c['circle_mean_abs_error']}")
+    _has(f"mean error {c['tool_mean_abs_error']} crashes, against {c['circle_mean_abs_error']} when every crash within 100 m is counted")
     _has(f"not met ({c['tool_agree']} of 10; mean error {c['tool_mean_abs_error']} crashes")
 
 

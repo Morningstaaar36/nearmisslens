@@ -11,9 +11,9 @@ Open the [live page](https://hussainshahraz720--nearmisslens-copilot-web.us-east
 ```bash
 git clone https://github.com/Morningstaaar36/nearmisslens && cd nearmisslens
 uv sync                                  # Python 3.12
+uv run nml cities                        # no key: which cities can be checked, and what each lacks
 echo "MODEL_API_KEY=..." > .env          # a Meta Model API key; never commit it
 set -a; . ./.env; set +a
-uv run nml cities                        # which cities can be checked, and what each lacks
 ```
 
 A Baseten key (`BASETEN_API_KEY`) is optional: with it, letters are drafted by Muse Spark Open; without it, by hosted
@@ -35,7 +35,7 @@ In the registered runs a case cost $0.06 to $0.13 of Meta API (it is capped by `
 it waiting for public map and data servers. The result is printed and saved as `runs/checks/<time>_<slug>/result.json`
 and `report.md`.
 
-The web app does the same: `uv run nml app`, open http://127.0.0.1:8770, choose "Check a claim".
+The web app does the same: `uv run nml app` (add `--port N` if 8770 is taken), open http://127.0.0.1:8770, choose "Check a claim".
 
 A city that is not in the registry, or has no crash data, gets a plain answer and no run. To add one:
 `nml add-city ID --name NAME --bbox LAT_MIN LON_MIN LAT_MAX LON_MAX --agency AGENCY`, then
@@ -101,7 +101,7 @@ What happens:
 3. Muse Spark Open (Baseten) red-teams the decision. It is shown every value in the receipts and must rest each objection on one of them; code keeps an objection only if that fact is in the receipt, drops one that rests on the verdict itself, and lets the red team replace dropped ones once. Dropped objections are saved with the reason.
 4. Muse Spark writes the memo, and the gate holds it to the code's verdict, the receipts' numbers and an answer to every kept objection.
 
-The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`, with `result.json` and `receipts.json` (the data behind every receipt id the memo cites). A review cost about $0.03 Meta plus $0.02 Muse Spark Open in development.
+The memo is printed and saved as `runs/reviews/<time>_<slug>/memo.md`, with `result.json` and `receipts.json` (the data behind every receipt id the memo cites). In the registered run (T28) a review cost $0.084 on average: $0.050 Meta plus $0.034 Muse Spark Open (`validation/results/bench/experiment_T28.json`).
 
 **The real proposals** in `validation/examples/proposals.json` come from agency plans, neighborhood commission resolutions, a community board letter, a petition and a news report. They are split by a fixed hash within each city:
 - `registered`: run by the project as T26;

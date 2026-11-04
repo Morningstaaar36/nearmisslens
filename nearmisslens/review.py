@@ -601,7 +601,8 @@ def review(text: str, city: str, client=None, letter_client=None, open_client=No
                                                             .get("letter") or "") or None,
            "receipts": {k: {"tool": v["tool"]} for k, v in rv.desk.receipts.items()},
            "cost_usd": {"meta": round(run.usd, 4), "open_weights_red_team": round(rv.red_team_usd, 4)},
-           "turns": run.turns, "seconds": round(time.time() - t0, 1), "asof": config_asof().isoformat(),
+           "turns": run.turns, "cached_turns": run.cached_turns, "seconds": round(time.time() - t0, 1),
+           "asof": config_asof().isoformat(),
            "trace": [{"turn": s.turn, "tool": s.tool,
                       "error": (s.result or {}).get("error") if isinstance(s.result, dict) else None,
                       "errors": (s.result or {}).get("errors") if isinstance(s.result, dict) else None}

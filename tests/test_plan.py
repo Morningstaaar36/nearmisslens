@@ -50,17 +50,27 @@ def test_agencies_split_and_presumed_owners_are_flagged():
 
 
 def test_agency_letter_is_number_checked_and_a_wrong_total_is_refused():
-    rows = [plan.corner(_case("a", [_opt("LPI", 2.0, "measured here")], injury=60)),
-            plan.corner(_case("b", [_opt("Backplates", 1.5, "FHWA-cited")], injury=40))]
-    idx = {r["slug"]: r for r in rows}
-    g = plan.by_agency(rows)[0]
-    good = plan.agency_letter("nyc", g, idx, "2026-10-31")
-    assert good["body"] and not good["refused"] and "100 injury crashes" in good["body"]
+    for a, b in ((60, 40), (63, 41)):  # 100 once equalled the 100 m radius in the letter, hiding that it was refused
+        rows = [plan.corner(_case("a", [_opt("LPI", 2.0, "measured here")], injury=a)),
+                plan.corner(_case("b", [_opt("Backplates", 1.5, "FHWA-cited")], injury=b))]
+        idx = {r["slug"]: r for r in rows}
+        g = plan.by_agency(rows)[0]
+        good = plan.agency_letter("nyc", g, idx, "2026-10-31")
+        assert good["body"] and not good["refused"] and f"{a + b} injury crashes" in good["body"], good["refused"]
     from nearmisslens.context import FactCheck
-    check = FactCheck(good["facts"])  # the record says 100 injury crashes and 3.5 avoided a year
+    check = FactCheck(good["facts"])  # the record says 104 injury crashes and 3.5 avoided a year
     assert check.text("the 2 high-crash intersections had 120 injury crashes.")
     assert check.text("a fix would avoid about 9 crashes a year.")
-    assert not check.text("the 2 high-crash intersections had 100 injury crashes.")
+    assert not check.text("the 2 high-crash intersections had 104 injury crashes.")
+
+
+def test_every_saved_plan_letter_passes_its_checks():
+    """The published plans' letters: a refused letter shows on the page as 'refused by the number checker'."""
+    import json
+    from pathlib import Path
+    for p in sorted(Path(plan.RESULTS_DIR, "bench").glob("plan_*.json")):
+        for g in json.loads(p.read_text())["agencies"]:
+            assert g["letter"]["body"] and not g["letter"]["refused"], (p.name, g["party"], g["letter"]["refused"])
 
 
 def test_regression_to_the_mean_is_measured_only_on_corners_without_a_project():

@@ -34,6 +34,11 @@ class DailyBudget:
     def _key(self) -> str:
         return dt.datetime.now(dt.timezone.utc).date().isoformat()
 
+    def resets(self) -> dt.datetime:
+        """When today's budget starts again: the next midnight, UTC (the day is the UTC date)."""
+        today = dt.datetime.now(dt.timezone.utc).date()
+        return dt.datetime.combine(today + dt.timedelta(days=1), dt.time(0), tzinfo=dt.timezone.utc)
+
     def _get(self) -> dict:
         if self.store is not None:
             return self.store.get(self._key(), {"usd": 0.0, "requests": 0})
@@ -108,3 +113,13 @@ class VisitorLimit:
                 return False, int(ts[0] - cut) + 1
             self._seen[key] = ts + [now]
             return True, 0
+
+    def refund(self, address: str) -> None:
+        """Give back the visitor's latest job: a request that was refused or failed before any work counts for nothing."""
+        key = hashlib.sha256(self._salt + address.encode()).hexdigest()[:20]
+        with self._lock:
+            ts = self._seen.get(key)
+            if ts:
+                ts.pop()
+                if not ts:
+                    del self._seen[key]

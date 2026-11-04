@@ -154,8 +154,16 @@ async function serviceStatus() {
   if (!el) return;
   if (LIVE === null) { el.className = "svc"; el.innerHTML = `<i></i>Saved results`; return; }
   if (!d) { el.className = "svc down"; el.innerHTML = `<i></i>Live server not answering: saved results still open`; return; }
+  const resets = svc.budget_resets_utc ? new Date(svc.budget_resets_utc).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}) : null;
+  if (svc.budget_usd != null && svc.review_reserve_usd != null && Number(svc.budget_left_usd) < Number(svc.review_reserve_usd)) {
+    // a review holds its worst case while it runs, so with less than that left new paid tasks wait for the next day
+    el.className = "svc down";
+    el.innerHTML = `<i></i>Today's model budget is used: new reviews start again${resets ? ` at ${esc(resets)} your time` : " tomorrow"}; saved results and corner look-ups still open`;
+    return;
+  }
   el.className = "svc up";
-  el.innerHTML = `<i></i>Live` + (svc.budget_usd != null ? `: $${Number(svc.budget_left_usd).toFixed(2)} of today's $${Number(svc.budget_usd).toFixed(2)} model budget left` : "");
+  el.innerHTML = `<i></i>Live` + (svc.budget_usd != null ? `: $${Number(svc.budget_left_usd).toFixed(2)} of today's $${Number(svc.budget_usd).toFixed(2)} model budget left` +
+    (resets ? ` · resets ${esc(resets)}` : "") : "");
 }
 
 async function coveredCities() {
@@ -304,13 +312,14 @@ const STAGES = {
 };
 
 function working(kind, secs, step = 1) {
-  // one line for what is happening now and a bar against the usual time; the strip above moves to its second box
+  // elapsed time against the usual time, and the steps in the order they run; the server reports only that the job
+  // is running, so no step is claimed as the current one
   if (step != null) markStep(step);
   const usual = (DURATIONS || {})[kind] || 120, list = STAGES[kind], t = secs || 0;
-  const now = list[Math.min(list.length - 1, Math.floor(t / (usual / list.length)))];
   return `<div class="working" role="status" aria-live="polite"><div class="bar" aria-hidden="true"><i style="width:${Math.min(95, 4 + 100 * t / usual).toFixed(0)}%"></i></div>` +
-    `<p><span class="spin" aria-hidden="true"></span><b>${Math.round(t)} s</b> · ${esc(now)}</p>` +
-    `<p class="legend">Usually ${minutes(usual)}. Keep this page open; the result appears here.</p></div>`;
+    `<p><span class="spin" aria-hidden="true"></span><b>${Math.round(t)} s</b> · running; usually ${minutes(usual)}</p>` +
+    `<details><summary>What it does, in order</summary><ol class="legend">${list.map(x => `<li>${esc(x)}</li>`).join("")}</ol></details>` +
+    `<p class="legend">Keep this page open; the result appears here.</p></div>`;
 }
 
 const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", mixed: "warn", reconsider: "bad"};
@@ -350,6 +359,7 @@ function reviewResult(r) {
       objs.map(o => `<li><b>${esc(o.id)}</b> ${esc(o.objection)} <span class="legend">[${esc(o.receipt)}: ${esc(o.field)} = ${esc(String(o.value))}]</span>` +
         (ans[o.id] ? `<br><i>Answer:</i> ${esc(ans[o.id].answer)} <span class="legend">[${esc(ans[o.id].receipt)}]</span>` : "") + `</li>`).join("") + `</ul></details>` : "") +
     (r.letter ? `<details class="more"><summary>Draft work order (number-checked; nothing is sent)</summary><pre class="letter">${esc(r.letter)}</pre></details>` : "") +
+    (r.turns && r.cached_turns === r.turns ? `<p class="legend"><b>Answered from the cache:</b> this exact proposal was reviewed before, so Muse Spark's answers come from that run (no new model call; the cost shown is that run's). Code rebuilt the verdict and re-checked every number now.</p>` : "") +
     `<p class="legend">Records as of ${esc(r.asof || "")} · $${esc(cost.meta)} Meta API + $${esc(cost.open_weights_red_team)} Muse Spark Open · ${Math.round(r.seconds || 0)} s</p>`;
 }
 

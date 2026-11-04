@@ -121,10 +121,8 @@
    "letter": {
     "to": "the San Francisco Municipal Transportation Agency (SFMTA)",
     "subject": "50 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 50 high-crash intersections in San Francisco where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 768 injury crashes that the records place at them (a crash placed at two of them counts for each). At 40 of them, a low-cost fix the evidence supports would avoid about 20.8 crashes a year, worth about $7.0 million a year at the U.S. DOT's values. At 7 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 50,
      "intersections_owner_recorded": 0,
@@ -662,10 +660,8 @@
    "letter": {
     "to": "the California Department of Transportation (Caltrans) (route designation only; confirm ownership)",
     "subject": "7 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 7 high-crash intersections in San Francisco where we take you to be responsible for at least one of the roads, because the state's road inventory does not list them had 138 injury crashes that the records place at them (a crash placed at two of them counts for each). At 7 of them, a low-cost fix the evidence supports would avoid about 3.6 crashes a year, worth about $1.2 million a year at the U.S. DOT's values. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 7,
      "intersections_owner_recorded": 0,

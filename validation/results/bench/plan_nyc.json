@@ -658,10 +658,8 @@
    "letter": {
     "to": "the NYC Department of Transportation (NYC DOT)",
     "subject": "303 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 303 high-crash intersections in New York City where you are responsible for at least one of the roads (listed in the road-owner records at 26 of them, and taken to be yours at the rest because the state's road inventory does not list them) had 4,541 injury crashes that the records place at them (a crash placed at two of them counts for each). At 142 of them, a low-cost fix the evidence supports would avoid about 51.9 crashes a year, worth about $17.5 million a year at the U.S. DOT's values. At 138 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 303,
      "intersections_owner_recorded": 26,
@@ -3733,10 +3731,8 @@
    "letter": {
     "to": "the New York State Department of Transportation (NYSDOT), Region 11",
     "subject": "11 high-crash intersections on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 11 high-crash intersections in New York City where the road-owner records list you for at least one of the roads had 253 injury crashes that the records place at them (a crash placed at two of them counts for each). At 7 of them, a low-cost fix the evidence supports would avoid about 6.3 crashes a year, worth about $2.1 million a year at the U.S. DOT's values. At 2 more, a fix needs a site check first; the table names what to check. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at each intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 11,
      "intersections_owner_recorded": 11,
@@ -3878,10 +3874,8 @@
    "letter": {
     "to": "MTA Bridges and Tunnels (the Triborough Bridge and Tunnel Authority)",
     "subject": "1 high-crash intersection on your roads",
-    "body": null,
-    "refused": [
-     "number 100 is not in the dossier"
-    ],
+    "body": "In the 5 years of public police crash records up to 2026-10-31, the 1 high-crash intersection in New York City where the road-owner records list you for at least one of the roads had 0 injury crashes that the records place at them (a crash placed at two of them counts for each). None of them has a low-cost fix that the public evidence supports without a site visit. The table lists each intersection, the fix and the evidence behind it. We ask for a safety review at the intersection and for the fixes listed, and a reply on which you will take up.",
+    "refused": [],
     "facts": {
      "intersections": 1,
      "intersections_owner_recorded": 1,
