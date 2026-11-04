@@ -154,3 +154,56 @@ form.ask .examples,form.ask textarea{flex:1 1 100%}
 form.ask textarea{width:100%;min-height:96px;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);resize:vertical}
 form.ask select,form.ask input:not([type=checkbox]){font:inherit;font-size:15px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
 form.ask button[type=submit],form.ask>button:last-child{margin-left:auto}
+
+/* v2: the road's own vocabulary. Asphalt bar with a dashed centre line; verdicts as signs (guide, warning diamond,
+   octagon); Overpass (Highway Gothic's descendant) for headings, Atkinson Hyperlegible for reading. */
+:root{--asphalt:#2E3439;--marking:#F2B705;--signgo:#00704A;--signstop:#C8102E;--paper:#F1F2EE;--sheet:#FFFFFF;--ink:#1E252B;--mut:#58626B;--rule:#D3D8D2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--asphalt:#1B1F23;--paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#A8B0B6;--rule:#3F464C;--signgo:#2E9C6E;--signstop:#E0485C}}
+:root[data-theme="dark"]{--asphalt:#1B1F23;--paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#A8B0B6;--rule:#3F464C;--signgo:#2E9C6E;--signstop:#E0485C}
+body{font:17px/1.6 "Atkinson Hyperlegible",system-ui,sans-serif}
+h1,h2,h3,h4,.logo,nav.tasks a,button,.vlabel,.cards .t{font-family:"Overpass",system-ui,sans-serif}
+.topbar{background:var(--asphalt);border-bottom:0;position:sticky;box-shadow:inset 0 -4px 0 0 transparent}
+.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--marking) 0 28px,transparent 28px 48px)}
+.logo{color:#fff}
+nav.tasks a{color:#E6E9EC}
+nav.tasks a:hover{background:rgba(255,255,255,.08)}
+nav.tasks a[aria-current="page"]{background:var(--marking);color:#1E252B}
+.start h2{max-width:22ch;font-size:clamp(30px,4vw,46px)}
+h3.ask{font-size:22px;margin:26px 0 12px}
+.cards a{border-radius:10px;background:var(--sheet)}
+.cards a.primary{border:2px solid var(--marking);box-shadow:none}
+.cards .go{font-family:"Overpass",system-ui,sans-serif;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+ol.steps{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:14px 0 22px;counter-reset:st}
+ol.steps li{counter-increment:st;display:flex;align-items:baseline;gap:8px;color:var(--mut);font-size:15px;max-width:30ch}
+ol.steps li::before{content:counter(st);flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--rule);font:800 14px "Overpass",sans-serif;color:var(--mut)}
+ol.steps li[aria-current="step"]{color:var(--ink)}
+ol.steps li[aria-current="step"]::before{background:var(--marking);border-color:var(--marking);color:#1E252B}
+.flabel{flex:1 1 100%;font-weight:700;font-size:16px}
+.vcard{display:flex;gap:18px;align-items:flex-start;padding:18px 20px;margin:16px 0;border-radius:10px;background:var(--sheet);border:1px solid var(--rule);max-width:780px}
+.vcard.go{border-left:6px solid var(--signgo)}.vcard.warn{border-left:6px solid var(--marking)}.vcard.stop{border-left:6px solid var(--signstop)}
+.vtext{min-width:0}.vtext p{margin:0 0 6px}
+.vlabel{font-size:24px;font-weight:800;line-height:1.15;margin:0 0 6px!important}
+.vnext{font-size:15px}
+.vsign{flex:none;width:64px;height:64px;display:grid;place-items:center;font:800 28px "Overpass",sans-serif}
+.vsign.go{background:var(--signgo);color:#fff;border-radius:8px;box-shadow:inset 0 0 0 3px var(--signgo),inset 0 0 0 5px #fff}
+.vsign.warn{width:52px;height:52px;margin:6px;background:var(--marking);color:#111;transform:rotate(45deg);border-radius:6px;box-shadow:inset 0 0 0 3px #111}
+.vsign.warn span{transform:rotate(-45deg)}
+.vsign.stop{background:var(--signstop);color:#fff;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+.working{border:1px dashed var(--rule);border-radius:10px;padding:16px 20px;max-width:780px;background:var(--sheet)}
+.working ol{margin:4px 0 8px;padding-left:22px;color:var(--mut)}
+.working p{margin:0 0 6px}
+.spin{display:inline-block;width:14px;height:14px;margin-right:8px;border:3px solid var(--rule);border-top-color:var(--marking);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+form.ask button{background:var(--asphalt);color:#fff;padding:11px 18px}
+form.ask button:hover{background:var(--ink)}
+.examples button{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-weight:400}
+details summary{font-size:15px}
+#sample{margin:8px 0 10px}
+
+.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
+ol.steps li span{display:block}
+form.ask .examples button{background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);padding:6px 12px;font-size:14px;border-radius:999px}
+form.ask .examples button:hover{border-color:var(--ink);background:var(--sheet)}
+.examples .hint{flex:1 1 100%}

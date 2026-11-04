@@ -23,6 +23,8 @@ async function getJSON(url, opts) {
 }
 
 let CITY = null;
+const CITY_NAMES = {};  // city id -> name, from the site's own index (a fallback when the live list cannot be reached)
+const cityName = id => CITY_NAMES[id] || String(id || "").replace(/^./, ch => ch.toUpperCase());
 
 function route() {
   // "#city/corner", "#corner" (the default city) or "#city"
@@ -37,6 +39,7 @@ async function boot() {
     $("citynote").textContent = `The city list did not load (${e.message}).`; return;
   }
   const r = route(), ids = (top.cities || []).map(c => c.id);
+  for (const c of top.cities || []) CITY_NAMES[c.id] = c.name;
   CITY = ids.includes(r.city) ? r.city : ids.includes(r.corner) ? r.corner : top.default;
   if (ids.length > 1) {
     $("cityswitch").innerHTML = `<label for="city">City</label> <select id="city">` + top.cities.map(c =>
@@ -100,22 +103,42 @@ function showStart() {
   setView("start");
   const live = LIVE !== null;
   const card = (href, t, d, k, primary) => `<li><a href="${href}"${primary ? ' class="primary"' : ""}><span class="t">${t}</span>` +
-    `<span class="d">${d}</span><span class="k">${k}</span><span class="go">Start →</span></a></li>`;
-  $("out").innerHTML = `<section class="start"><p class="where">For engineers and agencies in ${esc(INDEX.city_name)} and the other covered cities</p>` +
-    `<h2>Check a street-safety project against the city's own crash record before money is spent</h2>` +
-    `<p class="lede">Describe a proposed fix, paste a news story, or pick a corner. Meta's models do the research; code checks every ` +
-    `number against the public record and every quote against its page, and says so when the evidence does not cover a fix.</p>` +
-    `<ul class="cards">` +
+    `<span class="d">${d}</span><span class="k">${k}</span><span class="go">${primary ? "Start here" : "Open"}</span></a></li>`;
+  $("out").innerHTML = `<section class="start"><h2>Check a street-safety project against the city's own crash record before money is spent</h2>` +
+    `<p class="lede">For traffic engineers and agencies in <span id="citylist">the covered cities</span>. ` +
+    `Meta's models do the research; code sets every verdict and checks every number and quote.</p>` +
+    `<h3 class="ask">What do you want to do?</h3><ul class="cards">` +
     card("#review", "Review a project", "One proposed fix at one intersection: is it supported here, what would it avoid, what does the record say against it?", live ? "About 1–2 minutes" : "Saved reviews", true) +
     card("#program", "Review a list", "Two to four proposals, or a whole program: each reviewed, then ranked by what the evidence supports, within your budget.", live ? "A few minutes" : "Saved program reviews") +
     card("#check", "Check a claim", "A news link or an official's statement about a corner, tested against the crash record.", live ? "About 2 minutes" : "Saved checks") +
     card("#corners", "Look up a corner", `The worst corners in ${esc(INDEX.city_name)}: what their crashes have in common, what was tried, who must act.`, "Opens at once") +
-    `</ul><h3>How a review works</h3><ol class="how">` +
+    `</ul><div id="sample"></div><h3>How a review works</h3><ol class="how">` +
     `<li>Muse Spark reads your proposal and investigates the corner with checked tools: crash records, past city programs, federal crash-reduction studies, road owners.</li>` +
     `<li>Code, not the model, sets the verdict: proceed, check on site first, compare, not covered by the evidence, or reconsider.</li>` +
     `<li>A second model argues against the verdict. Code keeps an objection only if its fact is in the record, and the memo answers each one.</li>` +
     `</ol><p class="legend">Every registered test, passed or not, is in <a href="https://github.com/Morningstaaar36/nearmisslens#how-we-kept-ourselves-honest">the repository</a>. ` +
     `${live ? "Live work runs under a daily budget; saved results always open." : ""}</p></section>`;
+  sampleResult();
+  coveredCities();
+}
+
+async function coveredCities() {
+  // the cities this copy can check, from the server (or the site's own index when it cannot be reached)
+  let names = [];
+  try { names = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable).map(c => c.name); } catch (e) { /* below */ }
+  if (!names.length) names = Object.values(CITY_NAMES);
+  if (names.length && $("citylist")) $("citylist").textContent = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names.at(-1) : names[0];
+}
+
+async function sampleResult() {
+  // a real saved review, so a visitor sees what comes back before starting
+  let d;
+  try { d = await getJSON("data/reviews.json"); } catch (e) { return; }
+  const c = (d.cases || []).find(x => x.verdict === "reconsider" && (x.appraisal || {}).in_place) || (d.cases || [])[0];
+  if (!c || !$("sample")) return;
+  $("sample").innerHTML = `<h3>What you get back</h3><p class="legend">A real review from the saved runs. Proposal: ${esc(c.input)}</p>` +
+    verdictCard(c.verdict, `<p class="legend">Why: ${esc(((c.appraisal || {}).reasons || [])[0] || "")}</p>`) +
+    `<p><a href="#review">Review a project of your own</a></p>`;
 }
 
 async function showCorners() {
@@ -129,16 +152,18 @@ async function showCorners() {
 async function showProgram() {
   // a whole list: each proposal reviewed, then grouped and ranked by code
   setView("program");
-  const head = `<p class="where">Review a list</p><h2 class="corner">Review a list of proposed projects</h2>` +
-    `<p class="lede">Paste two to four proposals, one per line, each with its intersection and, if you know it, its cost. ` +
-    `Each is reviewed like a single project; then code groups the list (build, check on site first, compare, study, ` +
-    `reconsider) and fits your budget.</p>`;
+  const head = `<p class="where">Review a list</p><h2 class="corner">Which of these projects should be built first?</h2>` +
+    `<p class="lede">Paste two to four proposals, one per line. Each is reviewed like a single project; then the list is sorted ` +
+    `into build, check on site first, compare, needs a study, and reconsider, and fitted to your budget.</p>` +
+    steps(["<b>Paste</b> one project per line, with its intersection and cost", "<b>We review</b> each one: a few minutes",
+           "<b>Read the ranked list</b> and what fits the budget"], 0);
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` + (await savedPrograms());
     return;
   }
   let cities = [];
   try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
+  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
   $("out").innerHTML = head + programForm(cities) + (await savedPrograms());
   wireProgram();
 }
@@ -147,6 +172,61 @@ const TIER = {"measured here": "passed the causal gate in this city (estimate us
 
 const VERDICT_LABEL = {proceed: "proceed", proceed_after_site_check: "proceed after a site check", compare_alternative: "compare first",
   outside_evidence: "not covered by the evidence", mixed: "decide part by part", reconsider: "reconsider"};
+// each verdict as a road sign: guide (go), warning diamond, or the octagon (stop and reconsider), with what it means
+const VERDICT_INFO = {
+  proceed: {shape: "go", glyph: "✓", label: "Proceed",
+    meaning: "The crash record shows the crashes this fix targets, and the evidence for it fits this kind of site.",
+    next: "Go ahead with design. The memo says how many injury crashes it is expected to avoid."},
+  proceed_after_site_check: {shape: "warn", glyph: "!", label: "Proceed after a site check",
+    meaning: "The fix fits, but its estimate assumes something public data cannot show, such as the signal timing or the traffic control.",
+    next: "Confirm that condition at the corner, then proceed."},
+  compare_alternative: {shape: "warn", glyph: "!", label: "Compare first",
+    meaning: "Another proven fix is expected to avoid at least twice as many crashes here.",
+    next: "Compare the two before committing money."},
+  outside_evidence: {shape: "warn", glyph: "?", label: "Not covered by the evidence",
+    meaning: "No federal crash-reduction study fits this fix at this site, so no reduction can be promised.",
+    next: "Decide on a site study and an engineer's assessment, or fund a before-and-after study."},
+  mixed: {shape: "warn", glyph: "!", label: "Decide part by part",
+    meaning: "The parts of this proposal get different verdicts.",
+    next: "Read each part's verdict in the table below."},
+  reconsider: {shape: "stop", glyph: "✕", label: "Reconsider",
+    meaning: "The record or the evidence does not support this fix here as proposed: it may already be installed, or the record shows none of the crashes it targets.",
+    next: "Read the reasons before funding it."},
+};
+
+function verdictCard(v, extra) {
+  const i = VERDICT_INFO[v];
+  if (!i) return "";
+  return `<div class="vcard ${i.shape}"><div class="vsign ${i.shape}" aria-hidden="true"><span>${i.glyph}</span></div>` +
+    `<div class="vtext"><p class="vlabel">${esc(i.label)}</p><p>${esc(i.meaning)}</p>` +
+    `<p class="vnext"><b>Next:</b> ${esc(i.next)}</p>${extra || ""}</div></div>`;
+}
+
+function steps(items, now) {
+  // the task as a sequence the visitor can see: what they do, what happens, what they get
+  return `<ol class="steps">` + items.map((t, k) => `<li${k === now ? ' aria-current="step"' : ""}><span>${t}</span></li>`).join("") + `</ol>`;
+}
+
+const STAGES = {
+  review: ["Reads your proposal and matches each part to the federal list of proven fixes",
+           "Finds the intersection and its police crash records (the corner's own crashes)",
+           "Checks the city's past safety programs and the evidence for each fix",
+           "Code sets the verdict",
+           "A second model argues against the verdict; code keeps only objections whose facts check out",
+           "Writes the memo, which must answer every objection"],
+  check: ["Reads the source you gave", "Finds the intersection it names", "Pulls that corner's crash record",
+          "Tests every number and every quote", "Writes the case, or says why it cannot"],
+  program: ["Reviews each project like a single review, three at a time", "Groups them by verdict",
+            "Ranks the supported ones by crashes avoided per dollar and fits your budget"],
+};
+
+function working(kind, secs, typical) {
+  return `<div class="working" role="status" aria-live="polite"><p><span class="spin" aria-hidden="true"></span>` +
+    `<b>Working: ${Math.round(secs || 0)} s</b> <span class="legend">(usually ${typical})</span></p>` +
+    `<p class="legend">What happens now:</p><ol>${STAGES[kind].map(t => `<li>${t}</li>`).join("")}</ol>` +
+    `<p class="legend">Keep this page open; the result appears here.</p></div>`;
+}
+
 const VERDICT_CLASS = {proceed: "ok", proceed_after_site_check: "warn", compare_alternative: "warn", outside_evidence: "warn", mixed: "warn", reconsider: "bad"};
 
 function reviewResult(r) {
@@ -155,13 +235,15 @@ function reviewResult(r) {
   const a = r.appraisal || {}, m = r.memo || {}, ans = {};
   for (const x of m.answers || []) ans[x.objection] = x;
   const cost = r.cost_usd || {};
-  return `<p class="verdict ${VERDICT_CLASS[r.verdict] || ""}"><b>${esc(r.verdict_text)}</b> <span class="legend">(set by code from the receipts)</span></p>` +
+  return verdictCard(r.verdict, `<p class="legend">Set by code from the records, not by the model.</p>`) +
     ((a.parts || []).length > 1 ? `<table><tr><th>Part</th><th>Verdict</th></tr>${a.parts.map(x =>
       `<tr><td>${esc(x.countermeasure === "other" ? x.what : x.countermeasure)}</td><td>${esc(x.verdict_text)}</td></tr>`).join("")}</table>` : "") +
     `<ul>${(a.reasons || []).map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
     `<p>${esc(m.summary || "")}</p>` +
-    `<h4>Findings</h4><ul>${(m.findings || []).map(f => `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("")}</ul>` +
-    ((r.objections || []).length ? `<h4>Pre-mortem: the red team (Muse Spark Open), facts checked by code</h4><ul>` +
+    `<h4>What the record shows</h4><p class="legend">Each sentence names its receipt (D1, D2…): the data it came from, so any number can be checked.</p>` +
+    `<ul>${(m.findings || []).map(f => `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("")}</ul>` +
+    ((r.objections || []).length ? `<h4>The case against this verdict</h4><p class="legend">A second model (Muse Spark Open) argued against the verdict. ` +
+      `Code kept an objection only if the fact it rests on is in the record, and the memo answers each one.</p><ul>` +
       r.objections.map(o => `<li><b>${esc(o.id)}</b> ${esc(o.objection)} <span class="legend">[${esc(o.receipt)}: ${esc(o.field)} = ${esc(String(o.value))}]</span>` +
         (ans[o.id] ? `<br><i>Answer:</i> ${esc(ans[o.id].answer)} <span class="legend">[${esc(ans[o.id].receipt)}]</span>` : "") + `</li>`).join("") + `</ul>` : "") +
     (r.letter ? `<details><summary>Draft work order (Muse Spark Open, number-checked; nothing is sent)</summary><pre class="letter">${esc(r.letter)}</pre></details>` : "") +
@@ -173,7 +255,7 @@ async function savedReviews() {
   try { d = await getJSON("data/reviews.json"); } catch (e) { return ""; }
   const s = d.summary;
   const tryRows = (d.try || []).map(t => `<li>${esc(t.city)}: ${esc(t.proposal)} <span class="legend">(${esc({held_out: "held out: never run by the project", independent: "run by an independent tester", team: "tried by the team"}[t.split] || t.split)}; <a href="${esc(t.source)}" target="_blank" rel="noopener">source</a>)</span></li>`).join("");
-  return `<section class="step"><h3>Saved reviews: ${esc(d.run)}, real proposed projects</h3>` +
+  return `<section class="step"><h3>Reviews already run on real proposals</h3><p>Open one to read the full memo: the verdict, the reasons, and the case against it.</p>` +
     `<p class="legend">Registered in ${esc(d.registered)}. ${s.published} of ${s.inputs} memos published; every verdict set by code; ` +
     `${s.objections_kept} red-team objections kept after their facts were checked. Rule ${s.rule_met ? "met" : "not met"}; ` +
     `mean $${Number(s.mean_usd).toFixed(3)} per review.</p>` +
@@ -191,7 +273,7 @@ async function reviewExamples(cities) {
   const box = document.createElement("div");
   box.className = "examples";
   box.innerHTML = `<span class="hint">Try a real proposal:</span>` + rows.map((t, i) =>
-    `<button type="button" data-i="${i}">${esc((cities.find(c => c.id === t.city) || {}).name || t.city)}: ${esc(t.proposal.slice(0, 70))}${t.proposal.length > 70 ? "…" : ""}</button>`).join("");
+    `<button type="button" data-i="${i}">${esc((cities.find(c => c.id === t.city) || {}).name || cityName(t.city))}: ${esc(t.proposal.slice(0, 70))}${t.proposal.length > 70 ? "…" : ""}</button>`).join("");
   $("reviewin").before(box);
   box.onclick = e => {
     const b = e.target.closest("button[data-i]");
@@ -206,11 +288,11 @@ async function reviewExamples(cities) {
 async function showReview() {
   // Before you commit: a proposed project, reviewed against the city's record before anyone commits money to it
   setView("review");
-  const head = `<p class="where">Before you commit</p><h2 class="corner">Review a proposed project before funding it</h2>` +
-    `<p class="lede">Describe the project as you would to a colleague: the fix, the intersection, the cost. Muse Spark registers it ` +
-    `against the federal list of proven countermeasures and investigates the corner with the checked tools. Code tests it against ` +
-    `the crash record and sets the verdict. Muse Spark Open argues against it, and code keeps only objections whose facts are in ` +
-    `the record. The memo must answer every one. A review takes a few minutes.</p>`;
+  const head = `<p class="where">Review a project</p><h2 class="corner">Is this fix worth funding at this corner?</h2>` +
+    `<p class="lede">Describe what you plan to build and where. You get a verdict, the reasons from the corner's own crash record, ` +
+    `and the strongest case against it.</p>` +
+    steps(["<b>Describe</b> the fix, the intersection and, if you know it, the cost", "<b>We investigate</b> the corner: about 1 to 2 minutes",
+           "<b>Read the verdict</b>, why, and what to do next"], 0);
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml review "Leading pedestrian intervals at Street A &amp; Street B, about $15,000" --city CITY</code>, ` +
       `or a whole list: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` +
@@ -219,15 +301,17 @@ async function showReview() {
   }
   let cities = [];
   try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* none */ }
-  $("out").innerHTML = head + `<form id="reviewform" class="search ask"><textarea id="reviewin" maxlength="1500" rows="3" ` +
-    `placeholder="e.g. Leading pedestrian intervals at Street A &amp; Street B, about $15,000"></textarea>` +
+  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  $("out").innerHTML = head + `<form id="reviewform" class="search ask"><label class="flabel" for="reviewin">What do you plan to build, and where?</label>` +
+    `<textarea id="reviewin" maxlength="1500" rows="3" ` +
+    `placeholder="For example: Rapid flashing beacons at Street A &amp; Street B, about $60,000"></textarea>` +
     `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
-      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review</button></form>` +
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review this project</button></form>` +
     `<div id="reviewout"></div>` + await savedReviews();
   await reviewExamples(cities);
   $("reviewform").onsubmit = async ev => {
     ev.preventDefault();
-    $("reviewout").innerHTML = `<p class="busy">Starting…</p>`;
+    $("reviewout").innerHTML = working("review", 0, "1 to 2 minutes");
     let job;
     try {
       job = (await getJSON(`${LIVE}review`, {method: "POST", headers: {"Content-Type": "application/json"},
@@ -238,7 +322,7 @@ async function showReview() {
       let rec;
       try { rec = await getJSON(`${LIVE}review/${encodeURIComponent(job)}`); }
       catch (e) { $("reviewout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("reviewout").innerHTML = `<p class="busy">Reviewing… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "running") { $("reviewout").innerHTML = working("review", rec.seconds, "1 to 2 minutes"); continue; }
       if (rec.status === "failed") { $("reviewout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("reviewout").innerHTML = reviewResult(rec.result);
       return;
@@ -270,24 +354,47 @@ function programResult(p) {
 async function savedPrograms() {
   let d;
   try { d = await getJSON("data/programs.json"); } catch (e) { return ""; }
-  return `<section class="step"><h3>Saved program reviews: ${esc(d.run)}, real program lists</h3><p class="legend">${esc(d.note || "")}</p>` +
+  return `<section class="step"><h3>Lists already reviewed: real agency programs</h3><p class="legend">${esc(d.note || "")}</p>` +
     d.programs.map(p => `<details><summary>${esc(p.city_name || p.city)} · ${esc(p.title)} · ${p.totals.proposals} proposals</summary>` +
       `<p class="legend">Source: <a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(p.agency || "the agency")}</a></p>${programResult(p)}</details>`).join("") + `</section>`;
 }
 
 function programForm(cities) {
-  return `<p class="hint">The command line (<code>nml portfolio list.txt --city CITY --budget-total 500000</code>) takes up to 25, or reads them from an agency's web page (<code>--from-url</code>).</p>` +
-    `<form id="programform" class="search ask"><textarea id="programin" rows="4" aria-label="Proposals, one per line" ` +
-    `placeholder="Rapid flashing beacons at Street A &amp; Street B, $45,000&#10;A refuge island at Street C &amp; Street D"></textarea>` +
+  return `<form id="programform" class="search ask"><label class="flabel" for="programin">Your projects, one per line</label>` +
+    `<div class="examples" id="programexamples"></div>` +
+    `<textarea id="programin" rows="4" ` +
+    `placeholder="Rapid flashing beacons at Street A &amp; Street B, $60,000&#10;Curb extensions at Street C &amp; Street D, $40,000"></textarea>` +
     `<label for="programcity">City</label> <select id="programcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
-    `<label for="programbudget">Budget $</label> <input id="programbudget" type="number" min="0" step="1000" style="width:8em"> <button>Review the list</button></form><div id="programout"></div>`;
+    `<label for="programbudget">Budget in dollars (optional)</label> <input id="programbudget" type="number" min="0" step="1000" style="width:9em"> <button>Review the list</button></form>` +
+    `<p class="hint">For longer lists (up to 25), or to read the projects straight from an agency's web page, use the command line: ` +
+    `<code>nml portfolio list.txt --city CITY --budget-total 500000</code> or <code>--from-url</code> (see TESTING.md).</p><div id="programout"></div>`;
+}
+
+async function programExamples() {
+  // a real list: the first two projects of a saved agency program, to fill the form with one click
+  let d;
+  try { d = await getJSON("data/programs.json"); } catch (e) { return; }
+  const box = $("programexamples");
+  const progs = (d.programs || []).map(p => ({p, rows: Object.values(p.groups || {}).flat().slice(0, 2)})).filter(x => x.rows.length === 2);
+  if (!box || !progs.length) return;
+  box.innerHTML = `<span class="hint">Try a real list:</span>` + progs.map((x, i) =>
+    `<button type="button" data-i="${i}">${esc(x.p.city_name || cityName(x.p.city))}: ${esc(x.p.title.slice(0, 48))}${x.p.title.length > 48 ? "…" : ""} (2 projects)</button>`).join("");
+  box.onclick = e => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    const x = progs[+b.dataset.i];
+    $("programin").value = x.rows.map(r => r.input).join("\n");
+    if ($("programcity")) $("programcity").value = x.p.city;
+    $("programin").focus();
+  };
 }
 
 function wireProgram() {
+  programExamples();
   $("programform").onsubmit = async ev => {
     ev.preventDefault();
-    $("programout").innerHTML = `<p class="busy">Starting…</p>`;
+    $("programout").innerHTML = working("program", 0, "a few minutes");
     const budget = Number($("programbudget").value) || null;
     let job;
     try {
@@ -299,7 +406,7 @@ function wireProgram() {
       let rec;
       try { rec = await getJSON(`${LIVE}portfolio/${encodeURIComponent(job)}`); }
       catch (e) { $("programout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("programout").innerHTML = `<p class="busy">Reviewing the list… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "running") { $("programout").innerHTML = working("program", rec.seconds, "a few minutes"); continue; }
       if (rec.status === "failed") { $("programout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("programout").innerHTML = programResult(rec.result);
       return;
@@ -312,7 +419,7 @@ async function savedChecks() {
   let d;
   try { d = await getJSON("data/checks.json"); } catch (e) { return ""; }
   const s = d.summary, m = s.met, ok = v => v ? "met" : "not met";
-  return `<section class="step"><h3>Saved checks: ${esc(d.run)}, ${s.inputs} inputs fixed before the run</h3>` +
+  return `<section class="step"><h3>Checks already run on real inputs</h3><p class="legend">${s.inputs} inputs fixed before the run (registered test ${esc(d.run)}).</p>` +
     `<p class="legend">Registered in ${esc(d.registered)}. ${s.published_real} of ${s.real} real inputs published (${ok(m.published)}); ` +
     `${s.quotes_verified} of ${s.quotes_published} published quotes found on their page; the off-topic page ${s.offtopic_published ? "was" : "was not"} published ` +
     `and the false zero-crash statement was ${esc(s.false_claim_status)} (${esc((s.false_claim_verdicts || []).join("; ") || "no verdict")}). ` +
@@ -334,12 +441,14 @@ async function showCheck() {
   }
   let cities = [];
   try { cities = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable); } catch (e) { /* listed below */ }
-  $("out").innerHTML = `<p class="where">Check a claim</p><h2 class="corner">Check a news story or a claim about a corner</h2>` +
-    `<p class="lede">A news link, an official's claim, or a resident's report. Muse Spark finds and reads the source, ` +
-    `investigates the corner with the checked tools and tests each number against the city's own crash record; code ` +
-    `refuses any quote not on its page and any number not in the record. A case takes a few minutes; one runs at a time, ` +
-    `under a daily budget.</p>` +
-    `<form id="checkform" class="search ask"><textarea id="checkin" maxlength="2000" rows="3" ` +
+  if (!cities.length) cities = Object.entries(CITY_NAMES).map(([id, name]) => ({id, name}));
+  $("out").innerHTML = `<p class="where">Check a claim</p><h2 class="corner">Is what was said about this corner true?</h2>` +
+    `<p class="lede">Paste a news link, an official's statement, or a resident's report. Each number is tested against the ` +
+    `city's crash record, and each quote against its page.</p>` +
+    steps(["<b>Paste</b> a link or a statement", "<b>We check</b> it against the record: about 2 minutes",
+           "<b>Read</b> which claims hold, which differ, and which the record cannot test"], 0) +
+    `<form id="checkform" class="search ask"><label class="flabel" for="checkin">A news link, or the statement itself</label>` +
+    `<textarea id="checkin" maxlength="2000" rows="3" ` +
     `placeholder="https://… a news story, or: The council says this corner had 30 crashes last year"></textarea>` +
     `<label for="checkcity">City</label> <select id="checkcity">${cities.map(c =>
       `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
@@ -353,7 +462,7 @@ async function showCheck() {
     const report = $("checkreport").checked;
     const body = {input: $("checkin").value, city: $("checkcity").value, kind: report ? "report" : null,
                   address: report ? $("checkaddr").value : null, photo: report ? $("checkphoto").value : null};
-    $("checkout").innerHTML = `<p class="busy">Starting…</p>`;
+    $("checkout").innerHTML = working("check", 0, "about 2 minutes");
     let job;
     try {
       job = (await getJSON(`${LIVE}check`, {method: "POST", headers: {"Content-Type": "application/json"},
@@ -364,7 +473,7 @@ async function showCheck() {
       let rec;
       try { rec = await getJSON(`${LIVE}check/${encodeURIComponent(job)}`); }
       catch (e) { $("checkout").innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
-      if (rec.status === "running") { $("checkout").innerHTML = `<p class="busy">Working on it… ${Math.round(rec.seconds)} s</p>`; continue; }
+      if (rec.status === "running") { $("checkout").innerHTML = working("check", rec.seconds, "about 2 minutes"); continue; }
       if (rec.status === "failed") { $("checkout").innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
       $("checkout").innerHTML = checkResult(rec.result);
       return;
@@ -375,8 +484,10 @@ async function showCheck() {
 function checkResult(r) {
   if (r.status === "unsupported_city" || r.status === "error") return `<p class="legend">${esc(r.reason)}</p>`;
   const head = r.status === "published"
-    ? `<h3>${esc(r.corner || "")}: published</h3><p>${esc(r.summary)}</p>`
-    : `<h3>Not published</h3><p class="legend">${esc(r.reason)}. The gate refuses a case it cannot check; nothing here is a finding.</p>`;
+    ? `<div class="vcard go"><div class="vsign go" aria-hidden="true"><span>✓</span></div><div class="vtext"><p class="vlabel">Checked: ${esc(r.corner || "")}</p>` +
+      `<p>${esc(r.summary)}</p><p class="vnext"><b>Read:</b> each claim below says whether the record agrees, differs, or cannot test it.</p></div></div>`
+    : `<div class="vcard warn"><div class="vsign warn" aria-hidden="true"><span>?</span></div><div class="vtext"><p class="vlabel">Not published</p>` +
+      `<p>${esc(r.reason)}</p><p class="vnext"><b>Why:</b> a case is shown only when every number and quote checks out; nothing here is a finding.</p></div></div>`;
   const claims = (r.claims || []).length ? `<h4>Claims checked against the record</h4><ul>` + r.claims.map(c =>
     `<li>“${esc(c.claim)}”: <b>${esc(c.verdict)}</b>${c.frame ? ` <span class="legend">(${esc(c.frame)})</span>` : ""}</li>`).join("") + `</ul>` : "";
   const finds = (r.findings || []).length ? `<h4>Findings</h4><ul>` + r.findings.map(f =>
