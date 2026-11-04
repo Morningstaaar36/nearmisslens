@@ -45,6 +45,12 @@ reported next to successes. The full story, with what each review of the results
 | A corner's own crash count against an independent count (T31b) | agrees at 3 of 10 corners; mean error 4.7 crashes against the 100 m circle's 22.9 | **not met** |
 | A frozen patch against a held-out attacker (T18) | cut accepted false claims by 46%, short of the 50% registered | **not met** |
 
+**A new real case, run live on 4 November 2026** ([write-up and proof](validation/case_studies/2026-11-04_nyc_lafayette/)):
+NYC DOT proposed leading pedestrian intervals at three Lafayette Street corners. The site found that the city's own
+records show one already installed at Prince Street since 2024 (confirmed against NYC's dataset), said "compare first" at
+Great Jones Street, and "proceed after a site check" at Houston Street. The run also found six faults, including a 2023
+death the New York mapping missed; all are fixed.
+
 Independent testers saw only [TESTING.md](TESTING.md); their reports are kept as written in
 [`validation/independent/`](validation/independent/), with what we changed after each.
 

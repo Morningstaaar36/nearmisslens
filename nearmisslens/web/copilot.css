@@ -208,6 +208,8 @@ p.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 .chip{display:inline-block;font-size:14px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--sheet);border:1.5px solid var(--rule)}
 details.more{max-width:780px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet);padding:4px 16px;margin:8px 0}
 details.more>summary{font-family:var(--head);font-weight:700;color:var(--ink);font-size:16px;margin:8px 0}
+ul.reasons{margin:0;padding-left:18px}
+ul.reasons li{margin:0 0 6px}
 details.saved{max-width:900px;margin:28px 0 8px;border-top:2px solid var(--rule);padding-top:6px}
 details.saved>summary{font-family:var(--head);font-weight:700;font-size:18px;color:var(--ink)}
 

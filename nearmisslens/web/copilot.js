@@ -460,9 +460,17 @@ function programResult(p) {
       (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project${plan.no_cost_given.length > 1 ? "s have" : " has"} no cost to rank.` : "") + `</p>` : "") +
     PROGRAM_GROUPS.filter(([g]) => (p.groups[g] || []).length).map(([g, label]) => `<h4>${esc(label)}</h4><table><tr><th>Proposal</th><th>Avoided a year</th><th>Cost</th><th>Why</th></tr>` +
       p.groups[g].map(x => `<tr><td>${esc(x.input)}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
-        `<td>${esc((x.reasons || []).join("; "))}${x.alternative ? ` (alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year)` : ""}</td></tr>`).join("") + `</table>`).join("") +
+        `<td>${reasonList(x.reasons)}${x.alternative ? `<p class="legend">Alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year</p>` : ""}</td></tr>`).join("") + `</table>`).join("") +
     ((p.not_reviewed || []).length ? `<h4>Not reviewed</h4><ul>${p.not_reviewed.map(x => `<li>${esc(x.input)}: ${esc(x.reason || x.status)}</li>`).join("")}</ul>` : "") +
     `<p class="legend">Cost of the reviews: $${esc(t.review_cost_usd)}.</p>`;
+}
+
+function reasonList(reasons) {
+  // one line per part of a proposal, the fix's name first: "Leading Pedestrian Interval: reconsider: ..."
+  return `<ul class="reasons">` + (reasons || []).map(r => {
+    const i = r.indexOf(": ");
+    return i > 0 && i < 70 ? `<li><b>${esc(r.slice(0, i))}</b>: ${esc(r.slice(i + 2))}</li>` : `<li>${esc(r)}</li>`;
+  }).join("") + `</ul>`;
 }
 
 async function savedPrograms() {

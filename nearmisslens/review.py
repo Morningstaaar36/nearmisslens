@@ -36,6 +36,12 @@ MAX_INPUT = 1500
 EXAMPLES = Path(__file__).resolve().parent.parent / "validation" / "examples" / "proposals.json"
 
 
+
+def _crashes(target) -> str:
+    """'injury crashes' or 'pedestrian injury crashes' as given; 'crashes' added only when the target lacks it."""
+    t = str(target or "").strip()
+    return t if t.endswith("crashes") else f"{t} crashes".strip()
+
 def example(n: int) -> dict:
     """A real proposal from the test set (validation/examples/proposals.json), numbered from 1."""
     rows = json.loads(EXAMPLES.read_text())["proposals"] if EXAMPLES.exists() else []
@@ -121,7 +127,7 @@ def appraise(fx: dict, countermeasure: str, cost_usd: float | None) -> dict:
         verdict = "compare_alternative"
         why.append(f"{best['countermeasure']} is expected to avoid {_avoided(best):g} injury crashes a year here, against "
                    f"{_avoided(me):g} for the proposal"
-                   + (f" (it targets {best.get('targets')} crashes; the proposal targets {me.get('targets')} crashes, "
+                   + (f" (it targets {_crashes(best.get('targets'))}; the proposal targets {_crashes(me.get('targets'))}, "
                       "so both may be worth doing)" if best.get("targets") != me.get("targets") else ""))
     else:
         verdict = "proceed"

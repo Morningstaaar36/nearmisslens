@@ -1,0 +1,141 @@
+{
+ "source": "NYC DOT, Lafayette St/4 Av, Prince St to E 15 St, Community Board 2 Transportation Committee, April 28, 2026",
+ "site": "https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run",
+ "run_1_review_list_corner": {
+  "source": "NYC DOT, Lafayette St/4 Av, Prince St to E 15 St, Community Board 2 Transportation Committee, April 28, 2026",
+  "base": "https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run",
+  "steps": [
+   {
+    "step": "start screen",
+    "ok": true,
+    "detail": "Live: $2.58 of today's $3.00 model budget left",
+    "screenshot": "01_start_screen.png",
+    "at": "16:36:53"
+   },
+   {
+    "step": "review: running",
+    "ok": true,
+    "detail": "9 s \u00b7 Reads your proposal and matches each part to the federal list of proven fixes\n\nUsually about a minute. Keep this page open; the result appears here.",
+    "screenshot": "02_review:_running.png",
+    "at": "16:37:10"
+   },
+   {
+    "step": "review: verdict",
+    "ok": true,
+    "detail": "!\n\nProceed after a site check\n\nThe fix fits, but its estimate assumes something public data cannot show, such as the signal timing or the traffic control.\n\nNext: Confirm that condition at the corner, then proceed.\n\nWhy\nLeading Pedestrian Interval: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement)\nDedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\n\nVerdict set by code, not the model\n4 objections checked and answered\n8 findings, each with its source\n\nThe memo\nThe case against this verdict (4)\n\nRecords as of 2026-10-31 \u00b7 $0.052 Meta API + $0.0442 Muse Spark Open \u00b7 48 s",
+    "screenshot": "03_review:_verdict.png",
+    "at": "16:37:53"
+   },
+   {
+    "step": "review: memo and case against it opened",
+    "ok": true,
+    "detail": "2 sections",
+    "screenshot": "04_review:_memo_and_case_against_it_opened.png",
+    "at": "16:37:58"
+   },
+   {
+    "step": "list: running",
+    "ok": true,
+    "detail": "11 s \u00b7 Reviews each project like a single review, three at a time\n\nUsually about 3 minutes. Keep this page open; the result appears here.",
+    "screenshot": "05_list:_running.png",
+    "at": "16:38:17"
+   },
+   {
+    "step": "list: ranked",
+    "ok": true,
+    "detail": "3 proposals, 3 reviewed. Code ranks them; no model compares one corner with another. If every supported project is built, the reviews expect about 3.83 injury crashes avoided a year.\n\nBuild after a site check\nProposal\tAvoided a year\tCost\tWhy\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & East Houston Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.33\tnot given\tLeading Pedestrian Interval: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\nDecide part by part\nProposal\tAvoided a year\tCost\tWhy\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & Great Jones Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.25\tnot given\tLeading Pedestrian Interval: compare before committing: another supported fix is expected to avoid much more (Backplates with Retroreflective Borders is expected to avoid 0.39 injury crashes a year here, against 0.08 for the proposal (it targets injury crashes crashes; the proposal targets pedestrian injury crashes crashes, so both may be worth doing)); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: room for a turn lane on the approach)\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & Prince Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.25\tnot given\tLeading Pedestrian Interval: reconsider: the record or the evidence does not support this fix here as proposed (the city's records show Leading Pedestrian Interval already installed here (2024)); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\n\nCost of the reviews: $0.26.",
+    "screenshot": "06_list:_ranked.png",
+    "at": "16:39:27"
+   },
+   {
+    "step": "corner: case",
+    "ok": true,
+    "detail": "13 injury crashes since 31 October 2021, about $890,000 a year in harm. One road owner must act.",
+    "screenshot": "07_corner:_case.png",
+    "at": "16:39:37"
+   },
+   {
+    "step": "corner: what the crashes have in common",
+    "ok": true,
+    "detail": "2\nWhat the crashes have in common\n\n41 police-reported crashes within 100 m. Yellow marks a pattern that is more common here than at the city's priority junctions after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.\n\nhappened in daylight hours\n68% here, 64% at the city's priority junctions\nhappened at night (7 pm",
+    "screenshot": "08_corner:_what_the_crashes_have_in_common.png",
+    "at": "16:39:39"
+   },
+   {
+    "step": "corner: the fix and its price",
+    "ok": true,
+    "detail": "4\nThe fix and its price\n\nFederal Proven Safety Countermeasures, estimated only where a crash-reduction study matches this corner's control (Signalized) and the crashes it targets. Dollars use the U.S. DOT's crash costs.\n\nFix\tCrashes avoided a year\tHarm avoided a year\tStudy\nBackplates with Retroreflective Borders\t0.4\t$134,000\tCMF 1410 (0.85), the record FHWA's fact sheet cites\nYellow Change Interva",
+    "screenshot": "09_corner:_the_fix_and_its_price.png",
+    "at": "16:39:42"
+   },
+   {
+    "step": "corner: who must act",
+    "ok": true,
+    "detail": "5\nWho must act\n\nRoad owners from the road inventory; streets it does not list are marked as inferred. Offices from the city's district maps.\n\nthe NYC Department of Transportation (NYC DOT)\n\nLafayette Street, East Houston Street\n\nNot listed in NYSDOT Roadway Inventory (RoadwayData FeatureServer layer 0)\n\nWho can push for it: Council Member, District 2, New York City Council and Manhattan Community ",
+    "screenshot": "10_corner:_who_must_act.png",
+    "at": "16:39:44"
+   },
+   {
+    "step": "corner: letter drafted and number-checked",
+    "ok": false,
+    "detail": "The checker refused every draft: 1 is not the record's number of deaths for what this sentence names",
+    "screenshot": "11_corner:_letter_drafted_and_number-checked.png",
+    "at": "16:39:48"
+   }
+  ],
+  "review_text": "!\n\nProceed after a site check\n\nThe fix fits, but its estimate assumes something public data cannot show, such as the signal timing or the traffic control.\n\nNext: Confirm that condition at the corner, then proceed.\n\nWhy\nLeading Pedestrian Interval: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement)\nDedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\n\nVerdict set by code, not the model\n4 objections checked and answered\n8 findings, each with its source\n\nThe memo\n\nVerdict is proceed_after_site_check: Leading Pedestrian Interval is proceed_after_site_check and Dedicated Left- and Right-Turn Lanes at Intersections is proceed_after_site_check, each conditional on confirming turning movement and lane room. The corner shows pedestrian and cyclist harm with city evidence for LPI but cost unstated, backplates as best low-cost alternative, under NYC DOT ownership.\n\nLafayette Street & East Houston Street had 13 injury crashes since 2021-10-31: 3 pedestrians injured, 5 cyclists injured and 1 person killed. [D4]\n7% of crashes here had oversized vehicle recorded as a contributing factor, against 1% at the city's priority junctions. [D2]\nLeading Pedestrian Interval is expected to avoid about 0.1 crashes a year, worth $27,000 a year with break-even cost $188,000, holding only if the site shows a turning movement. [D7]\nDedicated turn-lane work would avoid about 1.2 crashes a year, worth $427,000 a year, holding only if the site shows a turning movement and room for a turn lane. [D4]\nCity Leading Pedestrian Interval signals: pedestrian injury crashes changed -17% (95% interval -22% to -11%) at 1,651 sites, and a placebo date shows nothing. [D8]\nBackplates with Retroreflective Borders would avoid about 0.4 crashes a year, worth $134,000 a year. [D4]\nAt the U.S. DOT's values that harm costs about $890,000 a year (injury crashes only: deaths are not valued in this figure). [D4]\nThe NYC Department of Transportation (NYC DOT) is responsible for Lafayette Street, East Houston Street. [D5]\nPart\tVerdict\nLeading Pedestrian Interval\tproceed only after a site check confirms what the estimate assumes\nDedicated Left- and Right-Turn Lanes at Intersections\tproceed only after a site check confirms what the estimate assumes\nThe case against this verdict (4)\n\nMuse Spark Open argued against the verdict. Code kept an objection only if its fact is in the record.\n\nO1 LPI targets only pedestrian injury crashes (0.6/year) but most harm is broader: 1 fatality and 13 injury crashes including 5 cyclist-injured, which LPI does not address. [D4: crashes.any_killed = 1]\nAnswer: LPI is expected to avoid about 0.1 crashes a year from its pedestrian target, so broader cyclist and fatal harm remains outside that estimate; verdict stays conditional on site check. [D7]\nO2 Pattern shows crashes over-represented for oversized vehicle, not turning conflicts LPI addresses, undermining site-fit for the LPI assumption. [D2: over_represented.0.pattern = factor: oversized vehicle]\nAnswer: 7% of crashes here had oversized vehicle recorded versus 1% at priority junctions, which does not match a turning-conflict pattern and leaves site fit to be confirmed. [D2]\nO3 Cost is not stated, so even the low break-even of $188k for LPI cannot be verified against benefit and turn-lane reconstruction costs are unbounded. [D1: cost_covers = not stated]\nAnswer: Cost is not stated and the LPI break-even cost is $188,000 with $27,000 harm avoided a year, so cost cannot be verified against benefit. [D7]\nO4 Both treatments require site confirmation of turning movement and room for lane; without geometric check, estimates are speculative. [D4: options.4.verify_on_site = a turning movement; room for a turn lane on the approach]\nAnswer: Both estimates hold only if the site shows a turning movement and, for the turn lane, room for a turn lane on the approach, so a geometric check is required. [D7]\n\nRecords as of 2026-10-31 \u00b7 $0.052 Meta API + $0.0442 Muse Spark Open \u00b7 48 s",
+  "list_text": "3 proposals, 3 reviewed. Code ranks them; no model compares one corner with another. If every supported project is built, the reviews expect about 3.83 injury crashes avoided a year.\n\nBuild after a site check\nProposal\tAvoided a year\tCost\tWhy\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & East Houston Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.33\tnot given\tLeading Pedestrian Interval: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\nDecide part by part\nProposal\tAvoided a year\tCost\tWhy\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & Great Jones Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.25\tnot given\tLeading Pedestrian Interval: compare before committing: another supported fix is expected to avoid much more (Backplates with Retroreflective Borders is expected to avoid 0.39 injury crashes a year here, against 0.08 for the proposal (it targets injury crashes crashes; the proposal targets pedestrian injury crashes crashes, so both may be worth doing)); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: room for a turn lane on the approach)\nA leading pedestrian interval with a left-turn lane treatment at Lafayette Street & Prince Street, Manhattan, as NYC DOT proposed to Community Board 2 on April 28, 2026\t1.25\tnot given\tLeading Pedestrian Interval: reconsider: the record or the evidence does not support this fix here as proposed (the city's records show Leading Pedestrian Interval already installed here (2024)); Dedicated Left- and Right-Turn Lanes at Intersections: proceed only after a site check confirms what the estimate assumes (the estimate holds only if the site shows: a turning movement; room for a turn lane on the approach)\n\nCost of the reviews: $0.26.",
+  "corner_head": "Searched corner\n\nLafayette Street & East Houston Street\n\n13 injury crashes since 31 October 2021, about $890,000 a year in harm. One road owner must act.\n\nBuilt in under a second from records as of 31 October 2026. Every claim passed the number checker.\n\nThe case\nWhat the crashes have in common\nWhat the city already tried\nThe fix and its price\nWho must act\nThe request\nAsk the engineer\nReceipts\n1\nThe case\n\nEach sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.\n\nLafayette Street & East Houston Street had 13 injury crashes in police records since 2021-10-31: 3 pedestrians injured, 5 cyclists injured and 1 person killed.R3\nThese counts are Lafayette Street & East Houston Street's own: the city's record places 21 of the 62 records within 100 m at another intersection or street, and they are left out.R3\nAt the U.S. DOT's values that harm costs about $890,000 a year (injury crashes only: deaths are not valued in this figure).R3\n7% of crashes here had \u201coversized vehicle\u201d recorded as a contributing factor, against 1% at the city's priority junctions.R1\n2% of crashes here had \u201cprescription medication\u201d recorded as a contributing factor, against 0% at the city's priority junctions.R1\nThe city's Leading Pedestrian Interval signals: passed the causal gate (pedestrian injury crashes changed -17% (95% interval -22% to -11%) at 1,651 sites against sites treated later or the citywide trend, and a placebo date shows nothing).R",
+  "letter": "The checker refused every draft: 1 is not the record's number of deaths for what this sentence names"
+ },
+ "run_2_corner_after_letter_fixes": {
+  "source": "NYC DOT, Lafayette St/4 Av, Prince St to E 15 St, Community Board 2 Transportation Committee, April 28, 2026",
+  "base": "https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run",
+  "steps": [
+   {
+    "step": "start screen",
+    "ok": true,
+    "detail": "Live: $2.21 of today's $3.00 model budget left",
+    "screenshot": "01_start_screen.png",
+    "at": "16:41:31"
+   },
+   {
+    "step": "corner: case",
+    "ok": true,
+    "detail": "13 injury crashes since 31 October 2021, about $890,000 a year in harm. One road owner must act.",
+    "screenshot": "02_corner:_case.png",
+    "at": "16:41:41"
+   },
+   {
+    "step": "corner: what the crashes have in common",
+    "ok": true,
+    "detail": "2\nWhat the crashes have in common\n\n41 police-reported crashes within 100 m. Yellow marks a pattern that is more common here than at the city's priority junctions after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.\n\nhappened in daylight hours\n68% here, 64% at the city's priority junctions\nhappened at night (7 pm",
+    "screenshot": "03_corner:_what_the_crashes_have_in_common.png",
+    "at": "16:41:44"
+   },
+   {
+    "step": "corner: the fix and its price",
+    "ok": true,
+    "detail": "4\nThe fix and its price\n\nFederal Proven Safety Countermeasures, estimated only where a crash-reduction study matches this corner's control (Signalized) and the crashes it targets. Dollars use the U.S. DOT's crash costs.\n\nFix\tCrashes avoided a year\tHarm avoided a year\tStudy\nBackplates with Retroreflective Borders\t0.4\t$134,000\tCMF 1410 (0.85), the record FHWA's fact sheet cites\nYellow Change Interva",
+    "screenshot": "04_corner:_the_fix_and_its_price.png",
+    "at": "16:41:46"
+   },
+   {
+    "step": "corner: who must act",
+    "ok": true,
+    "detail": "5\nWho must act\n\nRoad owners from the road inventory; streets it does not list are marked as inferred. Offices from the city's district maps.\n\nthe NYC Department of Transportation (NYC DOT)\n\nLafayette Street, East Houston Street\n\nNot listed in NYSDOT Roadway Inventory (RoadwayData FeatureServer layer 0)\n\nWho can push for it: Council Member, District 2, New York City Council and Manhattan Community ",
+    "screenshot": "05_corner:_who_must_act.png",
+    "at": "16:41:48"
+   },
+   {
+    "step": "corner: letter drafted and number-checked",
+    "ok": true,
+    "detail": "To: the NYC Department of Transportation (NYC DOT)\nCc: Council Member, District 2, New York City Council; Manhattan Community Board 2\nSubject: Request for safety review at Lafayette Street & East Houston Street\n\nDear colleagues at NYC DOT,\n\nWe are writing to ask for a safety study at Lafayette Stree",
+    "screenshot": "06_corner:_letter_drafted_and_number-checked.png",
+    "at": "16:41:53"
+   }
+  ],
+  "corner_head": "Searched corner\n\nLafayette Street & East Houston Street\n\n13 injury crashes since 31 October 2021, about $890,000 a year in harm. One road owner must act.\n\nBuilt in 1 s from records as of 31 October 2026. Every claim passed the number checker.\n\nThe case\nWhat the crashes have in common\nWhat the city already tried\nThe fix and its price\nWho must act\nThe request\nAsk the engineer\nReceipts\n1\nThe case\n\nEach sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.\n\nLafayette Street & East Houston Street had 13 injury crashes in police records since 2021-10-31: 3 pedestrians injured, 5 cyclists injured and 1 person killed.R3\nThese counts are Lafayette Street & East Houston Street's own: the city's record places 21 of the 62 records within 100 m at another intersection or street, and they are left out.R3\nAt the U.S. DOT's values that harm costs about $890,000 a year (injury crashes only: deaths are not valued in this figure).R3\n7% of crashes here had \u201coversized vehicle\u201d recorded as a contributing factor, against 1% at the city's priority junctions.R1\n2% of crashes here had \u201cprescription medication\u201d recorded as a contributing factor, against 0% at the city's priority junctions.R1\nThe city's Leading Pedestrian Interval signals: passed the causal gate (pedestrian injury crashes changed -17% (95% interval -22% to -11%) at 1,651 sites against sites treated later or the citywide trend, and a placebo date shows nothing).R2\nThe city'",
+  "letter": "To: the NYC Department of Transportation (NYC DOT)\nCc: Council Member, District 2, New York City Council; Manhattan Community Board 2\nSubject: Request for safety review at Lafayette Street & East Houston Street\n\nDear colleagues at NYC DOT,\n\nWe are writing to ask for a safety study at Lafayette Street & East Houston Street on the roads you are responsible for.\n\nThe official record for the 5 years from 31 October 2021 shows 41 crashes, of which 13 were injury crashes. Three pedestrians and 5 cyclists were injured and 1 person was killed. The yearly cost of the harm is $0.9 million a year in the U.S. DOT's official values for the cost of crashes (2024 dollars). No safety work is recorded in this period. The last recorded nearby project was East Houston Street at Crosby Street in 2015.\n\nWe ask you to study and, where suitable, install:\n- reflective backplates on the traffic signals, which is expected to prevent about 0.4 injury crashes a year.\n- longer yellow signal times, which is expected to prevent about 0.2 injury crashes a year, if a check on site shows the current yellow plus all-red time is below the ITE recommended practice.\n\nIn this city, where the city installed a leading pedestrian interval (a walk signal a few seconds before the green) at 1,651 intersections, pedestrian injury crashes fell 17% (95% interval 11% to 22%) compared with intersections that got it later; a stricter check against fake programs is less certain. Please consider this treatment, which must be checked on site for a turning movement.\n\nThank you for considering these low-cost fixes.\n\nYours sincerely,\n[Your name]\n[Your organisation or address]\n\nSources:\n- NYC Open Data, Motor Vehicle Collisions - Crashes (h9gi-nx95)\n- NYC DOT Street Improvement Projects (corridors); NYC DOT Street Improvement Projects (intersections); NYC Vision Zero View, Enhanced Crossings (6ax4-q5k4); NYC Vision Zero View, Leading Pedestrian Interval Signals; NYC Vision Zero View, Signal Timing/25 MPH Retiming; NYC Vision Zero View, Speed Humps (jknp-skuy); NYC Vision Zero View, Turn Traffic Calming; NYC Vision Zero priority corridors; NYC Vision Zero priority intersections\n- FHWA CMF Clearinghouse, CMF 1410 (reflective backplates on the traffic signals)\n- FHWA CMF Clearinghouse, CMF 4219 (longer yellow signal times)\n- U.S. DOT Benefit-Cost Analysis Guidance, 2026 Update, Table A-1 (2024 dollars)\n- NearMissLens NML-Bench T11: before/after study of the city's own installs (validation/BENCH.md)\n- Road owners: the registry's road-inventory layer (see the engineer report's receipts)\n\n(Drafted with NearMissLens from public records as of 2026-10-31. Review it and send it yourself; NearMissLens sends nothing.)"
+ }
+}
