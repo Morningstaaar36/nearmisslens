@@ -324,6 +324,16 @@ def cmd_intake(args) -> int:
     return 0 if out["projects"] else 2
 
 
+def cmd_find(args) -> int:
+    """Muse Spark finds an agency's project pages (or reports about a corner) on the web; code checks each page."""
+    from . import finder
+    from .meta_client import MetaClient
+    client = MetaClient(SETTINGS)
+    out = finder.find(args.city, client, corner=args.corner) if args.corner else finder.find_projects(args.city, client)
+    print(json.dumps(out, indent=1, default=str) if args.json else finder.report_md(out))
+    return 0 if out["reports"] else 2
+
+
 def cmd_portfolio(args) -> int:
     """Program review: a list of proposals reviewed one by one, then ranked by code (see nearmisslens/portfolio.py)."""
     from . import portfolio
@@ -816,6 +826,11 @@ def main(argv: list[str] | None = None) -> int:
     it.add_argument("--city", required=True)
     it.add_argument("--include-completed", action="store_true", help="also list projects the page says are completed")
     it.add_argument("--json", action="store_true")
+    fd = sub.add_parser("find", help="find the agency's project pages, or reports about a corner, with Muse Spark and "
+                                     "web search; every page and passage checked (paid; about $0.10 to $0.30)")
+    fd.add_argument("city")
+    fd.add_argument("--corner", help="'Street A & Street B': reports about this corner instead of project pages")
+    fd.add_argument("--json", action="store_true")
     cc = sub.add_parser("corner-count", help="a corner's own crash count for a registered spec's corners (T31, T32), "
                                             "compared with an independent count if given; no model")
     cc.add_argument("spec")
@@ -922,7 +937,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "intake": cmd_intake, "intake-run": cmd_intake_run, "corner-count": cmd_corner_count, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "intake": cmd_intake, "find": cmd_find, "intake-run": cmd_intake_run, "corner-count": cmd_corner_count, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

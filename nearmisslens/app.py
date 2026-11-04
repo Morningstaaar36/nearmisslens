@@ -46,7 +46,7 @@ CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one 
 # the origins of the page's static copy (e.g. the GitHub Pages site), comma-separated, allowed to call the endpoints
 ALLOWED_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get("NML_ALLOWED_ORIGINS", "").split(",") if o.strip()}
 PROGRAM_ITEMS = int(os.environ.get("NML_PROGRAM_ITEMS", "4"))  # proposals in one program review on the server
-PAID = ("/engineer", "/letter", "/check", "/review", "/portfolio", "/ask")  # each counts against the visitor's hourly limit
+PAID = ("/engineer", "/letter", "/check", "/review", "/portfolio", "/ask", "/find")  # each counts against the visitor's hourly limit
 
 
 def repo_url() -> str:
@@ -60,6 +60,7 @@ def repo_url() -> str:
         return ""
 
 
+FIND_RESERVE_USD = 0.50  # a web search for pages ($0.10 to $0.20) and reading their projects (up to $0.20)
 PROGRAM_REVIEW_USD = 0.20  # each proposal's Meta cap within a program (a review costs about $0.04); 4 reserve $1.00
 
 
@@ -191,6 +192,15 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                        PROGRAM_ITEMS * (PROGRAM_REVIEW_USD + reviews.RED_TEAM_BUDGET_USD),
                        SETTINGS.runs_dir / "programs" / "jobs", busy="another program review is running; try again later")
 
+    from . import finder
+
+    def finding(q: dict) -> dict:
+        r = finder.find(q["city"], desk_client, corner=q["corner"]) if q.get("corner") else \
+            finder.find_projects(q["city"], desk_client)
+        return {**r, "cost_usd": {"find": r["usd"]}}
+    finds = Jobs(finding, budget if public else None, FIND_RESERVE_USD, SETTINGS.runs_dir / "finds" / "jobs",
+                 busy="another web search is running; try again in a minute")
+
     def investigate(q: dict) -> dict:
         lat, lon, name = brief.geocode(q["address"])
         if context.city_of(lat, lon) is None:
@@ -251,9 +261,9 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                                         "service": service()})
             if u.path == "/health":
                 return self._json(200, {"ok": True, "uptime_s": round(time.time() - started), **service()})
-            if u.path.startswith(("/check/", "/engineer/", "/review/", "/portfolio/")):
+            if u.path.startswith(("/check/", "/engineer/", "/review/", "/portfolio/", "/find/")):
                 rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing,
-                       "/portfolio/": programming}[u.path[:u.path.index("/", 1) + 1]] \
+                       "/portfolio/": programming, "/find/": finds}[u.path[:u.path.index("/", 1) + 1]] \
                     .status(u.path.rsplit("/", 1)[1])
                 return self._json(200, rec) if rec else self._json(404, {"error": "no such job (kept 24 hours)"})
             if u.path.startswith("/data/"):
@@ -352,6 +362,20 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                     try:
                         return self._json(202, {"job": programming.submit({"proposals": text, "city": city,
                                                                            "budget_total": total})})
+                    except Busy as e:
+                        return self._json(409, {"error": str(e)})
+                    except Paused as e:
+                        return self._json(429, {"error": str(e)})
+                if path == "/find":
+                    city, corner = q.get("city"), q.get("corner") or None
+                    if not isinstance(city, str) or not isinstance(corner, (str, type(None))):
+                        raise BadRequest("give the city, and the corner if any, as text")
+                    if corner is not None and not (5 <= len(corner) <= 120 and "&" in corner):
+                        raise BadRequest("name the corner as 'Street A & Street B'")
+                    if check.supported(city)[0] is None:
+                        return self._json(422, {"error": check.supported(city)[1]})
+                    try:
+                        return self._json(202, {"job": finds.submit({"city": city, "corner": corner})})
                     except Busy as e:
                         return self._json(409, {"error": str(e)})
                     except Paused as e:

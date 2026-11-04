@@ -189,7 +189,7 @@ async function showProgram() {
   // a whole list: each proposal reviewed, then grouped and ranked by code
   setView("program");
   const head = `<p class="where">Review a list</p><h2 class="corner">Which of these projects should be built first?</h2>` +
-    steps([`<b>Paste</b> <span id="maxitems">a few</span> projects, one per line`, `<b>We review</b> each one <span data-time="program"></span>`,
+    steps([`<b>Find</b> the agency's projects on the web, or paste your own`, `<b>We review</b> each one <span data-time="program"></span>`,
            "<b>Read</b> the ranked list and what fits your budget"], 0);
   if (LIVE === null) {
     $("out").innerHTML = head + `<p class="legend">Run your own: <code>nml portfolio list.txt --city CITY --budget-total 500000</code> (see TESTING.md).</p>` + (await savedPrograms());
@@ -245,6 +245,7 @@ async function loadDurations() {
   try { DURATIONS.review = (await getJSON("data/reviews.json")).summary.mean_seconds; } catch (e) { /* unknown */ }
   try { DURATIONS.check = (await getJSON("data/checks.json")).summary.mean_seconds; } catch (e) { /* unknown */ }
   if (DURATIONS.review) DURATIONS.program = DURATIONS.review * 2;  // reviews run three at a time
+  DURATIONS.find = 180;  // live runs on 4 November 2026: two to four minutes
   return DURATIONS;
 }
 const minutes = s => !s ? "a few minutes" : s < 100 ? "about a minute" : `about ${Math.round(s / 60)} minutes`;
@@ -296,13 +297,15 @@ const STAGES = {
            "Writes the memo, which must answer every objection"],
   check: ["Reads the source you gave", "Finds the intersection it names", "Pulls that corner's crash record",
           "Tests every number and every quote", "Writes the case, or says why it cannot"],
+  find: ["Muse Spark searches the web for the agency's own pages", "Opens the most promising pages and copies a passage from each",
+         "Code opens every page itself: the passage must be on it word for word", "Reads each kept page's intersection projects; code checks each one"],
   program: ["Reviews each project like a single review, three at a time", "Groups them by verdict",
             "Ranks the supported ones by crashes avoided per dollar and fits your budget"],
 };
 
-function working(kind, secs) {
+function working(kind, secs, step = 1) {
   // one line for what is happening now and a bar against the usual time; the strip above moves to its second box
-  markStep(1);
+  if (step != null) markStep(step);
   const usual = (DURATIONS || {})[kind] || 120, list = STAGES[kind], t = secs || 0;
   const now = list[Math.min(list.length - 1, Math.floor(t / (usual / list.length)))];
   return `<div class="working" role="status" aria-live="polite"><div class="bar" aria-hidden="true"><i style="width:${Math.min(95, 4 + 100 * t / usual).toFixed(0)}%"></i></div>` +
@@ -422,15 +425,18 @@ async function showReview() {
   }
   const cities = await liveCities();
   await loadDurations();
-  $("out").innerHTML = head + `<form id="reviewform" class="search ask"><label class="flabel" for="reviewin">What do you plan to build, and where?</label>` +
+  $("out").innerHTML = head + `<div class="findrow"><label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select>` +
+    `<button type="button" id="findone" class="quiet">Find a planned project on the web</button></div><div id="findoneout"></div>` +
+    `<form id="reviewform" class="search ask"><label class="flabel" for="reviewin">What do you plan to build, and where?</label>` +
     `<textarea id="reviewin" maxlength="1500" rows="3" ` +
     `placeholder="For example: Rapid flashing beacons at Street A &amp; Street B, about $60,000"></textarea>` +
-    `<label for="reviewcity">City</label> <select id="reviewcity">${cities.map(c =>
-      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> <button>Review this project</button></form>` +
+    `<button>Review this project</button></form>` +
     verdictLegend() +
     `<div id="reviewout"></div>` + await savedReviews();
   await reviewExamples(cities);
   fillDurations();
+  $("findone").onclick = () => findProjects($("reviewcity").value, $("findone"), $("findoneout"), 1, $("reviewin"));
   $("reviewform").onsubmit = async ev => {
     ev.preventDefault();
     $("reviewout").innerHTML = working("review", 0);
@@ -506,7 +512,7 @@ function cornerGlance(cr, fx, killed, owners) {
   // the corner at a glance: four numbers, then who was hurt as bars on one scale
   if (cr.injury_crashes == null) return "";
   const tiles = `<div class="tiles glance">` +
-    `<div class="tile"><b>${cr.injury_crashes}</b><span>injury crashes in five years</span></div>` +
+    `<div class="tile"><b>${cr.injury_crashes}</b><span>injury ${cr.injury_crashes === 1 ? "crash" : "crashes"} in five years</span></div>` +
     `<div class="tile${killed ? " grave" : ""}"><b>${killed}</b><span>${killed === 1 ? "person" : "people"} killed</span></div>` +
     (fx.harm ? `<div class="tile"><b>${usd(fx.harm.usd_per_year)}</b><span>a year in harm (U.S. DOT values)</span></div>` : "") +
     `<div class="tile"><b>${owners}</b><span>road ${owners === 1 ? "owner" : "owners"} who must act</span></div></div>`;
@@ -532,38 +538,77 @@ async function savedPrograms() {
 }
 
 function programForm(cities) {
-  return `<form id="programform" class="search ask"><label class="flabel" for="programin">Your projects, one per line</label>` +
-    `<div class="examples" id="programexamples"></div>` +
+  // city first; then find the agency's own projects on the web, or paste them; then review
+  return `<div class="findrow"><label for="programcity">City</label> <select id="programcity">${cities.map(c =>
+      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select>` +
+    `<button type="button" id="findprojects">Find its planned projects on the web</button></div>` +
+    `<p class="hint">Muse Spark searches the agency's own pages; code opens each page and checks every project on it.</p><div id="findout"></div>` +
+    `<form id="programform" class="search ask"><label class="flabel" for="programin">Projects to review (<span id="maxitems">a few</span>), one per line</label>` +
     `<textarea id="programin" rows="4" ` +
     `placeholder="Rapid flashing beacons at Street A &amp; Street B, $60,000&#10;Curb extensions at Street C &amp; Street D, $40,000"></textarea>` +
-    `<label for="programcity">City</label> <select id="programcity">${cities.map(c =>
-      `<option value="${esc(c.id)}"${c.id === CITY ? " selected" : ""}>${esc(c.name)}</option>`).join("")}</select> ` +
     `<label for="programbudget">Budget in dollars (optional)</label> <input id="programbudget" type="number" min="0" step="1000" style="width:9em"> <button>Review the list</button></form>` +
-    `<p class="hint">For longer lists (up to 25), or to read the projects straight from an agency's web page, use the command line: ` +
-    `<code>nml portfolio list.txt --city CITY --budget-total 500000</code> or <code>--from-url</code> (see TESTING.md).</p><div id="programout"></div>`;
+    `<p class="hint">Longer lists (up to 25): <code>nml portfolio --from-url URL --city CITY</code> (see TESTING.md).</p><div id="programout"></div>`;
 }
 
-async function programExamples() {
-  // a real list: the first two projects of a saved agency program, to fill the form with one click
-  let d;
-  try { d = await getJSON("data/programs.json"); } catch (e) { return; }
-  const box = $("programexamples");
-  const progs = (d.programs || []).map(p => ({p, rows: Object.values(p.groups || {}).flat().slice(0, 2)})).filter(x => x.rows.length === 2);
-  if (!box || !progs.length) return;
-  box.innerHTML = `<span class="hint">Try a real list:</span>` + progs.map((x, i) =>
-    `<button type="button" data-i="${i}">${esc(x.p.city_name || cityName(x.p.city))}: ${esc(x.p.title.slice(0, 48))}${x.p.title.length > 48 ? "…" : ""} (2 projects)</button>`).join("");
-  box.onclick = e => {
-    const b = e.target.closest("button[data-i]");
-    if (!b) return;
-    const x = progs[+b.dataset.i];
-    $("programin").value = x.rows.map(r => r.input).join("\n");
-    if ($("programcity")) $("programcity").value = x.p.city;
-    $("programin").focus();
-  };
+async function findJob(body, box, done) {
+  // a web search job: Muse Spark finds pages, code checks each; the panel shows progress, then done(result)
+  box.innerHTML = working("find", 0, null);
+  let job;
+  try {
+    job = (await getJSON(`${LIVE}find`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)})).job;
+  } catch (e) { box.innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+  for (;;) {
+    await new Promise(ok => setTimeout(ok, 4000));
+    let rec;
+    try { rec = await getJSON(`${LIVE}find/${encodeURIComponent(job)}`); }
+    catch (e) { box.innerHTML = `<p class="legend">${esc(e.message)}</p>`; return; }
+    if (rec.status === "running") { box.innerHTML = working("find", rec.seconds, null); continue; }
+    if (rec.status === "failed") { box.innerHTML = `<p class="legend">${esc(rec.error)}</p>`; return; }
+    done(rec.result);
+    return;
+  }
+}
+
+function foundPages(r) {
+  // the pages Muse Spark found on the web, each opened again by code: its passage is on it word for word
+  const refused = r.refused || [];
+  const tally = `<p class="legend">${(r.searches || []).length} web searches · ${r.pages_read} pages opened · ` +
+    `${r.reports.length} kept${refused.length ? ` · ${refused.length} refused (${esc([...new Set(refused.map(x => x.why))].join("; "))})` : ""} · $${Number(r.usd || 0).toFixed(2)} of Meta API</p>`;
+  if (!r.reports.length) return `<p class="legend">No page passed the checks.</p>` + tally;
+  return `<ul class="webfound">` + r.reports.map(x => `<li><span class="vsign mini go" aria-hidden="true"><span>✓</span></span><div>` +
+    `<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>` +
+    `<span class="legend"> ${esc(x.publisher)}${x.published ? ", " + esc(x.published) : ""}</span>` +
+    `<blockquote>${esc(x.passage)}</blockquote></div></li>`).join("") + `</ul>` + tally;
+}
+
+function projectPicker(r, max) {
+  // the projects read from the pages: tick the ones to review (the first few are ticked)
+  if (!(r.projects || []).length) return `<p class="legend">These pages list no project at a single intersection; paste your own below.</p>`;
+  return `<fieldset class="pick"><legend>${r.projects.length} projects at single intersections. ${max === 1 ? "Pick one" : `Pick up to ${max}`}.</legend>` +
+    r.projects.map((x, i) => `<label><input type="checkbox" value="${i}"${i < max ? " checked" : ""}>` +
+      `<span><b>${esc(x.intersection)}</b> ${esc(x.treatment)}${x.cost_usd ? ` · ${usd(x.cost_usd)}` : ""}</span></label>`).join("") + `</fieldset>`;
+}
+
+function findProjects(city, button, box, max, target) {
+  // Muse Spark finds the agency's planned projects on the web; ticking one puts it in the text box to review
+  button.disabled = true;
+  findJob({city}, box, r => {
+    box.innerHTML = `<h4>Found on the web</h4>` + foundPages(r) + projectPicker(r, max);
+    button.disabled = false;
+    const boxes = [...box.querySelectorAll(".pick input")];
+    const fill = () => {
+      const on = boxes.filter(b => b.checked);
+      boxes.forEach(b => { b.disabled = !b.checked && on.length >= max; });
+      target.value = on.map(b => r.projects[+b.value].text).join("\n");
+    };
+    boxes.forEach(b => b.onchange = fill);
+    fill();
+    box.scrollIntoView({behavior: "smooth", block: "start"});
+  });
 }
 
 function wireProgram() {
-  programExamples();
+  $("findprojects").onclick = () => findProjects($("programcity").value, $("findprojects"), $("findout"), LIMITS.program_items || 4, $("programin"));
   $("programform").onsubmit = async ev => {
     ev.preventDefault();
     $("programout").innerHTML = working("program", 0);
@@ -758,20 +803,25 @@ async function showPlan() {
   const rows = [...p.corners].filter(c => c.best).sort((a, b) => b.best.crashes_avoided_per_year - a.best.crashes_avoided_per_year);
   $("out").innerHTML = `<p class="where">${esc(p.city_name)} · records as of ${date(p.asof)}</p>` +
     `<h2 class="corner">Where the evidence says to act first</h2>` +
-    `<p class="lede">Add up the largest low-cost estimate at each of these ${s.corners} corners and you get about ` +
-    `<b>${Math.round(s.textbook_crashes_avoided_per_year)}</b> fewer crashes a year. The evidence supports <b>${Math.round(s.crashes_avoided_per_year_total)}</b> ` +
-    `without a site visit` + (s.crashes_avoided_per_year_counted_once != null ? ` (<b>${Math.round(s.crashes_avoided_per_year_counted_once)}</b> counting each crash once` +
-      (r.factor != null && r.factor < 1 ? `, about <b>${Math.round(s.crashes_avoided_per_year_counted_once_after_rtm)}</b> after the drop the worst corners show on their own` : "") + `)` : "") +
-    `. The difference rests on studies of other kinds of sites, or on a check nobody has made yet, such as the signal timing.</p>` +
+    `<p class="lede">If each of these ${s.corners} corners got its best low-cost fix, how many injury crashes a year would it avoid?</p>` +
+    `<div class="chart">${hbars([
+      {label: "The textbook says", value: Math.round(s.textbook_crashes_avoided_per_year), note: "largest estimate at each corner"},
+      {label: "The evidence supports", value: Math.round(s.crashes_avoided_per_year_counted_once ?? s.crashes_avoided_per_year_total), sign: "go", note: "without a site visit"},
+      ...(r.factor != null && r.factor < 1 ? [{label: "After regression to the mean", value: Math.round(s.crashes_avoided_per_year_counted_once_after_rtm), sign: "go",
+        note: "the worst corners partly improve on their own"}] : [])], "injury crashes avoided a year")}` +
+    `<p class="legend">The gap rests on studies of other kinds of sites, or on a check nobody has made yet, such as the signal timing.</p></div>` +
     `<div class="tiles">` +
-    tile(usd(s.harm_usd_per_year || s.harm_usd_per_year_summed), "a year in injury crashes at these corners (U.S. DOT values)") +
-    tile(`${s.corners_with_supported_fix}`, `corners with a fix the evidence supports now (${tiers || "none"})`) +
-    tile(`${s.corners_with_another_road_owner}`, "corners where the city's transportation department is not the only road owner") +
-    (repeat ? tile(`${repeat[1]}`, `corners that already got ${esc(repeat[0])}, whose drop the city's own record cannot separate from an earlier trend`) : "") +
-    (q ? tile(`${q.rerequests.length}`, "corners where a fix was asked for, turned down, is still missing, and pedestrians are still hurt") : "") +
+    tile(usd(s.harm_usd_per_year_summed || s.harm_usd_per_year), "a year in harm from these corners' own injury crashes") +
+    `<div class="tile" title="${esc(tiers)}"><b>${s.corners_with_supported_fix}</b><span>corners with a supported fix</span></div>` +
+    tile(`${s.corners_with_another_road_owner}`, "corners with another road owner") +
+    (repeat ? tile(`${repeat[1]}`, `already got ${esc(repeat[0])}; its effect here is unproven`) : "") +
+    (q ? tile(`${q.rerequests.length}`, "fixes asked for, turned down, still needed") : "") +
     `</div>` +
-    (q && q.rerequests.length ? `<section class="step"><h3>Asked for and turned down</h3><p class="legend">From ${esc(q.source)}, matched by street names (${q.corners_matched} of ${q.corners} corners matched).</p>` +
-      `<ul class="claims">${q.rerequests.map(x => `<li><b>${link(x.corner)}</b>: ${esc(x.text)} <span class="legend">request ${esc(x.reference)}</span></li>`).join("")}</ul></section>` : "") +
+    (q && q.rerequests.length ? `<section class="step"><h3>Asked for and turned down</h3>` +
+      `<table class="plan"><thead><tr><th>Corner</th><th>Asked for</th><th>Turned down</th><th>Injury crashes since ${esc(date(q.rerequests[0].facts.records_since))}</th><th>Pedestrians hurt</th></tr></thead><tbody>` +
+      q.rerequests.map(x => `<tr><td>${link(x.corner)}</td><td>${esc(x.request)} <span class="legend">${esc(x.reference)}</span></td><td>${esc(x.decided)}</td>` +
+        `<td class="num">${x.facts.injury_crashes}</td><td class="num">${x.facts.pedestrians_injured}</td></tr>`).join("") +
+      `</tbody></table><p class="legend">From ${esc(q.source)}, matched by street names (${q.corners_matched} of ${q.corners} corners). None of these fixes is recorded at the corner now.</p></section>` : "") +
     `<section class="step"><h3>Who must act</h3>` + p.agencies.map(g =>
       `<details class="agency"><summary><b>${esc(g.party)}</b>${g.presumed ? ' <span class="status">presumed</span>' : ""}: ${g.intersections} ${g.intersections === 1 ? "corner" : "corners"}` +
       (g.intersections_with_supported_fix ? `, ${g.crashes_avoided_per_year_total} crashes a year avoidable at ${g.intersections_with_supported_fix}` : "") + `</summary>` +
@@ -893,7 +943,7 @@ function show(r, corner) {
   const owners = who.owners.length;
   const tag = id => `<button class="rtag" data-r="${esc(id)}" aria-label="show receipt ${esc(id)}">${esc(id)}</button>`;
   const lede = cr.injury_crashes != null ?
-    `${cr.injury_crashes} injury crashes since ${date(cr.since)}${killed ? `, ${killed} ${killed === 1 ? "death" : "deaths"}` : ""}` +
+    `${cr.injury_crashes} injury ${cr.injury_crashes === 1 ? "crash" : "crashes"} since ${date(cr.since)}${killed ? `, ${killed} ${killed === 1 ? "death" : "deaths"}` : ""}` +
     `${fx.harm ? `, about ${usd(fx.harm.usd_per_year)} a year in harm` : ""}. ` +
     (owners ? `${WORDS[owners] || owners} road ${owners === 1 ? "owner" : "owners"} must act.` : "") : "No crash record is registered for this place.";
 
@@ -967,7 +1017,7 @@ function show(r, corner) {
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>
       <ul class="claims">${r.claims.map(c => `<li>${esc(c.text)}${tag(c.receipt)}</li>`).join("")}</ul></section>
     <section class="step"><h3><span class="no">2</span>What the crashes have in common</h3>
-      <p class="why">${rc.crashes ?? "?"} police-reported crashes within ${rc.radius_m ?? 100} m. Yellow marks a pattern that is more common here than at ${esc(peers)} after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
+      <p class="why">${rc.crashes ?? "?"} police-reported crashes at this corner. Yellow marks a pattern that is more common here than at ${esc(peers)} after a correction for testing many patterns; the line marks the city's share. Police factors are an officer's account, not a proven cause.</p>
       <div class="bars">${bars || '<p class="legend">Too few crashes to compare.</p>'}</div>
       ${rc.not_recorded && rc.not_recorded.length ? `<p class="legend">Not recorded in this dataset: ${esc(rc.not_recorded.join(", "))}.</p>` : ""}
       ${rc.factor_unspecified_share != null ? `<p class="legend">${pct(rc.factor_unspecified_share)} of these crashes have no contributing factor recorded.</p>` : ""}
@@ -990,6 +1040,9 @@ function show(r, corner) {
       <div class="owners">${ownerCards || '<p class="legend">No road owner found in the registered datasets.</p>'}</div>${reqs}</section>
     <section class="step"><h3><span class="no">6</span>The request</h3>${letter}</section>
     ${agentHTML(r.agent)}
+    ${LIVE !== null ? `<section class="step"><h3>Published about this corner</h3>
+      <p class="why">Muse Spark searches the web for agency pages, council items and news about this corner; code opens each page and keeps it only if the passage is on it and the page names both streets.</p>
+      <button id="findreports" type="button" class="quiet">Search the web</button><div id="reportsout"></div></section>` : ""}
     <section class="step"><h3>Ask the engineer</h3>
       <p class="why">Muse Spark Open answers from this corner's receipts. Every sentence names its receipt; sentences the checker refuses are shown struck through with the reason.</p>
       ${LIVE !== null && corner ? `<form id="askform" class="search ask"><input id="askq" maxlength="300" placeholder="e.g. Why are trucks over-represented here, and who can fix it?"><button>Ask</button></form><div id="askout"></div>` : ""}
@@ -1009,6 +1062,10 @@ function show(r, corner) {
     } catch (err) { $("askout").innerHTML = `<p>${esc(err.message)}</p>`; }
   };
   wireTags();
+  if ($("findreports")) $("findreports").onclick = () => {
+    $("findreports").disabled = true;
+    findJob({city: CITY, corner: j.name.split(",")[0]}, $("reportsout"), res => { $("reportsout").innerHTML = foundPages(res); });
+  };
   if ($("draft")) $("draft").onclick = async () => {
     $("draft").disabled = true; $("draftout").innerHTML = `<p class="legend">Drafting and checking…</p>`;
     try {
@@ -1026,7 +1083,7 @@ function show(r, corner) {
 
 function pathNav() {
   // the corner's report as a path of its sections, each a jump, so the page reads like a flow chart
-  const secs = [...$("out").querySelectorAll("section.step")].filter(x => x.querySelector("h3"));
+  const secs = [...$("out").querySelectorAll("section.step")].filter(x => x.querySelector("h3 .no"));  // the numbered steps only
   const meta = $("out").querySelector("p.meta");
   if (secs.length < 3 || !meta) return;
   const nav = document.createElement("nav");

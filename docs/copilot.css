@@ -39,6 +39,7 @@ body{font:17px/1.6 var(--body)}
 h1,h2,h3,h4,.logo,nav.tasks a,button,.vlabel,.cards .t{font-family:var(--head)}
 a{color:var(--guide)}
 :focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+#out:focus{outline:none}  /* focused by code after a result loads, for screen readers; not a control */
 button{font:inherit;font-family:var(--head);font-weight:700;font-size:15px;padding:9px 14px;border-radius:6px;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
 button.quiet{background:transparent;color:var(--ink);border:1.5px solid var(--rule)}
 button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:underline}
@@ -171,6 +172,22 @@ form.ask button:not(.examples button):hover{filter:brightness(.92)}
 .examples button{font-family:var(--body);font-weight:400;font-size:15px;padding:6px 12px;border-radius:999px;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);text-align:left}
 .examples button:hover{border-color:var(--ink)}
 textarea{width:100%;max-width:100%;min-height:360px;font:15px/1.55 var(--body);padding:12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+
+/* found on the web: a primary action above the form, then each kept page with its checked passage, then a checklist */
+.findrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:14px 0 6px}
+.findrow button{background:var(--task);color:var(--task-ink);padding:11px 18px}
+.findrow select{font:inherit;font-size:16px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+.findrow select:focus{outline:3px solid var(--task);outline-offset:1px}
+.findrow button:disabled{opacity:.6;cursor:progress}
+.findrow button.quiet{background:transparent;color:var(--ink);border:1.5px solid var(--task)}
+#findout h4{margin:18px 0 6px}
+ul.webfound{list-style:none;padding:0;margin:8px 0}
+ul.webfound li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule)}
+ul.webfound blockquote{margin:6px 0 0;padding:2px 0 2px 12px;border-left:3px solid var(--rule);color:var(--mut);font-size:15px}
+fieldset.pick{border:1.5px solid var(--rule);border-radius:8px;padding:8px 14px 12px;margin:14px 0;background:var(--sheet)}
+fieldset.pick legend{font-family:var(--head);font-weight:700;padding:0 6px}
+fieldset.pick label{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:15px;cursor:pointer}
+fieldset.pick input:disabled+span{color:var(--mut)}
 
 /* 6 verdicts as road signs, and a running job ---------------------------------------------------------------------- */
 .vcard{display:flex;gap:18px;align-items:flex-start;padding:18px 20px;margin:16px 0;border-radius:10px;background:var(--sheet);border:1px solid var(--rule);max-width:780px}
