@@ -321,7 +321,19 @@ function reviewResult(r) {
   const objs = r.objections || [], parts = a.parts || [];
   const partsTable = parts.length > 1 ? `<table><tr><th>Part</th><th>Verdict</th></tr>${parts.map(x =>
       `<tr><td>${esc(x.countermeasure === "other" ? x.what : x.countermeasure)}</td><td>${esc(x.verdict_text)}</td></tr>`).join("")}</table>` : "";
-  return verdictCard(r.verdict, "") +
+  const opts = [];
+  for (const x of parts.length ? parts : [a]) {
+    const pr = x.proposed, alt = x.best_alternative;
+    const sign = (VERDICT_INFO[x.verdict] || {}).shape;
+    if (pr) opts.push({label: `Proposed: ${esc(pr.countermeasure)}`, value: pr.injury_crashes_avoided_per_year, track: pr.target_crashes_per_year, sign,
+                       note: `of ${pr.target_crashes_per_year} ${esc(pr.targets)} a year`});
+    if (alt && (!pr || alt.countermeasure !== pr.countermeasure))
+      opts.push({label: `Alternative: ${esc(alt.countermeasure)}`, value: alt.injury_crashes_avoided_per_year, track: alt.target_crashes_per_year,
+                 note: `of ${alt.target_crashes_per_year} ${esc(alt.targets)} a year`});
+  }
+  const chart = opts.length ? `<div class="chart"><h4>Injury crashes each option is expected to avoid a year</h4>` +
+    `<p class="legend">The light rail is the crashes the fix targets here; the bar is the share the study behind it expects to avoid.</p>${hbars(opts, "injury crashes avoided a year")}</div>` : "";
+  return verdictCard(r.verdict, "") + chart +
     `<div class="why3"><h4>Why</h4><ul>${(a.reasons || []).slice(0, 3).map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` +
     `<p class="chips"><span class="chip">Verdict set by code, not the model</span>` +
     (objs.length ? `<span class="chip">${objs.length} objection${objs.length > 1 ? "s" : ""} checked and answered</span>` : "") +
@@ -458,11 +470,49 @@ function programResult(p) {
       : `<p class="verdict warn"><b>Within ${money(plan.budget_usd)}:</b> nothing to fund yet. No project in this list has both ` +
         `evidence that it fits its corner and a stated cost.`) +
       (plan.no_cost_given.length ? ` ${plan.no_cost_given.length} supported project${plan.no_cost_given.length > 1 ? "s have" : " has"} no cost to rank.` : "") + `</p>` : "") +
+    programChart(p) +
     PROGRAM_GROUPS.filter(([g]) => (p.groups[g] || []).length).map(([g, label]) => `<h4>${esc(label)}</h4><table><tr><th>Proposal</th><th>Avoided a year</th><th>Cost</th><th>Why</th></tr>` +
       p.groups[g].map(x => `<tr><td>${esc(x.input)}</td><td>${x.injury_crashes_avoided_per_year ?? "–"}</td><td>${money(x.cost_usd)}</td>` +
         `<td>${reasonList(x.reasons)}${x.alternative ? `<p class="legend">Alternative: ${esc(x.alternative.countermeasure)}, ${x.alternative.injury_crashes_avoided_per_year} a year</p>` : ""}</td></tr>`).join("") + `</table>`).join("") +
     ((p.not_reviewed || []).length ? `<h4>Not reviewed</h4><ul>${p.not_reviewed.map(x => `<li>${esc(x.input)}: ${esc(x.reason || x.status)}</li>`).join("")}</ul>` : "") +
     `<p class="legend">Cost of the reviews: $${esc(t.review_cost_usd)}.</p>`;
+}
+
+function hbars(rows, unit) {
+  // horizontal bars on one scale: rows [{label, value, track?, sign?, note?}]; a track is the most the value could be
+  // (e.g. the crashes a fix targets), drawn as a light rail behind the bar; the value is written at the bar's end
+  const top = Math.max(...rows.map(r => Math.max(r.value || 0, r.track || 0)), 1e-9);
+  const w = v => `${(100 * (v || 0) / top).toFixed(1)}%`;
+  return `<div class="hb" role="img" aria-label="${esc(unit)}">` + rows.map(r =>
+    `<div class="hb-l">${r.sign ? `<span class="vsign mini ${r.sign}" aria-hidden="true"><span>${SIGN_GLYPH[r.sign]}</span></span>` : ""}<span>${r.label}</span></div>` +
+    `<div class="hb-c" title="${esc(`${r.value ?? "no estimate"} ${unit}${r.track ? ` of ${r.track} targeted` : ""}`)}">` +
+    `<span class="hb-w"><span class="hb-t" style="width:${w(r.track || r.value)}"><span class="hb-f ${r.sign || ""}" style="width:${r.track ? (100 * (r.value || 0) / r.track).toFixed(1) : 100}%"></span></span></span>` +
+    `<span class="hb-x"><b class="hb-v">${r.value == null ? "no estimate" : r.value}</b>${r.note ? `<span class="hb-n">${r.note}</span>` : ""}</span></div>`).join("") + `</div>`;
+}
+const SIGN_GLYPH = {go: "✓", warn: "!", stop: "✕", quiet: "?"};
+
+const GROUP_SIGN = {build: "go", site_check: "warn", compare: "warn", parts: "warn", study: "quiet", reconsider: "stop"};
+const GROUP_SHORT = {build: "build", site_check: "build after a site check", compare: "compare first", parts: "decide part by part",
+  study: "not covered by the evidence", reconsider: "reconsider"};
+function programChart(p) {
+  // every proposal on one scale, ranked as code ranked them, each bar wearing its group's sign and name
+  const rows = PROGRAM_GROUPS.flatMap(([g]) => (p.groups[g] || []).map(x => ({
+    label: esc((x.input || "").replace(/,? as .*$/, "").slice(0, 80)), value: x.injury_crashes_avoided_per_year ?? null,
+    sign: GROUP_SIGN[g], note: GROUP_SHORT[g]})));
+  return rows.length ? `<div class="chart"><h4>Injury crashes avoided a year, in the order code ranks them</h4>${hbars(rows, "injury crashes avoided a year")}</div>` : "";
+}
+
+function cornerGlance(cr, fx, killed, owners) {
+  // the corner at a glance: four numbers, then who was hurt as bars on one scale
+  if (cr.injury_crashes == null) return "";
+  const tiles = `<div class="tiles glance">` +
+    `<div class="tile"><b>${cr.injury_crashes}</b><span>injury crashes in five years</span></div>` +
+    `<div class="tile${killed ? " grave" : ""}"><b>${killed}</b><span>${killed === 1 ? "person" : "people"} killed</span></div>` +
+    (fx.harm ? `<div class="tile"><b>${usd(fx.harm.usd_per_year)}</b><span>a year in harm (U.S. DOT values)</span></div>` : "") +
+    `<div class="tile"><b>${owners}</b><span>road ${owners === 1 ? "owner" : "owners"} who must act</span></div></div>`;
+  const hurt = [["Pedestrians", cr.pedestrian_injured], ["Cyclists", cr.cyclist_injured], ["People in vehicles", cr.motorist_injured]]
+    .filter(([, v]) => v != null).map(([label, value]) => ({label, value}));
+  return tiles + (hurt.length ? `<div class="chart"><h4>Who was hurt</h4>${hbars(hurt, "people injured")}</div>` : "");
 }
 
 function reasonList(reasons) {
@@ -611,7 +661,13 @@ function checkResult(r) {
       `<p>${esc(r.summary)}</p><p class="vnext"><b>Read:</b> each claim below says whether the record agrees, differs, or cannot test it.</p></div></div>`
     : `<div class="vcard warn"><div class="vsign warn" aria-hidden="true"><span>?</span></div><div class="vtext"><p class="vlabel">Not published</p>` +
       `<p>${esc(r.reason)}</p><p class="vnext"><b>Why:</b> a case is shown only when every number and quote checks out; nothing here is a finding.</p></div></div>`;
-  const claims = (r.claims || []).length ? `<h4>Claims checked against the record</h4><ul>` + r.claims.map(c =>
+  const kinds = {holds: 0, differs: 0, untested: 0};
+  for (const c of r.claims || []) kinds[/consistent|matches|holds/i.test(c.verdict) ? "holds" : /differ|contradict/i.test(c.verdict) ? "differs" : "untested"] += 1;
+  const tally = (r.claims || []).length ? `<div class="tiles tally">` +
+    `<div class="tile"><span class="vsign mini go" aria-hidden="true"><span>✓</span></span><b>${kinds.holds}</b><span>agree with the record</span></div>` +
+    `<div class="tile"><span class="vsign mini stop" aria-hidden="true"><span>✕</span></span><b>${kinds.differs}</b><span>differ from the record</span></div>` +
+    `<div class="tile"><span class="vsign mini warn" aria-hidden="true"><span>?</span></span><b>${kinds.untested}</b><span>the record cannot test</span></div></div>` : "";
+  const claims = (r.claims || []).length ? tally + `<h4>Claims checked against the record</h4><ul>` + r.claims.map(c =>
     `<li>“${esc(c.claim)}”: <b>${esc(c.verdict)}</b>${c.frame ? ` <span class="legend">(${esc(c.frame)})</span>` : ""}</li>`).join("") + `</ul>` : "";
   const finds = (r.findings || []).length ? `<details class="more"><summary>Findings (${r.findings.length})</summary><ul>` + r.findings.map(f =>
     `<li>${esc(f.text)} <span class="legend">[${esc(f.receipt)}]</span></li>`).join("") + `</ul></details>` : "";
@@ -813,7 +869,9 @@ function show(r, corner) {
     who = f.who_must_act || {owners: [], requesters: []}, lt = f.draft_request || {};
   const j = r.junction;
   if (map) { map.setView([j.lat, j.lon], 15); mapPlaced = true; if (pin) pin.remove(); pin = L.circleMarker([j.lat, j.lon], {radius: 11, color: "#E8A800", weight: 4, fill: false}).addTo(map); }
-  const killed = (cr.pedestrian_killed || 0) + (cr.cyclist_killed || 0) + (cr.motorist_killed || 0);
+  // deaths: the larger of the by-mode sum and the dataset's total (some records hold a death with every mode at zero)
+  const killed = Math.max((cr.pedestrian_killed || 0) + (cr.cyclist_killed || 0) + (cr.motorist_killed || 0),
+                          cr.any_killed || 0, (fx.harm || {}).deaths_in_record || 0);
   const owners = who.owners.length;
   const tag = id => `<button class="rtag" data-r="${esc(id)}" aria-label="show receipt ${esc(id)}">${esc(id)}</button>`;
   const lede = cr.injury_crashes != null ?
@@ -885,6 +943,7 @@ function show(r, corner) {
     <h2 class="corner">${esc(j.name.split(",")[0])}</h2>
     <p class="lede">${esc(lede)}</p>
     <p class="meta">Built in ${r.seconds < 1 ? "under a second" : `${Math.round(r.seconds)} s`} from records as of ${date(r.asof)}. ${r.claim_errors.length ? `${r.claim_errors.length} claims refused by the checker.` : "Every claim passed the number checker."}</p>
+    ${cornerGlance(cr, fx, killed, owners)}
     ${media}
     <section class="step"><h3><span class="no">1</span>The case</h3>
       <p class="why">Each sentence names the receipt behind it. A sentence whose numbers do not match its receipt is refused before it is shown.</p>
@@ -901,7 +960,11 @@ function show(r, corner) {
       <p class="legend">Recorded safety work at this corner: ${here || "none in the city's project records"}.</p></section>
     <section class="step"><h3><span class="no">4</span>The fix and its price</h3>
       <p class="why">Federal Proven Safety Countermeasures, estimated only where a crash-reduction study matches this corner's control (${esc(fx.control || "unknown")}) and the crashes it targets. Dollars use the U.S. DOT's crash costs.</p>
-      <table class="fixes"><thead><tr><th>Fix</th><th>Crashes avoided a year</th><th>Harm avoided a year</th><th>Study</th></tr></thead><tbody>${fixes}</tbody></table>
+      ${(fx.options || []).length ? hbars(fx.options.slice(0, 6).map(o => ({label: esc(o.countermeasure), value: o.injury_crashes_avoided_per_year,
+          track: o.target_crashes_per_year, sign: o.verify_on_site ? "warn" : "go",
+          note: o.verify_on_site ? "check on site first" : esc(o.evidence || o.chosen_by || "")})), "injury crashes avoided a year") : ""}
+      <details class="more"><summary>Every fix, its harm avoided and its study</summary>
+      <table class="fixes"><thead><tr><th>Fix</th><th>Crashes avoided a year</th><th>Harm avoided a year</th><th>Study</th></tr></thead><tbody>${fixes}</tbody></table></details>
       ${skipped ? `<details><summary>${(fx.not_estimated || []).length} more fixes without a number, and why</summary><ul class="legend">${skipped}</ul></details>` : ""}
       ${site}</section>
     <section class="step"><h3><span class="no">5</span>Who must act</h3>
