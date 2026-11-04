@@ -22,6 +22,10 @@
 | USGS The National Map imagery | US public domain | Aerial photos where no city orthophoto is registered |
 | Mapillary street-level images | CC BY-SA 4.0 | Shown in briefs with a link to the image and the licence |
 | OpenStreetMap (Overpass, Nominatim) and map tiles | ODbL 1.0 | Street layout and route tags in briefs and the engineer; geocoding; the copilot's base map, credited on the map as "© OpenStreetMap contributors". Contact e-mail tags are removed from the published replay cache |
+| Esri World Street Map tiles (server.arcgisonline.com) | Esri terms of use; credited on the map | The copilot's base map; OpenStreetMap tiles are the fallback |
+| Photon geocoder (photon.komoot.io), OpenStreetMap data | ODbL 1.0 | Geocoding fallback when Nominatim refuses |
+| pypdf | BSD-3-Clause | Reads agency pages that are PDFs |
+| Public Sans typeface | SIL Open Font License 1.1 | Copilot body text (Google Fonts) |
 | Leaflet 1.9.4 | BSD-2-Clause | Copilot map (CDN) |
 | three.js 0.160.0 | MIT | Viewer 3D replay (CDN) |
 | marked 12.0.2 | MIT | Viewer memo rendering (CDN) |
