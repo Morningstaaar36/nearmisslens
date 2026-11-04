@@ -71,3 +71,13 @@ def test_a_death_counted_only_in_the_total_is_not_lost():
     assert context.deaths({"pedestrian_killed": 1}) == 1
     nyc = next(a for a in opendata.adapters_of("nyc", "crash") if a["id"] == "nyc-crashes")
     assert nyc["killed"].get("any") == ["number_of_persons_killed"]
+
+
+def test_the_checker_knows_the_letters_death_total():
+    """A letter's facts carry deaths as people_killed: "1 person was killed" passes and "no one was killed" does not."""
+    from nearmisslens import context
+    chk = context.FactCheck({"junction": "A Street & B Street", "crashes": 41, "injury_crashes": 13,
+                             "pedestrian_injured": 3, "people_killed": 1})
+    assert chk.text("1 person was killed.") == []
+    assert chk.text("3 pedestrians were injured and 1 person was killed.") == []
+    assert chk.text("No one was killed.")

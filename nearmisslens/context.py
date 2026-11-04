@@ -443,7 +443,7 @@ class FactCheck:
             if name == "dollars":  # "$8.8 million" and "$561,000" both name a dollar field
                 vals += [v / 1e6 for v in vals] + [v / 1e3 for v in vals]
             if name == "deaths":  # "no one was killed" is about everyone: the total, not any one mode's count
-                tot = [v for p_, k, v in self.paths if k in ("any_killed", "deaths_in_record")]
+                tot = [v for p_, k, v in self.paths if k in ("any_killed", "deaths_in_record", "people_killed")]
                 modes = sum(v for p_, k, v in self.paths if k in ("pedestrian_killed", "cyclist_killed", "motorist_killed"))
                 vals = [max(tot + [modes])] if (tot or modes) else []
             self.by_label[name] = vals or [0.0]  # an absent count is zero (the record lists only non-zero counts)
