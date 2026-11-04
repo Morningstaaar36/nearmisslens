@@ -782,6 +782,7 @@ Registered in BENCH_PREREG.md (T31; T31b on fresh corners after T31's change). I
 |---|---|---|---|---|---|
 | T31 | 2 of 10 | 1 of 10 | 13.5 | 30.1 | not met |
 | T31b | 3 of 9 | 0 of 9 | 4.7 | 22.9 | not met |
+| T32 | 7 of 10 | 0 of 10 | 3.9 | 40.5 | not met |
 
 ## Data agent: adapters found and validated without hand-written code
 

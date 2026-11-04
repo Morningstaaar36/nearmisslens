@@ -1,0 +1,268 @@
+{
+ "id": "T32",
+ "spec": "validation/experiments/T32.json",
+ "tool": [
+  {
+   "city": "dc",
+   "corner": "Suitland Parkway Southeast & Firth Sterling Avenue Southeast",
+   "lat": 38.861763,
+   "lon": -76.998083,
+   "tool_injury_crashes": 2,
+   "circle_injury_crashes": 37,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 178,
+    "kept": 4,
+    "left_out_elsewhere": 174,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "dc",
+   "corner": "Florida Avenue Northwest & 7th Street Northwest",
+   "lat": 38.916324,
+   "lon": -77.02185,
+   "tool_injury_crashes": 15,
+   "circle_injury_crashes": 95,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 419,
+    "kept": 65,
+    "left_out_elsewhere": 225,
+    "left_out_unplaced_far": 129,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "Flatbush Avenue & Avenue U",
+   "lat": 40.6098090793,
+   "lon": -73.9224975086,
+   "tool_injury_crashes": 54,
+   "circle_injury_crashes": 65,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 157,
+    "kept": 109,
+    "left_out_elsewhere": 18,
+    "left_out_unplaced_far": 30,
+    "not_placed": 45
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "Hylan Boulevard & Midland Avenue",
+   "lat": 40.5779442459,
+   "lon": -74.1023160729,
+   "tool_injury_crashes": 27,
+   "circle_injury_crashes": 57,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 112,
+    "kept": 55,
+    "left_out_elsewhere": 51,
+    "left_out_unplaced_far": 6,
+    "not_placed": 9
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "Rainier Avenue South & South Walker Street",
+   "lat": 47.583503,
+   "lon": -122.302068,
+   "tool_injury_crashes": 8,
+   "circle_injury_crashes": 82,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 211,
+    "kept": 17,
+    "left_out_elsewhere": 194,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "5th Avenue & Pine Street",
+   "lat": 47.611385,
+   "lon": -122.337168,
+   "tool_injury_crashes": 6,
+   "circle_injury_crashes": 167,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 441,
+    "kept": 13,
+    "left_out_elsewhere": 428,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "Mission Street & 11th Street",
+   "lat": 37.774366,
+   "lon": -122.417099,
+   "tool_injury_crashes": 14,
+   "circle_injury_crashes": 30,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 30,
+    "kept": 14,
+    "left_out_elsewhere": 16,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "Duboce Avenue & Mission Street",
+   "lat": 37.770143,
+   "lon": -122.420017,
+   "tool_injury_crashes": 14,
+   "circle_injury_crashes": 38,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 38,
+    "kept": 14,
+    "left_out_elsewhere": 24,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Ashland Avenue & Cullerton Street",
+   "lat": 41.8550631,
+   "lon": -87.6661332,
+   "tool_injury_crashes": 11,
+   "circle_injury_crashes": 18,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 114,
+    "kept": 46,
+    "left_out_elsewhere": 12,
+    "left_out_unplaced_far": 56,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Foster Avenue & Pulaski Road",
+   "lat": 41.9755275,
+   "lon": -87.7282337,
+   "tool_injury_crashes": 22,
+   "circle_injury_crashes": 28,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 149,
+    "kept": 106,
+    "left_out_elsewhere": 0,
+    "left_out_unplaced_far": 43,
+    "not_placed": 0
+   }
+  }
+ ],
+ "independent": "validation/independent/t32_independent_counts_2026-11-04.json",
+ "comparison": [
+  {
+   "city": "dc",
+   "corner": "Suitland Parkway Southeast & Firth Sterling Avenue Southeast",
+   "independent": 5,
+   "tool": 2,
+   "circle": 37,
+   "agree": false,
+   "circle_agree": false
+  },
+  {
+   "city": "dc",
+   "corner": "Florida Avenue Northwest & 7th Street Northwest",
+   "independent": 35,
+   "tool": 15,
+   "circle": 95,
+   "agree": false,
+   "circle_agree": false
+  },
+  {
+   "city": "nyc",
+   "corner": "Flatbush Avenue & Avenue U",
+   "independent": 54,
+   "tool": 54,
+   "circle": 65,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "nyc",
+   "corner": "Hylan Boulevard & Midland Avenue",
+   "independent": 27,
+   "tool": 27,
+   "circle": 57,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "Rainier Avenue South & South Walker Street",
+   "independent": 9,
+   "tool": 8,
+   "circle": 82,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "5th Avenue & Pine Street",
+   "independent": 7,
+   "tool": 6,
+   "circle": 167,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "sf",
+   "corner": "Mission Street & 11th Street",
+   "independent": 14,
+   "tool": 14,
+   "circle": 30,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "sf",
+   "corner": "Duboce Avenue & Mission Street",
+   "independent": 28,
+   "tool": 14,
+   "circle": 38,
+   "agree": false,
+   "circle_agree": false
+  },
+  {
+   "city": "chicago",
+   "corner": "Ashland Avenue & Cullerton Street",
+   "independent": 11,
+   "tool": 11,
+   "circle": 18,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "chicago",
+   "corner": "Foster Avenue & Pulaski Road",
+   "independent": 22,
+   "tool": 22,
+   "circle": 28,
+   "agree": true,
+   "circle_agree": false
+  }
+ ],
+ "summary": {
+  "corners": 10,
+  "counted_by_both": 10,
+  "tool_agree": 7,
+  "circle_agree": 0,
+  "tool_mean_abs_error": 3.9,
+  "circle_mean_abs_error": 40.5,
+  "rule_met": false
+ }
+}

@@ -42,7 +42,7 @@ reported next to successes. The full story, with what each review of the results
 | Review a list: 3 real agency programs (T29b) | 21 of 23 reviewed, each on its own corner; the ranking rebuilt exactly; $0.079 a proposal | met |
 | Read an agency's web page into projects (T30c) | **16 of 16** hand-collected projects found, 55 kept; $0.063 a page | met |
 | The causal gate on New York's leading pedestrian intervals (T11) | **−17%** pedestrian injury crashes (95% interval −22% to −11%); a naive before/after says −24% | passed |
-| A corner's own crash count against an independent count (T31b) | agrees at 3 of 10 corners; mean error 4.7 crashes against the 100 m circle's 22.9 | **not met** |
+| A corner's own crash count against an independent count (T32, after T31b's lessons) | agrees at 7 of 10 fresh corners (3 in T31b); mean error 3.9 crashes against the 100 m circle's 40.5 | **not met** (8 needed) |
 | A frozen patch against a held-out attacker (T18) | cut accepted false claims by 46%, short of the 50% registered | **not met** |
 
 **A new real case, run live on 4 November 2026** ([write-up and proof](validation/case_studies/2026-11-04_nyc_lafayette/)):
@@ -127,7 +127,8 @@ The live page runs on Modal (`nearmisslens/modal_web.py`) as one small container
   qualified engineer must review each one.
 - **The gates check numbers, quotes and wording, not whether a finding is the right one to make.** An independent audit of 12 published desk
   cases found an error in 7; the causes are fixed, and no person has audited the cases yet.
-- **Whose crashes a corner's counts are** depends on rules the open data does not settle (T31b, not met).
+- **Whose crashes a corner's counts are** depends on rules the open data does not settle where a city places
+  crashes by a point only (T32: 7 of 10, not met).
 - **The crash record lags the news** by days to weeks; every answer states the date its records run to.
 - **US cities only so far**: the method needs geocoded crash records, which most countries do not publish.
 

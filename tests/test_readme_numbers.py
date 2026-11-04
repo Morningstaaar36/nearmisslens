@@ -206,6 +206,17 @@ def test_t31_numbers():
          f"{b['circle_mean_abs_error']}, but it agreed within 15% at only {b['tool_agree']} of 10")
 
 
+def test_t32_numbers():
+    c = _load("experiment_T32.json")["summary"]
+    frozen = {(r["city"], r["corner"]): r["tool_injury_crashes"] for r in _load("experiment_T32_tool_before_counts.json")["tool"]}
+    scored = {(r["city"], r["corner"]): r["tool"] for r in _load("experiment_T32.json")["comparison"]}
+    assert frozen == scored  # the counts scored are the ones saved before the independent counts existed
+    assert not c["rule_met"]
+    _has(f"agrees at {c['tool_agree']} of 10 fresh corners")
+    _has(f"mean error {c['tool_mean_abs_error']} crashes against the 100 m circle's {c['circle_mean_abs_error']}")
+    _has(f"not met ({c['tool_agree']} of 10; mean error {c['tool_mean_abs_error']} crashes")
+
+
 def test_t29b_numbers():
     from nearmisslens.portfolio import run_summary
     sp = json.loads((ROOT / "validation" / "experiments" / "T29b.json").read_text())

@@ -391,6 +391,7 @@ Each desk run reruns from its registered spec with `nml desk T21c` (paid, live w
   | T30 / T30b / T30c | Does intake find at least 75% of the projects collected by hand from an agency's own pages, and nothing on the controls? | not met / not met / met (16 of 16) |
   | T29 / T29b | Does program review review at least 80% of three real program lists, each on its corner, and can code's ranking be rebuilt exactly? | not met (tied rows' order followed the threads) / met (21 of 23 reviewed, all on their corner, ranking rebuilt exactly) |
   | T31 / T31b | Does a corner's own crash count agree with an independent count from the city's data at 8 of 10 corners? | not met / not met (2 and 3 of 10; mean error 13.5 and 4.7 crashes, against the 100 m circle's 30.1 and 22.9) |
+  | T32 | The same on 10 fresh corners, after a 30 m rule for crashes the data does not place at a named intersection | not met (7 of 10; mean error 3.9 crashes, against the 100 m circle's 40.5) |
 
   Earlier tests of the drone-video pipeline (T1–T10) are in BENCH.md; most of their rules were not met, and that pipeline is not part of the product.
 - **Results that did not help.** Muse Wonder planning video review, a model review panel, Muse Spark rating video clips, residents' reports in crash prediction, and the aerial-photo site check all lost to simpler methods or changed nothing. They are reported in BENCH.md and not used in the product.

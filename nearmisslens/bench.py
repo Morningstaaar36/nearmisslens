@@ -1360,9 +1360,9 @@ def _t30_section() -> list[str]:
 
 
 def _t31_section() -> list[str]:
-    """T31 and T31b: a corner's own crash count against an independent count."""
+    """T31, T31b and T32: a corner's own crash count against an independent count."""
     L = []
-    for run in ("T31", "T31b"):
+    for run in ("T31", "T31b", "T32"):
         r = _load(f"experiment_{run}.json")
         if not r or not r.get("summary"):
             continue

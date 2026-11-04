@@ -1115,3 +1115,20 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
   instructions and no access to the tool, counts the same corners from each city's open-data API.
 - **Rule:** the tool agrees within max(1, 15% of the independent count) at 8 or more of the 10 corners. A corner the
   tool cannot find counts as not agreeing.
+
+### T32 result (2026-11-04)
+- **Rule not met.** The tool agreed with the independent count at **7 of the 10 fresh corners** (the rule asked 8),
+  up from 3 in T31b. The 100 m circle agreed at none. Mean absolute error 3.9 injury crashes against the circle's
+  40.5. The tool's counts, saved before the independent counts existed (`experiment_T32_tool_before_counts.json`),
+  are the ones scored. The independent counts are kept as written:
+  `validation/independent/t32_independent_counts_2026-11-04.md`.
+- **The three misses are the corners the counter itself found rule-dependent:**
+  - Florida Ave & 7th St NW (DC), 15 against 35: DC places most crashes on corner buildings 16 to 29 m from its node, so
+    the counter's own count runs from 13 at 20 m to 47 at 50 m; only 5 injury crashes name both streets.
+  - Suitland Pkwy & Firth Sterling Ave SE (DC), 2 against 5: DC never keys this intersection, and records naming it are
+    keyed 123 to 143 m away.
+  - Duboce Ave & Mission St (SF), 14 against 28: one five-leg city node (Mission, Duboce, 13th St, Otis and a US-101
+    ramp); counting only records that name Duboce and Mission gives 14, the tool's count.
+- **What this shows:** where a city names both streets or codes its own intersection class, the tool now matches a
+  careful independent count; where it places crashes by a point only, the count depends on a radius the data does not
+  settle. The registered rule stays not met.
