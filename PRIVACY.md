@@ -19,10 +19,11 @@ stores, where, and about whom.
 - **The static site** (GitHub Pages) has no server code and stores nothing. The page remembers nothing between visits.
   It loads a font from Google Fonts, the Leaflet map library from unpkg.com and map tiles from OpenStreetMap, so those
   services see the visitor's IP address, as with any page that uses them.
-- **The live endpoint** (Modal) is built but not deployed; the site is a static replay. Deployed, it would keep no
-  request log and no IP addresses. Its caps are global daily counters (a date,
-  a request count and a dollar amount), so there is nothing per visitor to keep. Searched addresses are sent to
-  Nominatim and the cities' open-data APIs to answer the request.
+- **The live endpoint** (Modal) keeps no request log and no IP addresses. Its daily caps are global counters (a date, a
+  request count and a dollar amount). The hourly limit for one visitor holds a salted hash of the visitor's address in
+  memory only; the salt is never saved, and each hash is dropped an hour after its last job. Searched addresses are
+  sent to Nominatim and the cities' open-data APIs to answer the request. Proposals, claims and lists you submit are
+  sent to Meta's models, and the review's memo and receipts are kept on the server's volume.
 - **Letters** are drafted for you to review and send yourself. NearMissLens sends nothing.
 
 ## The desk, the 311 inbox and Corner Watch

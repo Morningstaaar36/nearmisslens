@@ -27,7 +27,9 @@ SECRETISH = re.compile(r"(sk-[A-Za-z0-9]{16,}|api[_-]?key\"?\s*[:=]\s*\"[^\"]{8,
 def page(mode: str, live: str = "") -> str:
     if live and not live.startswith("https://"):
         raise ValueError("the live endpoint must be an https:// URL")
-    return (WEB / "copilot.html").read_text().replace("__MODE__", mode).replace("__LIVE__", live)
+    from .app import repo_url
+    return (WEB / "copilot.html").read_text().replace("__MODE__", mode).replace("__LIVE__", live) \
+        .replace("__REPO__", repo_url())
 
 
 def compact(rep: dict) -> dict:

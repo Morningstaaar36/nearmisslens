@@ -77,10 +77,13 @@ def test_check_endpoints_end_to_end(monkeypatch, tmp_path):
     base = f"http://127.0.0.1:{port}"
     for _ in range(100):
         try:
-            assert _call(base + "/cities") == (200, {"cities": [{"id": "zz", "checkable": True}], "limits": {"program_items": app.PROGRAM_ITEMS}})
+            code, d = _call(base + "/cities")
             break
         except OSError:
             time.sleep(0.05)
+    assert code == 200 and d["cities"] == [{"id": "zz", "checkable": True}]
+    assert d["limits"] == {"program_items": app.PROGRAM_ITEMS}
+    assert d["service"]["records_as_of"] and d["service"]["repository"].startswith("https://")
     assert _call(base + "/check", {"input": "https://example.org/a", "city": "la"})[0] == 422
     assert _call(base + "/check", {"input": ["x"], "city": "zz"})[0] == 400
     code, body = _call(base + "/check", {"input": "https://example.org/a", "city": "zz"})
@@ -247,3 +250,36 @@ def test_the_static_copy_may_call_the_endpoints_and_no_one_else(monkeypatch, tmp
     req = urllib.request.Request(base + "/cities", headers={"Origin": "https://pages.example"})
     with urllib.request.urlopen(req) as r:
         assert r.headers["Access-Control-Allow-Origin"] == "https://pages.example"
+
+
+def test_health_says_the_server_is_up_and_what_it_reads(monkeypatch, tmp_path):
+    monkeypatch.setattr(app.SETTINGS, "runs_dir", tmp_path, raising=False)
+    port = _port()
+    threading.Thread(target=app.serve, kwargs={"port": port, "open_weights": False}, daemon=True).start()
+    base = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            code, d = _call(base + "/health")
+            break
+        except OSError:
+            time.sleep(0.05)
+    assert code == 200 and d["ok"] is True and d["version"] and d["records_as_of"]
+    req = urllib.request.Request(base + "/health")
+    with urllib.request.urlopen(req) as r:
+        assert r.headers["X-Frame-Options"] == "DENY" and r.headers["Referrer-Policy"] == "no-referrer"
+
+
+def test_one_visitor_cannot_use_up_the_day():
+    """A visitor may start a few paid jobs an hour; others are not affected; the window rolls; nothing is kept as an
+    address (only salted hashes, dropped after the window)."""
+    from nearmisslens.budget import VisitorLimit
+    lim = VisitorLimit(jobs=2, window_s=100)
+    assert lim.allow("1.2.3.4", now=0) == (True, 0)
+    assert lim.allow("1.2.3.4", now=10) == (True, 0)
+    ok, wait = lim.allow("1.2.3.4", now=20)
+    assert not ok and wait == 81
+    assert lim.allow("5.6.7.8", now=20) == (True, 0)
+    assert lim.allow("1.2.3.4", now=101)[0]
+    assert not any("1.2.3.4" in k for k in lim._seen)
+    lim.allow("9.9.9.9", now=500)
+    assert len(lim._seen) == 1

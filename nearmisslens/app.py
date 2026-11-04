@@ -7,7 +7,9 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
                             when it takes longer than ENGINEER_WAIT_S (a corner never fetched before), {"job": id}
     GET  /engineer/<id>     {"status": "running" | "done" | "failed", "seconds", "result"?}
     POST /letter            {"name", "lat", "lon"} -> a drafted, number-checked request letter (Muse Spark Open)
-    GET  /cities            the registry's cities and whether each can be checked
+    GET  /cities            the registry's cities and whether each can be checked, the server's limits and the service
+                            facts the page shows (records date, today's budget left, source repository)
+    GET  /health            {"ok": true, ...}: for an uptime monitor
     POST /check             {"input", "city", "kind"?, "photo"?, "address"?} -> {"job": id}: the desk on one input
     GET  /check/<id>        {"status": "running" | "done" | "failed", "seconds", "result"?}
     POST /review            {"proposal", "city"} -> {"job": id}: Before you commit, a review of a proposed project
@@ -15,8 +17,8 @@ precomputed. Runs on 127.0.0.1 by default (nml app); the Modal app runs it in pu
     POST /portfolio         {"proposals": "one per line", "city", "budget_total"?} -> {"job": id}: a program review
     GET  /portfolio/<id>    {"status": "running" | "done" | "failed", "seconds", "result"?}
 
-Public mode (NML_PUBLIC=1): global daily caps on requests and model dollars (budget.DailyBudget), no illustration,
-no caller identity kept, places outside the registered cities refused, errors in plain words."""
+Public mode (NML_PUBLIC=1): global daily caps on requests and model dollars (budget.DailyBudget), a per-visitor
+hourly limit on paid jobs (budget.VisitorLimit: a salted hash in memory only), no illustration, no caller identity kept, places outside the registered cities refused, errors in plain words."""
 from __future__ import annotations
 
 import json
@@ -28,8 +30,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote, urlparse
 
 from . import brief, context, engineer, letter
-from .budget import DailyBudget
-from .config import ROOT, SETTINGS
+from . import __version__
+from .budget import DailyBudget, VisitorLimit
+from .config import ROOT, SETTINGS, asof
 from .evaluate import RESULTS_DIR
 
 WEB = ROOT / "nearmisslens" / "web"
@@ -43,6 +46,20 @@ CHECK_BUDGET_USD = float(os.environ.get("NML_CHECK_BUDGET_USD", "0.50"))  # one 
 # the origins of the page's static copy (e.g. the GitHub Pages site), comma-separated, allowed to call the endpoints
 ALLOWED_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get("NML_ALLOWED_ORIGINS", "").split(",") if o.strip()}
 PROGRAM_ITEMS = int(os.environ.get("NML_PROGRAM_ITEMS", "4"))  # proposals in one program review on the server
+PAID = ("/engineer", "/letter", "/check", "/review", "/portfolio", "/ask")  # each counts against the visitor's hourly limit
+
+
+def repo_url() -> str:
+    """Where the source and every registered test live: NML_REPO_URL (set by the Modal image), else pyproject's."""
+    if os.environ.get("NML_REPO_URL"):
+        return os.environ["NML_REPO_URL"]
+    try:
+        import tomllib
+        return tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["urls"]["Repository"]
+    except (OSError, KeyError, ValueError):
+        return ""
+
+
 PROGRAM_REVIEW_USD = 0.20  # each proposal's Meta cap within a program (a review costs about $0.04); 4 reserve $1.00
 
 
@@ -135,6 +152,18 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
     html = page("live").encode()
     public = os.environ.get("NML_PUBLIC") == "1"
     budget = DailyBudget()
+    visitors = VisitorLimit()
+    started = time.time()
+
+    def service() -> dict:
+        """What the page tells a visitor about this server: records date, today's budget left, where the source is."""
+        out = {"version": __version__, "records_as_of": asof().isoformat(), "repository": repo_url(), "public": public,
+               "visitor_jobs_per_hour": visitors.jobs if public else None}
+        if public:
+            day = budget.state()
+            out["budget_left_usd"] = round(max(0.0, day["usd_cap"] - day["usd"]), 2)
+            out["budget_usd"] = day["usd_cap"]
+        return out
     from . import check
     from .jobs import Busy, Jobs, Paused
     desk_client = MetaClient(SETTINGS)
@@ -186,9 +215,17 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Referrer-Policy", "no-referrer")
+            self.send_header("X-Frame-Options", "DENY")
+            self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
             self._cors()
             self.end_headers()
             self.wfile.write(body)
+
+        def _visitor(self) -> str:
+            """The caller's address for the hourly limit only: the proxy appends the real one last."""
+            fwd = [a.strip() for a in (self.headers.get("X-Forwarded-For") or "").split(",") if a.strip()]
+            return fwd[-1] if fwd else self.client_address[0]
 
         def do_OPTIONS(self):  # a browser's preflight before the static page posts JSON here
             self.send_response(204 if self.headers.get("Origin") in ALLOWED_ORIGINS else 403)
@@ -210,7 +247,10 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                 return self._send(200, (WEB / u.path[1:]).read_bytes(),
                                   "text/javascript" if u.path.endswith(".js") else "text/css")
             if u.path == "/cities":
-                return self._json(200, {"cities": check.cities(), "limits": {"program_items": PROGRAM_ITEMS}})
+                return self._json(200, {"cities": check.cities(), "limits": {"program_items": PROGRAM_ITEMS},
+                                        "service": service()})
+            if u.path == "/health":
+                return self._json(200, {"ok": True, "uptime_s": round(time.time() - started), **service()})
             if u.path.startswith(("/check/", "/engineer/", "/review/", "/portfolio/")):
                 rec = {"/check/": jobs, "/engineer/": corners, "/review/": reviewing,
                        "/portfolio/": programming}[u.path[:u.path.index("/", 1) + 1]] \
@@ -229,6 +269,12 @@ def serve(port: int = 8770, open_weights: bool = True, illustrate: bool = False)
                 if n > MAX_BODY:
                     raise BadRequest("the request is too large")
                 q = parse(self.rfile.read(n))
+                if public and path in PAID:
+                    ok, wait = visitors.allow(self._visitor())
+                    if not ok:
+                        return self._json(429, {"error": f"you have started {visitors.jobs} jobs in the last hour, "
+                                                         f"the limit for one visitor; try again in "
+                                                         f"{max(1, round(wait / 60))} minutes"})
                 if path == "/engineer":
                     a = address(q)
                     if public and not budget.request():

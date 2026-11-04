@@ -14,6 +14,10 @@ dependencies = [
     "scipy>=1.14",
 ]
 
+[project.urls]
+Repository = "https://github.com/Morningstaaar36/nearmisslens"
+Live = "https://hussainshahraz720--nearmisslens-copilot-web.us-east.modal.run"
+
 [project.optional-dependencies]
 local = [
     "torch==2.11.0",

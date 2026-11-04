@@ -3,13 +3,17 @@
 Model calls reserve their worst-case cost before they run and settle the real cost after; deterministic requests
 count against a request cap. On Modal the counters live in a modal.Dict (NML_BUDGET_DICT names it), so a second
 container cannot double the cap; locally they live in a JSON file under the runs directory. Counters reset each UTC
-day. No caller identity is stored: the caps are global, so no IP address is ever kept."""
+day. The caps are global; the per-visitor limit (VisitorLimit) tells visitors apart by a salted hash held in memory for
+one hour and never written, so no IP address is stored."""
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import os
+import secrets
 import threading
+import time
 from pathlib import Path
 
 from .config import SETTINGS
@@ -75,3 +79,32 @@ class DailyBudget:
 
     def state(self) -> dict:
         return {**self._get(), "usd_cap": self.usd, "request_cap": self.requests, "day": self._key()}
+
+
+class VisitorLimit:
+    """At most `jobs` paid jobs per visitor in a rolling window, so one visitor cannot use up the day's budget.
+
+    A visitor is a salted hash of their address; the salt is made at start-up and never saved, the hashes live only in
+    memory and are dropped once their window has passed. Nothing is written to disk or logged."""
+
+    def __init__(self, jobs: int | None = None, window_s: float = 3600.0):
+        self.jobs = int(os.environ.get("NML_VISITOR_JOBS_PER_HOUR", "10")) if jobs is None else jobs
+        self.window = window_s
+        self._salt = secrets.token_bytes(16)
+        self._seen: dict[str, list[float]] = {}
+        self._lock = threading.Lock()
+
+    def allow(self, address: str, now: float | None = None) -> tuple[bool, int]:
+        """(True, 0) and count one job, or (False, seconds until the visitor may start another)."""
+        now = time.time() if now is None else now
+        cut = now - self.window
+        key = hashlib.sha256(self._salt + address.encode()).hexdigest()[:20]
+        with self._lock:
+            for k in [k for k, ts in self._seen.items() if ts[-1] <= cut]:
+                del self._seen[k]
+            ts = [t for t in self._seen.get(key, []) if t > cut]
+            if len(ts) >= self.jobs:
+                self._seen[key] = ts
+                return False, int(ts[0] - cut) + 1
+            self._seen[key] = ts + [now]
+            return True, 0

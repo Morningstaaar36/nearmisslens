@@ -22,6 +22,9 @@ PORT = 8000
 # already carries the date in its environment
 _ASOF_FILE = ROOT / "validation" / "ASOF"
 ASOF = _ASOF_FILE.read_text().strip() if _ASOF_FILE.exists() else os.environ.get("NML_ASOF", "")
+_PYPROJECT = ROOT / "pyproject.toml"
+REPO = (__import__("tomllib").loads(_PYPROJECT.read_text())["project"]["urls"]["Repository"] if _PYPROJECT.exists()
+        else os.environ.get("NML_REPO_URL", ""))
 app = modal.App("nearmisslens-copilot")
 state = modal.Volume.from_name("nearmisslens-state", create_if_missing=True)
 image = (modal.Image.debian_slim(python_version="3.12")
@@ -30,7 +33,8 @@ image = (modal.Image.debian_slim(python_version="3.12")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
                "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "3.00", "NML_DAILY_REQUESTS": "300",
-               "NML_CHECK_BUDGET_USD": "0.50", "NML_ALLOWED_ORIGINS": "https://morningstaaar36.github.io", "NML_ASOF": ASOF})
+               "NML_CHECK_BUDGET_USD": "0.50", "NML_ALLOWED_ORIGINS": "https://morningstaaar36.github.io", "NML_ASOF": ASOF,
+               "NML_REPO_URL": REPO, "NML_VISITOR_JOBS_PER_HOUR": "10"})
          .add_local_dir(ROOT / "validation", "/app/validation")
          .add_local_dir(ROOT / "docs", "/app/docs", ignore=["video/**", "img/**", "*.md"])
          .add_local_dir(ROOT / "nearmisslens", "/app/nearmisslens", ignore=["**/__pycache__/**"]))

@@ -4,6 +4,7 @@
 const meta = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
 const MODE = meta("nml-mode") === "live" ? "live" : "static";
 const LIVE = MODE === "live" ? "" : (meta("nml-live").startsWith("https://") ? meta("nml-live").replace(/\/?$/, "/") : null);
+const REPO = meta("nml-repo").startsWith("https://") ? meta("nml-repo") : "";
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 const safeUrl = u => /^https?:\/\//i.test(String(u ?? "")) ? esc(u) : "#";  // never a javascript: or data: link
@@ -69,6 +70,7 @@ async function boot() {
       .on("click", () => openCorner(c)).addTo(layer);
   }
   listCorners(INDEX.corners);
+  serviceStatus();
   dispatch(r);
   window.addEventListener("hashchange", () => {
     const n = route();
@@ -117,17 +119,37 @@ function showStart() {
     `<li>Muse Spark reads your proposal and investigates the corner with checked tools: crash records, past city programs, federal crash-reduction studies, road owners.</li>` +
     `<li>Code, not the model, sets the verdict: proceed, check on site first, compare, not covered by the evidence, or reconsider.</li>` +
     `<li>A second model argues against the verdict. Code keeps an objection only if its fact is in the record, and the memo answers each one.</li>` +
-    `</ol><p class="legend">Every registered test, passed or not, is in <a href="https://github.com/Morningstaaar36/nearmisslens#how-we-kept-ourselves-honest">the repository</a>. ` +
+    `</ol><p class="legend">${REPO ? `Every registered test, passed or not, is in <a href="${esc(REPO)}">the repository</a>. ` : ""}` +
     `${live ? "Live work runs under a daily budget; saved results always open." : ""}</p></section>`;
   sampleResult();
   coveredCities();
   loadDurations().then(fillDurations);
 }
 
+let SERVER = null;
+function serverInfo() {
+  // the live server's cities, limits and service facts, asked once; null when there is no live server or it is down
+  if (!SERVER) SERVER = LIVE === null ? Promise.resolve(null) : getJSON(`${LIVE}cities`).catch(() => null);
+  return SERVER;
+}
+
+async function serviceStatus() {
+  // the task bar says whether live work is possible right now, and the footer says how old the records are
+  const d = await serverInfo(), el = $("svc"), svc = (d || {}).service || {};
+  if (REPO && $("repolink")) $("repolink").href = REPO;
+  const asof = svc.records_as_of || (INDEX || {}).asof;
+  if (asof && $("footdate")) $("footdate").textContent = `Crash records as of ${date(asof)}; police data lags by weeks.`;
+  if (!el) return;
+  if (LIVE === null) { el.className = "svc"; el.innerHTML = `<i></i>Saved results`; return; }
+  if (!d) { el.className = "svc down"; el.innerHTML = `<i></i>Live server not answering: saved results still open`; return; }
+  el.className = "svc up";
+  el.innerHTML = `<i></i>Live` + (svc.budget_usd != null ? `: $${Number(svc.budget_left_usd).toFixed(2)} of today's $${Number(svc.budget_usd).toFixed(2)} model budget left` : "");
+}
+
 async function coveredCities() {
   // the cities this copy can check, from the server (or the site's own index when it cannot be reached)
   let names = [];
-  try { names = (await getJSON(`${LIVE}cities`)).cities.filter(c => c.checkable).map(c => c.name); } catch (e) { /* below */ }
+  try { names = (await serverInfo()).cities.filter(c => c.checkable).map(c => c.name); } catch (e) { /* below */ }
   if (!names.length) names = Object.values(CITY_NAMES);
   if (names.length && $("citylist")) $("citylist").textContent = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names.at(-1) : names[0];
 }
@@ -226,7 +248,7 @@ async function liveCities() {
   // the cities the server can check, and its limits; the site's own index when it cannot be reached
   let cities = [];
   try {
-    const d = await getJSON(`${LIVE}cities`);
+    const d = await serverInfo();
     cities = (d.cities || []).filter(c => c.checkable);
     LIMITS = d.limits || {};
   } catch (e) { /* below */ }

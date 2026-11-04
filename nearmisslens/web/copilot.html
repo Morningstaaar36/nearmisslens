@@ -2,12 +2,13 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NearMissLens</title>
-<meta name="description" content="A safety engineer for city streets: the worst corners, what their crashes have in common, what the city already tried, the fix and its price, who must act, and the request letter. Every claim carries a receipt.">
+<meta name="description" content="Check a street-safety project against the city's own crash record before money is spent: a verdict set by code, its reasons, and the strongest case against it.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Cpath d=%22M16 2 30 16 16 30 2 16Z%22 fill=%22%23E8A800%22 stroke=%22%2318222E%22 stroke-width=%222%22/%3E%3C/svg%3E">
 <meta name="nml-mode" content="__MODE__">
 <meta name="nml-live" content="__LIVE__">
+<meta name="nml-repo" content="__REPO__">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@600;800&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="copilot.css">
@@ -22,6 +23,7 @@
     <a href="#corners" data-view="corners">Look up a corner</a>
     <a href="#desk" data-view="desk">Saved results</a>
   </nav>
+  <p class="svc" id="svc" role="status" aria-live="polite"></p>
 </header>
 <div class="app">
   <aside class="rail" aria-label="Corners in this city">
@@ -36,5 +38,12 @@
     <p class="busy">Loading…</p>
   </main>
 </div>
+<footer class="foot">
+  <p><b>Beta.</b> A screening aid built on public police crash records and federal crash-reduction studies. It is not
+  engineering advice and does not replace a site visit or an engineering study. <span id="footdate"></span></p>
+  <p>No account, cookies or analytics. What you submit goes to Meta's models to do the work, and the server keeps the
+  result so the page can show it (<a href="__REPO__/blob/main/PRIVACY.md">privacy</a>).
+  <a id="repolink" href="__REPO__">Source code and every test, passed or not</a>.</p>
+</footer>
 <script src="copilot.js"></script>
 </body></html>

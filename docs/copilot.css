@@ -1,257 +1,264 @@
-:root{--paper:#EDEFF0;--sheet:#F8F9F9;--ink:#18222E;--mut:#56616D;--rule:#C9CED3;
---warn:#E8A800;--warn-bg:#FFF4CC;--go:#1F6B48;--go-bg:#E1F0E7;--stop:#B42318;--stop-bg:#FBE4E1;--guide:#1F4E8C;--guide-bg:#E2EAF5;
---lane:repeating-linear-gradient(90deg,var(--rule) 0 18px,transparent 18px 30px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#24272B;--sheet:#2C3035;--ink:#ECEEF0;--mut:#A3ABB4;--rule:#474D55;
---warn:#F2BC2E;--warn-bg:#3D3417;--go:#5FC08D;--go-bg:#1D3328;--stop:#F07A6C;--stop-bg:#3E2422;--guide:#7FA8E3;--guide-bg:#1F2B3D}}
-:root[data-theme="dark"]{--paper:#24272B;--sheet:#2C3035;--ink:#ECEEF0;--mut:#A3ABB4;--rule:#474D55;
---warn:#F2BC2E;--warn-bg:#3D3417;--go:#5FC08D;--go-bg:#1D3328;--stop:#F07A6C;--stop-bg:#3E2422;--guide:#7FA8E3;--guide-bg:#1F2B3D}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--paper);color:var(--ink)}
-body{font:16px/1.55 "Overpass",system-ui,sans-serif;font-variant-numeric:tabular-nums}
-a{color:var(--guide)}
-:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
-.app{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);min-height:100vh}
-.app>*{min-width:0}
-.rail{border-right:1px solid var(--rule);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
-.brand{padding:18px 18px 10px}
-.brand h1{font-size:22px;font-weight:800;margin:0;letter-spacing:-.01em}
-.brand p{margin:4px 0 0;color:var(--mut);font-size:14px;line-height:1.45}
-form.search{display:flex;gap:8px;padding:0 18px 12px}
-form.search input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px 11px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
-button{font:inherit;font-weight:700;font-size:15px;padding:9px 14px;border-radius:6px;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
-button.quiet{background:transparent;color:var(--ink);border:1.5px solid var(--rule)}
-#map{height:34vh;min-height:220px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.citynote{padding:12px 18px;font-size:14px;color:var(--mut);line-height:1.45}
-.citynote b{color:var(--ink)}
-ol.corners{list-style:none;margin:0;padding:0 0 24px;overflow:auto;flex:1}
-ol.corners li button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:2.4em minmax(0,1fr) auto;gap:8px;width:100%;padding:8px 18px;cursor:pointer;font-size:14px}
-ol.corners li button:hover,ol.corners li button[aria-current="true"]{background:var(--sheet)}
-ol.corners li button:focus-visible{outline:3px solid var(--warn);outline-offset:-3px}
-.rank{color:var(--mut)}.n{font-weight:700}
-.gapdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--stop);margin-right:6px;vertical-align:1px}
-main{padding:28px clamp(16px,4vw,56px) 80px;max-width:1040px}
-.empty{color:var(--mut);max-width:60ch;margin-top:12vh}
-.empty h2{color:var(--ink);font-size:30px;line-height:1.15;margin:0 0 12px;font-weight:800}
-.where{color:var(--mut);font-size:14px;margin:0}
-h2.corner{font-size:clamp(28px,3.6vw,42px);line-height:1.08;font-weight:800;margin:4px 0 10px;letter-spacing:-.015em}
-.lede{font-size:clamp(18px,2vw,21px);line-height:1.45;max-width:62ch;margin:0 0 6px}
-.meta{color:var(--mut);font-size:13px;margin:0}
-section.step{padding:26px 0 8px;position:relative}
-section.step::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--lane)}
-section.step h3{font-size:20px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
-section.step h3 .no{font-size:13px;font-weight:700;color:var(--mut);min-width:1.6em}
-.why{color:var(--mut);font-size:14px;max-width:70ch;margin:0 0 12px}
-ul.claims{list-style:none;padding:0;margin:0;max-width:74ch}
-ul.claims li{padding:6px 0;line-height:1.5}
-.rtag{all:unset;cursor:pointer;font-size:12px;font-weight:700;color:var(--guide);background:var(--guide-bg);padding:1px 6px;border-radius:4px;margin-left:6px;white-space:nowrap}
-.rtag:focus-visible{outline:2px solid var(--warn)}
-.bars{display:grid;grid-template-columns:minmax(180px,1.2fr) 2fr;gap:6px 16px;max-width:820px;font-size:14px}
-.bar{position:relative;height:22px;background:var(--sheet);border-radius:3px}
-.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--rule);border-radius:3px}
-.bar .city{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
-.bar span{position:absolute;right:6px;top:1px;font-size:12px;color:var(--mut)}
-.bar.over i{background:var(--warn)}
-.lab.over{font-weight:700}
-.legend{font-size:13px;color:var(--mut)}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th{font-weight:700;text-align:left;color:var(--mut);font-size:13px;padding:6px 8px;border-bottom:1.5px solid var(--rule)}
-td{padding:9px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
-td.num{text-align:right;white-space:nowrap;font-weight:700}
-.status{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:4px;white-space:nowrap}
-.s-worked{background:var(--go-bg);color:var(--go)}
-.s-not{background:var(--sheet);color:var(--mut);border:1px solid var(--rule)}
-.s-trend,.s-worse{background:var(--warn-bg);color:var(--ink)}
-.flag{background:var(--stop-bg);border-left:4px solid var(--stop);padding:10px 14px;margin:0 0 12px;max-width:74ch}
-.note{font-size:13px;margin-top:4px;color:var(--mut)}
-.note.good{color:var(--go)}
-.owners{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;max-width:860px}
-.owner{background:var(--guide);color:#fff;border-radius:8px;padding:14px 16px;border:3px solid var(--guide);box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}
-.owner b{display:block;font-size:17px;line-height:1.25}
-.owner .roads{margin:6px 0 0;font-size:14px}
-.owner .basis{margin:8px 0 0;font-size:12px;opacity:.85}
-.owner.inferred{background:transparent;color:var(--guide);box-shadow:none;border-style:dashed}
-.req{margin:12px 0 0;font-size:15px}
-textarea{width:100%;max-width:100%;min-height:360px;font:14px/1.55 "Overpass",system-ui,sans-serif;padding:12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
-.receipts{display:grid;gap:10px;max-width:880px}
-.receipt{border:1px solid var(--rule);border-radius:6px;padding:10px 14px;background:var(--sheet);transition:box-shadow .4s}
-.receipt.lit{box-shadow:0 0 0 3px var(--warn)}
-.receipt h4{margin:0;font-size:15px}
-.receipt ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--mut)}
-.aerial{width:100%;max-width:420px;height:auto;border-radius:6px;display:block;margin:12px 0 4px}
-details summary{cursor:pointer;color:var(--mut);font-size:14px;margin-top:10px}
-.busy{color:var(--mut);margin-top:12vh}
-@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr)}.rail{height:auto;position:static;border-right:0}
-ol.corners{max-height:40vh}.bars{grid-template-columns:1fr}main{padding-top:20px}
-table.fixes th:nth-child(4),table.fixes td:nth-child(4){display:none}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-code{font-size:13px;overflow-wrap:anywhere}
-.legend,.note,.why,.claims li{overflow-wrap:anywhere}
-table{table-layout:auto}
-.mech{margin-top:18px;max-width:820px}.mech h4{margin:0 0 4px;font-size:16px}.mech ul{margin:6px 0 0;padding-left:18px}.mech li{margin:6px 0}
-.found{font-size:12px;font-weight:700;color:var(--go);background:var(--go-bg);padding:1px 6px;border-radius:4px;white-space:nowrap}
-.cityswitch{padding:0 18px 10px;font-size:14px}.cityswitch select{font:inherit;padding:6px 8px;border-radius:6px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink)}
-.askcard{border-left:4px solid var(--guide);padding:8px 14px;margin:12px 0;max-width:780px;background:var(--sheet);border-radius:0 6px 6px 0}.askcard .q{font-weight:700;margin:0 0 6px}
-.refused s{color:var(--mut)}form.ask{padding:0;max-width:780px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0 6px}
-.tile{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
-.tile b{display:block;font-size:26px;line-height:1.1;font-weight:800}
-.tile span{display:block;font-size:13px;color:var(--mut);line-height:1.4;margin-top:4px}
-table.plan{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0;display:block;overflow-x:auto}
-table.plan th,table.plan td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
-table.plan th{font-size:12px;color:var(--mut);font-weight:700}
-details.agency{border:1px solid var(--rule);border-radius:6px;padding:10px 14px;margin:10px 0;background:var(--sheet)}
-details.agency summary{cursor:pointer}
-p.letter{max-width:70ch;white-space:pre-wrap}
-button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:underline}
-button.linkish:focus-visible{outline:3px solid var(--warn)}
-button.planlink{margin-top:8px;font-size:14px;padding:6px 10px}
-.status.recheck { white-space: normal; display: inline; }
+/* NearMissLens page styles, in one pass from tokens to components.
 
-.verdict{padding:.6em .8em;border-radius:6px;border-left:4px solid var(--muted, #888);background:rgba(127,127,127,.08)}
-.verdict.ok{border-left-color:#2e7d32}.verdict.warn{border-left-color:#b26a00}.verdict.bad{border-left-color:#c62828}
+   The look borrows the street's own vocabulary: an asphalt task bar with a dashed centre line, verdicts drawn as road
+   signs (guide rectangle, warning diamond, octagon), and each task in the colour of a real sign family, so colour
+   says where you are (guide green: review a project; service blue: review a list; work-zone orange: check a claim;
+   school-zone yellow-green: look up a corner). Overpass (Highway Gothic's descendant) sets headings and controls;
+   Public Sans (the U.S. Web Design System's face, plain zeros) sets everything a visitor reads.
 
-/* task bar, start screen and views: one task per screen; the map only for looking up corners */
-.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--paper);padding:8px 12px;z-index:20}
-.skip:focus{left:12px}
-.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px 24px;flex-wrap:wrap;
-  background:var(--sheet);border-bottom:1px solid var(--rule);
-  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.logo{font-weight:800;font-size:20px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
-nav.tasks{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
-nav.tasks a{white-space:nowrap;padding:8px 12px;border-radius:6px;color:var(--ink);text-decoration:none;font-weight:700;font-size:15px}
-nav.tasks a:hover{background:var(--paper)}
-nav.tasks a[aria-current="page"]{background:var(--ink);color:var(--paper)}
-body:not(.with-map) .app{grid-template-columns:minmax(0,1fr)}
-body:not(.with-map) .rail{display:none}
-body:not(.with-map) main{margin:0 auto;width:100%}
-.rail{height:calc(100vh - 60px);top:60px}
-.start h2{font-size:clamp(28px,3.6vw,40px);line-height:1.1;font-weight:800;margin:8px 0 12px;letter-spacing:-.015em;max-width:24ch;text-wrap:balance}
-.start .lede{margin-bottom:22px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px;margin:0 0 30px;padding:0;list-style:none}
-.cards a{display:flex;flex-direction:column;gap:6px;height:100%;padding:18px;border:1.5px solid var(--rule);border-radius:8px;
-  background:var(--sheet);color:var(--ink);text-decoration:none}
-.cards a:hover{border-color:var(--ink)}
-.cards a.primary{border-color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
-.cards .t{font-weight:800;font-size:18px}
-.cards .d{color:var(--mut);font-size:14px;line-height:1.45;flex:1}
-.cards .k{font-size:13px;color:var(--mut)}
-.cards .go{font-weight:700;color:var(--guide)}
-ol.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;padding:0;margin:0 0 24px;list-style:none;counter-reset:s}
-ol.how li{counter-increment:s;padding-top:10px;border-top:2px solid var(--rule)}
-ol.how li::before{content:counter(s);font-weight:800;color:var(--warn);margin-right:8px}
-.examples{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
-.examples button{font-weight:600;font-size:13px;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);text-align:left}
-.examples button:hover{border-color:var(--ink)}
-.field{display:grid;gap:6px;margin:0 0 12px}
-.field label{font-weight:700;font-size:14px}
-.hint{color:var(--mut);font-size:13px;margin:0}
-.formrow{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
-.formrow .field{margin:0}
-@media (max-width:860px){.rail{height:auto;top:auto}}
-/* the task forms read top to bottom: examples, the text, then where and go */
-form.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:0;max-width:780px;margin:8px 0 18px}
-form.ask .examples,form.ask textarea{flex:1 1 100%}
-form.ask textarea{width:100%;min-height:96px;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);resize:vertical}
-form.ask select,form.ask input:not([type=checkbox]){font:inherit;font-size:15px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
-form.ask button[type=submit],form.ask>button:last-child{margin-left:auto}
+   Sections: 1 tokens · 2 base · 3 task bar and footer · 4 start screen · 5 task forms · 6 verdicts and progress
+   · 7 corner view (rail, map, list) · 8 corner report · 9 plans and saved results · 10 small screens */
 
-/* v2: the road's own vocabulary. Asphalt bar with a dashed centre line; verdicts as signs (guide, warning diamond,
-   octagon); Overpass (Highway Gothic's descendant) for headings, Atkinson Hyperlegible for reading. */
-:root{--asphalt:#2E3439;--marking:#F2B705;--signgo:#00704A;--signstop:#C8102E;--paper:#F1F2EE;--sheet:#FFFFFF;--ink:#1E252B;--mut:#58626B;--rule:#D3D8D2}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--asphalt:#1B1F23;--paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#A8B0B6;--rule:#3F464C;--signgo:#2E9C6E;--signstop:#E0485C}}
-:root[data-theme="dark"]{--asphalt:#1B1F23;--paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#A8B0B6;--rule:#3F464C;--signgo:#2E9C6E;--signstop:#E0485C}
-body{font:17px/1.6 "Atkinson Hyperlegible",system-ui,sans-serif}
-h1,h2,h3,h4,.logo,nav.tasks a,button,.vlabel,.cards .t{font-family:"Overpass",system-ui,sans-serif}
-.topbar{background:var(--asphalt);border-bottom:0;position:sticky;box-shadow:inset 0 -4px 0 0 transparent}
-.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--marking) 0 28px,transparent 28px 48px)}
-.logo{color:#fff}
-nav.tasks a{color:#E6E9EC}
-nav.tasks a:hover{background:rgba(255,255,255,.08)}
-nav.tasks a[aria-current="page"]{background:var(--marking);color:#1E252B}
-.start h2{max-width:22ch;font-size:clamp(30px,4vw,46px)}
-h3.ask{font-size:22px;margin:26px 0 12px}
-.cards a{border-radius:10px;background:var(--sheet)}
-.cards a.primary{border:2px solid var(--marking);box-shadow:none}
-.cards .go{font-family:"Overpass",system-ui,sans-serif;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-ol.steps{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:14px 0 22px;counter-reset:st}
-ol.steps li{counter-increment:st;display:flex;align-items:baseline;gap:8px;color:var(--mut);font-size:15px;max-width:30ch}
-ol.steps li::before{content:counter(st);flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--rule);font:800 14px "Overpass",sans-serif;color:var(--mut)}
-ol.steps li[aria-current="step"]{color:var(--ink)}
-ol.steps li[aria-current="step"]::before{background:var(--marking);border-color:var(--marking);color:#1E252B}
-.flabel{flex:1 1 100%;font-weight:700;font-size:16px}
-.vcard{display:flex;gap:18px;align-items:flex-start;padding:18px 20px;margin:16px 0;border-radius:10px;background:var(--sheet);border:1px solid var(--rule);max-width:780px}
-.vcard.go{border-left:6px solid var(--signgo)}.vcard.warn{border-left:6px solid var(--marking)}.vcard.stop{border-left:6px solid var(--signstop)}
-.vtext{min-width:0}.vtext p{margin:0 0 6px}
-.vlabel{font-size:24px;font-weight:800;line-height:1.15;margin:0 0 6px!important}
-.vnext{font-size:15px}
-.vsign{flex:none;width:64px;height:64px;display:grid;place-items:center;font:800 28px "Overpass",sans-serif}
-.vsign.go{background:var(--signgo);color:#fff;border-radius:8px;box-shadow:inset 0 0 0 3px var(--signgo),inset 0 0 0 5px #fff}
-.vsign.warn{width:52px;height:52px;margin:6px;background:var(--marking);color:#111;transform:rotate(45deg);border-radius:6px;box-shadow:inset 0 0 0 3px #111}
-.vsign.warn span{transform:rotate(-45deg)}
-.vsign.stop{background:var(--signstop);color:#fff;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
-.working{border:1px dashed var(--rule);border-radius:10px;padding:16px 20px;max-width:780px;background:var(--sheet)}
-.working ol{margin:4px 0 8px;padding-left:22px;color:var(--mut)}
-.working p{margin:0 0 6px}
-.spin{display:inline-block;width:14px;height:14px;margin-right:8px;border:3px solid var(--rule);border-top-color:var(--marking);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.spin{animation:none}}
-form.ask button{background:var(--asphalt);color:#fff;padding:11px 18px}
-form.ask button:hover{background:var(--ink)}
-.examples button{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-weight:400}
-details summary{font-size:15px}
-#sample{margin:8px 0 10px}
-
-.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
-ol.steps li span{display:block}
-form.ask .examples button{background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);padding:6px 12px;font-size:14px;border-radius:999px}
-form.ask .examples button:hover{border-color:var(--ink);background:var(--sheet)}
-.examples .hint{flex:1 1 100%}
-
-/* v3: each task wears the colour of a real sign family, so colour says where you are.
-   guide green: review a project; service blue: review a list; work-zone orange: check a claim;
-   school-zone yellow-green: look up a corner; saved results stay neutral. */
-:root{--t-review:#00704A;--t-program:#0057A8;--t-check:#E3650F;--t-corners:#8DB31A;--t-desk:#5C6670;--task:var(--marking);--task-ink:#fff}
+/* 1 tokens ------------------------------------------------------------------------------------------------------- */
+:root{
+  --paper:#F1F2EE;--sheet:#FFFFFF;--ink:#1E252B;--mut:#4F5961;--rule:#D3D8D2;
+  --asphalt:#2E3439;--marking:#F2B705;--signgo:#00704A;--signstop:#C8102E;
+  --warn:#E8A800;--warn-bg:#FFF4CC;--go:#1F6B48;--go-bg:#E1F0E7;--stop:#B42318;--stop-bg:#FBE4E1;--guide:#1F4E8C;--guide-bg:#E2EAF5;
+  --t-review:#00704A;--t-program:#0057A8;--t-check:#E3650F;--t-corners:#8DB31A;--t-desk:#5C6670;
+  --task:var(--marking);--task-ink:#fff;
+  --lane:repeating-linear-gradient(90deg,var(--rule) 0 18px,transparent 18px 30px);
+  --head:"Overpass",system-ui,sans-serif;--body:"Public Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#B1B8BE;--rule:#3F464C;--asphalt:#1B1F23;--signgo:#2E9C6E;--signstop:#E0485C;
+  --warn:#F2BC2E;--warn-bg:#3D3417;--go:#5FC08D;--go-bg:#1D3328;--stop:#F07A6C;--stop-bg:#3E2422;--guide:#7FA8E3;--guide-bg:#1F2B3D;
+  --t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}}
+:root[data-theme="dark"]{
+  --paper:#202428;--sheet:#2A2F34;--ink:#ECEEEA;--mut:#B1B8BE;--rule:#3F464C;--asphalt:#1B1F23;--signgo:#2E9C6E;--signstop:#E0485C;
+  --warn:#F2BC2E;--warn-bg:#3D3417;--go:#5FC08D;--go-bg:#1D3328;--stop:#F07A6C;--stop-bg:#3E2422;--guide:#7FA8E3;--guide-bg:#1F2B3D;
+  --t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}
 body.view-review{--task:var(--t-review)}
 body.view-program{--task:var(--t-program)}
 body.view-check{--task:var(--t-check)}
 body.view-corners{--task:var(--t-corners);--task-ink:#1E252B}
 body.view-desk{--task:var(--t-desk)}
+
+/* 2 base --------------------------------------------------------------------------------------------------------- */
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font:17px/1.6 var(--body)}
+h1,h2,h3,h4,.logo,nav.tasks a,button,.vlabel,.cards .t{font-family:var(--head)}
+a{color:var(--guide)}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+button{font:inherit;font-family:var(--head);font-weight:700;font-size:15px;padding:9px 14px;border-radius:6px;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
+button.quiet{background:transparent;color:var(--ink);border:1.5px solid var(--rule)}
+button.linkish{all:unset;cursor:pointer;color:var(--guide);text-decoration:underline}
+button.linkish:focus-visible{outline:3px solid var(--warn)}
+code{font-size:14px;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;font-size:15px;table-layout:auto}
+th{font-weight:700;text-align:left;color:var(--mut);font-size:14px;padding:6px 8px;border-bottom:1.5px solid var(--rule)}
+td{padding:9px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td.num{text-align:right;white-space:nowrap;font-weight:700}
+details summary{cursor:pointer;color:var(--mut);font-size:15px;margin-top:10px}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--paper);padding:8px 12px;z-index:20}
+.skip:focus{left:12px}
+.legend,.note,.why,.claims li{overflow-wrap:anywhere}
+.legend{font-size:15px;color:var(--mut)}
+.hint{color:var(--mut);font-size:15px;margin:0}
+.meta{color:var(--mut);font-size:15px;margin:0}
+.where{color:var(--mut);font-size:15px;margin:0}
+.busy{color:var(--mut);margin-top:12vh}
+.empty{color:var(--mut);max-width:60ch;margin-top:12vh}
+.empty h2{color:var(--ink);font-size:30px;line-height:1.15;margin:0 0 12px;font-weight:800}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* 3 task bar and footer: one task per screen, its colour on the bar --------------------------------------------- */
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:8px 24px;flex-wrap:wrap;background:var(--asphalt);
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:repeating-linear-gradient(90deg,var(--marking) 0 28px,transparent 28px 48px)}
+.logo{font-weight:800;font-size:20px;color:#fff;text-decoration:none;letter-spacing:-.01em}
+nav.tasks{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+nav.tasks a{white-space:nowrap;padding:8px 12px;border-radius:6px;color:#E6E9EC;text-decoration:none;font-weight:700;font-size:15px}
+nav.tasks a:hover{background:rgba(255,255,255,.08)}
 nav.tasks a[data-view="review"]{box-shadow:inset 0 -3px 0 var(--t-review)}
 nav.tasks a[data-view="program"]{box-shadow:inset 0 -3px 0 var(--t-program)}
 nav.tasks a[data-view="check"]{box-shadow:inset 0 -3px 0 var(--t-check)}
 nav.tasks a[data-view="corners"]{box-shadow:inset 0 -3px 0 var(--t-corners)}
 nav.tasks a[data-view="desk"]{box-shadow:inset 0 -3px 0 var(--t-desk)}
 nav.tasks a[aria-current="page"]{background:var(--task);color:var(--task-ink);box-shadow:none}
+.svc{margin:0 0 0 auto;font-size:14px;color:#D5DADE;display:flex;align-items:center;gap:8px}
+.svc:empty{display:none}
+.svc i{width:10px;height:10px;border-radius:50%;background:#7C868F;flex:none}
+.svc.up i{background:#3CCB7F;box-shadow:0 0 0 3px rgba(60,203,127,.25)}
+.svc.down i{background:var(--marking)}
+.foot{border-top:1px solid var(--rule);padding:18px clamp(16px,4vw,56px) 28px;font-size:15px;color:var(--mut);background:var(--paper)}
+.foot p{max-width:96ch;margin:0 auto 6px}
+.foot b{color:var(--ink)}
+body.with-map .foot{display:none}
+
+/* layout: the map rail shows only when looking up corners */
+.app{display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr);min-height:calc(100vh - 60px)}
+.app>*{min-width:0}
+body:not(.with-map) .app{grid-template-columns:minmax(0,1fr)}
+body:not(.with-map) .rail{display:none}
+main{padding:28px clamp(16px,4vw,56px) 64px;max-width:1040px}
+body:not(.with-map) main{margin:0 auto;width:100%}
 body:not(.view-start) main::before{content:"";display:block;height:6px;width:96px;border-radius:3px;background:var(--task);margin:0 0 14px}
-ol.steps li[aria-current="step"]::before{background:var(--task);border-color:var(--task);color:var(--task-ink)}
-form.ask button:not(.examples button){background:var(--task);color:var(--task-ink)}
-form.ask button:not(.examples button):hover{filter:brightness(.92);background:var(--task)}
-form.ask textarea:focus,form.ask select:focus,form.ask input:focus{outline:3px solid var(--task);outline-offset:1px}
-.cards a{position:relative;padding-top:22px;border-top-width:6px}
+
+/* 4 start screen ------------------------------------------------------------------------------------------------- */
+.start h2{font-size:clamp(30px,4vw,46px);line-height:1.1;font-weight:800;margin:8px 0 12px;letter-spacing:-.015em;max-width:22ch;text-wrap:balance}
+.start .lede{margin-bottom:22px}
+h3.ask{font-size:22px;margin:26px 0 12px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0 0 30px;padding:0;list-style:none}
+.cards a{position:relative;display:flex;flex-direction:column;gap:6px;height:100%;padding:22px 18px 18px;border:1.5px solid var(--rule);
+  border-top-width:6px;border-radius:10px;background:var(--sheet);color:var(--ink);text-decoration:none}
 .cards a.task-review{border-top-color:var(--t-review)}
 .cards a.task-program{border-top-color:var(--t-program)}
 .cards a.task-check{border-top-color:var(--t-check)}
 .cards a.task-corners{border-top-color:var(--t-corners)}
-.cards a.primary{border-color:var(--rule);border-top-color:var(--t-review);box-shadow:0 0 0 2px var(--t-review)}
-.cards a:hover{box-shadow:0 0 0 2px currentColor}
-.cards a.task-review:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-review)}
-.cards a.task-program:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-program)}
-.cards a.task-check:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-check)}
-.cards a.task-corners:hover{color:var(--ink);box-shadow:0 0 0 2px var(--t-corners)}
+.cards a.primary{box-shadow:0 0 0 2px var(--t-review)}
+.cards a.task-review:hover{box-shadow:0 0 0 2px var(--t-review)}
+.cards a.task-program:hover{box-shadow:0 0 0 2px var(--t-program)}
+.cards a.task-check:hover{box-shadow:0 0 0 2px var(--t-check)}
+.cards a.task-corners:hover{box-shadow:0 0 0 2px var(--t-corners)}
+.cards .t{font-weight:800;font-size:20px}
+.cards .d{color:var(--ink);font-size:16px;line-height:1.5;flex:1}
+.cards .k{font-size:15px;color:var(--mut)}
+.cards .go{font-family:var(--head);font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 .tsign{display:block;width:34px;height:34px;margin-bottom:4px}
 .task-review .tsign{background:var(--t-review);border-radius:5px;box-shadow:inset 0 0 0 2px var(--t-review),inset 0 0 0 4px #fff}
 .task-program .tsign{background:var(--t-program);border-radius:5px;box-shadow:inset 0 0 0 2px var(--t-program),inset 0 0 0 4px #fff}
 .task-check .tsign{width:28px;height:28px;margin:3px 3px 7px;background:var(--t-check);transform:rotate(45deg);border-radius:4px;box-shadow:inset 0 0 0 2px #111}
 .task-corners .tsign{background:var(--t-corners);clip-path:polygon(50% 0,100% 38%,100% 100%,0 100%,0 38%)}
-.cards .go{color:var(--ink)}
+ol.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;padding:0;margin:0 0 24px;list-style:none;counter-reset:s}
+ol.how li{counter-increment:s;padding-top:10px;border-top:2px solid var(--rule)}
+ol.how li::before{content:counter(s);font-weight:800;color:var(--warn);margin-right:8px}
+#sample{margin:8px 0 10px}
+
+/* the rail search and the task forms share .search; the task forms (.ask) override it below */
+form.search{display:flex;gap:8px;padding:0 18px 12px}
+form.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 11px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+
+/* 5 task forms: examples, the text, then where and go ------------------------------------------------------------ */
+h2.corner{font-size:clamp(28px,3.6vw,42px);line-height:1.08;font-weight:800;margin:4px 0 10px;letter-spacing:-.015em}
+.lede{font-size:clamp(18px,2vw,21px);line-height:1.5;max-width:62ch;margin:0 0 6px}
+ol.steps{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:14px 0 22px;counter-reset:st}
+ol.steps li{counter-increment:st;display:flex;align-items:baseline;gap:8px;color:var(--mut);font-size:16px;max-width:30ch}
+ol.steps li span{display:block}
+ol.steps li::before{content:counter(st);flex:none;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--rule);font:800 14px var(--head);color:var(--mut)}
+ol.steps li[aria-current="step"]{color:var(--ink)}
+ol.steps li[aria-current="step"]::before{background:var(--task);border-color:var(--task);color:var(--task-ink)}
+form.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:0;max-width:780px;margin:8px 0 18px}
+form.ask .examples,form.ask textarea{flex:1 1 100%}
+form.ask textarea{width:100%;min-height:96px;font:inherit;font-size:17px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink);resize:vertical}
+form.ask select,form.ask input:not([type=checkbox]){font:inherit;font-size:16px;padding:8px 10px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+form.ask textarea:focus,form.ask select:focus,form.ask input:focus{outline:3px solid var(--task);outline-offset:1px}
+form.ask button[type=submit],form.ask>button:last-child{margin-left:auto}
+form.ask button:not(.examples button){background:var(--task);color:var(--task-ink);padding:11px 18px}
+form.ask button:not(.examples button):hover{filter:brightness(.92)}
+.flabel{flex:1 1 100%;font-weight:700;font-size:17px}
+.field{display:grid;gap:6px;margin:0 0 12px}
+.field label{font-weight:700;font-size:15px}
+.examples{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.examples .hint{flex:1 1 100%}
+.examples button{font-family:var(--body);font-weight:400;font-size:15px;padding:6px 12px;border-radius:999px;background:var(--sheet);color:var(--ink);border:1.5px solid var(--rule);text-align:left}
+.examples button:hover{border-color:var(--ink)}
+textarea{width:100%;max-width:100%;min-height:360px;font:15px/1.55 var(--body);padding:12px;border:1.5px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+
+/* 6 verdicts as road signs, and a running job ---------------------------------------------------------------------- */
+.vcard{display:flex;gap:18px;align-items:flex-start;padding:18px 20px;margin:16px 0;border-radius:10px;background:var(--sheet);border:1px solid var(--rule);max-width:780px}
+.vcard.go{border-left:6px solid var(--signgo)}.vcard.warn{border-left:6px solid var(--marking)}.vcard.stop{border-left:6px solid var(--signstop)}
+.vtext{min-width:0}.vtext p{margin:0 0 6px}
+.vlabel{font-size:26px;font-weight:800;line-height:1.15;margin:0 0 6px!important}
+.vnext{font-size:16px}
+.vsign{flex:none;width:64px;height:64px;display:grid;place-items:center;font:800 28px var(--head)}
+.vsign.go{background:var(--signgo);color:#fff;border-radius:8px;box-shadow:inset 0 0 0 3px var(--signgo),inset 0 0 0 5px #fff}
+.vsign.warn{width:52px;height:52px;margin:6px;background:var(--marking);color:#111;transform:rotate(45deg);border-radius:6px;box-shadow:inset 0 0 0 3px #111}
+.vsign.warn span{transform:rotate(-45deg)}
+.vsign.stop{background:var(--signstop);color:#fff;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+.vsign.mini{width:30px;height:30px;font-size:15px;border-radius:5px}
+.vsign.mini.go{box-shadow:inset 0 0 0 2px var(--signgo),inset 0 0 0 3px #fff}
+.vsign.mini.warn{width:24px;height:24px;margin:3px;box-shadow:inset 0 0 0 2px #111}
 .vlegend{max-width:780px;margin:0 0 18px;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:10px 16px}
 .vlegend summary{font-weight:700;color:var(--ink);font-size:16px;margin:0}
 .vlegend ul{list-style:none;padding:0;margin:10px 0 4px;display:grid;gap:10px}
-.vlegend li{display:flex;gap:12px;align-items:flex-start;font-size:15px}
-.vsign.mini{width:30px;height:30px;font-size:15px;border-radius:5px}
-.vsign.mini.warn{width:24px;height:24px;margin:3px}
-.vsign.mini.go{box-shadow:inset 0 0 0 2px var(--signgo),inset 0 0 0 3px #fff}
-.vsign.mini.warn{box-shadow:inset 0 0 0 2px #111}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}}
-:root[data-theme="dark"]{--t-review:#2E9C6E;--t-program:#3D86D6;--t-check:#F28A3C;--t-corners:#A6CB3A}
+.vlegend li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.verdict{padding:.6em .8em;border-radius:6px;border-left:4px solid var(--mut);background:rgba(127,127,127,.08)}
+.verdict.ok{border-left-color:var(--go)}.verdict.warn{border-left-color:var(--warn)}.verdict.bad{border-left-color:var(--stop)}
+.working{border:1px dashed var(--rule);border-radius:10px;padding:16px 20px;max-width:780px;background:var(--sheet)}
+.working ol{margin:4px 0 8px;padding-left:22px;color:var(--mut)}
+.working p{margin:0 0 6px}
+.spin{display:inline-block;width:14px;height:14px;margin-right:8px;border:3px solid var(--rule);border-top-color:var(--marking);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* 7 corner view: city switch, search, map and the ranked list ------------------------------------------------------ */
+.rail{border-right:1px solid var(--rule);display:flex;flex-direction:column;height:calc(100vh - 60px);position:sticky;top:60px}
+.cityswitch{padding:12px 18px 10px;font-size:15px}
+.cityswitch select{font:inherit;padding:6px 8px;border-radius:6px;border:1.5px solid var(--rule);background:var(--sheet);color:var(--ink)}
+#map{height:34vh;min-height:220px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.citynote{padding:12px 18px;font-size:15px;color:var(--mut);line-height:1.5}
+.citynote b{color:var(--ink)}
+ol.corners{list-style:none;margin:0;padding:0 0 24px;overflow:auto;flex:1}
+ol.corners li button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:2.4em minmax(0,1fr) auto;gap:8px;width:100%;padding:8px 18px;cursor:pointer;font-size:15px}
+ol.corners li button:hover,ol.corners li button[aria-current="true"]{background:var(--sheet)}
+ol.corners li button:focus-visible{outline:3px solid var(--warn);outline-offset:-3px}
+.rank{color:var(--mut)}.n{font-weight:700}
+.gapdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--stop);margin-right:6px;vertical-align:1px}
+button.planlink{margin-top:8px;font-size:15px;padding:6px 10px}
+
+/* 8 corner report: numbered steps, claims with receipts, owners, the letter -------------------------------------- */
+section.step{padding:26px 0 8px;position:relative}
+section.step::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--lane)}
+section.step h3{font-size:21px;font-weight:800;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
+section.step h3 .no{font-size:14px;font-weight:700;color:var(--mut);min-width:1.6em}
+.why{color:var(--mut);font-size:15px;max-width:70ch;margin:0 0 12px}
+ul.claims{list-style:none;padding:0;margin:0;max-width:74ch}
+ul.claims li{padding:6px 0;line-height:1.55}
+.rtag{all:unset;cursor:pointer;font-size:13px;font-weight:700;color:var(--guide);background:var(--guide-bg);padding:1px 6px;border-radius:4px;margin-left:6px;white-space:nowrap}
+.rtag:focus-visible{outline:2px solid var(--warn)}
+.found{font-size:13px;font-weight:700;color:var(--go);background:var(--go-bg);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.bars{display:grid;grid-template-columns:minmax(180px,1.2fr) 2fr;gap:6px 16px;max-width:820px;font-size:15px}
+.bar{position:relative;height:22px;background:var(--sheet);border-radius:3px}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--rule);border-radius:3px}
+.bar .city{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink)}
+.bar span{position:absolute;right:6px;top:1px;font-size:13px;color:var(--mut)}
+.bar.over i{background:var(--warn)}
+.lab.over{font-weight:700}
+.status{display:inline-block;font-size:13px;font-weight:800;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.status.recheck{white-space:normal;display:inline}
+.s-worked{background:var(--go-bg);color:var(--go)}
+.s-not{background:var(--sheet);color:var(--mut);border:1px solid var(--rule)}
+.s-trend,.s-worse{background:var(--warn-bg);color:var(--ink)}
+.flag{background:var(--stop-bg);border-left:4px solid var(--stop);padding:10px 14px;margin:0 0 12px;max-width:74ch}
+.note{font-size:14px;margin-top:4px;color:var(--mut)}
+.note.good{color:var(--go)}
+.mech{margin-top:18px;max-width:820px}.mech h4{margin:0 0 4px;font-size:17px}.mech ul{margin:6px 0 0;padding-left:18px}.mech li{margin:6px 0}
+.owners{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;max-width:860px}
+.owner{background:var(--guide);color:#fff;border-radius:8px;padding:14px 16px;border:3px solid var(--guide);box-shadow:inset 0 0 0 2px rgba(255,255,255,.75)}
+.owner b{display:block;font-size:17px;line-height:1.25}
+.owner .roads{margin:6px 0 0;font-size:15px}
+.owner .basis{margin:8px 0 0;font-size:13px;opacity:.9}
+.owner.inferred{background:transparent;color:var(--guide);box-shadow:none;border-style:dashed}
+.req{margin:12px 0 0;font-size:16px}
+.receipts{display:grid;gap:10px;max-width:880px}
+.receipt{border:1px solid var(--rule);border-radius:6px;padding:10px 14px;background:var(--sheet);transition:box-shadow .4s}
+.receipt.lit{box-shadow:0 0 0 3px var(--warn)}
+.receipt h4{margin:0;font-size:16px}
+.receipt ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--mut)}
+.aerial{width:100%;max-width:420px;height:auto;border-radius:6px;display:block;margin:12px 0 4px}
+.askcard{border-left:4px solid var(--guide);padding:8px 14px;margin:12px 0;max-width:780px;background:var(--sheet);border-radius:0 6px 6px 0}
+.askcard .q{font-weight:700;margin:0 0 6px}
+.refused s{color:var(--mut)}
+p.letter{max-width:70ch;white-space:pre-wrap}
+
+/* 9 plans and saved results ---------------------------------------------------------------------------------------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:18px 0 6px}
+.tile{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+.tile b{display:block;font-size:26px;line-height:1.1;font-weight:800}
+.tile span{display:block;font-size:14px;color:var(--mut);line-height:1.45;margin-top:4px}
+table.plan{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0;display:block;overflow-x:auto}
+table.plan th,table.plan td{text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.plan th{font-size:13px;color:var(--mut);font-weight:700}
+details.agency{border:1px solid var(--rule);border-radius:6px;padding:10px 14px;margin:10px 0;background:var(--sheet)}
+details.agency summary{cursor:pointer}
+
+/* 10 small screens ------------------------------------------------------------------------------------------------- */
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{height:auto;position:static;top:auto;border-right:0}
+  ol.corners{max-height:40vh}
+  .bars{grid-template-columns:1fr}
+  main{padding-top:20px}
+  table.fixes th:nth-child(4),table.fixes td:nth-child(4){display:none}
+  .svc{margin-left:0;flex:1 1 100%}}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}}
