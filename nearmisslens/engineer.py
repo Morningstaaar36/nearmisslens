@@ -216,6 +216,9 @@ def draft_request(desk: Desk, lat: float, lon: float, name: str, who: dict, clie
     member (resident). Facts only without a client; with one, the letter is drafted and number-checked."""
     from . import letter
     t0 = time.perf_counter()
+    # the corner's own crashes, as in its case: a letter drafted on its own (the live page's /letter) must not fall
+    # back to the whole 100 m circle and give other numbers than the case shown above it
+    desk.corners.setdefault((round(lat, 6), round(lon, 6)), name.split(",")[0])
     d = desk.dossier(lat, lon)
     from .countermeasures import load_cmf
     b = {"junction": name, "dossier": d, "fixes": brief.fix_options(d, load_cmf())}
