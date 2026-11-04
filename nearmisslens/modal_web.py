@@ -29,7 +29,7 @@ app = modal.App("nearmisslens-copilot")
 state = modal.Volume.from_name("nearmisslens-state", create_if_missing=True)
 image = (modal.Image.debian_slim(python_version="3.12")
          .pip_install("httpx==0.28.1", "numpy==1.26.4", "pandas==2.2.3", "scipy==1.14.1",
-                      "opencv-python-headless==4.10.0.84", "meta-sam-parser==0.1.0", "modal")
+                      "opencv-python-headless==4.10.0.84", "meta-sam-parser==0.1.0", "modal", "pypdf==6.21.4")
          .env({"NML_DATA": "/state/data", "NML_CACHE": "/state/cache", "NML_RUNS": "/state/runs",
                "NML_HOST": "0.0.0.0", "NML_PUBLIC": "1", "PYTHONPATH": "/app",
                "NML_BUDGET_DICT": "nearmisslens-budget", "NML_DAILY_USD": "3.00", "NML_DAILY_REQUESTS": "300",
