@@ -2345,6 +2345,12 @@
 "name": "Seward Park Avenue South & South Henderson Street",
 "city": "seattle"
 },
+"sf|10th avenue & lincoln way": {
+"lat": 37.7659288,
+"lon": -122.467538,
+"name": "10th Avenue & Lincoln Way",
+"city": "sf"
+},
 "sf|14th street & mission street": {
 "lat": 37.7682771,
 "lon": -122.4200052,
@@ -2399,6 +2405,12 @@
 "name": "Fulton Street & 40th Avenue",
 "city": "sf"
 },
+"sf|4th avenue & fulton street": {
+"lat": 37.7739091,
+"lon": -122.4616383,
+"name": "Fulton Street & 4th Avenue",
+"city": "sf"
+},
 "sf|4th street & channel street": {
 "lat": 37.7744007,
 "lon": -122.3916177,
@@ -2409,6 +2421,18 @@
 "lat": 37.7832509,
 "lon": -122.4027076,
 "name": "Howard Street & 4th Street",
+"city": "sf"
+},
+"sf|4th street & long bridge street": {
+"lat": 37.7733851,
+"lon": -122.3914605,
+"name": "Long Bridge Street & 4th Street",
+"city": "sf"
+},
+"sf|4th street & mission rock street": {
+"lat": 37.772829,
+"lon": -122.3914073,
+"name": "4th Street & Mission Rock Street",
 "city": "sf"
 },
 "sf|5th street & bryant street": {
