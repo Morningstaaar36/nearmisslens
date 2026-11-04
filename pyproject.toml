@@ -59,7 +59,10 @@ allow-direct-references = true
 nml = "nearmisslens.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8.3"]
+dev = [
+    "pillow>=10",
+    "pytest>=8.3",
+]
 
 [build-system]
 requires = ["hatchling"]

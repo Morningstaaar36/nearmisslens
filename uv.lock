@@ -993,6 +993,7 @@ voice = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "pillow" },
     { name = "pytest" },
 ]
 
@@ -1019,7 +1020,10 @@ requires-dist = [
 provides-extras = ["local", "voice", "demo", "narration", "hosting"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.3" }]
+dev = [
+    { name = "pillow", specifier = ">=10" },
+    { name = "pytest", specifier = ">=8.3" },
+]
 
 [[package]]
 name = "networkx"

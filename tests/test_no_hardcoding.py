@@ -13,6 +13,7 @@ import json
 import pkgutil
 import re
 import tokenize
+from pathlib import Path
 from urllib.parse import urlparse
 
 import nearmisslens
@@ -112,7 +113,10 @@ def test_no_product_module_names_a_place_in_its_code():
     for m in pkgutil.iter_modules(nearmisslens.__path__):
         if m.name in STUDIES:
             continue
-        hits = _hits(_code_only(inspect.getsource(importlib.import_module(f"nearmisslens.{m.name}"))),
+        # the source as written, read from the file: importing would need every optional extra (modal, torch) installed
+        src = (Path(nearmisslens.__path__[0]) / f"{m.name}.py").read_text() if not m.ispkg else \
+            inspect.getsource(importlib.import_module(f"nearmisslens.{m.name}"))
+        hits = _hits(_code_only(src),
                      words - set(ALLOWED.get(m.name, {})))
         if hits:
             found[m.name] = hits
