@@ -1,0 +1,50 @@
+{
+ "id": "T31b_dev",
+ "what": "T31b's corners, used as the development set for T32's change (post hoc)",
+ "corners": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast"
+  },
+  {
+   "city": "dc",
+   "corner": "Southeast Freeway & 11th Street Southeast"
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street"
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue"
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street"
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South"
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street"
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street"
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue"
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue"
+  }
+ ],
+ "rule": {
+  "agree_within": "max(1, 15% of the independent count)",
+  "min_agree": 8
+ }
+}

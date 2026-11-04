@@ -366,6 +366,15 @@ def cmd_portfolio(args) -> int:
     return 0
 
 
+def cmd_corner_count(args) -> int:
+    from . import cornercount
+    res = cornercount.run(args.spec, independent=args.independent, out=args.out)
+    print(json.dumps(res.get("summary") or [{k: r.get(k) for k in ("city", "corner", "tool_injury_crashes",
+                                                                  "circle_injury_crashes", "error")} for r in res["tool"]],
+                     indent=1))
+    return 0
+
+
 def cmd_intake_run(args) -> int:
     from . import intake
     from .meta_client import MetaClient
@@ -807,6 +816,11 @@ def main(argv: list[str] | None = None) -> int:
     it.add_argument("--city", required=True)
     it.add_argument("--include-completed", action="store_true", help="also list projects the page says are completed")
     it.add_argument("--json", action="store_true")
+    cc = sub.add_parser("corner-count", help="a corner's own crash count for a registered spec's corners (T31, T32), "
+                                            "compared with an independent count if given; no model")
+    cc.add_argument("spec")
+    cc.add_argument("--independent", help="the independent counter's JSON (a path in the repository)")
+    cc.add_argument("--out", help="another result file name (a registered result is never overwritten)")
     ir = sub.add_parser("intake-run", help="run nml intake on a registered spec's pages (T30) and score its rule; paid")
     ir.add_argument("spec")
     pr = sub.add_parser("portfolio-run", help="run nml portfolio on a registered spec's program lists (T29) and score its rule; paid unless --replay")
@@ -908,7 +922,7 @@ def run_command(args) -> int:
             "experiment": cmd_experiment, "bench": cmd_bench, "ask": cmd_ask, "context": cmd_context,
             "office": cmd_office, "brief": cmd_brief, "discover": cmd_discover, "add-city": cmd_add_city, "check": cmd_check, "cities": cmd_cities, "citywide": cmd_citywide, "treatments": cmd_treatments,
             "voice-studio": cmd_voice_studio, "programs": cmd_programs, "gate": cmd_gate,
-            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "intake": cmd_intake, "intake-run": cmd_intake_run, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
+            "app": cmd_app, "engineer": cmd_engineer, "pages": cmd_pages, "plan": cmd_plan, "agent-cases": cmd_agent_cases, "cameras": cmd_cameras, "desk": cmd_desk, "check-run": cmd_check_run, "review": cmd_review, "portfolio": cmd_portfolio, "intake": cmd_intake, "intake-run": cmd_intake_run, "corner-count": cmd_corner_count, "portfolio-run": cmd_portfolio_run, "review-run": cmd_review_run, "alone": cmd_alone, "pack-cache": cmd_pack_cache, "ask-engineer": cmd_ask_engineer}[args.cmd](args)
 
 
 if __name__ == "__main__":

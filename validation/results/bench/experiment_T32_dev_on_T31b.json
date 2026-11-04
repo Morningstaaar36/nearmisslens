@@ -1,0 +1,268 @@
+{
+ "id": "T31b_dev",
+ "spec": "validation/experiments/T31b_dev.json",
+ "tool": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast",
+   "lat": 38.847145,
+   "lon": -76.980573,
+   "tool_injury_crashes": 28,
+   "circle_injury_crashes": 46,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 178,
+    "kept": 95,
+    "left_out_elsewhere": 47,
+    "left_out_unplaced_far": 36,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "dc",
+   "corner": "Southeast Freeway & 11th Street Southeast",
+   "lat": 38.872003,
+   "lon": -76.989707,
+   "tool_injury_crashes": 0,
+   "circle_injury_crashes": 55,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 225,
+    "kept": 0,
+    "left_out_elsewhere": 210,
+    "left_out_unplaced_far": 15,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street",
+   "lat": 40.7429100198,
+   "lon": -73.9928034095,
+   "tool_injury_crashes": 24,
+   "circle_injury_crashes": 52,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 103,
+    "kept": 44,
+    "left_out_elsewhere": 37,
+    "left_out_unplaced_far": 22,
+    "not_placed": 25
+   }
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue",
+   "lat": 40.6691726655,
+   "lon": -73.9863042919,
+   "tool_injury_crashes": 11,
+   "circle_injury_crashes": 31,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 69,
+    "kept": 20,
+    "left_out_elsewhere": 20,
+    "left_out_unplaced_far": 29,
+    "not_placed": 29
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street",
+   "lat": 47.536901,
+   "lon": -122.281179,
+   "tool_injury_crashes": 13,
+   "circle_injury_crashes": 69,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 251,
+    "kept": 39,
+    "left_out_elsewhere": 212,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South",
+   "lat": 47.563457,
+   "lon": -122.288011,
+   "tool_injury_crashes": 0,
+   "circle_injury_crashes": 54,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 166,
+    "kept": 0,
+    "left_out_elsewhere": 166,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street",
+   "lat": 37.783191,
+   "lon": -122.419201,
+   "tool_injury_crashes": 17,
+   "circle_injury_crashes": 51,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 51,
+    "kept": 17,
+    "left_out_elsewhere": 34,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street",
+   "lat": 37.777756,
+   "lon": -122.400243,
+   "tool_injury_crashes": 19,
+   "circle_injury_crashes": 25,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 25,
+    "kept": 19,
+    "left_out_elsewhere": 6,
+    "left_out_unplaced_far": 0,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue",
+   "lat": 41.9389391,
+   "lon": -87.739491,
+   "tool_injury_crashes": 7,
+   "circle_injury_crashes": 14,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 75,
+    "kept": 37,
+    "left_out_elsewhere": 5,
+    "left_out_unplaced_far": 33,
+    "not_placed": 0
+   }
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue",
+   "lat": 41.9851049,
+   "lon": -87.6624561,
+   "tool_injury_crashes": 6,
+   "circle_injury_crashes": 23,
+   "attribution": {
+    "by": "where the dataset places each crash",
+    "within_radius": 214,
+    "kept": 94,
+    "left_out_elsewhere": 11,
+    "left_out_unplaced_far": 109,
+    "not_placed": 0
+   }
+  }
+ ],
+ "independent": "validation/independent/t31b_independent_counts_2026-11-04.json",
+ "comparison": [
+  {
+   "city": "dc",
+   "corner": "Alabama Avenue Southeast & Stanton Road Southeast",
+   "independent": 32,
+   "tool": 28,
+   "circle": 46,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "dc",
+   "corner": "Southeast Freeway & 11th Street Southeast",
+   "independent": 7,
+   "tool": 0,
+   "circle": 55,
+   "agree": false,
+   "circle_agree": false
+  },
+  {
+   "city": "nyc",
+   "corner": "Avenue Of The Americas & West 23 Street",
+   "independent": 26,
+   "tool": 24,
+   "circle": 52,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "nyc",
+   "corner": "9 Street & 5 Avenue",
+   "independent": 12,
+   "tool": 11,
+   "circle": 31,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "Martin Luther King Junior Way South & South Othello Street",
+   "independent": 14,
+   "tool": 13,
+   "circle": 69,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "seattle",
+   "corner": "South Oregon Street & 35th Avenue South",
+   "independent": 0,
+   "tool": 0,
+   "circle": 54,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "sf",
+   "corner": "Polk Street & Eddy Street",
+   "independent": 17,
+   "tool": 17,
+   "circle": 51,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "sf",
+   "corner": "5th Street & Bryant Street",
+   "independent": 19,
+   "tool": 19,
+   "circle": 25,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "chicago",
+   "corner": "Kilbourn Avenue & Belmont Avenue",
+   "independent": 7,
+   "tool": 7,
+   "circle": 14,
+   "agree": true,
+   "circle_agree": false
+  },
+  {
+   "city": "chicago",
+   "corner": "Ridge Avenue & Hollywood Avenue",
+   "independent": 16,
+   "tool": 6,
+   "circle": 23,
+   "agree": false,
+   "circle_agree": false
+  }
+ ],
+ "summary": {
+  "corners": 10,
+  "counted_by_both": 10,
+  "tool_agree": 8,
+  "circle_agree": 0,
+  "tool_mean_abs_error": 2.5,
+  "circle_mean_abs_error": 27.0,
+  "rule_met": true
+ }
+}

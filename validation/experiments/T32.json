@@ -1,0 +1,54 @@
+{
+ "id": "T32",
+ "registered": "validation/BENCH_PREREG.md, T32",
+ "what": "A corner's own crash count against an independent count, after the T32 change: a crash the city's data does not place at a named intersection (no street names, or one street only) is the corner's only within 30 m of the junction; Chicago's 'intersection related' flag is replaced by that rule; San Francisco's corner crashes are its own 'Intersection <= 20ft' class",
+ "asof": "2026-10-31",
+ "window": "2021-10-31 to 2026-10-31",
+ "corners": [
+  {
+   "city": "dc",
+   "corner": "Suitland Parkway Southeast & Firth Sterling Avenue Southeast"
+  },
+  {
+   "city": "dc",
+   "corner": "Florida Avenue Northwest & 7th Street Northwest"
+  },
+  {
+   "city": "nyc",
+   "corner": "Flatbush Avenue & Avenue U"
+  },
+  {
+   "city": "nyc",
+   "corner": "Hylan Boulevard & Midland Avenue"
+  },
+  {
+   "city": "seattle",
+   "corner": "Rainier Avenue South & South Walker Street"
+  },
+  {
+   "city": "seattle",
+   "corner": "5th Avenue & Pine Street"
+  },
+  {
+   "city": "sf",
+   "corner": "Mission Street & 11th Street"
+  },
+  {
+   "city": "sf",
+   "corner": "Duboce Avenue & Mission Street"
+  },
+  {
+   "city": "chicago",
+   "corner": "Ashland Avenue & Cullerton Street"
+  },
+  {
+   "city": "chicago",
+   "corner": "Foster Avenue & Pulaski Road"
+  }
+ ],
+ "drawn": "seed 20261106: 2 per screened city from its saved screen, T31 and T31b corners left out; Chicago has no screen, so its 2 are the test sets' Chicago corners inside the city not used before (the third, Lake St & Franklin Ave, is in River Forest)",
+ "rule": {
+  "agree_within": "max(1, 15% of the independent count)",
+  "min_agree": 8
+ }
+}

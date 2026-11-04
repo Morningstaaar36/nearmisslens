@@ -1099,3 +1099,19 @@ Three live checks were run to test the new product path (Meta API $0.63 in all):
 - **Post-hoc review:**
   - **Every memo is on its corner and keeps every part.** The two changed verdicts that rest on the mapped control (Lander) and on the absence of a fitting study (Webster, the crosswalks and curb ramps) now say so, instead of "reconsider".
   - **The red team improved but is uneven.** In Ashland and Lander it argued against the verdict, citing alternatives, cost and the crash mix, and the answers address it. In 3 memos no objection's fact checked out, so none was kept. In the Bronx memo two of the three kept objections restate the verdict despite the instruction to argue against it.
+
+## T32 A corner's own crashes, after a 30 m rule for unplaced crashes (registered 2026-11-04, before any T32 count)
+- **Change (made after T31b, tried on T31b's corners as the development set, post hoc):**
+  - a crash the city's data does not place at a named intersection (no street names, or only one street) is the
+    corner's only when its point is within 30 m of the junction (DC's own offset limit, and the T31 counters' radius);
+    a record with no point is kept as before;
+  - Chicago's "intersection related" flag is replaced by this rule (a crash on one of the corner's streets, within 30 m);
+  - San Francisco's corner crashes are its own "Intersection <= 20ft" class (rear ends up to 150 ft back left out).
+  On T31b's corners this gives 8 of 10 within the tolerance (from 3), mean absolute error 2.5 injury crashes against
+  the 100 m circle's 27.0 (`experiment_T32_dev_on_T31b.json`; development, not a test).
+- **Inputs** (`validation/experiments/T32.json`): 10 corners none of T31's or T31b's, drawn with seed 20261106, 2 per
+  screened city from its saved screen; Chicago's 2 are the test sets' Chicago corners inside the city not used before.
+- **Method:** the tool's count with `nml corner-count T32` (no model) at this commit; a new counter agent, with T31's
+  instructions and no access to the tool, counts the same corners from each city's open-data API.
+- **Rule:** the tool agrees within max(1, 15% of the independent count) at 8 or more of the 10 corners. A corner the
+  tool cannot find counts as not agreeing.

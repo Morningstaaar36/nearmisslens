@@ -323,6 +323,15 @@ def crash_place(r: dict, a: dict) -> tuple[str, ...] | None:
     return None
 
 
+UNPLACED_M = 30  # T32: an unplaced crash must be this close to the junction (DC's own offset limit; T31's counters' radius)
+
+
+def _within(r: dict, a: dict, lat: float, lon: float, metres: float) -> bool | None:
+    """Whether a record's point is within `metres` of the junction; None when the record has no point."""
+    p = point_of(r, a)
+    return None if p is None else context.metres(lat, lon, p[0], p[1]) <= metres
+
+
 def at_corner(place: tuple[str, ...] | None, corner: str) -> bool | None:
     """Whether a crash the dataset places is this corner's: an intersection that is the corner, or a street that is
     one of its streets. None when the dataset does not say (such a crash is kept)."""
@@ -348,9 +357,18 @@ def crash_summary(a: dict, lat: float, lon: float, radius_m: float = 100, years:
         # the corner's own crashes: those the dataset places at another intersection or on another street are left
         # out (a 100 m circle takes in neighbouring corners where they are close; independent test round 3)
         places = [(r, crash_place(r, a)) for r in rows]
-        mine = [r for r, pl in places if at_corner(pl, corner) is not False]
+        mine, far = [], 0
+        for r, pl in places:
+            if at_corner(pl, corner) is False:
+                continue
+            # a crash the dataset does not place at a named intersection (no street names, or only one street) is the
+            # corner's only when its point is within UNPLACED_M of the junction (T32; T31b's New York over-count)
+            if (pl is None or pl[0] == "street") and _within(r, a, lat, lon, UNPLACED_M) is False:
+                far += 1
+                continue
+            mine.append(r)
         attribution = {"by": "where the dataset places each crash", "within_radius": len(rows), "kept": len(mine),
-                       "left_out_elsewhere": len(rows) - len(mine),
+                       "left_out_elsewhere": len(rows) - len(mine) - far, "left_out_unplaced_far": far,
                        "not_placed": sum(pl is None for _, pl in places)}
         all_rows, rows = rows, mine
     else:

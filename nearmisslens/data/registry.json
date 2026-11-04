@@ -137,7 +137,7 @@
   },
   {
    "id": "chicago-crashes",
-   "location": {"street_field": "street_name", "midblock": {"field": "intersection_related_i", "pattern": "^(N|None|)$", "_note": "the officer's judgment that the intersection played a role: the dataset's closest field to where the crash was"}},
+   "location": {"street_field": "street_name", "_note": "a street and its address only, no cross street: a crash on one of the corner's streets is the corner's within 30 m of the junction (T32). The officer's 'intersection related' flag (intersection_related_i) left out crashes at the corner itself (T31b: 3 against 7)"},
    "kind": "crash",
    "place": "Chicago",
    "bbox": [
@@ -693,7 +693,7 @@
   },
   {
    "id": "sf-crashes",
-   "location": {"midblock": {"field": "intersection", "pattern": "^Midblock"}},
+   "location": {"midblock": {"field": "intersection", "pattern": "^(Midblock|Intersection Rear End)", "_note": "the city's own at-the-intersection class is 'Intersection <= 20ft'; rear ends up to 150 ft back are left out (T32)"}},
    "kind": "crash",
    "city": "sf",
    "place": "San Francisco",

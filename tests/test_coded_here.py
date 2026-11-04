@@ -76,7 +76,7 @@ def test_the_summary_keeps_the_corners_own_crashes_and_says_what_it_left_out(mon
     s = O.crash_summary(a, 0, 0, corner="Florida Street & Cesar Chavez Street")
     assert s["injury_crashes"] == 5 and s["attribution"] == {"by": "where the dataset places each crash",
                                                              "within_radius": 19, "kept": 5, "left_out_elsewhere": 14,
-                                                             "not_placed": 2}
+                                                             "left_out_unplaced_far": 0, "not_placed": 2}
     assert O.crash_summary(a, 0, 0)["injury_crashes"] == 19  # without a corner name: the circle, as before
 
 
@@ -98,3 +98,19 @@ def test_initials_jr_and_roadway_tags_match_the_full_name():
     assert brief.same_corner("M L King Jr Wr Way S & S Othello St", full)
     assert brief.same_corner(full, "M L King Jr Er Way S & S Othello St")
     assert not brief.same_corner("Lake St & Franklin Ave", "Lake St & Frank Ave")
+
+
+def test_an_unplaced_crash_is_the_corners_only_near_the_junction(monkeypatch):
+    """T32: a crash with no street names (or only one street) is the corner's only within 30 m of the junction; one
+    the dataset places at the corner by name counts wherever its point is; a record with no point is kept."""
+    from nearmisslens import opendata as O
+    a = {"id": "zz-crashes", "source": "zz", "date_field": "d", "injured": {"any": ["n"]}, "killed": {"any": ["k"]},
+         "street_fields": ["on", "cross"], "lat_field": "y", "lon_field": "x"}
+    near, far = 0.0001, 0.001  # about 11 m and 111 m north of the junction
+    rows = [{"d": "2026-01-01", "n": "1", "k": "0", "on": "", "cross": "", "y": str(near), "x": "0"},
+            {"d": "2026-01-01", "n": "1", "k": "0", "on": "", "cross": "", "y": str(far), "x": "0"},
+            {"d": "2026-01-01", "n": "1", "k": "0", "on": "FLORIDA ST", "cross": "CESAR CHAVEZ ST", "y": str(far), "x": "0"},
+            {"d": "2026-01-01", "n": "1", "k": "0", "on": "", "cross": ""}]
+    monkeypatch.setattr(O, "rows_near", lambda *a_, **k: rows)
+    s = O.crash_summary(a, 0, 0, corner="Florida Street & Cesar Chavez Street")
+    assert s["injury_crashes"] == 3 and s["attribution"]["left_out_unplaced_far"] == 1
