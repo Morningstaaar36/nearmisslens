@@ -225,7 +225,7 @@ def script() -> list[Scene]:
         Scene("video", "Where drone video exists, SAM 3.1 tracks the road users and measures near misses before "
                        "crashes happen.", "viewer", caption="SAM 3.1 near-miss measurement on drone video (FLUID dataset, CC BY 4.0)"),
         Scene("end", f"NearMissLens. {h['of']} corners, each case built from public records in seconds, every claim "
-                     "with its receipt. Open source, built during the hackathon. Engineers decide.", "card", "NearMissLens",
+                     "with its receipt. Open source. Engineers decide.", "card", "NearMissLens",
               "A safety engineer that shows its receipts. Muse Spark Open on Baseten, Muse Spark, SAM 3.1, Muse Image."),
     ]
     return scenes

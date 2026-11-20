@@ -4,7 +4,7 @@ NearMissLens is a street-safety copilot built from agents on Meta's models. Each
 
 ## The idea
 
-Meta's verifiable-agent pattern (`meta-models/legal-agent-workshop`, from the hackathon's verifiable-agents session) puts the checks inside the tools, outside the agent's control, so an agent cannot finish until its work passes them. Those checks compare an agent's claims with the case's documents and ground truth. Road safety needs one more kind of check: a claim about the world, such as "a leading pedestrian interval will cut pedestrian crashes here", cannot be verified by reading a document. It can only be tested against what happened when the city did it before.
+Meta's verifiable-agent pattern (`meta-models/legal-agent-workshop`) puts the checks inside the tools, outside the agent's control, so an agent cannot finish until its work passes them. Those checks compare an agent's claims with the case's documents and ground truth. Road safety needs one more kind of check: a claim about the world, such as "a leading pedestrian interval will cut pedestrian crashes here", cannot be verified by reading a document. It can only be tested against what happened when the city did it before.
 
 A falsification gate is a deterministic test, inside the tool an agent uses to finish, that tries to show a claim is wrong. The claim goes through only if the test fails to break it. NearMissLens has these gates:
 

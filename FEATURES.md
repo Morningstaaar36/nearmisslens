@@ -107,8 +107,8 @@ A box is ticked only when a unit test or a `nml selftest` row verifies the featu
 - [x] Replay mode: every paid result is cached, and `nml --replay ...` costs nothing. Verified by the `selftest` replay run.
 - [x] Muse Glimmer served on a Modal L4 GPU (`nearmisslens/glimmer_modal.py`): its Q4 weights need more than this PC's 16 GB, so it runs on partner hardware, not locally.
 
-## Submission
-- [x] **README** with quick start, Meta tools table and "built during the hackathon".
+## Release
+- [x] **README** with quick start, Meta tools table and credits.
 - [x] **LICENSES.md and PRIVACY.md.**
 - [x] **Data download:** `nml fetch` reads clips out of remote ZIP64 archives with resumable range requests and a CRC32 check, verifies MD5s, and completes the CMF server's certificate chain from its AIA URL. Verified by `tests/test_fetch.py`.
 - [x] **Demo video renderer, built:** `nml demo` records the viewer with headless Chrome, adds the reviewed event clip with Spark's verdict, and makes title cards from run outputs. A trial render on dev data was checked frame by frame.

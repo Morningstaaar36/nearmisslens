@@ -34,7 +34,7 @@ voice = [
 demo = [
     "playwright>=1.64.1",
 ]
-# a guide voice for timing draft demo cuts (the submitted video is narrated by a person); pulls in torch
+# a guide voice for timing draft demo cuts (the published demo video is narrated by a person); pulls in torch
 narration = [
     "kokoro>=0.9.4",
     "soundfile>=0.14.0",

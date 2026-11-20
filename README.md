@@ -197,13 +197,10 @@ The live page runs on Modal (`nearmisslens/modal_web.py`) as one small container
 
 All the limits are in [EVIDENCE.md](EVIDENCE.md#limits).
 
-## Built during the hackathon
+## Credits
 
-Meta Global AI Developer Hackathon, Indie track, "Push the Frontier". Solo entry by Morningstaaar36.
-
-- **Built during the event (Oct 27 – Nov 4, 2026):** all the code in this repository, the city registry, the tests,
-  the registered studies and their results, the page and the live deployment. The first commit, `dc089bf`, is dated
-  Oct 27 (ET); the history shows the rest.
+- **Ours:** all the code in this repository, the city registry, the tests, the registered studies and their results,
+  the page and the live deployment; the git history shows how it was built.
 - **Not ours, and used under their terms:** Meta's models (through the Meta Model API and Baseten), the cities' open
   data, the FHWA crash-modification studies, OpenStreetMap and the map tiles, and the open-source libraries listed in
   `pyproject.toml`. Each is listed with its licence in [LICENSES.md](LICENSES.md); what is stored about whom is in

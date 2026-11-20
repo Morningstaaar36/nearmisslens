@@ -86,7 +86,7 @@ Every result, met or not, is in `validation/BENCH_PREREG.md` and `validation/BEN
 
 ## 0.x (October 27 – November 3, 2026)
 
-Built during the Meta hackathon:
+What this period built:
 - the desk (T21 to T21e);
 - the causal gate (T11 to T14b);
 - the red team (T18 to T20b);

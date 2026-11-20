@@ -270,7 +270,7 @@ def render(key: str | None = None, out: Path | None = None) -> Path:
     lines = score_lines()
     if lines:
         segs.append(card("Checked against reference trajectories", " ".join(lines), work / "c_score", work, 9.0))
-    segs.append(card("Open source, built during the hackathon",
+    segs.append(card("Open source",
                      "A screening tool built on surrogate safety measures, not a crash predictor. A qualified traffic "
                      "engineer must review any design.", work / "c_end", work))
     parts = [_to_clip(s, work / f"part{k:02d}.mp4", work) for k, s in enumerate(segs)]
